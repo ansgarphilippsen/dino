@@ -27,6 +27,8 @@
 
 //static char struct_obj_return[256];
 
+static void gen_spline_nd(cgfxPoint *sp, int spc);
+
 int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **wl)
 {
   int i,od;
@@ -941,9 +943,6 @@ int structSmooth(struct STRUCT_OBJ *obj)
   // go through each segment
   bc=0;
 
-  /* TV */
-  //obj->tvc=0;
-  
   while(bc<obj->bond_count) {
     
     // generate consecutive points
@@ -978,9 +977,6 @@ int structSmooth(struct STRUCT_OBJ *obj)
     }
     if(point_list[i].id==CGFX_STRAND)
       point_list[i].id=CGFX_STRAND2;
-
-
-
 
     // generate normals
     for(i=0;i<pc;i++) {
@@ -1022,26 +1018,9 @@ int structSmooth(struct STRUCT_OBJ *obj)
       }
 
       matfNormalize(n3,point_list[i].n);
-      /* 
-	 this is not used at the moment since its buggy
-	 i.e. gives visual artefacts !
-
-      n3[0]=point_list[i].v1[0];
-      n3[1]=point_list[i].v1[1];
-      n3[2]=point_list[i].v1[2];
-
-      if(matfCalcDot(n3,n4)<0) {
-	n3[0]*=-1.0;
-	n3[1]*=-1.0;
-	n3[2]*=-1.0;
-      }
-      */
 
       // take as new reference
-      n4[0]=n3[0];
-      n4[1]=n3[1];
-      n4[2]=n3[2];
-      matfNormalize(n4,n4);
+      matfNormalize(n3,n4);
     }
 
     // if strand method is 1
@@ -1134,7 +1113,14 @@ int structSmooth(struct STRUCT_OBJ *obj)
 
     // generate spline, spoint_list is allocated
     bsplineGenerate(point_list, &spoint_list, pc, detail, obj->render.cgfx_flag);
-
+    
+    /*
+      this is not used !
+      while the algorithm is elegant, the normals for the bb
+      should not be 'random' but rather dependent change of direction
+      as calculated above
+       gen_spline_nd(spoint_list,pc*detail+detail);
+    */
     // should transparency be set here ??
 
     // create cgfx object
@@ -1143,27 +1129,9 @@ int structSmooth(struct STRUCT_OBJ *obj)
     cgfxAppend(&obj->va,&va);
 
     Cfree(va.p);
-    /* TV */
-    /*******************
-    if(obj->tvc+detail*pc>=obj->tvm) {
-      obj->tvm+=1024;
-      obj->tv=Crecalloc(obj->tv,obj->tvm,sizeof(struct STRUCT_TV));
-    }
-    for(i=0;i<detail*pc;i++) {
-      obj->tv[obj->tvc].px=spoint_list[i].v[0];
-      obj->tv[obj->tvc].py=spoint_list[i].v[1];
-      obj->tv[obj->tvc].pz=spoint_list[i].v[2];
-      obj->tv[obj->tvc].dx=spoint_list[i].d[0];
-      obj->tv[obj->tvc].dy=spoint_list[i].d[1];
-      obj->tv[obj->tvc].dz=spoint_list[i].d[2];
-      obj->tv[obj->tvc].nx=spoint_list[i].n[0];
-      obj->tv[obj->tvc].ny=spoint_list[i].n[1];
-      obj->tv[obj->tvc].nz=spoint_list[i].n[2];
-      obj->tvc++;
-    }
-    ********************/
-    /* TV */
 
+    //obj->sp=spoint_list;
+    //obj->spc=pc*detail;
     Cfree(spoint_list);
 
   } // next segment
@@ -1171,6 +1139,133 @@ int structSmooth(struct STRUCT_OBJ *obj)
   Cfree(point_list);
   return 0;
 }
+
+/*
+  generate normal and direction vectors based on spline points
+*/
+
+static void gen_spline_nd(cgfxPoint *sp, int spc)
+{
+  int i,c;
+  double n0[4],d0[4],ax[4],n1[4],d1[4],ra,rm[16];
+
+  // initial direction
+  for(i=0;i<3;i++)
+    d0[i]=(double)(sp[1].v[i]-sp[0].v[i]);
+  d0[3]=1.0;
+  matNormalize(d0,d0);
+
+  // initial normal
+  d1[0]=-d0[1]; d1[1]=d0[0]; d1[2]=0.0;
+  d1[3]=1.0;
+  matCalcCross(d0,d1,n0);
+  n0[3]=1.0;
+  n0[3]=1.0;
+  ax[3]=1.0;
+
+  for(i=0;i<3;i++) {
+    sp[0].d[i]=d0[i];
+    sp[0].n[i]=n0[i];
+  }
+
+  for(c=1;c<spc-1;c++) {
+    // new direction from point[c]
+    for(i=0;i<3;i++)
+      d1[i]=(double)(sp[c+1].v[i]-sp[c].v[i]);
+    matNormalize(d1,d1);
+    
+    // check that both dir vectors are not equal
+    if(!(d0[0]==d1[0] && d0[1]==d1[1] && d0[2]==d1[2])) {
+      // calculate rotation matrix to go from old to new dir
+      matTransformAtoB(d0,d1,rm);
+      matMultMV(rm,n0,n1);
+    } else {
+      //fprintf(stderr,"eq\n");
+      for(i=0;i<3;i++)
+	n1[i]=n0[i];
+    }
+    
+    // n1 and d1 contain new direction and normal vectors
+    for(i=0;i<3;i++) {
+      sp[c].d[i]=d1[i];
+      sp[c].n[i]=n1[i];
+      //matfNormalize(sp[c].n,sp[c].n);
+      d0[i]=d1[i];
+      n0[i]=n1[i];
+    }
+  }
+  for(i=0;i<3;i++) {
+    sp[spc-1].d[i]=d0[i];
+    sp[spc-1].n[i]=n0[i];
+  }
+
+}
+
+static void gen_spline_nd2(cgfxPoint *sp, int spc)
+{
+  int i,c;
+  double n0[4],d0[4],ax[4],n1[4],d1[4],ra,rm[16];
+
+  // initial direction
+  for(i=0;i<3;i++)
+    d0[i]=(double)(sp[1].v[i]-sp[0].v[i]);
+  d0[3]=1.0;
+  matNormalize(d0,d0);
+
+  // initial normal
+  d1[0]=d0[1]; d1[1]=d0[2]; d1[2]=d0[0];
+  d1[3]=1.0;
+  matCalcCross(d0,d1,n0);
+  n0[3]=1.0;
+  n0[3]=1.0;
+  ax[3]=1.0;
+
+  for(i=0;i<3;i++) {
+    sp[0].d[i]=d0[i];
+    sp[0].n[i]=n0[i];
+  }
+
+  for(c=1;c<spc-1;c++) {
+    // new direction from point[c]
+    for(i=0;i<3;i++)
+      d1[i]=(double)(sp[c+1].v[i]-sp[c].v[i]);
+    matNormalize(d1,d1);
+    
+    // check that both dir vectors are not equal
+    if(!(d0[0]==d1[0] && d0[1]==d1[1] && d0[2]==d1[2])) {
+      // axis that runs perp to both d0 and d1
+      matCalcCross(d0,d1,ax);
+      // angle to rotate around this axis to go from d0 to d1
+      ra=asin(matCalcDot(d1,d0)/(matCalcLen(d0)*matCalcLen(d1)));
+      // generate rotation matrix around axis
+      matMakeRotMat(ra*180.0/M_PI,ax[0],ax[1],ax[2],rm);
+      // apply this matrix to current normal
+      matTranspose(rm,rm);
+      matMultVM(n0,rm,n1);
+      fprintf(stderr,"%f\n",180.0/M_PI*asin(matCalcDot(n0,n1)));
+      matNormalize(n1,n1);
+    } else {
+      //fprintf(stderr,"eq\n");
+      for(i=0;i<3;i++)
+	n1[i]=n0[i];
+    }
+    
+    // n1 and d1 contain new direction and normal vectors
+    for(i=0;i<3;i++) {
+      sp[c].d[i]=d1[i];
+      sp[c].n[i]=n1[i];
+      //matfNormalize(sp[c].n,sp[c].n);
+      d0[i]=d1[i];
+      n0[i]=n1[i];
+    }
+  }
+  for(i=0;i<3;i++) {
+    sp[spc-1].d[i]=d0[i];
+    sp[spc-1].n[i]=n0[i];
+  }
+
+}
+
 
 
 int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)

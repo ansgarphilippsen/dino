@@ -142,6 +142,28 @@ int structDrawObj(structObj *obj)
 #else
     glDrawArrays(GL_LINES,0,obj->va.count);
 #endif
+    
+    /*
+      TEST PURPOSE ONLY
+    glBegin(GL_LINES);
+    for(i=0;i<obj->spc;i++) {
+      glColor3f(1,0,0);
+      glVertex3f(obj->sp[i].v[0],
+		 obj->sp[i].v[1],
+		 obj->sp[i].v[2]);
+      glVertex3f(obj->sp[i].v[0]+obj->sp[i].n[0],
+		 obj->sp[i].v[1]+obj->sp[i].n[1],
+		 obj->sp[i].v[2]+obj->sp[i].n[2]);
+      glColor3f(0,1,0);
+      glVertex3f(obj->sp[i].v[0],
+		 obj->sp[i].v[1],
+		 obj->sp[i].v[2]);
+      glVertex3f(obj->sp[i].v[0]+obj->sp[i].d[0],
+		 obj->sp[i].v[1]+obj->sp[i].d[1],
+		 obj->sp[i].v[2]+obj->sp[i].d[2]);
+    }
+    glEnd();
+    */
 
     glDisable(GL_VERTEX_ARRAY);
     glDisable(GL_COLOR_ARRAY);

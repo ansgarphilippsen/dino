@@ -1129,7 +1129,7 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
     t.value=val;
     
     val[0]=CMI_INPUT_KEYBOARD;
-    val[1]=CMI_BUTTON_RELEASE;
+    val[1]=CMI_BUTTON_PRESS;
 
     kcount=XLookupString(&(cd->event->xkey),kbuf,sizeof(kbuf),&key,NULL);
     kbuf[kcount]='\0';
