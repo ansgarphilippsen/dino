@@ -1155,7 +1155,7 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
   writePOVCheckName(obj_name);
   sprintf(tp_name,"_%s_%s_tp",obj->node->name,obj->name);
   writePOVCheckName(tp_name);
-  sprintf(tp_name,"_%s_%s_fi",obj->node->name,obj->name);
+  sprintf(fi_name,"_%s_%s_fi",obj->node->name,obj->name);
   writePOVCheckName(fi_name);
   sprintf(lw_name,"_%s_%s_lw",obj->node->name,obj->name);
   writePOVCheckName(lw_name);
@@ -1184,25 +1184,55 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
   }
 
   fprintf(f,"#if (%s)\n",obj_name);
-
   fprintf(f,"union {\n");
-  for(i=0;i<obj->point_count;i++) {
-    if(!writePOVTransform(&obj->node->transform,obj->point[i].v,v1,1)) continue;
-    writePOVCheckLim(v1,lim);
-    
-    if(obj->render.mode==RENDER_OFF) 
-      fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%s*%.3f\n",
-	      v1[0],v1[1],v1[2],ps_name,obj->point[i].ps);
-    else
-      fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%.3f\n",
-	      v1[0],v1[1],v1[2],obj->point[i].r);
-    fprintf(f,"material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s*%.3f,%s*%.3f>}",
-	    tex_name, obj->point[i].c[0], 
-	    obj->point[i].c[1],
-	    obj->point[i].c[2], 
-	    fi_name,1.0-obj->point[i].c[3],
-	    tp_name,1.0-obj->point[i].c[3]);
+  if(obj->render.mode==RENDER_TUBE) {
+    if(write_pov_mode==WRITE_POV_MEGA) {
+      writePOVGenMegaTex(f,obj_name,tex_name,tp_name,fi_name);
+    }
+
+    if(write_pov_mode==WRITE_POV_NEW ||
+       write_pov_mode==WRITE_POV_NOCOLOR ||
+       write_pov_mode==WRITE_POV_MEGA) {
+      fprintf(f,"mesh {\n");
+    } else { // SMOOTH or DEFAULT
+      fprintf(f,"union {\n");
+    }
+    if(write_pov_mode==WRITE_POV_SMOOTH) {
+      fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
+    }
+    for(i=0;i<obj->va.count;i+=3) {
+      writePOVTriangle(f,&obj->node->transform,write_pov_mode,
+		       obj->va.p[i+0].v,obj->va.p[i+0].n,obj->va.p[i+0].c,
+		       obj->va.p[i+1].v,obj->va.p[i+1].n,obj->va.p[i+1].c,
+		       obj->va.p[i+2].v,obj->va.p[i+2].n,obj->va.p[i+2].c,
+		       obj_name, lim);
+    }
+
+    if(write_pov_mode==WRITE_POV_NEW ||
+       write_pov_mode==WRITE_POV_NOCOLOR) {
+      fprintf(f,"material {%s}\n",mat_name);
+    }
     fprintf(f,"}\n");
+  } else {
+    fprintf(f,"union {\n");
+    for(i=0;i<obj->point_count;i++) {
+      if(!writePOVTransform(&obj->node->transform,obj->point[i].v,v1,1)) continue;
+      writePOVCheckLim(v1,lim);
+      
+      if(obj->render.mode==RENDER_OFF) 
+	fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%s*%.3f\n",
+		v1[0],v1[1],v1[2],ps_name,obj->point[i].ps);
+      else
+	fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%.3f\n",
+		v1[0],v1[1],v1[2],obj->point[i].r);
+      fprintf(f,"material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s*%.3f,%s*%.3f>}",
+	      tex_name, obj->point[i].c[0], 
+	      obj->point[i].c[1],
+	      obj->point[i].c[2], 
+	      fi_name,1.0-obj->point[i].c[3],
+	      tp_name,1.0-obj->point[i].c[3]);
+      fprintf(f,"}\n");
+    }
   }
   for(i=0;i<obj->line_count;i++) {
     if(obj->render.stipple_flag) {
@@ -1279,7 +1309,6 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
 	if(matfCalcLen(stipple_dir)>ll)
 	  break;
       }
-      
     } else {
       if(!writePOVTransform(&obj->node->transform,obj->line[i].v1,v1,1)) continue;
       if(!writePOVTransform(&obj->node->transform,obj->line[i].v2,v2,1)) continue;
