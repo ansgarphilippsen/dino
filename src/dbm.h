@@ -1,6 +1,7 @@
 #ifndef DBM_H
 #define DBM_H
 
+#include "dbm_common.h"
 #include "struct_db.h"
 #include "scal_db.h"
 #include "vect_db.h"
@@ -141,12 +142,9 @@ typedef struct DBM_VECT_NODE {
 }dbmVectNode;
 
 
-
 typedef union DBM_NODE {
   struct DBM_NODE_COMMON {
-    int type;
-    char name[256];
-    char path[1024];
+    DBM_NODE_COMMON_HEADER
   }common;
   dbmStructNode structNode;
   dbmScalNode scalNode;

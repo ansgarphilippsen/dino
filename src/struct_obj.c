@@ -336,20 +336,20 @@ int structObjRenew(structObj *obj, Set *set, Select *sel)
   memset(obj->atom_flag,0,sizeof(unsigned char)*obj->node->atom_count);
 
   if(obj->type==STRUCT_TRACE) {
-    comMessage("tracing ...\n");
+    comMessage("tracing ... ");
     if(structObjTrace(obj->node, obj, sel)<0)
       return -1;
   } else if(obj->type==STRUCT_CONNECT) {
-    comMessage("connecting ...\n");
+    comMessage("connecting ... ");
     if(structObjConnect(obj->node, obj, sel)<0)
       return -1;
   } else if(obj->type==STRUCT_NBOND) {
-    comMessage("nbonding ...\n");
+    comMessage("nbonding ... ");
     if(structObjNbond(obj->node, obj, sel)<0)
       return -1;
   }
 
-  sprintf(message,"%d atoms with %d bonds",obj->atom_count, obj->bond_count);
+  sprintf(message,"%d atoms with %d bonds\n",obj->atom_count, obj->bond_count);
   comMessage(message);
 
   // set object properties after renewing

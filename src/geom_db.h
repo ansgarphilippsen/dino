@@ -1,17 +1,15 @@
 #ifndef GEOM_DB_H
 #define GEOM_DB_H
 
+#include "dbm_common.h"
 #include "geom_obj.h"
 #include "transform.h"
 
 typedef struct DBM_GEOM_NODE {
-  int type;
-  char name[256];
-  char path[256];
+  DBM_NODE_COMMON_HEADER
   struct GEOM_OBJ **obj;
   int obj_count;
   int obj_max;
-  transMat transform;
 }dbmGeomNode;
 
 typedef struct GEOM_NAME_LIST {

@@ -302,7 +302,7 @@ static int call_script(const char *filename, const char **wl, int wc)
   }
     
   guitSuspend(1);
-
+  shellOut("\n");
   scrlvl++;
 
   fstat(fileno(f),&st);

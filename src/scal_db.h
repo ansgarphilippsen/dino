@@ -1,6 +1,7 @@
 #ifndef SCAL_DB_H
 #define SCAL_DB_H
 
+#include "dbm_common.h"
 #include "scal_obj.h"
 #include "rex.h"
 #include "render.h"
@@ -84,9 +85,7 @@ struct SCAL_OCTREE_GLOBS {
 #endif
 
 typedef struct DBM_SCAL_NODE {
-  int type;
-  char name[256];
-  char path[1024];
+  DBM_NODE_COMMON_HEADER
   union DBM_NODE *attach;
   struct LEX_STACK restrict;
   scalObj **obj;
@@ -101,7 +100,7 @@ typedef struct DBM_SCAL_NODE {
   double center[3];
 
   int swap_flag;
-  transMat transform,transform_save;
+  transMat transform_save;
 }dbmScalNode;
 
 

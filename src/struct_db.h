@@ -1,6 +1,7 @@
 #ifndef STRUCT_DB_H
 #define STRUCT_DB_H
 
+#include "dbm_common.h"
 #include "rex.h"
 #include "render.h"
 #include "cgfx.h"
@@ -241,8 +242,7 @@ struct TRJ_PLAY {
 
 
 typedef struct DBM_STRUCT_NODE {
-  int type;
-  char name[256];
+  DBM_NODE_COMMON_HEADER
   Select *restrict;
   struct STRUCT_OBJ *obj;
   int *obj_flag;
@@ -297,7 +297,6 @@ typedef struct DBM_STRUCT_NODE {
   double rmat[16];
   double trans[3];
   */
-  transMat transform;
 }dbmStructNode;
 
 struct STRUCT_ATOM_TABLE {

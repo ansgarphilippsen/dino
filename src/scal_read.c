@@ -55,7 +55,7 @@ int scalRead(dbmScalNode *node, int type, FILE *f, int flag)
 
   if(ret==0) {
 
-    sprintf(message," %dx%dx%d",
+    sprintf(message,"scalar-field size is %dx%dx%d gridpoints\n",
 	    node->field->u_size,
 	    node->field->v_size,
 	    node->field->w_size);

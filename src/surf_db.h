@@ -3,6 +3,7 @@
 #ifndef SURF_H
 #define SURF_H
 
+#include "dbm_common.h"
 #include "render.h"
 #include "rex.h"
 #include "surf_obj.h"
@@ -46,8 +47,7 @@ enum {SURF_PROP_COLOR,
       SURF_PROP_RCEN};
 
 typedef struct DBM_SURF_NODE {
-  int type;
-  char name[256];
+  DBM_NODE_COMMON_HEADER
   Select *restrict;
   float attach_cutoff;
   int attach_flag;
@@ -61,7 +61,6 @@ typedef struct DBM_SURF_NODE {
   int fc;
   cubeArray *ca;
   int smode;
-  transMat transform;
 
   PropTable pt;
   

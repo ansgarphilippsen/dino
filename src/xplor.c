@@ -225,7 +225,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
 
   fread(dummy,sizeof(dummy),1,f);
   fread(&ntitle,sizeof(int),1,f);
-  fprintf(stderr,"%x\n",ntitle);
+  //  fprintf(stderr,"%x\n",ntitle);
 
   if(ntitle>1024 || ntitle<0) {
     node->swap_flag=1;
@@ -234,7 +234,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
       comMessage("error reading header (even after byte-swap)\n");
       return -1;
     } else {
-      comMessage(" (byte swapping) ");
+      comMessage("(byte swapping) ");
     }
   }
   fread(title,sizeof(char),ntitle*80,f);
@@ -335,7 +335,6 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
 
   node->def_level=1.0;
 
-  comMessage(".");
   for(c=header.cmin;c<header.cmax;c++) {
     fread(dummy,sizeof(dummy),1,f);
     fread(&i,sizeof(int),1,f);
@@ -353,7 +352,6 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
 		       sdata[b*an+a]);
   }
   Cfree(sdata);
-  comMessage(".");
   /* transformation vectors */
   fx=1.0/(double)header.na;
   fy=1.0/(double)header.nb;
@@ -387,9 +385,10 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
     swap_4bs((unsigned char *)&header.delta,2);
 
   }
-  fprintf(stderr,"swap: %d sizeof(header:) %d, hdr: %4s  istart:%d  nsavc: %d  diff:%d  delta:%f\n", sf, sizeof(header),
+  /*
+    fprintf(stderr,"swap: %d sizeof(header:) %d, hdr: %4s  istart:%d  nsavc: %d  diff:%d  delta:%f\n", sf, sizeof(header),
 	  header.hdr,header.istart,header.nsavc, header.diff, header.delta);
-
+  */
   if(header.diff!=0) {
     comMessage("error: all atoms must be free atoms\n");
     return -1;
@@ -400,12 +399,12 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   if(sf)
     swap_4b((unsigned char *)&ntitle);
 
-  fprintf(stderr,"ntitle: %d\n",ntitle);
+  //  fprintf(stderr,"ntitle: %d\n",ntitle);
 
   for(i=0;i<ntitle;i++) {
     fread(title,sizeof(title),1,f);
     title[79]='\0';
-    fprintf(stderr,"%s\n",title);
+    //    fprintf(stderr,"%s\n",title);
   }
   fread(dummy,sizeof(dummy),1,f);
 
@@ -416,7 +415,7 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   if(sf)
     swap_4b((unsigned char *)&natom);
 
-  fprintf(stderr,"natom:%d\n",natom);
+  //  fprintf(stderr,"natom:%d\n",natom);
 
   /*
     we don't know number of trajectories . . .
@@ -470,7 +469,7 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
     }
   }
   
-  fprintf(stderr,"tcount: %d\n",tcount-1);
+  //  fprintf(stderr,"tcount: %d\n",tcount-1);
 
   node->trj.frame_count=tcount-1;
   node->trj.pos=pos;

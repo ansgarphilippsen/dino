@@ -120,9 +120,9 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
 	  sn->field->offset_z);
   debmsg(dmesg);
 
-  sprintf(dmesg,"uhbdRead: reading section %d",k);
   for(k=0;k<header.km;k++) {
     sprintf(dmesg,"uhbdRead: reading section %d",k);
+    debmsg(dmesg);
     fread(dummy, sizeof(dummy),1,f);
     fread(uv_dummy, sizeof(uv_dummy), 1,f);
     fread(dummy, sizeof(dummy),1,f);

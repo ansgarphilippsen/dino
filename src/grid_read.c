@@ -151,7 +151,7 @@ int gridTiffRead(int fd, char *fn, dbmGridNode *node)
   
   TIFFClose(t);
 
-  sprintf(message," %ldx%ld pixels",w,h);
+  sprintf(message," %ldx%ld pixels\n",w,h);
   comMessage(message);
 
   return 0;

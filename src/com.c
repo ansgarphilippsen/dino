@@ -687,6 +687,11 @@ void comTimeProc()
 #ifdef USE_CMI
   cmiToken t;
 #endif
+  
+  if(init_command_flag) {
+    init_command_flag=0;
+    comRawCommand(init_command);
+  }
 
 #ifdef NEW_SHELL
   shellTimeProc();
@@ -2084,6 +2089,18 @@ void comCMICallback(const cmiToken *t)
 
 }
 #endif
+
+void comCenterDS(transMat *t)
+{
+    gfx.transform.cen[0]=-t->tra[0];
+    gfx.transform.cen[1]=-t->tra[1];
+    gfx.transform.cen[2]=-t->tra[2];
+
+
+}
+
+
+/***********************************************************/
 
 static int tunnelvision2(structObj *obj2,int f)
 {

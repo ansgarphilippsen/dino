@@ -78,6 +78,7 @@ int dbmInit(void)
 
 int dbmLoad(int wc, const char **wl)
 {
+  static int first_flag=1;
   char type[64];
   char file[256];
   char name[64];
@@ -98,27 +99,27 @@ int dbmLoad(int wc, const char **wl)
     return -1;
   }
 
-  strcpy(file,wl[0]);
+  clStrcpy(file,wl[0]);
   if((bp=strrchr(file,'/'))!=NULL)
-    strcpy(base,bp+1);
+    clStrcpy(base,bp+1);
   else
-    strcpy(base,file);
+    clStrcpy(base,file);
   
   bp=strrchr(base,'.');
   if(bp!=NULL) {
     bp[0]='\0';
-    strcpy(ext,bp+1);
-    strcpy(name,base);
+    clStrcpy(ext,bp+1);
+    clStrcpy(name,base);
   } else {
-    strcpy(name,base);
-    strcpy(ext,"");
+    clStrcpy(name,base);
+    clStrcpy(ext,"");
   }
 
   dbm_flag=0;
   rn_flag=0;
 
   n=1;
-  strcpy(type,"");
+  clStrcpy(type,"");
   while(n<wc) {
     if(!strcmp(wl[n],"-type") ||
        !strcmp(wl[n],"-t")) {
@@ -127,7 +128,7 @@ int dbmLoad(int wc, const char **wl)
 	comMessage(message);
 	return -1;
       }
-      strcpy(type,wl[n+1]);
+      clStrcpy(type,wl[n+1]);
       n++;
     } else if(!strcmp(wl[n],"-name") ||
 	      !strcmp(wl[n],"-n")) {
@@ -136,7 +137,7 @@ int dbmLoad(int wc, const char **wl)
 	comMessage(message);
 	return -1;
       }
-      strcpy(name,wl[n+1]);
+      clStrcpy(name,wl[n+1]);
       n++;
     } else if(!strcmp(wl[n],"-swap")) {
       dbm_flag|=DBM_FLAG_SWAP;
@@ -155,7 +156,7 @@ int dbmLoad(int wc, const char **wl)
 
   if(strcmp(type,"msms")) {
     if(stat(file,&st)!=0) {
-      strcpy(file2,file);
+      clStrcpy(file2,file);
       strcat(file,".gz");
       if(stat(file,&st)!=0) {
 	sprintf(message,"error accessing %s\n",file2);
@@ -163,14 +164,14 @@ int dbmLoad(int wc, const char **wl)
 	return -1;
       } else {
 	if((bp=strrchr(file,'/'))!=NULL)
-	  strcpy(base,bp+1);
+	  clStrcpy(base,bp+1);
 	else
-	  strcpy(base,file);
+	  clStrcpy(base,file);
 	
 	bp=strrchr(base,'.');
 	if(bp!=NULL)
 	  bp[0]='\0';
-	strcpy(ext,bp+1);
+	clStrcpy(ext,bp+1);
       }
     }
     
@@ -179,7 +180,7 @@ int dbmLoad(int wc, const char **wl)
       bp=strrchr(base,'.');
       if(bp!=NULL)
 	bp[0]='\0';
-      strcpy(ext,bp+1);
+      clStrcpy(ext,bp+1);
       sprintf(gunzip,"gunzip < %s",file);
       if((f=popen(gunzip,"r"))==NULL) {
 	sprintf(message,"Error while piping %s\n",file);
@@ -199,7 +200,7 @@ int dbmLoad(int wc, const char **wl)
     n=0;
     while(strlen(ext_def[n].ext)>0) {
       if(!strcmp(ext_def[n].ext,ext)) {
-	strcpy(type,ext_def[n].type);
+	clStrcpy(type,ext_def[n].type);
 	break;
       }
       n++;
@@ -220,7 +221,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
 
-    sprintf(message,"loading %s, type pdb \n",name);
+    sprintf(message,"loading %s, type pdb",name);
     comMessage(message);
     if(pdbRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -243,6 +244,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message,"%s %d bond(s)",
 	    message,node->structNode.bond_count);
     comMessage(message);
+    comMessage("\n");
   } else if(!strcmp(type,"xplorc") ||
 	    !strcmp(type,"cnsc")) {
     /*
@@ -273,6 +275,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message,"%s %d bond(s)",
 	    message,node->structNode.bond_count);
     comMessage(message);
+    comMessage("\n");
   } else if(!strcmp(type,"charmm")) {
     /*
       CHARMM coordinate format
@@ -302,6 +305,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message,"%s %d bond(s)",
 	    message,node->structNode.bond_count);
     comMessage(message);
+    comMessage("\n");
   } else if(!strcmp(type,"bdtrj")) {
     /*
       CHARMM BDTRJ
@@ -322,6 +326,7 @@ int dbmLoad(int wc, const char **wl)
     structPrepRes(&node->structNode);
     structSetMinMax(&node->structNode);
     structRecenter(&node->structNode);
+    comMessage("\n");
   } else if(!strcmp(type,"dgrid")) {
     /*
       DINO GRID
@@ -383,6 +388,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message,"%s %d bond(s)",
 	    message,node->structNode.bond_count);
     comMessage(message);
+    comMessage("\n");
 
   } else if(!strcmp(type,"xplorb")) {
     /*
@@ -527,14 +533,14 @@ int dbmLoad(int wc, const char **wl)
 
   } else if(!strcmp(type,"msms")) {
     /* MSMS surface format */
-    strcpy(file2,file);
+    clStrcpy(file2,file);
     strcat(file2,".vert");
     if((f=fopen(file2,"r"))==NULL) {
       sprintf(message,"Error opening %s\n",file2);
       comMessage(message);
       return -1;
     }
-    strcpy(file3,file);
+    clStrcpy(file3,file);
     strcat(file3,".face");
     if((f2=fopen(file3,"r"))==NULL) {
       sprintf(message,"Error opening %s\n",file3);
@@ -555,6 +561,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message," %d vertices, %d faces",
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
+    comMessage("\n");
     surfBuildCA(&node->surfNode);
     surfCalcMinMax(&node->surfNode);
   } else if(!strcmp(type,"msp")) {
@@ -576,6 +583,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message," %d vertices, %d faces",
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
+    comMessage("\n");
     surfBuildCA(&node->surfNode);
     surfCalcMinMax(&node->surfNode);
   } else if(!strcmp(type,"grasp")) {
@@ -597,6 +605,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message," %d vertices, %d faces",
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
+    comMessage("\n");
     surfBuildCA(&node->surfNode);
     surfCalcMinMax(&node->surfNode);
     if(rn_flag)
@@ -620,6 +629,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message," %d vertices, %d faces",
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
+    comMessage("\n");
     surfBuildCA(&node->surfNode);
     //    surfCalcMinMax(&node->surfNode);
   } else if(!strcmp(type,"topo")) {
@@ -661,6 +671,7 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message,"%s %d bond(s)",
 	    message,node->structNode.bond_count);
     comMessage(message);
+    comMessage("\n");
   } else {
     if(cmp) pclose(f); else fclose(f);
     comMessage("Unknown type \n");
@@ -669,6 +680,16 @@ int dbmLoad(int wc, const char **wl)
   }
   sprintf(message,".%s",name);
   comReturn(message);
+
+  if(first_flag) {
+    first_flag=0;
+    comCenterDS(&node->common.transform);
+    sprintf(message,"scene centered at {%.3f,%.3f,%.3f}\n",
+	    -node->common.transform.tra[0],
+	    -node->common.transform.tra[1],
+	    -node->common.transform.tra[2]);
+    comMessage(message);
+  }
 
   return 0;
 }
@@ -679,7 +700,7 @@ dbmNode *dbmNewNode(int type, const char *oname)
   char name[256];
   int owflag=0;
 
-  strcpy(name,oname);
+  clStrcpy(name,oname);
 
   if(owflag) {
     dbmDeleteNode(name);
@@ -695,14 +716,14 @@ dbmNode *dbmNewNode(int type, const char *oname)
 	}
       i++;
     }
-    strcpy(oname,name);
+    clStrcpy(oname,name);
   }
   for(i=0;i<dbm.nodec_max;i++) {
     if(dbm.node[i].common.type==DBM_NODE_EMPTY) {
       memset(&dbm.node[i],0,sizeof(dbmNode));
 
       dbm.node[i].common.type=type;
-      strcpy(dbm.node[i].common.name,name);
+      clStrcpy(dbm.node[i].common.name,name);
       comNewDB(name);
       switch(type) {
       case DBM_NODE_STRUCT:
@@ -724,7 +745,6 @@ dbmNode *dbmNewNode(int type, const char *oname)
 	  return NULL;
 	break;
       case DBM_NODE_GEOM:
-	strcpy(dbm.node[i].geomNode.path,"");
 	dbm.node[i].geomNode.obj_count=0;
 	dbm.node[i].geomNode.obj_max=64;
 	transReset(&dbm.node[i].geomNode.transform);
@@ -795,7 +815,7 @@ int dbmDeleteNode(const char *name)
       }
       
       dbm.node[i].common.type=DBM_NODE_EMPTY;
-      strcpy(dbm.node[i].common.name,"");
+      clStrcpy(dbm.node[i].common.name,"");
       comDelDB(name);
       return 0;
     }
@@ -987,51 +1007,51 @@ int dbmSplitPOV(const char *oexpr, char *prop, char *op, char *val)
   int c,wc;
   char *cp,expr[2048];
 
-  strcpy(expr,oexpr);
+  clStrcpy(expr,oexpr);
   wc=0;
   c=0;
   if(expr[0]=='!') {
-    strcpy(op,"!");
-    strcpy(prop,expr+1);
-    strcpy(val,"");
+    clStrcpy(op,"!");
+    clStrcpy(prop,expr+1);
+    clStrcpy(val,"");
   } else if((cp=strstr(expr,"*="))!=NULL) {
     op[0]=cp[0];
     op[1]=cp[1];
     op[2]='\0';
     cp[0]='\0';
-    strcpy(prop,expr);
-    strcpy(val,cp+2);
+    clStrcpy(prop,expr);
+    clStrcpy(val,cp+2);
   } else if((cp=strstr(expr,"/="))!=NULL) {
     op[0]=cp[0];
     op[1]=cp[1];
     op[2]='\0';
     cp[0]='\0';
-    strcpy(prop,expr);
-    strcpy(val,cp+2);
+    clStrcpy(prop,expr);
+    clStrcpy(val,cp+2);
   } else if((cp=strstr(expr,"+="))!=NULL) {
     op[0]=cp[0];
     op[1]=cp[1];
     op[2]='\0';
     cp[0]='\0';
-    strcpy(prop,expr);
-    strcpy(val,cp+2);
+    clStrcpy(prop,expr);
+    clStrcpy(val,cp+2);
   } else if((cp=strstr(expr,"-="))!=NULL) {
     op[0]=cp[0];
     op[1]=cp[1];
     op[2]='\0';
     cp[0]='\0';
-    strcpy(prop,expr);
-    strcpy(val,cp+2);
+    clStrcpy(prop,expr);
+    clStrcpy(val,cp+2);
   } else if((cp=strstr(expr,"="))!=NULL) {
     op[0]=cp[0];
     op[1]='\0';
     cp[0]='\0';
-    strcpy(prop,expr);
-    strcpy(val,cp+1);
+    clStrcpy(prop,expr);
+    clStrcpy(val,cp+1);
   } else {
-    strcpy(prop, expr);
-    strcpy(op,"");
-    strcpy(val,"");
+    clStrcpy(prop, expr);
+    clStrcpy(op,"");
+    clStrcpy(val,"");
   }
 
 
@@ -1088,9 +1108,9 @@ int dbmGetColorHash(const char *expr, double *r, double *g, double *b)
     return -1;
   }
 
-  sscanf(hexr,"%0xd",&rv);
-  sscanf(hexg,"%0xd",&gv);
-  sscanf(hexb,"%0xd",&bv);
+  sscanf(hexr,"%xd",&rv);
+  sscanf(hexg,"%xd",&gv);
+  sscanf(hexb,"%xd",&bv);
 
 
   return 0;
@@ -1128,9 +1148,9 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
   struct LEX_STACK *lsp;
   float v1[3];
 
-  strcpy(set,"");
-  strcpy(selection,"");
-  strcpy(range,"");
+  clStrcpy(set,"");
+  clStrcpy(selection,"");
+  clStrcpy(range,"");
   
   dbmSplit(expr,' ',&wc,&wl);
   for(i=0;i<wc;i++) {
@@ -1174,10 +1194,10 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
   if(strlen(selection)>0)
     selection[strlen(selection)-1]='\0';
   else 
-    strcpy(selection,"*");
+    clStrcpy(selection,"*");
 
   if(type==DBM_NODE_GEOM) {
-    strcpy(s->sel_string,selection);
+    clStrcpy(s->sel_string,selection);
   } else {
     if((lsp=lexGenerate(selection))==NULL) {
       sprintf(message,"set: syntax error in selection: %s\n",selection);
@@ -1192,7 +1212,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
   if(strlen(range)>0) {
     s->range_flag=1;
     range[strlen(range)-1]='\0';
-    strcpy(s->range.expr,range);
+    clStrcpy(s->range.expr,range);
     if(dbmRangeExtract(node,&s->range)==-1) {
       sprintf(message,"set: syntax error in range: %s\n",range);
       comMessage(message);
@@ -1220,18 +1240,18 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
 	return -1;
       }
       if((cp=strchr(val,','))==NULL) {
-	strcpy(val1,val);
-	strcpy(val2,"");
+	clStrcpy(val1,val);
+	clStrcpy(val2,"");
       } else {
 	val[strlen(val)-1]='\0';
-	strcpy(val2,cp+1);
+	clStrcpy(val2,cp+1);
 	cp[0]='\0';
-	strcpy(val1,val+1);
+	clStrcpy(val1,val+1);
       }
     } else {
       rf=0;
-      strcpy(val1,val);
-      strcpy(val2,"");
+      clStrcpy(val1,val);
+      clStrcpy(val2,"");
     }
 
     /* get the operator */
@@ -1459,7 +1479,7 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
   char **wl;
   int wc;
 
-  strcpy(expr,range->expr);
+  clStrcpy(expr,range->expr);
   dbmSplit(expr,',',&wc,&wl);
 
   /*
@@ -1469,7 +1489,7 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
   range->src=node;
   range->v1=0.0;
   range->v2=0.0;
-  strcpy(range->prop,"");
+  clStrcpy(range->prop,"");
 
 
   for(i=0;i<wc;i++) {
@@ -1514,7 +1534,7 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
 	comMessage(message);
 	return -1;
       }
-      strcpy(range->prop,val);
+      clStrcpy(range->prop,val);
     } else if(!strcmp(prop,"val")) {
       /******************
               val
@@ -1681,8 +1701,8 @@ int dbmNew(int wc, const char **wl)
   }
 
   
-  strcpy(type,wl[0]);
-  strcpy(name,"");
+  clStrcpy(type,wl[0]);
+  clStrcpy(name,"");
   i=1;
   while(i<wc) {
     if(!strcmp(wl[i],"-name")) {
@@ -1691,7 +1711,7 @@ int dbmNew(int wc, const char **wl)
 	comMessage("dbmNew: missing name\n");
 	return -1;
       } else {
-	strcpy(name,wl[i]);
+	clStrcpy(name,wl[i]);
       }
     } else {
       sprintf(message,"dbmNew: unknown parameter %s\n",wl[i]);
@@ -1702,7 +1722,7 @@ int dbmNew(int wc, const char **wl)
   }
 
   if(strlen(name)==0)
-    strcpy(name,type);
+    clStrcpy(name,type);
 
   sprintf(message,".%s",name);
   comReturn(message);

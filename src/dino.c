@@ -167,8 +167,8 @@ int dinoMain(int argc,char **argv)
 
   if(strlen(script)>0) {
     sprintf(expr,"@%s",script);
-    //    comSetInitCommand(expr);
-    comRawCommand(expr);
+    comSetInitCommand(expr);
+    //comRawCommand(expr);
   }
 
 #ifndef NEW_SHELL

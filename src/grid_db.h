@@ -3,6 +3,7 @@
 #ifndef GRID_DB_H
 #define GRID_DB_H
 
+#include "dbm_common.h" 
 #include "render.h"
 #include "rex.h"
 #include "grid_obj.h"
@@ -77,8 +78,7 @@ typedef struct GRID_TEXTURE
 }gridTexture;
 
 typedef struct DBM_GRID_NODE {
-  int type;
-  char name[256];
+  DBM_NODE_COMMON_HEADER
   gridObj *obj;
   unsigned char *obj_flag;
   int obj_max;
@@ -91,7 +91,7 @@ typedef struct DBM_GRID_NODE {
   // cubeArray *ca; 
 
   int smode;
-  transMat transform,transform_save;
+  transMat transform_save;
 
   gridTexture *texture;
   int texture_count, texture_max;
