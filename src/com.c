@@ -5,8 +5,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <X11/Xlib.h>
-
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -165,7 +163,7 @@ int comInit()
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_MOUSE;
-  com.tlist[tc].mask=ControlMask;
+  com.tlist[tc].mask=GUI_CNTRL_MASK;
   strcpy(com.tlist[tc].name,"mouse2");
   for(i=0;mouse[i].axis!=-1;i++)
     memcpy(&com.tlist[tc].command[i],&mouse[i],
@@ -182,7 +180,7 @@ int comInit()
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_DIALS;
-  com.tlist[tc].mask=ControlMask;
+  com.tlist[tc].mask=GUI_CNTRL_MASK;
   strcpy(com.tlist[tc].name,"dials2");
   for(i=0;dials[i].axis!=-1;i++)
     memcpy(&com.tlist[tc].command[i],&dials[i],
@@ -199,7 +197,7 @@ int comInit()
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_SPACEBALL;
-  com.tlist[tc].mask=ControlMask;
+  com.tlist[tc].mask=GUI_CNTRL_MASK;
   strcpy(com.tlist[tc].name,"spaceball2");
   for(i=0;spaceball[i].axis!=-1;i++)
     memcpy(&com.tlist[tc].command[i],&spaceball[i],
@@ -339,15 +337,16 @@ int comWorkPrompt(int word_count, char ** word_list)
       errflag=1;
     }
     ***************/
+
+    /* not used
   } else if(!strcmp(word_list[0],"input") ||
 	    !strncmp(word_list[0],s_input,strlen(s_input))) {
-    /*
-      input command
-    */
+
     bp=strchr(word_list[0],'.');
     if(inputCommand(word_count-1, word_list+1,bp)!=0) {
       errflag=1;
     }
+    */
   } else if(!strcmp(word_list[0],"new")) {
     /* create new dataset */
 

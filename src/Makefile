@@ -24,8 +24,8 @@ OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL
 # GLUT_GUI (and USE_FREEGLUT)
 # X11_GUI
 
-#OPTIONS += -DGLUT_GUI #-DUSE_FREEGLUT
-OPTIONS += -DX11_GUI
+OPTIONS += -DGLUT_GUI #-DUSE_FREEGLUT
+#OPTIONS += -DX11_GUI
 
 MALLOCLIB=
 
@@ -43,7 +43,7 @@ SRC= dino.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
      write.c render.c mat.c rex.c Cmalloc.c cgfx.c raster.c pov.c \
-     cubearray.c input.c writePS.c \
+     cubearray.c writePS.c \
      sglib.c symm.c
 
 # include architecture specific settings, including additional SRC files
@@ -69,7 +69,7 @@ SRC += gui_sdl.c om_sdl.c
 LOPT += -lSDL
 endif
 ifneq (,$(findstring X11_GUI,$(OPTIONS)))
-SRC += extension.c gui_x11.c om_x11.c AppPlus.c
+SRC += extension.c gui_x11.c om_x11.c AppPlus.c input.c
 endif
 
 # special EXPO functionality

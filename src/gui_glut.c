@@ -26,17 +26,11 @@ Uses GLUT
 #include "com.h"
 #include "gui.h"
 #include "gfx.h"
-#include "extension.h"
 #include "glw.h"
 #include "om_glut.h"
 #include "input.h"
 #include "transform.h"
 #include "cl.h"
-#include "AppPlus.h"
-
-#ifdef SPACETEC
-#include "spacetec.h"
-#endif
 
 struct GUI gui;
 extern struct GFX gfx;
@@ -47,7 +41,7 @@ extern int debug_mode,gfx_mode,stereo_mode;
 extern FILE *core_debug;
 #endif
 
-static void guiReshape(int width, int height)
+static void gui_reshape(int width, int height)
 {
   gui.win_width=width;
   gui.win_height=height;
@@ -60,17 +54,17 @@ static void guiReshape(int width, int height)
   comRedraw();
 }
 
-static void guiTimer(int value)
+static void gui_timer(int value)
 {
   if(gui.redraw) {
     gui.redraw=0;
     gfxRedraw();
   }
   comTimeProc();
-  glutTimerFunc(5,guiTimer,0);
+  glutTimerFunc(5,gui_timer,0);
 }
 
-static void guiMouseFunc(int button, int state, int x, int y)
+static void gui_mouse_func(int button, int state, int x, int y)
 {
   struct timeval tp;
   struct timezone tzp;
@@ -118,7 +112,7 @@ static void guiMouseFunc(int button, int state, int x, int y)
 }
 
 
-static void guiMotionFunc(int x, int y)
+static void gui_motion_func(int x, int y)
 {
   int dx,dy;
   int mod=gui.modifiers;
@@ -149,12 +143,12 @@ static void guiMotionFunc(int x, int y)
   comTransform(TRANS_MOUSE, mask, 1, dy);
 }
 
-static void guiKeyboardFunc(unsigned char key, int x, int y)
+static void gui_keyboard_func(unsigned char key, int x, int y)
 {
   comWriteCharBuf(key);
 }
 
-static void guiSpecialFunc(int key, int x, int y)
+static void gui_special_func(int key, int x, int y)
 {
   switch(key) {
   case GLUT_KEY_UP: 
@@ -180,6 +174,20 @@ static void guiSpecialFunc(int key, int x, int y)
   }
 }
 
+static void gui_spaceball_motion_func(int x, int y, int z)
+{
+  fprintf(stderr,"\nspaceball motion event: %d %d %d",x,y,z);
+}
+
+static void gui_spaceball_rotation_func(int x, int y, int z)
+{
+  fprintf(stderr,"\nspaceball rotation event: %d %d %d",x,y,z);
+}
+
+static void gui_dials_func(int d, int v)
+{
+  fprintf(stderr,"\nbutton box event: %d %d",d,v);
+}
 
 static char *um_list[]={
   "  autoslab  ","scene autoslab",
@@ -326,13 +334,18 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   gui.glut_main=glutCreateWindow("dino gfx");
 
   glutDisplayFunc(comRedraw);
-  glutReshapeFunc(guiReshape);
-  glutMouseFunc(guiMouseFunc);
-  glutMotionFunc(guiMotionFunc);
-  glutKeyboardFunc(guiKeyboardFunc);
-  glutSpecialFunc(guiSpecialFunc);
- 
-  glutTimerFunc(5,guiTimer,0);
+  glutReshapeFunc(gui_reshape);
+  glutMouseFunc(gui_mouse_func);
+  glutMotionFunc(gui_motion_func);
+  glutKeyboardFunc(gui_keyboard_func);
+  glutSpecialFunc(gui_special_func);
+  glutSpaceballMotionFunc(gui_spaceball_motion_func);
+  glutSpaceballRotationFunc(gui_spaceball_rotation_func);
+  glutDialsFunc(gui_dials_func);
+
+
+
+  glutTimerFunc(5,gui_timer,0);
 
   debmsg("glut: setting up user menu");
   // user menu
@@ -470,167 +483,12 @@ int guiMessage(char *m)
 
 int guiMessage2(char *m)
 {
-  Arg arg[10];
-  XmString xms;
-
-  strcpy(gui.message_string2,m);
-
-  xms= XmStringCreateLtoR(gui.message_string2, XmSTRING_DEFAULT_CHARSET);
-  XtSetArg(arg[0],XmNlabelString,xms);
-
-  XtSetValues(gui.message2,arg,1);
-
-  return 0;
-}
-
-void guiRegisterCustomEvent(Window w, guiCustomFunc f, void *ptr)
-{
-  gui.ce.entry[gui.ce.entry_count].w=w;
-  gui.ce.entry[gui.ce.entry_count].f=f;
-  gui.ce.entry[gui.ce.entry_count].ptr=ptr;
-  gui.ce.entry_count++;
-}
-
-int guiCheckCustomEvent(XEvent *event)
-{
-#ifndef GLUT_GUI
-  int i;
-
-  /*
-  fprintf(stderr,"\n%d",event->type);
-  */
-
-  /* this is an ugly patch */
-  if(om.pflag)
-    if(event->type==ButtonRelease)
-      if(event->xbutton.button==3) {
-	om.pflag=0;
-	XUnmapWindow(om.dpy,om.pwin);
-	omExposeEvent();
-      }
-  
-
-
-  for(i=0;i<gui.ce.entry_count;i++)
-    if(event->xany.window==gui.ce.entry[i].w) {
-      (gui.ce.entry[i].f)(gui.ce.entry[i].w,event,gui.ce.entry[i].ptr);
-      return 1;
-    }
-      
-#endif
-  return 0;
-}
-
-void guiRegisterUserMenu(Window w)
-{
-  gui.user_menu=w;
-}
-
-
-int guiErrorHandler(Display *d, XErrorEvent *e)
-{
-  char buffer[256];
-  XGetErrorText(d,e->error_code,buffer,255);
-  fprintf(stderr,"\nWARNING: Caught X error: %s",buffer);
-  return 0;
-}
-
-int guiIOErrorHandler(Display *d)
-{
-  fprintf(stderr,"\nCaught fatal X error - exiting\n");
-  dinoExit(-1);
   return 0;
 }
 
 int guiMInit(void (*func)(int, char **), int *argc, char ***argv)
 {
-  int i,j;
-  char major[8],minor[8];
-#ifdef SGI
-  int ev,er;
-#endif
-#ifdef DEC
-  int ev,er;
-#endif
-#ifdef SUN
-  int ev,er;
-#endif
-  int visbuf[]={GLX_RGBA,None};
-  /*
-    Initialze the RGB color database
-  */
-  guiInitRGB();
-
-  /*
-    open top level app
-  */
-  debmsg("guiMInit: opening display");
-  XtToolkitInitialize();
-  gui.app=XtCreateApplicationContext();
-  if((gui.dpy=XtOpenDisplay(gui.app,NULL,NULL,NULL,NULL,0,argc,(*argv)))==NULL){
-    fprintf(stderr,"guiMInit: error opening display\n");
-    return -1;
-  }
-
-
-
-  /*
-    initialize GLX 
-  */
-  debmsg("guiMInit: checking GLX availability");
-  if(!glXQueryExtension(gui.dpy,NULL,NULL)) {
-    fprintf(stderr,"GLX extension not available\n");
-    gui.om_flag=0;
-    return -1;
-  }
-
-  /*
-    assign simple visual
-  */  
-  gui.visinfo=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),visbuf);
- 
-  gui.om_flag=0;
-
-
-  gui.callback=func;
-  
-  gui.redraw=0;
-  
-  /*
-    print info about graphics subsystem
-  */
-  debmsg("guiInit: info");
-  fprintf(stderr,"Graphics Subsystem ID: %s %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER));
-  sprintf(major,"%c",glGetString(GL_VERSION)[0]);
-  major[1]='\0';
-  sprintf(minor,"%c",glGetString(GL_VERSION)[2]);
-  minor[1]='\0';
-
-  if(atoi(major)<1 || (atoi(major)==1 && atoi(minor)<1)) {
-    fprintf(stderr,"OpenGL version %d.%d or above required, found %s.%s instead\n",
-	    1,1,major,minor);
-    gui.om_flag=0;
-    return -1;
-  } else {
-    fprintf(stderr,"OpenGL Version %s.%s\n",major,minor);
-  }
-
-  /*
-    check OpenGL extensions 
-  */
-  debmsg("Extensions:");
-  debmsg(glGetString(GL_EXTENSIONS));
-  
-  /*
-    as a last step, grab the error handler
-  */
-  XSetErrorHandler(guiErrorHandler);
-  XSetIOErrorHandler(guiIOErrorHandler);
-
-  /*
-    initialization completed
-  */
-  return 1;
+  return -1;
 }
 
 void guiSwapBuffers()

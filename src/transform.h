@@ -1,6 +1,3 @@
-/* for the masks */
-#include <X11/X.h>   
-
 #ifndef _TRANSFORM_H
 #define _TRANSFORM_H
 

@@ -910,6 +910,8 @@ void guiTimeProc(XtPointer client_data)
    arguments: main callback function, command
               line parameters
 
+   this monolithic functions is simply horrible
+
 *************************************************/
 
 int guiInit(void (*func)(int, char **), int *argc, char ***argv)
