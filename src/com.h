@@ -70,7 +70,7 @@ void comTimeProc(void);
 void comRedraw(void);
 void comDBRedraw(void);
 void comMessage(const char *s);
-void comSetCP(double x, double y, double z);
+void comSetCP(transMat *t,double x, double y, double z);
 int comPick(int x, int y, int flag);
 int comCustom(double value);
 int comGetColor(const char *, float *r, float *g, float *b);
