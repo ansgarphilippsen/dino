@@ -915,12 +915,14 @@ int structSet(dbmStructNode *node, Set *s)
 	comMessage("error: set: unexpected range in property helicalsym\n");
 	return -1;
       }
-      if(matExtract1Df(val->val1,3,v1)==-1) {
-	if(matExtract1Df(val->val1,2,v1)==-1) {
-	  comMessage("error in helicalsym value, expected {angle,dist[,axialratio]}\n");
-	  return -1;
-	} else {
-	  v1[2]=1.0;
+      v1[2]=1.0; // default axr
+      v1[3]=0.0; // default aoffset
+      if(matExtract1Df(val->val1,4,v1)==-1) {
+	if(matExtract1Df(val->val1,3,v1)==-1) {
+	  if(matExtract1Df(val->val1,2,v1)==-1) {
+	    comMessage("error in helicalsym value, expected {angle,dist[,axialratio[,angleoffset]]}\n");
+	    return -1;
+	  }
 	}
       }
       if(v1[2]<=0.0) {
@@ -933,6 +935,8 @@ int structSet(dbmStructNode *node, Set *s)
       node->helical->angle=v1[0];
       node->helical->dist=v1[1];
       node->helical->axr=v1[2];
+      node->helical->aoffset=v1[3];
+
       // TODO OTHER ATOM PROPERTIES
     case STRUCT_PROP_BFAC:
       for(i=0;i<node->atom_count;i++) {
@@ -2592,6 +2596,18 @@ int structGetMinMax(dbmStructNode *n, const char *prop, float *vmin, float *vmax
     (*vmin)=n->min_max.bfac1;
     (*vmax)=n->min_max.bfac2;
   } else if(clStrcmp(prop,"dist")) {
+    // TODO
+    (*vmin)=0.0;
+    (*vmax)=0.0;
+  } else if(clStrcmp(prop,"x")) {
+    // TODO
+    (*vmin)=0.0;
+    (*vmax)=0.0;
+  } else if(clStrcmp(prop,"y")) {
+    // TODO
+    (*vmin)=0.0;
+    (*vmax)=0.0;
+  } else if(clStrcmp(prop,"z")) {
     // TODO
     (*vmin)=0.0;
     (*vmax)=0.0;

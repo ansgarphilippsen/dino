@@ -1231,8 +1231,8 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
   */
   switch(cd->event->type){
 
-  case KeyPress:
     /*
+  case KeyRelease:
     t.target=CMI_TARGET_COM;
     t.command=CMI_INPUT;
     t.value=val;
@@ -1246,8 +1246,8 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
       val[2]=(int)kbuf[i];
       cmiSubmit(&t);
     }
-    */
     break;
+    */
   case KeyRelease:
     t.target=CMI_TARGET_COM;
     t.command=CMI_INPUT;
@@ -1264,40 +1264,26 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
     case XK_KP_Enter:
       val[2]=CMI_KEY_RETURN;
       cmiSubmit(&t);
-      //      comWriteCharBuf(13);
       break;
     case XK_Delete:
       val[2]=CMI_KEY_DELETE;
       cmiSubmit(&t);
-      //comWriteCharBuf(8);
       break;
     case XK_Up:
       val[2]=CMI_KEY_UP;
       cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('A');
       break;
     case XK_Down:
       val[2]=CMI_KEY_DOWN;
       cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('B');
       break;
     case XK_Left:
       val[2]=CMI_KEY_LEFT;
       cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('D');
       break;
     case XK_Right:
       val[2]=CMI_KEY_RIGHT;
       cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('C');
       break;
     default:
       {

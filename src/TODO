@@ -3,4 +3,5 @@ deprecate t flag for render, introduce alpha for property
 
 add "scene autofit"
 
-increase geom dataset parsing speed (or script in general)!
+scalar type grid not exported correctly to POVray
+

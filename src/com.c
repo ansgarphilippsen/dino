@@ -458,6 +458,8 @@ int comWorkPrompt(int word_count, const char ** word_list)
   } else if(!strcmp(word_list[0],"bench")) {
     // DEPCRECATED, NOW AN ALIAS WITH SCENE
     comBench();
+  } else if(!strcmp(word_list[0],"refresh")) {
+    comRedraw();
   } else {
     sprintf(message,"unknown command: %s\n",word_list[0]);
     comMessage(message);

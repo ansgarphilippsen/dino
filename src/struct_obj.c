@@ -2005,24 +2005,44 @@ int structObjDelete(structObj *obj)
 void structObjUpdateSymview(structObj* obj)
 {
   int sc;
-  double *cen, *tra, ea, eb,cosa,sina,dr,angle;
+  double *cen, *tra, ea, eb,cost,sint,cosp,sinp,posi[2],posa[2],rprime,theta,psi;
   transMat *trans;
 
-  if(obj->symview==2) { // helical symmetry
+  if(obj->symview==2 && obj->node->helical>0) { // helical symmetry
     if(obj->node->helical->axr!=1.0) {
       cen = obj->node->transform.cen;
       tra = obj->node->transform.tra;
+
+      // angle of actual object
+      psi = atan2(tra[1]+cen[1],tra[0]+cen[0]);
+      cosp = cos(psi);
+      sinp = sin(psi);
+      // distance from 0,0 is short axis
       ea = sqrt((tra[0]+cen[0])*(tra[0]+cen[0])+(tra[1]+cen[1])*(tra[1]+cen[1]));
+      // long axis
       eb = ea * obj->node->helical->axr;
 
-      for(sc=0;sc<=obj->symcount;sc++) {
+      for(sc=0;sc<obj->symcount*2;sc++) {
 	trans = transListGetEntry(&obj->transform_list,sc);
-	angle = trans->custom[0];
-	sina=sin(M_PI*angle/180.0);
-	cosa=cos(M_PI*angle/180.0);
-	dr = sqrt(ea*ea*eb*eb/(eb*eb*cosa*cosa+ea*ea*sina*sina))-ea;
-	trans->tra[1] = dr * sina;
-	trans->tra[0] = dr * cosa;
+
+	// relative angle of symobj
+	theta = trans->custom[0];
+	sint=sin(theta);
+	cost=cos(theta);
+
+	// ideal position of symobj, corrected for psi
+	rprime=sqrt((ea*ea*eb*eb)/(eb*eb*cost*cost+ea*ea*sint*sint));
+	posi[0]=rprime*(cost*cosp-sint*sinp);
+	posi[1]=rprime*(sint*cosp+sint*cosp);
+
+	// actual position of symobj due to transformation, corrected for psi
+	posa[0]=ea*(cost*cosp-sint*sinp);
+	posa[1]=ea*(sint*cosp+sint*cosp);
+
+	// correction
+	trans->tra[0]=posi[0]-posa[0];
+	trans->tra[1]=posi[1]-posa[1];
+
       }
     }
   }
@@ -2073,7 +2093,7 @@ static void prep_symview(structObj* obj)
 	for(sc=-obj->symcount;sc<=obj->symcount;sc++) {
 	  if(sc!=0) {
 	    angle = obj->node->helical->angle*(double)sc;
-	    tmat.custom[0]=angle;
+	    tmat.custom[0]=angle*M_PI/180.0;
 	    dist = obj->node->helical->dist*(double)sc;
 	    tmat.custom[1]=dist;
 	    matMakeRotMat(angle,0.0,0.0,1.0,tmat.rot);
