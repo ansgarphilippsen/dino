@@ -1,2 +1,24 @@
+rewrote POVray section, improved output, renamed '-new' to '-patch', added
+'-nocolor'
+
+first implementation of scal-obj slab
+
+first implementation of BDTRJ format
+
+first (incomplete) implementation of struct-obj hbond
+
+rewrote SGI stereo detection code (again)
+
+fixed some problems with ADS format (buffer overflow) but triangle normal
+determinations is still a problem (maybe should be rewritten with Delauny
+triangulation ?)
+
+fixed some problems with the spaceball under linux, still not working nicely,
+though
+
+fixed bug: '.struct write -type'
+
+fixed bug: ESC chars work in (newer) linux xterms
+
 fixed bug: ds creation for non-existent surface
 
