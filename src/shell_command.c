@@ -78,6 +78,7 @@ static struct SHELL_ALIAS {
 extern int shell_mode;
 
 static char *shell_subexp;
+int interrupt_flag;
 
 int shellInit(void)
 {
@@ -101,6 +102,8 @@ int shellInit(void)
   init_vars();
 
   init_alias();
+
+  interrupt_flag=0;
 
   return 0;
 }
@@ -1263,4 +1266,9 @@ static void init_alias()
     shell_alias.count++;
   }  
 
+}
+
+void shellInterrupt(void)
+{
+  interrupt_flag=1;
 }

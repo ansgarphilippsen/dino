@@ -152,3 +152,9 @@ void cmiCheckRedraw()
   cmiSubmit(&t_checkr);
 }
 
+static cmiToken t_inter={CMI_TARGET_COM, CMI_INTERRUPT, NULL};
+void cmiInterrupt()
+{
+  cmiSubmit(&t_inter);
+}
+

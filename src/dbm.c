@@ -159,6 +159,7 @@ int dbmLoad(int wc, const char **wl)
     } else if(!strcmp(wl[n],"-conv")) {
       dbm_flag|=DBM_FLAG_CONV;
     } else if(!strcmp(wl[n],"-rn")) {
+      // OBSOLETE ???
       rn_flag=1;
     } else {
       sprintf(message,"unknown option %s\n",wl[n]);

@@ -1419,6 +1419,7 @@ int comWrite(int wc,const char **wl)
   FILE *f,*f2;
   int pov_flag=0;
   int pov_mode=0;
+  char pov_def[256];
   int dump=0;
 
   if(wc<1) {
@@ -1510,6 +1511,14 @@ int comWrite(int wc,const char **wl)
       pov_mode=WRITE_POV_MEGA;
     } else if(!strcmp(wl[n],"-plane")) {
       pov_flag+=WRITE_POV_PLANE;
+    } else if(!strcmp(wl[n],"-def")) {
+      if(n+1>=wc) {
+	comMessage("missing parameters for -def");
+	return -1;
+      }
+      pov_flag+=WRITE_POV_DEF;
+      clStrcpy(pov_def,wl[n+1]);
+      n++;
     } else if(!strcmp(wl[n],"-box")) {
       pov_flag+=WRITE_POV_BOX;
     } else {
@@ -2064,6 +2073,7 @@ void comCMICallback(const cmiToken *t)
     case CMI_RAW: cp=(char *)t->value; comRawCommand(cp); break;
     case CMI_INPUT: inputProcess(t); break;
     case CMI_MESSAGE: comMessage((const char *)t->value); break;
+    case CMI_INTERRUPT: shellInterrupt(); break;
       
     default: break;
     }

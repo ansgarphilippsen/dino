@@ -25,6 +25,7 @@ static void add_history(const char *s);
 static int shell_unknown_cmd(ClientData clientData,
 			     Tcl_Interp *interp,
 			     int objc, Tcl_Obj *CONST objv[]);
+
 static void trace_proc(ClientData clientData,
 		       Tcl_Interp *interp,
 		       int level,
@@ -64,6 +65,8 @@ static struct SHELL_VAR {
   Tcl_DString tcl_ds;
   Tcl_Interp *tcl_interp;
 #endif
+
+extern int interrupt_flag; // in shell_command.c
 
 /*
   Initialization
@@ -123,6 +126,13 @@ static int shell_unknown_cmd(ClientData clientData,
   const char *aliasvalue;
 
   // TODO aliases must be handled here!
+
+  if(interrupt_flag) {
+    interrupt_flag=0;
+    Tcl_SetResult(interp,"",TCL_STATIC);
+    shellOut("\nInterrupt\n");
+    return TCL_ERROR;
+  }
 
   argc=objc-1;
   for(i=0;i<argc;i++)

@@ -26,6 +26,7 @@ enum {
   CMI_EXIT,     // exit request  (NULL)
   CMI_RAW,      // send raw command  (char *)
   CMI_INPUT,    // input event (int [N])
+  CMI_INTERRUPT,// interrupt (NULL);
 
   // TARGET_GFX
   CMI_INITGL,   // opengl can be initialized now (NULL)
@@ -129,7 +130,8 @@ void cmiMessage(const char *s);
 void cmiCommand(const char *s);
 void cmiRedraw(void);
 void cmiStereo(int m);
-  void cmiCheckRedraw(void);
+void cmiCheckRedraw(void);
+void cmiInterrupt(void);
 
 #ifdef __cplusplus
 }

@@ -144,8 +144,9 @@ int dinoMain(int argc,char **argv)
 #endif
   debmsg("calling comInit");
   if(comInit()<0) return -1;
-  debmsg("calling gfxInit");
-  if(gfxInit()<0) return -1;
+  // in main.c
+  //debmsg("calling gfxInit");
+  //if(gfxInit()<0) return -1;
   debmsg("calling dbmInit");
   if(dbmInit()<0) return -1;
   debmsg("calling sceneInit");

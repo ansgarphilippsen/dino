@@ -19,6 +19,7 @@ static struct winsize wsize;
 static struct termios tmode,tsavemode;
 
 static void finish(int n);
+static void inter(int n);
 static void sig_winch(int n);
 static void insert_char(char c);
 static void parse_esc(char *b);
@@ -53,7 +54,7 @@ int guitInit()
   signal(SIGQUIT, SIG_IGN);
   signal(SIGTSTP, SIG_IGN);
   signal(SIGHUP, finish);
-  signal(SIGINT, finish);
+  signal(SIGINT, inter);
   signal(SIGTERM, finish);
 
   signal(SIGWINCH, sig_winch);
@@ -348,6 +349,15 @@ static void finish(int n)
   shellOut("\n");
   guitOutit();
   dinoExit(-1);
+}
+
+static void inter(int n)
+{
+#ifdef USE_CMI
+  cmiInterrupt();
+#else
+  finish();
+#endif
 }
 
 static void sig_winch(int n)

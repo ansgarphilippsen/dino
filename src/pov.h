@@ -20,6 +20,7 @@
 
 #define WRITE_POV_PLANE 0x1
 #define WRITE_POV_BOX   0x2
+#define WRITE_POV_DEF   0x4
 
 int writePOV(FILE *fini,FILE *fpov,char *, int, int);
 

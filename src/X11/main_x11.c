@@ -17,11 +17,13 @@ int main(int argc, char **argv)
 
   cmiInit();
 
-  dinoMain(argc, argv);
+  gfxInit();
 
   if(guiInit(argc, argv)<0) {
     return -1;
   }
+
+  dinoMain(argc, argv);
 
   guitInit();
 
