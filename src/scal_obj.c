@@ -255,6 +255,10 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
     sprintf(message,"\nContouring at %f ...",obj->level);
     comMessage(message);
 
+    /* check selection syntax */
+    if(scalIsSelected(obj->node,0,0,0,sel)<0)
+      return -1;
+
     ret=scalMCN(obj,sel);
   } else if(obj->type==SCAL_GRID) {
     sprintf(message,"\nGenerating grid ...");
@@ -267,6 +271,9 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
   } else if(obj->type==SCAL_SLAB) {
     ret=scalSlab(obj,sel);
   }
+
+  if(ret==-1)
+    return -1;
 
   obj->ou_size=obj->u_size;
   obj->ov_size=obj->v_size;

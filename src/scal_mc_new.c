@@ -85,6 +85,7 @@ int scalMCN(scalObj *obj, Select *sel)
   save2_v_w=Ccalloc(usize+2,sizeof(int));
 
 
+
   /* create first w array */
   for(vc=0,v=vmin;v<=vmax;v++,vc++) { /* NOTE the <= */
     for(uc=0,u=umin;u<=umax;u++,uc++) { /* NOTE the <= */
@@ -278,6 +279,7 @@ int scalMCNCalcVert(int u, int v, int w, int id)
   float s1,s2,d1,d2,r;
   float uvw[4],xyz[4];
   float u1,u2,v1,v2,w1,w2;
+  int ret;
 
   p1=scal_mc_new_cube_coordi[scal_mc_new_cube_edge[id][0]];
   p2=scal_mc_new_cube_coordi[scal_mc_new_cube_edge[id][1]];
@@ -286,16 +288,21 @@ int scalMCNCalcVert(int u, int v, int w, int id)
   c2=scal_mc_new_cube_coord[scal_mc_new_cube_edge[id][1]];
 
   // apply selection here
-  if(scalIsSelected(scalMCNOrg.obj->node, 
+  ret=scalIsSelected(scalMCNOrg.obj->node, 
 		     p1[0]+u, p1[1]+v, p1[2]+w,
-		     scalMCNOrg.select)!=1)
+		     scalMCNOrg.select);
+  if(ret<1) {
     return -1;
-
-  if(scalIsSelected(scalMCNOrg.obj->node, 
+  }
+  
+  ret=scalIsSelected(scalMCNOrg.obj->node, 
 		     p2[0]+u, p2[1]+v, p2[2]+w,
-		     scalMCNOrg.select)!=1)
+		     scalMCNOrg.select);
+  if(ret<1) {
     return -1;
-
+  }
+  
+  
   s1=scalReadField(scalMCNOrg.field,
 		   p1[0]+u,p1[1]+v,p1[2]+w);
   s2=scalReadField(scalMCNOrg.field,

@@ -90,7 +90,7 @@ int dbmLoad(int wc, char **wl)
   dbmNode *node;
   struct stat st;
   char gunzip[256],gunzip2[256];
-  int cmp,ret,swap_flag,rn_flag;
+  int cmp,ret,dbm_flag,rn_flag;
   
   if(wc<1) {
     comMessage("\nfilename missing");
@@ -113,7 +113,7 @@ int dbmLoad(int wc, char **wl)
     strcpy(ext,"");
   }
 
-  swap_flag=0;
+  dbm_flag=0;
   rn_flag=0;
 
   n=1;
@@ -138,7 +138,10 @@ int dbmLoad(int wc, char **wl)
       strcpy(name,wl[n+1]);
       n++;
     } else if(!strcmp(wl[n],"-swap")) {
-      swap_flag=1;
+      dbm_flag|=DBM_FLAG_SWAP;
+    } else if(!strcmp(wl[n],"-c") ||
+	      !strcmp(wl[n],"-conv")) {
+      dbm_flag|=DBM_FLAG_CONV;
     } else if(!strcmp(wl[n],"-rn")) {
       rn_flag=1;
     } else {
@@ -301,11 +304,11 @@ int dbmLoad(int wc, char **wl)
   } else if(!strcmp(type,"bdtrj")) {
     /*
       CHARMM BDTRJ
-    */
+ */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     sprintf(message,"\nloading %s, type bdtrj ...",name);
     comMessage(message);
-    if(bdtrjRead(&node->structNode, f, swap_flag)!=0) {
+    if(bdtrjRead(&node->structNode, f, dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;
@@ -326,7 +329,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type dgrid ...",name);
     comMessage(message);
 
-    ret=scalRead(&node->scalNode, SCAL_READ_DINO,f,swap_flag);
+    ret=scalRead(&node->scalNode, SCAL_READ_DINO,f,dbm_flag);
     if(cmp) pclose(f); else fclose(f);
     if(ret!=0) {
       dbmDeleteNode(name);
@@ -342,7 +345,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type binary charmm ...",name);
     comMessage(message);
 
-    ret=scalRead(&node->scalNode, SCAL_READ_CHARMM_BINARY,f,swap_flag);
+    ret=scalRead(&node->scalNode, SCAL_READ_CHARMM_BINARY,f,dbm_flag);
     if(cmp) pclose(f); else fclose(f);
     if(ret!=0) {
       dbmDeleteNode(name);
@@ -388,7 +391,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type binary xplor map ...",name);
     comMessage(message);
 
-    ret=scalRead(&node->scalNode, SCAL_READ_XPLOR_BINARY,f,swap_flag);
+    ret=scalRead(&node->scalNode, SCAL_READ_XPLOR_BINARY,f,dbm_flag);
     if(cmp) pclose(f); else fclose(f);
     if(ret!=0) {
       dbmDeleteNode(name);
@@ -404,7 +407,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type binary cns map ...",name);
     comMessage(message);
 
-    ret=scalRead(&node->scalNode, SCAL_READ_CNS_BINARY,f,swap_flag);
+    ret=scalRead(&node->scalNode, SCAL_READ_CNS_BINARY,f,dbm_flag);
     if(cmp) pclose(f); else fclose(f);
     if(ret!=0) {
       dbmDeleteNode(name);
@@ -417,7 +420,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type ascii cns map ...",name);
     comMessage(message);
 
-    ret=scalRead(&node->scalNode, SCAL_READ_CNS_ASCII,f,swap_flag);
+    ret=scalRead(&node->scalNode, SCAL_READ_CNS_ASCII,f,dbm_flag);
     if(cmp) pclose(f); else fclose(f);
     if(ret!=0) {
       dbmDeleteNode(name);
@@ -433,7 +436,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type ascii xplor map ...",name);
     comMessage(message);
 
-    ret=scalRead(&node->scalNode, SCAL_READ_XPLOR_ASCII,f,swap_flag);
+    ret=scalRead(&node->scalNode, SCAL_READ_XPLOR_ASCII,f,dbm_flag);
     if(cmp) pclose(f); else fclose(f);
     if(ret!=0) {
       dbmDeleteNode(name);
@@ -449,7 +452,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type binary ccp4 map ...",name);
     comMessage(message);
 
-    if(scalRead(&node->scalNode,SCAL_READ_CCP4_BINARY,f,swap_flag)!=0) {
+    if(scalRead(&node->scalNode,SCAL_READ_CCP4_BINARY,f,dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;
@@ -464,7 +467,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type binary uhbd map ...",name);
     comMessage(message);
 
-    if(scalRead(&node->scalNode,SCAL_READ_UHBD_BINARY,f,swap_flag)!=0) {
+    if(scalRead(&node->scalNode,SCAL_READ_UHBD_BINARY,f,dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;
@@ -480,7 +483,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type mead map ...",name);
     comMessage(message);
 
-    if(scalRead(&node->scalNode,SCAL_READ_MEAD,f,swap_flag)!=0) {
+    if(scalRead(&node->scalNode,SCAL_READ_MEAD,f,dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;
@@ -496,7 +499,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type delphi/grasp map ...",name);
     comMessage(message);
 
-    if(scalRead(&node->scalNode,SCAL_READ_DELPHIG,f,swap_flag)!=0) {
+    if(scalRead(&node->scalNode,SCAL_READ_DELPHIG,f,dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;
@@ -513,7 +516,7 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"\nloading %s, type delphi map ...",name);
     comMessage(message);
 
-    if(scalRead(&node->scalNode,SCAL_READ_DELPHI,f,swap_flag)!=0) {
+    if(scalRead(&node->scalNode,SCAL_READ_DELPHI,f,dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;
@@ -540,7 +543,7 @@ int dbmLoad(int wc, char **wl)
     node=dbmNewNode(DBM_NODE_SURF, name);
     sprintf(message,"\nloading %s, type msms ...",name);
     comMessage(message);
-    if(msmsRead(f,f2,node,swap_flag)!=0) {
+    if(msmsRead(f,f2,node,dbm_flag)!=0) {
       fclose(f);
       fclose(f2);
       dbmDeleteNode(name);
@@ -584,7 +587,7 @@ int dbmLoad(int wc, char **wl)
     }
     sprintf(message,"\nloading %s, type grasp ...",name);
     comMessage(message);
-    if(graspRead(f,node,swap_flag)!=0) {
+    if(graspRead(f,node,dbm_flag)!=0) {
       fclose(f);
       dbmDeleteNode(name);
       return -1;

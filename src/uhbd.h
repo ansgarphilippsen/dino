@@ -19,6 +19,6 @@ struct UHBD_GRID_HEADER {
   int res9,res10;
 };
 
-int uhbdRead(FILE *f, struct DBM_SCAL_NODE *node);
+int uhbdRead(FILE *f, struct DBM_SCAL_NODE *node, int cflag);
 
 #endif

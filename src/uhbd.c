@@ -11,7 +11,7 @@
 
 extern int debug_mode;
 
-int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn)
+int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
 {
   int size;
   char dummy[4];
@@ -21,6 +21,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn)
   float uv_dummy[3];
   int i,j,k;
   char dmesg[256];
+  float sfactor=1.0;
 
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
@@ -45,10 +46,25 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn)
 	    header.ox,header.oy,header.oz,
 	    header.im, header.jm, header.km);
   }
+
+
+  if(cflag) {
+    if(header.scale==0.0) {
+      comMessage("\nwarning: scale value in header ist 0.0, unit conversion not done");
+      sfactor=1.0;
+    } else {
+      debmsg("uhbdRead: applying header scale factor");
+      sfactor=1.0/header.scale;
+    }
+  } else {
+    sfactor=1.0;
+  }
   
   size=header.im*header.jm*header.km;
 
-  if(size>1e10) {
+  if(abs(header.im)>1e6 || 
+     abs(header.jm)>1e6 ||
+     abs(header.km)>1e6) {
     comMessage("\nerror: uhbdRead: file not in UHBD format or byte-swapped ?");
     return -1;
   }
@@ -111,7 +127,8 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn)
 
     for(i=0;i<header.im;i++) 
       for(j=0;j<header.jm;j++)
-	scalWriteField(sn->field,i,j,k,uv[j*header.im+i]);
+	scalWriteField(sn->field,i,j,k,uv[j*header.im+i]*sfactor);
+    
   }
   Cfree(uv);
 

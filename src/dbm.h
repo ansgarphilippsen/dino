@@ -10,6 +10,9 @@
 #include "xtal.h"
 #include "transform.h"
 
+#define DBM_FLAG_SWAP 0x1
+#define DBM_FLAG_CONV 0x2
+
 enum {DBM_NODE_EMPTY=0,
       DBM_NODE_STRUCT=1,
       DBM_NODE_SCAL,

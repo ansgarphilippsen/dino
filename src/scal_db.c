@@ -392,6 +392,10 @@ int scalSet(dbmScalNode *node, Set *s)
       s->pov[pc].id=SCAL_PROP_EDGE;
     } else if (clStrcmp(s->pov[pc].prop,"scale")) {
       s->pov[pc].id=SCAL_PROP_SCALE;
+    } else if (clStrcmp(s->pov[pc].prop,"vm")) {
+      s->pov[pc].id=SCAL_PROP_VM;
+    } else if (clStrcmp(s->pov[pc].prop,"vc")) {
+      s->pov[pc].id=SCAL_PROP_VC;
     } else {
       comMessage("\nerror: set: unknown property ");
       comMessage(s->pov[pc].prop);
@@ -425,6 +429,22 @@ int scalSet(dbmScalNode *node, Set *s)
 	return -1;
       }
       node->field->scale=atof(val->val1);
+      scalSetMinMax(node);
+      break;
+    case SCAL_PROP_VM:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property edge");
+	return -1;
+      }
+      node->field->vm=atof(val->val1);
+      scalSetMinMax(node);
+      break;
+    case SCAL_PROP_VC:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property edge");
+	return -1;
+      }
+      node->field->vc=atof(val->val1);
       scalSetMinMax(node);
       break;
     case SCAL_PROP_ROT:
@@ -804,7 +824,7 @@ float scalReadField(struct SCAL_FIELD *field, int u, int v, int w)
 #ifdef SCAL_DEBUG
   if(p<field->size)
 #endif
-    return field->data[p];
+    return field->data[p]*field->vm+field->vc;
 #ifdef SCAL_DEBUG
   else
     fprintf(stderr,
@@ -1133,16 +1153,18 @@ int scalSetMinMax(dbmScalNode *node)
   int i;
   float v1,v2,*data;
   char dbmesg[256];
-  double uvw[3],xyz1[3],xyz2[3],xyz3[3];
+  double uvw[3],xyz1[3],xyz2[3],xyz3[3],vm,vc;
 
   data=node->field->data;
-  v1=data[0];
-  v2=data[0];
+  vm=node->field->vm;
+  vc=node->field->vc;
+  v1=data[0]*vm+vc;
+  v2=data[0]*vm+vc;
 
   for(i=0;i<node->field->size;i++) {
-    if(data[i]<v1)
+    if((data[i]*vm+vc)<v1)
       v1=data[i];
-    if(data[i]>v2)
+    if((data[i]*vm+vc)>v2)
       v2=data[i];
   }
   node->min_max.v1=v1;

@@ -43,6 +43,8 @@ enum {SCAL_PROP_COLOR,
       SCAL_PROP_EDGE,
       SCAL_PROP_DIR,
       SCAL_PROP_SCALE,
+      SCAL_PROP_VM,
+      SCAL_PROP_VC,
       SCAL_PROP_START,
       SCAL_PROP_END};
 
@@ -61,7 +63,7 @@ typedef struct SCAL_FIELD
   float sigma;
   float vmin,vmax;
   int wrap;
-  double scale;
+  double scale,vc,vm;
   double m[12],m_1[12];
   double a[3],b[3],c[3];
   double offset_x, offset_y, offset_z;

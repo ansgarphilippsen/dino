@@ -9,12 +9,13 @@
 #include "scal_read.h"
 #include "Cmalloc.h"
 
-int scalRead(dbmScalNode *node, int type, FILE *f, int swap_flag)
+int scalRead(dbmScalNode *node, int type, FILE *f, int flag)
 {
   int ret;
   char message[256];
-  node->swap_flag=swap_flag;
-
+  
+  node->swap_flag=(flag & DBM_FLAG_SWAP);
+  
   switch(type) {
   case SCAL_READ_DINO:
     ret=scalReadDino(f,node);
@@ -30,7 +31,7 @@ int scalRead(dbmScalNode *node, int type, FILE *f, int swap_flag)
   case SCAL_READ_UHBD_ASCII:
     break;
   case SCAL_READ_UHBD_BINARY:
-    ret=uhbdRead(f,node);
+    ret=uhbdRead(f,node,(flag & DBM_FLAG_CONV));
     break;
   case SCAL_READ_CHARMM_BINARY:
     ret=charmmReadB(f,node);
@@ -62,6 +63,8 @@ int scalRead(dbmScalNode *node, int type, FILE *f, int swap_flag)
 
     node->field->edge=0.0;
     node->field->scale=1.0;
+    node->field->vm=1.0;
+    node->field->vc=0.0;
 
     scalSetMinMax(node);
   }

@@ -35,7 +35,7 @@ struct DINO_GRID_HEADER
 };
 
 
-int scalRead(dbmScalNode *node, int type, FILE *f, int swap_flag);
+int scalRead(dbmScalNode *node, int type, FILE *f, int flag);
 int scalReadDino(FILE *f, dbmScalNode *node);
 
 
