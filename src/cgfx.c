@@ -1181,8 +1181,8 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       if(i==0) { // very first round
 	ks=1;
 	if(morph) {
-	  pro3.f=1.0;
-	  pro4.f=0.0;
+	  pro3.f=0.0;
+	  pro4.f=1.0;
 	  cgfxHSCTransform(&pro1, &sp[i].p[0], &pro3);
 	  cgfxHSCTransform(&pro2, &sp[i].p[0], &pro4);
 	  cgfxMorphProfile(&pro3,&pro4, &pro_last);
@@ -1192,7 +1192,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       } else {
 	ks=0;
       }
-      for(k=1;k<=sp[i].pc;k++) {
+      for(k=ks;k<=sp[i].pc;k++) {
 	
 	if(morph) {
 	  frac=(float)k/(float)(sp[i].pc);
