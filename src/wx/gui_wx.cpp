@@ -9,105 +9,19 @@ using namespace std;
 #include "gfx.h"
 #include "gui_terminal.h"
 
-#include "glix/app.h"
-#include "glix/glcanvas.h"
-#include "glix/glview.h"
-#include "glix/shell.h"
-
-using namespace glix;
-
 extern int debug_mode;
 
 IMPLEMENT_APP(App);
 
-// implementation of GLView
-class DinoGLView: public GLView {
-public:
-  DinoGLView(wxWindow* p, wxWindowID id, GLCanvas* c):
-    GLView(p,id,c) {
-    SetTimer(10);
-  }
-
-  virtual void InitGL() {
-    cmiInitGL();
-  }
-
-  virtual void Render() {
-    cmiRedraw();
-  }
-
-  virtual void Resize(int w, int h) {
-    cmiResize(w,h);
-  }
-
-  virtual void OnMouse(wxMouseEvent& e) {
-    if(e.ButtonUp() || e.ButtonDown() || e.Dragging() ) {
-      cmiToken t;
-      int val[5];
-      int i;
-      int dx,dy;
-      
-      t.target=CMI_TARGET_COM;
-      t.command=CMI_INPUT;
-      t.value=val;
-      
-      val[0]=CMI_INPUT_MOUSE;
-
-      val[2]=0;
-
-      if(e.ButtonDown()) {
-	val[1]=CMI_BUTTON_PRESS;
-	if(e.LeftDown())   val[2] += CMI_BUTTON1_MASK;
-	if(e.RightDown())  val[2] += CMI_BUTTON3_MASK;
-	if(e.MiddleDown()) val[2] += CMI_BUTTON2_MASK;
-      } else if(e.ButtonUp()) {
-	val[1]=CMI_BUTTON_RELEASE;
-	if(e.LeftUp())   val[2] += CMI_BUTTON1_MASK;
-	if(e.RightUp())  val[2] += CMI_BUTTON3_MASK;
-	if(e.MiddleUp()) val[2] += CMI_BUTTON2_MASK;
-      } else {
-	val[1]=CMI_MOTION;
-	if(e.LeftIsDown())   val[2] += CMI_BUTTON1_MASK;
-	if(e.RightIsDown())  val[2] += CMI_BUTTON3_MASK;
-	if(e.MiddleIsDown()) val[2] += CMI_BUTTON2_MASK;
-      }
-
-      if(e.ShiftDown())    val[2] += CMI_SHIFT_MASK;
-      if(e.ControlDown())  val[2] += CMI_CNTRL_MASK;
-      
-      val[3]=e.GetX();
-      val[4]=e.GetY();
-      
-      cmiSubmit(&t);
-    }    
-  }
-
-  virtual void OnChar(int kc) {
-  }
-
-  virtual void OnTimer() {
-    cmiTimer();
-  }
-
-private:
-};
-
-class DinoShell: public Shell {
-public:
-  DinoShell(): Shell("DINO Shell", "dino> ", 0, wxPoint(10,100),wxSize(500,300)) {
-    SetInfoAttr(wxColour(63,0,191),wxNullColour, GetFont(), "dino> ");
-  }
-
-  virtual void OnInput(const string& in) {
-    AddToHistory(in);
-    PrintInfo(in);
-    cmiCommand(in.c_str());
-  }
-
-};
-
+// global vars (actuall bad style, but unavoidable for C and C++ combination
 DinoShell* dino_shell=0;
 DinoGLView* dino_glview=0;
+wxFrame* dino_top=0;
+
+void DinoGLView::OnChar(const wxKeyEvent& e)
+{
+  dino_shell->SendKeyToPrompt(e);
+}
 
 bool App::OnInit()
 {
@@ -133,22 +47,28 @@ bool App::OnInit()
   GLConfig c;
 
   debmsg("opening top level frame");
-  wxFrame* top = new wxFrame(0,-1, "dino");
+  dino_top = new wxFrame(0,-1, "dino");
+  dino_top->CreateStatusBar();
 
   debmsg("searching best OpenGL config");
   FindBestConfig(c);
 
   debmsg("creating OpenGL Canvas");
-  GLCanvas* glcanvas = new GLCanvas(top,-1,c,wxDefaultPosition,wxSize(500,500));
+  GLCanvas* glcanvas = new GLCanvas(dino_top,-1,c, wxDefaultPosition, wxDefaultSize);
 
   debmsg("creating actual OpenGL view");
-  dino_glview=new DinoGLView(top,-1,glcanvas);
+  dino_glview=new DinoGLView(dino_top,-1,glcanvas);
 
-  top->Show(TRUE);
+  int scrw=wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+  int scrh=wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
+  int delta=10;
+
+  // set initial size, from root window
+  dino_top->SetSize(scrw-scrh,0,scrh-delta,scrh-delta);
+  dino_top->Show(TRUE);
 
   debmsg("registering callbacks");
   cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback); 
-  cmiResize(500,500);
 
   cout << "initializing Main" << endl;
   dinoMain(argc,argv);
@@ -174,6 +94,7 @@ int guiMainLoop(void)
 int guiMessage(char *m)
 {
   // update status bar
+  dino_top->SetStatusText(m);
   return 0;
 }
 
