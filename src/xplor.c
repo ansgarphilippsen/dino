@@ -387,21 +387,23 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   char title[80];
   int tcount,tmax,tsize;
   char message[256];
-  
-  fread(dummy,sizeof(dummy),1,f);
+
+  fread(dummy,sizeof(char),4,f);
   fread(&header,sizeof(header),1,f);
-  fread(dummy,sizeof(dummy),1,f);
+  fread(dummy,sizeof(char),4,f);
+  fread(dummy,sizeof(char),4,f); // extra fread due to alignement
 
-  fread(dummy,sizeof(dummy),1,f);
-  fread(&ntitle,sizeof(natom),1,f);
+  fread(dummy,sizeof(char),4,f);
+  fread(&ntitle,sizeof(int),1,f);
 
-  if(ntitle<0 || ntitle>1e4) {
+  if(ntitle<0 || ntitle>500) {
     // try swapping
     swap_int(&ntitle,1);
 
-    if(ntitle<0 || ntitle>1e4) {
+    if(ntitle<0 || ntitle>500) {
       // still not ok, probably invalid file
       comMessage("Error reading header (even tried byte swapping)\n");
+      return -1;
     } else {
       comMessage("(byte-swapping)");
       sf=1;

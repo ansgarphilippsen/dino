@@ -5,7 +5,7 @@ MACH=irix
 STRIP = strip -x -h
 
 CC   = cc
-GOPT = -O2 -n32 -fullwarn -mips3 
+GOPT = -O2 -n32 -fullwarn -mips3
 WOPT = -woff 1552,1174,1692,1209,3201
 IOPT = -I/usr/freeware/include -I/usr/include/CC -I../extras/include
 IOPT += -I/usr/freeware/include/tcl

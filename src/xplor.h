@@ -62,6 +62,8 @@ DOUBLE PRECISION DELTA
 
 ******/
 
+// align on 8 byte !!
+
 struct CNS_TRJ_HEADER {
   char hdr[4];
   int dummy1;
@@ -69,7 +71,7 @@ struct CNS_TRJ_HEADER {
   int dummy2[5];
   int diff;
   double delta;
-  int dummy3[9];
+  int dummy3[8]; // should really be 9 !
 };
 
 struct CNS_TRJ_ENTRY {
