@@ -125,7 +125,7 @@ int surfDrawObj(surfObj *obj)
     glDisable(GL_BLEND);
     glDisable(GL_FOG);
     glDepthMask(GL_TRUE);
-#ifdef LINUX
+#if defined(LINUX) || defined(OSX)
     glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 #else
     glDrawBuffer(GL_NONE);
