@@ -1192,8 +1192,7 @@ int comObjCommand(char *db, char *obj, char *command)
 
 int comRawCommand(const char *c)
 {
-  /* write the raw prompt out into the logfile */
-  fprintf(shell.logfile,"%s\n",c);
+  shellWriteLog(c);
   return shellWorkPrompt(c,-1,NULL);
 }
 
@@ -1676,8 +1675,7 @@ int comGetMinMaxSlab()
 
 int comWriteCharBuf(char c)
 {
-  if(shell.charbuf.count<1024)
-    shell.charbuf.buf[shell.charbuf.count++]=c;
+  shellAddChar(c);
   return 0;
 }
 

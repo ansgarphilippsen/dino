@@ -664,8 +664,8 @@ int dbmLoad(int wc, char **wl)
     comMessage(message);
   } else {
     if(cmp) pclose(f); else fclose(f);
-    shellOut("\nUnknown type ");
-    shellOut(type);
+    comMessage("\nUnknown type ");
+    comMessage(type);
     return -1;
   }
   sprintf(message,".%s",name);
