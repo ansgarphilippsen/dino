@@ -1619,7 +1619,6 @@ int dbmGetMinMax(dbmNode *node, char *prop, float *min, float *max)
   case DBM_NODE_SURF:
     return surfGetMinMax(&node->surfNode,prop,min,max);
   case DBM_NODE_SCAL:
-    fprintf(stderr,"\n<%s>\n",prop);
     if(prop==NULL || clStrcmp(prop,"v")) {
       (*min)=node->scalNode.min_max.v1;
       (*max)=node->scalNode.min_max.v2;
