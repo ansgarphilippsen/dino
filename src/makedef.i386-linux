@@ -1,0 +1,24 @@
+# Makedef for linux
+
+ARCH=LINUX
+
+LIBDIR = -L/usr/X11R6/lib
+LIBSTATIC = /usr/lib/libtiff.a /usr/lib/libjpeg.a /usr/lib/libpng.a /usr/lib/libz.a
+
+# shared lib version
+#INCLUDE = -Ilesstif/include -I/usr/X11R6/include
+#LIBGL = -lGLU -lGL
+#LIBGLW = /usr/X11R6/lib/libGLw.a
+LIBMOTIF = ../lesstif/libXm.a
+
+# static version
+INCLUDE = -I ../lesstif/include -I../mesa/include -I/usr/include/CC -I/usr/X11R6/include
+LIBGL = ../mesa/lib/libGL.a ../mesa/lib/libGLU.a ../mesa/lib/libGLw.a
+LIBGLW =
+#LIBMOTIF = /usr/X11R6/lib/libXm.a
+
+CC   = gcc
+COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
+LOPT = $(LIBDIR) $(LIBGL) -lXi $(LIBMOTIF) -lXt -lXmu -lXext -lX11 -lm $(MALLOCLIB) $(LIBGLW) $(LIBSTATIC) -lgdbm
+
+SRC += autoplay.c joy.c

@@ -29,13 +29,16 @@ gui.o: gui.c dino.h com.h struct_db.h rex.h render.h cgfx.h \
  scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h surf_obj.h prop.h \
  grid_db.h grid_obj.h geom_db.h geom_obj.h gui.h gfx.h extension.h \
  GLwStereo.h om.h input.h
-help.o: help.c help.h shell.h
+help.o: help.c help.h shell.h cl.h com.h struct_db.h rex.h render.h \
+ cgfx.h struct_obj.h struct_common.h set.h cubearray.h transform.h \
+ dbm.h scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h surf_obj.h \
+ prop.h grid_db.h grid_obj.h geom_db.h geom_obj.h
 conn.o: conn.c conn.h Cmalloc.h
 scene.o: scene.c dino.h scene.h input.h dbm.h struct_db.h rex.h \
  render.h cgfx.h struct_obj.h struct_common.h set.h cubearray.h \
  transform.h scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h \
  surf_obj.h prop.h grid_db.h grid_obj.h geom_db.h geom_obj.h com.h \
- gui.h gfx.h mat.h Cmalloc.h GLwStereo.h cl.h
+ gui.h gfx.h mat.h Cmalloc.h GLwStereo.h cl.h help.h
 glf.o: glf.c glf.h font_24.h font_16.h
 cl.o: cl.c cl.h Cmalloc.h
 set.o: set.c com.h struct_db.h rex.h render.h cgfx.h struct_obj.h \
@@ -220,11 +223,3 @@ GLwStereo.o: GLwStereo.c dino.h GLwStereo.h gfx.h dbm.h struct_db.h \
  rex.h render.h cgfx.h struct_obj.h struct_common.h set.h cubearray.h \
  transform.h scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h \
  surf_obj.h prop.h grid_db.h grid_obj.h geom_db.h geom_obj.h gui.h
-autoplay.o: autoplay.c autoplay.h com.h struct_db.h rex.h render.h \
- cgfx.h struct_obj.h struct_common.h set.h cubearray.h transform.h \
- dbm.h scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h surf_obj.h \
- prop.h grid_db.h grid_obj.h geom_db.h geom_obj.h gui.h shell.h gfx.h
-joy.o: joy.c joy.h com.h struct_db.h rex.h render.h cgfx.h \
- struct_obj.h struct_common.h set.h cubearray.h transform.h dbm.h \
- scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h surf_obj.h prop.h \
- grid_db.h grid_obj.h geom_db.h geom_obj.h
