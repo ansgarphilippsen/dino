@@ -116,6 +116,8 @@ static int eval_line(int argc, char **argv, struct COM_PARAMS *params)
       params->sb_rot_scale = atof(argv[1]);
     } else if(clStrcmp(argv[0],"sb_tra_scale")) {
       params->sb_tra_scale = atof(argv[1]);
+    } else if(clStrcmp(argv[0],"sb_thres")) {
+      params->sb_thres = atof(argv[1]);
     } else if(clStrcmp(argv[0],"dials_rot_scale")) {
       params->dials_rot_scale = atof(argv[1]);
     } else if(clStrcmp(argv[0],"dials_tra_scale")) {

@@ -11,7 +11,7 @@
 
 extern struct GFX gfx;
 
-#define OLD_SCAL_CONTOUR_DRAWING 1
+//#define OLD_SCAL_CONTOUR_DRAWING 1
 
 int scalDraw(dbmScalNode *node, int f)
 {

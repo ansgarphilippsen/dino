@@ -1290,7 +1290,7 @@ int scalGrid(scalObj *obj, Select *sel)
   obj->face=NULL;
   obj->face_count=0;
 
-  sprintf(message," %d points",
+  sprintf(message,"build grid of %d points\n",
 	  obj->point_count);
   comMessage(message);
 

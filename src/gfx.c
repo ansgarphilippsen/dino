@@ -207,7 +207,7 @@ int gfxInit()
 
   gfx.fog=0;
   gfx.fog_mode=GL_LINEAR;
-  gfx.fog_near_offset=10.0;
+  gfx.fog_near_offset=0.0;
   gfx.fog_far_offset=0.0;
   gfx.fog_near=gfx.transform.slabn+gfx.fog_near_offset;
   gfx.fog_far=gfx.transform.slabf+gfx.fog_far_offset;

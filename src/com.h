@@ -64,7 +64,7 @@ struct GLOBAL_COM {
 
 struct COM_PARAMS {
   float mouse_rot_scale,mouse_tra_scale;
-  float sb_rot_scale, sb_tra_scale;
+  float sb_rot_scale, sb_tra_scale,sb_thres;
   float dials_rot_scale,dials_tra_scale;
   int stereo_flag;
   float trans_limit[6];

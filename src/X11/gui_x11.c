@@ -1473,7 +1473,7 @@ static void extension_event(Widget w, XtPointer client_data, XEvent *event)
   int i,current_val;
   static int val_save[] = {0,0,0,0,0,0};
   static int val_count = 0;
-  static int val_max = 2;
+  static int val_max = 1;
   static int val_thres=3;
   XDeviceMotionEvent *device_motion;
   static int dial_state[] = {0,0,0,0,0,0,0,0};
