@@ -75,10 +75,6 @@ int gmxRead(FILE *f,dbmNode *node);
 int xplorPDBRead(FILE *f,dbmNode *node);
 int xplorPDBLine2AtomEntry(char *,struct STRUCT_FILE_ATOM_ENTRY *);
 
-int charmmRead(FILE *f,dbmNode *node);
-int charmmLine2AtomEntry(char *,struct STRUCT_FILE_ATOM_ENTRY *);
-int charmmTrjRead(FILE *f, dbmStructNode *node, int sf);
-
 int pqrRead(FILE *f,dbmNode *node);
 int pqrLine2AtomEntry(char *,struct STRUCT_FILE_ATOM_ENTRY *);
 

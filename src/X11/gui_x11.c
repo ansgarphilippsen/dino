@@ -187,7 +187,10 @@ int guiInit(int argc, char **argv)
 
 
   if(gfx_flags & DINO_FLAG_NOGFX) {
+    debmsg("opening display for nogfx modus");
     gui.dpy=XOpenDisplay(getenv("DISPLAY"));
+    gui.glxwindow=DefaultRootWindow(gui.dpy);
+    gui.nogfx_flag=1;
   } else {
     // open top level app
     debmsg("guiInit: opening top level app widget");
@@ -199,6 +202,7 @@ int guiInit(int argc, char **argv)
 			      );
     debmsg("guiInit: setting display");
     gui.dpy=XtDisplay(gui.top); 
+    gui.nogfx_flag=0;
   }
 
   debmsg("guiInit: checking GLX availability");
@@ -218,10 +222,11 @@ int guiInit(int argc, char **argv)
     }
   }
 
-  if(gfx_flags & DINO_FLAG_NOGFX) {
+  if(gui.nogfx_flag) {
     debmsg("creating offscreen rendering context");
-    gui.glxwindow=RootWindow(gui.dpy,DefaultScreen(gui.dpy));
-    guiCreateOffscreenContext(500,500,0);
+    if(guiCreateOffscreenContext(500,500,0)<0) {
+      return -1;
+    }
     gui.glxcontext=glXGetCurrentContext();
     gui.om_flag=0;
   } else {
@@ -400,7 +405,8 @@ int guiInit(int argc, char **argv)
 	outMessage("Spaceball detected\n");
     }
     
-  }
+  } // if nogfx
+
   /*
     reset redraw flag
   */
@@ -602,46 +608,64 @@ int guiMainLoop()
   Boolean dummy;
 
   // register timer first
-  debmsg("setting Xtimer");
-  XtAppAddTimeOut(gui.app,100,(XtTimerCallbackProc)guiTimeProc,NULL);
+  if(!gui.nogfx_flag) {
+    debmsg("setting Xtimer");
+    XtAppAddTimeOut(gui.app,100,(XtTimerCallbackProc)guiTimeProc,NULL);
 
-  /* endless loop */
-  while(1){
-    /* get next event */
-
-    XtAppNextEvent(gui.app,&event);
-
-    switch(event.type) {
-    case Expose:
-      if(event.xexpose.count>0)
-	continue;
-      break;
-      //case MapNotify: fprintf(stderr,"map\n"); break;
-      //case UnmapNotify: fprintf(stderr,"unmap\n"); break;
+    /* endless loop */
+    while(1){
+      /* get next event */
+      
+      XtAppNextEvent(gui.app,&event);
+      
+      switch(event.type) {
+      case Expose:
+	if(event.xexpose.count>0)
+	  continue;
+	break;
+	//case MapNotify: fprintf(stderr,"map\n"); break;
+	//case UnmapNotify: fprintf(stderr,"unmap\n"); break;
+      }
+      
+      /*
+	if dials are connected and
+	a dials device was detected,
+	branch to dials event handler
+      */
+      if(gui.dialsDevice!=NULL || gui.spaceballDevice!=NULL)
+	if(event.xany.type>gui.xiEventBase)
+	  extension_event(XtWindowToWidget(event.xany.display, event.xany.window),NULL,&event);
+      
+      
+      /***
+	  #ifdef SPACETEC
+	  if(gui.spacetecDevice)
+	  spacetecEventHandler(gui.dpy, &event);
+	  #endif
+      */
+      
+      // events for the user and object menu
+      guiCheckCustomEvent(&event);
+      
+      
+      XtDispatchEvent(&event);
     }
-
-    /*
-      if dials are connected and
-      a dials device was detected,
-      branch to dials event handler
-    */
-    if(gui.dialsDevice!=NULL || gui.spaceballDevice!=NULL)
-      if(event.xany.type>gui.xiEventBase)
-	extension_event(XtWindowToWidget(event.xany.display, event.xany.window),NULL,&event);
-    
-
-    /***
-#ifdef SPACETEC
-    if(gui.spacetecDevice)
-      spacetecEventHandler(gui.dpy, &event);
-#endif
-    */
-
-    // events for the user and object menu
-    guiCheckCustomEvent(&event);
-
-
-    XtDispatchEvent(&event);
+  } else {
+    // nogfx modus
+    debmsg("preparing offscreen main loop");
+    debmsg("initializing viewport");
+    cmiInitGL();
+    debmsg("initializing GL");
+    cmiResize(500,500);
+    debmsg("entering offscreen main loop");
+    while(1) {
+      guitTimeProc();
+      cmiTimer();
+      if(gui.redraw) {
+	gui.redraw=0;
+	cmiRedraw();
+      }
+    }
   }
   
   /* to make the compiler happy */
@@ -1673,13 +1697,13 @@ static int error_handler(Display *d, XErrorEvent *e)
 {
   char buffer[256];
   XGetErrorText(d,e->error_code,buffer,255);
-  fprintf(stderr,"\nWARNING: Caught X error: %s",buffer);
+  fprintf(stderr,"WARNING: Caught X error: %s\n",buffer);
   return 0;
 }
 
 static int error_io_handler(Display *d)
 {
-  fprintf(stderr,"\nCaught fatal X error - exiting\n");
+  fprintf(stderr,"Caught fatal X error - exiting\n");
   dinoExit(-1);
   return 0;
 }
@@ -1803,23 +1827,30 @@ int guiCreateOffscreenContext(int w, int h, int af)
   oc=&offscreen_context_list[i];
 
   // get visual
+  debmsg("retrieving offscreen visual");
   if((visinfo=get_offscreen_visual(af))==NULL) {
     outMessage("error: failed to find visual for offscreen rendering\n");
+    return -1;
   }
   
   // create new context
+  debmsg("creating new context");
   if((oc->glx_context=glXCreateContext(gui.dpy, visinfo, 0, False))==NULL) {
     outMessage("error: offscreen rendering context could not be created");
     return -1;
   }
 
   // create X pixmap
+  debmsg("creating X pixmap");
   oc->pm=XCreatePixmap(gui.dpy,gui.glxwindow,w,h,visinfo->depth);
 
   // convert to glx pixmap
+  debmsg("converting to glx pixmap");
   oc->glx_pm=glXCreateGLXPixmap(gui.dpy, visinfo, oc->pm);
 
-  glXMakeCurrent(gui.dpy,oc->glx_pm,oc->glx_context);
+  if(glXMakeCurrent(gui.dpy,oc->glx_pm,oc->glx_context)==False) {
+    outMessage("glXMakeCurrent failed for offscreen rendering context");
+  }
 
   oc->used=1;
   return i;
@@ -1891,6 +1922,7 @@ int guiGrab(int s)
 
 static void hide_cursor()
 {
+#if 0
   char bm[]={0,0,0,0,0,0,0,0};
   Pixmap pix = XCreateBitmapFromData(gui.dpy,XtWindow(gui.glxwin),bm,8,8);
   XColor black;
@@ -1899,6 +1931,7 @@ static void hide_cursor()
   Cursor pointer = XCreatePixmapCursor(gui.dpy,pix,pix,&black,&black,0,0);
   XFreePixmap(gui.dpy,pix);
   XDefineCursor(gui.dpy,XtWindow(gui.glxwin),pointer);
+#endif
 }
 
 static void show_cursor()

@@ -186,6 +186,8 @@ struct GUI
 #ifdef EXPO
   int idle;
 #endif
+
+  int nogfx_flag;
 };
 
 // other declarations already in gui_ext.h

@@ -1246,34 +1246,36 @@ int scalCELLtoVECT(struct SCAL_FIELD *field, double a, double b, double c, doubl
 int scalSetMinMax(dbmScalNode *node)
 {
   int i;
-  float v1,v2,vp,vt,vt2,*data;
-  char dbmesg[256];
+  double v1,v2,vp,vt,vt2,sz;
+  float *data;
+  char dbmesg[1024];
   double uvw[3],xyz1[3],xyz2[3],xyz3[3],vm,vc;
 
   data=node->field->data;
-  vm=node->field->vm;
-  vc=node->field->vc;
-  v1=data[0]*vm+vc;
-  v2=data[0]*vm+vc;
+  vm=(double)node->field->vm;
+  vc=(double)node->field->vc;
+  v1=((double)data[0])*vm+vc;
+  v2=((double)data[0])*vm+vc;
+  sz=(double)node->field->size;
 
   vt=0.0;
   for(i=1;i<node->field->size;i++) {
-    vp=data[i]*vm+vc;
-    vt+=vp;
+    vp=((double)data[i])*vm+vc; 
+    vt=vt+vp;
     v1 = (vp<v1) ? vp : v1;
     v2 = (vp>v2) ? vp : v2;
   }
-  node->min_max.v1=v1;
-  node->min_max.v2=v2;
+  node->min_max.v1=(float)v1;
+  node->min_max.v2=(float)v2;
 
-  vt/=(double)node->field->size;
+  vt=vt/sz;
 
   vt2=0.0;
   for(i=0;i<node->field->size;i++) {
-    vp=data[i]*vm+vc;
+    vp=(double)data[i]*vm+vc;
     vt2 += (vp-vt)*(vp-vt);
   }
-  vt2 = sqrt(vt2/(double)(node->field->size-1));
+  vt2 = sqrt(vt2/sz);
   
   sprintf(dbmesg,"min: %g  max: %g  stdev: %g\n",
 	  node->min_max.v1, node->min_max.v2, vt2);
@@ -1281,7 +1283,7 @@ int scalSetMinMax(dbmScalNode *node)
 
   node->field->vmin=node->min_max.v1;
   node->field->vmax=node->min_max.v2;
-  node->field->sigma=vt2;
+  node->field->sigma=(float)vt2;
 
   uvw[0]=node->field->u1;
   uvw[1]=node->field->v1;

@@ -34,7 +34,12 @@ int scalRead(dbmScalNode *node, int type, FILE *f, int flag)
     ret=uhbdRead(f,node,(flag & DBM_FLAG_CONV));
     break;
   case SCAL_READ_CHARMM_BINARY:
-    ret=charmmReadB(f,node);
+    // new format
+    ret=charmmReadB(f,node,0);
+    break;
+  case SCAL_READ_CHARMM_BINARY2:
+    // old format
+    ret=charmmReadB(f,node,1);
     break;
   case SCAL_READ_CCP4_BINARY:
     ret=ccp4Read(f,node);

@@ -359,6 +359,20 @@ int dbmLoad(int wc, const char **wl)
       dbmDeleteNode(name);
       return -1;
     }
+  } else if(!strcmp(type,"charmmb_old")) {
+    /*
+      CHARMM binary potential
+    */
+    node=dbmNewNode(DBM_NODE_SCAL,name);
+    sprintf(message,"loading %s, type old binary charmm ...\n",name);
+    comMessage(message);
+
+    ret=scalRead(&node->scalNode, SCAL_READ_CHARMM_BINARY2,f,dbm_flag);
+    if(cmp) pclose(f); else fclose(f);
+    if(ret!=0) {
+      dbmDeleteNode(name);
+      return -1;
+    }
   } else if(!strcmp(type,"pqr")) {
     /*
       PQR (MEAD) coordinate format

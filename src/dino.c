@@ -107,6 +107,7 @@ int dinoParseArgs(int argc, char **argv)
 	gfx_flags+=DINO_FLAG_NOSTENCIL;
       } else if(clStrcmp(argv[i],"-nogfx")) {
 	gfx_flags+=DINO_FLAG_NOGFX;
+	gfx_flags+=DINO_FLAG_NODBLBUFF;
       } else if(clStrcmp(argv[i],"-noom")) {
 	gfx_flags+=DINO_FLAG_NOOBJMENU;
       } else if(clStrcmp(argv[i],"-cons")) {

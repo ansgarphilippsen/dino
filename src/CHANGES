@@ -1,3 +1,13 @@
+*rc-10*
+
+
+-----
+*rc-9*
+
+fixed -nogfx flag under X11
+
+-----
+
 *rc-8*
 
 fixed slow topograph surface colouring

@@ -13,14 +13,16 @@
 
 extern int debug_mode;
 
-int charmmReadB(FILE *f, dbmScalNode *sn)
+int charmmReadB(FILE *f, dbmScalNode *sn, int hack_flag)
 {
   struct CHARMM_HEADER header;
+  struct CHARMM_HEADER_HACK header_hack;
   unsigned char dummy[4];
   char message[256];
   float *data,val=0.0;
   int u,v,w;
   long p;
+  int swap_flag=0;
 
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
@@ -29,22 +31,49 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
     return -1;
   }
 
-  fread(&header,sizeof(struct CHARMM_HEADER),1,f);
+  if(hack_flag) {
+    fread(&header_hack,sizeof(struct CHARMM_HEADER_HACK),1,f);
+    header.nclx=header_hack.nclx;
+    header.ncly=header_hack.ncly;
+    header.nclz=header_hack.nclz;
+    header.dcel=header_hack.dcel;
+    header.xbcen=header_hack.xbcen;
+    header.ybcen=header_hack.ybcen;
+    header.zbcen=header_hack.zbcen;
+    header.epsw=header_hack.epsw;
+    header.epsp=header_hack.epsp;
+    header.conc=header_hack.conc;
+    header.tmemb=header_hack.tmemb;
+    header.zmemb=header_hack.zmemb;
+    header.epsm=header_hack.epsm;
+  } else {
+    fread(&header,sizeof(struct CHARMM_HEADER),1,f);
+  }
 
-  if(sn->swap_flag) {
+  if(header.nclx>1e6) {
     swap_4b((unsigned char *)&header.nclx);
-    swap_4b((unsigned char *)&header.ncly);
-    swap_4b((unsigned char *)&header.nclz);
-    swap_double(&header.dcel,1);
-    swap_double(&header.xbcen,1);
-    swap_double(&header.ybcen,1);
-    swap_double(&header.zbcen,1);
-    swap_double(&header.epsw,1);
-    swap_double(&header.epsp,1);
-    swap_double(&header.conc,1);
-    swap_double(&header.tmemb,1);
-    swap_double(&header.zmemb,1);
-    swap_double(&header.epsm,1);
+    if(header.nclx<1e6) {
+      comMessage("auto-swapping\n");
+      swap_flag=1;
+      swap_4b((unsigned char *)&header.ncly);
+      swap_4b((unsigned char *)&header.nclz);
+      swap_double(&header.dcel,1);
+      swap_double(&header.xbcen,1);
+      swap_double(&header.ybcen,1);
+      swap_double(&header.zbcen,1);
+      swap_double(&header.epsw,1);
+      swap_double(&header.epsp,1);
+      swap_double(&header.conc,1);
+      swap_double(&header.tmemb,1);
+      swap_double(&header.zmemb,1);
+      swap_double(&header.epsm,1);
+    }
+  }
+
+  if(header.nclx>1e6 || header.ncly>1e6 || header.nclz>1e6) {
+      comMessage("nonsense values retrieved from header. Aborting read\n");
+      Cfree(sn->field);
+      return -1;
   }
 
   sprintf(message,"%d %d %d\n%g %g %g %g\n%g %g %g %g %g %g\n\n",
@@ -54,7 +83,6 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
 	  header.zmemb, header.epsm);
 
   debmsg(message);
-
 
   sn->field->size=header.nclx*header.ncly*header.nclz;
 
@@ -74,10 +102,11 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
     return -1;
   }
 
-//  fread(&dummy,sizeof(dummy),1,f);
   fread(data,sizeof(float),sn->field->size,f);
-  if(sn->swap_flag)
-    swap_4bs((unsigned char *)data,sn->field->size);
+  if(swap_flag) {
+    //swap_4bs((unsigned char *)data,sn->field->size);
+    swap_float(data,sn->field->size);
+  }
 
   sn->field->u_size=header.nclx;
   sn->field->v_size=header.ncly;
@@ -92,6 +121,9 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
   sn->field->wrap=0;
   sn->field->sigma=1.0;
   sn->field->scale=1.0;
+  sn->field->vc=0.0;
+  sn->field->vm=1.0;
+  sn->field->edge=0.0;
 
   sn->field->offset_x=-header.dcel*(float)(header.nclx-1)/2.0;
   sn->field->offset_y=-header.dcel*(float)(header.ncly-1)/2.0;
@@ -106,6 +138,9 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
 	  sn->field->offset_y,
 	  sn->field->offset_z);
 
+  debmsg(message);
+
+  sprintf(message,"total size: %d\n",sn->field->size);
   debmsg(message);
 
   for(w=0;w<sn->field->w_size;w++) {

@@ -23,16 +23,22 @@ struct CHARMM_HEADER {
   unsigned char dummy3[4];
 };
 
+struct CHARMM_HEADER_HACK {
+  int nclx, ncly, nclz;
+  double dcel, xbcen,ybcen,zbcen;
+  double epsw,epsp,conc,tmemb,zmemb,epsm;
+};
+
 struct CHARMM {
   struct CHARMM_ATOM_ENTRY *atom_entry;
   int atom_count;
 };
 
-int charmmRead(FILE *f,dbmNode *node);
+int charmmRead(FILE *f, dbmNode *node);
 int charmmLine2ATOM_ENTRY(char *,struct CHARMM_ATOM_ENTRY *);
 int charmm2structDB(struct CHARMM *, struct DBM_STRUCT_NODE *node);
 
-int charmmReadB(FILE *f, dbmScalNode *node);
+int charmmReadB(FILE *f, dbmScalNode *node, int hack_flag);
 
 int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag);
 
