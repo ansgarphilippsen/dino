@@ -12,6 +12,10 @@ extern float sqrtf(float v);
 extern float sqrtf(float v);
 #endif
 
+#ifdef SUN
+#define sqrtf(x) ((float)sqrt((double)x))
+#endif
+
 typedef struct MAT_WORD_LIST
 {
   int wc;
