@@ -141,32 +141,41 @@ static int iso(scalObj *obj)
   struct SCAL_ISO_CUBE *layer, *ccube, *ncube;
 
   // delete old gfx components
-  if(obj->point_count>0)
+  /*
+    not necessary, just set count to zero, max is still valid
+    if(obj->point_count>0)
     Cfree(obj->point);
-  if(obj->line_count>0)
+    if(obj->line_count>0)
     Cfree(obj->line);
-  if(obj->face_count>0)
+    if(obj->face_count>0)
     Cfree(obj->face);
-
+  */
+  
+  if(obj->line==NULL) {
+  }
   obj->line_count=0;
 
   // prepare points
-  obj->point_max=1000;
-  obj->point = Crealloc(NULL,obj->point_max*sizeof(struct SCAL_POINT));
+  if(obj->point==NULL) {
+    obj->point_max=10000;
+    obj->point = Crealloc(NULL,obj->point_max*sizeof(struct SCAL_POINT));
+  }
   obj->point_count=0;
 
   // prepare face
-  obj->face_max=1000;
-  obj->face = Crealloc(NULL,obj->face_max*sizeof(struct SCAL_FACE));
+  if(obj->face==NULL) {
+    obj->face_max=10000;
+    obj->face = Crealloc(NULL,obj->face_max*sizeof(struct SCAL_FACE));
+  }
   obj->face_count=0;
 
   // get limits
   ustart=obj->u_start;
-  usize=obj->u_end-ustart+1;
+  usize=(obj->u_end-ustart+1)/step;
   vstart=obj->v_start;
-  vsize=obj->v_end-vstart+1;
+  vsize=(obj->v_end-vstart+1)/step;
   wstart=obj->w_start;
-  wsize=obj->w_end-wstart+1;
+  wsize=(obj->w_end-wstart+1)/step;
   
   // allocate with +1, then boundary check below is not necessary
   layer = Cmalloc((usize+1)*(vsize+1)*sizeof(struct SCAL_ISO_CUBE));
@@ -223,9 +232,9 @@ static int iso(scalObj *obj)
 	for(i=0;i<8;i++) {
 	  // get values for corners
 	  cval[i] = scalReadField(obj->field,
-				  uc+ustart+cc_offsets[i][0]*step,
-				  vc+vstart+cc_offsets[i][1]*step,
-				  wc+wstart+cc_offsets[i][2]*step);
+				  uc*step+ustart+cc_offsets[i][0]*step,
+				  vc*step+vstart+cc_offsets[i][1]*step,
+				  wc*step+wstart+cc_offsets[i][2]*step);
 	  
 	  // calculate the 8bit pattern code
 	  if(cval[i]>level) pcode += (1<<i);
@@ -251,12 +260,12 @@ static int iso(scalObj *obj)
 	    if(coord_id<0) {
 	      coord_id = gen_coord(obj,
 				   cval[cor1],cval[cor2],
-				   uc+ustart+cc_offsets[cor1][0]*step,
-				   vc+vstart+cc_offsets[cor1][1]*step,
-				   wc+wstart+cc_offsets[cor1][2]*step,
-				   uc+ustart+cc_offsets[cor2][0]*step,
-				   vc+vstart+cc_offsets[cor2][1]*step,
-				   wc+wstart+cc_offsets[cor2][2]*step);
+				   uc*step+ustart+cc_offsets[cor1][0]*step,
+				   vc*step+vstart+cc_offsets[cor1][1]*step,
+				   wc*step+wstart+cc_offsets[cor1][2]*step,
+				   uc*step+ustart+cc_offsets[cor2][0]*step,
+				   vc*step+vstart+cc_offsets[cor2][1]*step,
+				   wc*step+wstart+cc_offsets[cor2][2]*step);
 	      /*
 	      fprintf(stderr,"%d %d %d - %d %d:  %d\n",
 		      u,v,w, cor1,cor2, coord_id);
@@ -313,6 +322,13 @@ static int iso(scalObj *obj)
     } // vc
   } // wc
 
+  // adjust memory
+  obj->face_max = obj->face_count;
+  obj->face = Crealloc(obj->face,obj->face_max*sizeof(struct SCAL_FACE));
+
+  obj->point_max = obj->point_count;
+  obj->point = Crealloc(obj->point,obj->point_max*sizeof(struct SCAL_POINT));
+
   // make faces from indices
   gen_faces(obj);
 
@@ -366,7 +382,7 @@ static int gen_coord(scalObj *obj, float l1, float l2, int u1, int v1, int w1, i
 static int add_point(scalObj *obj, float xyz[3])
 {
   if(obj->point_count>=obj->point_max) {
-    obj->point_max*=2;
+    obj->point_max+=10000;
     obj->point = Crealloc(obj->point,obj->point_max*sizeof(struct SCAL_POINT));
   }
   obj->point[obj->point_count].v[0]=xyz[0];
@@ -382,7 +398,7 @@ static int add_point(scalObj *obj, float xyz[3])
 static void add_face(scalObj *obj, int i1, int i2, int i3)
 {
   if(obj->face_count>=obj->face_max) {
-    obj->face_max*=2;
+    obj->face_max+=10000;
     obj->face = Crealloc(obj->face,obj->face_max*sizeof(struct SCAL_FACE));
   }
   if(i1<0 || i2<0 || i3<0) {
