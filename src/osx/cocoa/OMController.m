@@ -52,7 +52,7 @@ static id dinoOMController;
 
 - (void)omAddDB:(NSString *)name
 {
-    DinoDataSet *aDataSet =[[[DinoDataSet alloc] initWithName:name] autorelease];
+    DataSet *aDataSet =[[[DataSet alloc] initWithName:name] autorelease];
     [dataSetList addObject:aDataSet];
     [dinoOM reloadData];
 }

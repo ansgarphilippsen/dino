@@ -166,18 +166,15 @@
     gfx_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
 }
 
-//---------------------------------------------------------------------------------
-// keyboard input
+@end
+
+@implementation GFXWindow
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-    [[Controller dinoController] updateStatusBox:[theEvent characters]];
-
-    //    NSString *input = [theEvent characters];
-//    glx_keyboard_input((int)eventType);
+    [[Controller dinoController] sendEventToCLI:theEvent];
 }
 
 @end
-
 
 

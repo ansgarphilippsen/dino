@@ -8,6 +8,8 @@
 			29B97326FDCFA39411CA2CEA,
 		);
 		breakpoints = (
+			56F7396A04FF560300985453,
+			56F7396C04FF561100985453,
 		);
 		executables = (
 			F583D96E02B90205019813D9,
@@ -374,6 +376,18 @@
 	5610109D04EA9571009854CB = {
 		isa = PBXTargetBookmark;
 		trg = 29B97326FDCFA39411CA2CEA;
+	};
+	56F7396A04FF560300985453 = {
+		fileReference = F528332202491C4901FB7A39;
+		isa = PBXFileBreakpoint;
+		lineNumber = 292;
+		state = 1;
+	};
+	56F7396C04FF561100985453 = {
+		fileReference = F528332202491C4901FB7A39;
+		isa = PBXFileBreakpoint;
+		lineNumber = 283;
+		state = 1;
 	};
 	F583D96E02B90205019813D9 = {
 		activeArgIndex = 2147483647;

@@ -38,7 +38,6 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = DinoGFXWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
         {
             CLASS = DinoGLView; 
             LANGUAGE = ObjC; 
@@ -46,6 +45,7 @@
             SUPERCLASS = NSOpenGLView; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = GFXWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
         {
             ACTIONS = {toggleDinoObject = id; }; 
             CLASS = OMController; 

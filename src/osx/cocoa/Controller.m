@@ -71,6 +71,10 @@ static id dinoController;
     shellParseRaw([theCommand cString],0);
 }
 
+- (void)putCommand:(NSString *)theCommand;
+{
+    [dinoCLI putCommand:theCommand];
+}
 - (void)showCommandResult:(NSString *)tmp
 {
     [dinoCLI putText:tmp];
@@ -81,9 +85,9 @@ static id dinoController;
     [dinoCLI notifyUser:message returnPrompt:flag];
 }
 
-- (void)setCLIWindowAsKeyWindow
+- (void)sendEventToCLI:(NSEvent *)theEvent
 {
-    [[dinoCLI window] makeKeyWindow];
+    [[dinoCLI shellView] keyDown:theEvent];
 }
 
 //------------------------------------------------------

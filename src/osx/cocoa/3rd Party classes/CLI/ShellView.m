@@ -69,7 +69,7 @@ static BOOL useMaxSize;
   {
     prompt             = [thePrompt retain];
     history            = [[StrBuffer alloc] initWithUIntSize:theHistorySize];
-    parserMode         = NO_DECOMPOSE;
+    parserMode         = DECOMPOSE;
     commandHandler     = [theCommandHandler retain];
     lineEdited         = NO;
     last_command_start = 0;

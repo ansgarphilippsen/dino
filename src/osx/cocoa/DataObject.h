@@ -20,7 +20,7 @@
 
 @end
 
-@interface DinoDataSet : NSObject {
+@interface DataSet : NSObject {
 
     NSString            *name;
     NSMutableArray      *childrenList;

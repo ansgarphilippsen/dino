@@ -44,7 +44,7 @@
 
 @end
 
-@implementation DinoDataSet
+@implementation DataSet
 
 - (id)initWithName:(NSString *)s{
     [super init];
