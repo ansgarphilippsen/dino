@@ -42,12 +42,34 @@ include "f_header.inc.php";
 echo "<CENTER>\n";
 
 if($submit=="send new password") {
-	if(!ereg("(.+)@(.+)\.(..+)",$p_email)) {
+  $query = "SELECT id FROM reguser WHERE email='$p_email'";
+	$result = mysql_query($query) or die(mysql_error());
+	$res = mysql_num_rows($result);
+	if(!ereg("(.+)@(.+)\.(..+)",$p_email) || $res==0) {
 	  $mesg = "Please supply a valid email adress to resend the password to";
 		unset($submit);
 	} else {
-	  echo "<P>A new password has been send to <tt>$p_email</tt>";
-		echo "<P><A HREF='login.php'>Back to login page</A>\n";
+	  $new_pw="";
+	  for($i=0;$i<8;$i++) {
+		  $new_pw .= chr(ord("a")+rand(0,25));
+		}
+	  $m_to = $p_email;
+		$m_subj  = "Reset Request from the DINO Website";
+		$m_mesg  = "You (or someone entering your email) have requested a\n";
+		$m_mesg .= "new password to be generated for your account at \n";
+		$m_mesg .= "www.dino3d.org. It was reset to $new_pw\n\n";
+    $m_mesg .= "You may login and change it in the user preferences section\n";
+		$m_head  = "From: dino@dino3d.org\r\n";
+
+		if(mail($m_to,$m_subj,$m_mesg,$m_head)) {
+		  $new_crypt = md5($new_pw);
+		  $query = "UPDATE reguser SET passw='$new_crypt' WHERE email='$p_email'";
+			$result = mysql_query($query) or die(mysql_error());
+  	  echo "<P>A new password has been send to <tt>$p_email</tt>";
+			echo "<P><A HREF='login.php'>Back to login page</A>\n";
+		} else {
+			die("unexpected error while sending mail");
+		}
 	}
 }
 
