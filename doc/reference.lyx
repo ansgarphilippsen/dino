@@ -1540,6 +1540,24 @@ Requires a direction vector V and a scalar value S, returns the rotation
 
 Shell RPN Stack Operators
 \end_float 
+\layout Subsection
+
+Introduction to 
+\family typewriter 
+tcl
+\layout Standard
+
+Starting from v0.9, DINO optionally uses the 
+\family typewriter 
+tcl
+\family default 
+ library as its interpreter.
+ A complete treatment of 
+\family typewriter 
+tcl
+\family default 
+ is beyond the scope of this manual.
+ 
 \layout Standard
 
 
@@ -1875,7 +1893,15 @@ transx transy transz
 scene (transx | transy | transz) VALUE
 \layout Standard
 
-Translates VALUE along one of the major axis.
+Translates VALUE 
+\latex latex 
+
+\backslash 
+AA
+\backslash 
+
+\latex default 
+ along one of the major axis.
 \layout Standard
 
 \begin_float wide-tab 
@@ -2123,7 +2149,7 @@ float
 
 \layout Standard
 
-500
+400
 \end_inset 
 </cell>
 </row>
@@ -2313,7 +2339,7 @@ float
 
 \layout Standard
 
-0.0
+25.0
 \end_inset 
 </cell>
 </row>
@@ -2414,7 +2440,7 @@ float
 
 \layout Standard
 
-5
+10
 \end_inset 
 </cell>
 </row>
@@ -2515,7 +2541,7 @@ float
 
 \layout Standard
 
-495
+390
 \end_inset 
 </cell>
 </row>
@@ -2613,170 +2639,6 @@ center
 
 Scene Properties
 \end_float 
-\layout Subsection
-
-Scene Export
-\layout RefEntry
-
-write
-\layout Standard
-
-Exports the current scene as a PNG raster image, as a PostScript file or
- as a POVray scene.
- This command is aliased so 
-\family typewriter 
-scene
-\family default 
- can be ommitted
-\layout Subsubsection*
-
-PNG Raster Image
-\begin_float footnote 
-\layout Standard
-
-PNG provides a open-source, royalty-free, efficient graphics format.
- See 
-\family typewriter 
-http://www.libpng.org/
-\end_float 
-\layout Syntax
-
-write FILE.png [-s (SIZE | WxH | VAL%)] [-a ACC] [-dump]
-\layout Standard
-
-Creates a raster image.
- Unless 
-\family typewriter 
--dump
-\family default 
- is used (see below), an offline rendering context is created and the current
- scene is rendered into it.
- The dimensions of the offline rendering area can be set with 
-\family typewriter 
--s
-\family default 
-: a single value denotes a square area (in pixels), two numbers interspaced
- with 
-\family typewriter 
-x
-\family default 
- stand for a rectangular area (in pixels), and a percentage value refers
- to the corresponding relative size of the graphics window.
- The maximum possible size depends on the X-Windows system, 2000x2000 should
- work in most cases.
- On OpenGL systems supporting accumulation buffers, the scene can be subjected
- to scene antialiasing
-\begin_float footnote 
-\layout Standard
-
-from the OpenGL Programming Guide 3rd Edition
-\end_float 
-: The final image will be a blend of 
-\family typewriter 
-ACC
-\family default 
- images.
- Possible values for 
-\family typewriter 
-ACC
-\family default 
- are 2,3,4,5,6,8,9,12 or 16.
- The higher the number the better the final image will look, but rendering
- time is increased accordingly.
-\layout Standard
-
-If the option 
-\family typewriter 
--dump
-\family default 
- is used, the pixel values of the graphics window will be written, including
- parts of other windows partially obscuring it (therefore the graphics window
- should be in the foreground).
- This option is useful for OpenGL implementations that do not provide a
- good offline-rendering context.
- The size is fixed to the graphics window size, and scene antialiasing using
- the accumulation buffer is not available.
-\layout Subsubsection
-
-PostScript
-\layout Syntax
-
-write FILE.ps
-\layout Standard
-
-Converts the current scene into a PostScript file.
- The 3D primitives (points, lines and triangles) are displayed on the screen
- - after transformation and projection - with x and y coordinates in screen
- pixels and z coordinate normalized between 0 and 1.
- These transformed primitives are collected, sorted from back to front and
- then written as PostScript elements: again points, lines and triangles,
- just 2D.
- Several noteworthy points:
-\layout Enumerate
-
-The resulting scene is described by vectors and hence resolution independent
- (but see note about triangles below).
-\layout Enumerate
-
-A complicated scene might take a long time to render because every PostScript
- element is drawn, even if finally completely covered by other ones.
-\layout Enumerate
-
-Transparency is not possible with PostScript, any transparent object will
- be opaque.
-\layout Enumerate
-
-Depth cueing does not work.
-\layout Enumerate
-
-Postscript triangles are unicolored.
- DINO converts its gouraud shaded trianges into several unicolored ones
-\begin_float footnote 
-\layout Standard
-
-using the freely available 
-\family typewriter 
-gouraudtriangle
-\family default 
- macro written by Frederic Delhoume (delhoume@ilog.fr)
-\end_float 
-.
- This approximation might become apparent at high magnification.
-\layout Enumerate
-
-The BoundingBox is crudely set to the the window dimensions and might need
- adjustment.
-\layout Standard
-
-PostScript export has been largely superseded by the POVray format (see
- below).
-\layout Subsubsection
-
-POVray
-\layout Syntax
-
-write FILE.pov [-patch | -smooth | -mega | -nocolor]
-\layout Standard
-
-Exports the current scene as a POVray scene.
- The 
-\emph on 
-Persistence of Vision Raytracer
-\emph default 
- (
-\family typewriter 
-www.povray.org
-\family default 
-) is an extremely powerful tool to create stunningly beautiful raytraced
- pictures.
- Its freely available for all major platforms and is constantly being upgraded
- and improved upon by a large community of enthusiastic users and developers.
- An extensive tutorial on the DINO homepage (
-\family typewriter 
-www.dino3d.org
-\family default 
-) is devoted to POVray output and a duplication here would exceed the scope
- of this reference manual.
 \layout Subsection
 
 
@@ -3685,7 +3547,7 @@ The table below lists the effects of mouse movement in the graphics window,
 \align center 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="7" columns="2">
+<lyxtabular version="2" rows="9" columns="2">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="center" valignment="top" leftline="true" rightline="false" width="" special="">
 <column alignment="center" valignment="top" leftline="true" rightline="true" width="" special="">
@@ -3697,7 +3559,7 @@ The table below lists the effects of mouse movement in the graphics window,
 
 
 \emph on 
-Mouse Input Settings
+Default Mouse Input Settings
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -3798,7 +3660,7 @@ slab width
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="true" newpage="false">
+<row topline="false" bottomline="false" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -3813,6 +3675,42 @@ Left MB & Middle MB & Shift
 \layout Standard
 
 slab translation
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+MouseWheel
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+translate z (slow)
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+MouseWheel & Shift
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+translate z (fast)
 \end_inset 
 </cell>
 </row>
@@ -3845,7 +3743,7 @@ The table below lists the settings of the eight dials on a standard dialbox.
 
 
 \emph on 
-Dialbox Settings
+Default Dialbox Settings
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -4183,111 +4081,317 @@ get
 Selection
 \layout Standard
 
+Selection can be applied for various commands and allows a filtering of
+ dataset or object elements, to which the specified command is applied.
+ Each element is queried against the complete selection, and only if the
+ selection holds true the element is used.
+\layout Standard
+
 A selection is build up from individual selection statements, connected
  through boolean operators, optionally employing parenthesis to group statements.
+ Possible boolean operators are 
+\family typewriter 
+and
+\family default 
+, 
+\family typewriter 
+or
+\family default 
+ (both binary) as well as 
+\family typewriter 
+not
+\family default 
+ (unary).
 \layout Standard
 
-Recursive definition for a selection
+There are three types of selection statements, 
+\emph on 
+property
+\emph default 
+, 
+\emph on 
+within
+\emph default 
+ and 
+\emph on 
+object
+\emph default 
+:
+\layout Subsubsection
+
+Property
+\layout Syntax
+
+PROP OP VALUELIST
 \layout Standard
 
-SELECTION: (SELECTION)
+
+\family typewriter 
+PROP
+\family default 
+ is a data-unit property that is valid within a selection statement (as
+ indicated in the tables for each dataset), 
+\family typewriter 
+OP
+\family default 
+ is one of the comparison operators listed below, and 
+\family typewriter 
+VALUELIST
+\family default 
+ consists of one or more (comma separated) 
+\family typewriter 
+VALUE
+\family default 
+s.
+ A 
+\family typewriter 
+VALUE
+\family default 
+ is either a string, a number or a numeric range (
+\family typewriter 
+MIN
+\family default 
+:
+\family typewriter 
+MAX
+\family default 
+).
+ For the string and range 
+\family typewriter 
+VALUE
+\family default 
+s, only the equal resp.
+ not-equal operators are valid.
 \layout Standard
 
-SELECTION: not SELECTION
+The selection statement is true if the comparison between the queried element
+ property and any one of the listed values holds true.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="2" columns="6">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="false" leftline="false" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-SELECTION: SELECTION and SELECTION
+Comparison operators for selection statement
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-SELECTION: SELECTION or SELECTION
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-SELECTION: STATEMENT
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-STATEMENT: PROP OP VALUELIST
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-VALUELIST: VALUES[,VALUES \SpecialChar \ldots{}
-]
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-VALUES: VALUE | VALUE:VALUE
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-STATEMENT: DIST <> COORDLIST | DIST <> DSOBJLIST
+
+\family typewriter 
+\series bold 
+=
+\family default 
+\series default 
+ (equal)
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-COORDLIST: {x,y,z}[,{x,y,z} \SpecialChar \ldots{}
-]
+
+\family typewriter 
+\series bold 
+!=
+\family default 
+\series default 
+ (not equal)
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-DSOBJLOST: .DS.OBJ[,.DS.OBJ \SpecialChar \ldots{}
-]
+
+\family typewriter 
+\series bold 
+<
+\family default 
+\series default 
+ (smaller)
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-STATEMENT: OBJLIST
+
+\family typewriter 
+\series bold 
+<=
+\family default 
+\series default 
+ (smaller or equal)
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-\SpecialChar ~
-OBJLIST: .OBJ[,.OBJ \SpecialChar \ldots{}
-]
+
+\family typewriter 
+\series bold 
+>
+\family default 
+\series default 
+ (larger)
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
 \layout Standard
 
-There are three different selection statement types:
-\layout Enumerate
 
-data-unit property PROP OP VAL[,VAL ...] VAL can be range
-\layout Enumerate
+\family typewriter 
+\series bold 
+>=
+\family default 
+\series default 
+ (larger or equal)
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
 
-within DIST <> {x,y,z}[,{x,,y,z} ...] or DIST <> .DS.OBJ[,DS.OBJ ...]
-\layout Enumerate
+\end_inset 
 
-object .OBJ[,.OBJ ...]
+
+\layout Subsubsection
+
+Within
+\layout Syntax
+
+DIST <> TARGETLIST
+\layout Standard
+
+The within statement allows to select based on a distance 
+\family typewriter 
+DIST
+\family default 
+ 
+\latex latex 
+
+\backslash 
+AA
+\backslash 
+
+\latex default 
+ from a 
+\family typewriter 
+TARGETLIST
+\family default 
+, which consists of one or more (comma separated) 
+\family typewriter 
+TARGET
+\family default 
+s.
+ A 
+\family typewriter 
+TARGET
+\family default 
+ is either an point in space - with the syntax 
+\family typewriter 
+{x,y,z}
+\family default 
+ - or an arbitrary object from 
+\emph on 
+any
+\emph default 
+ other dataset - with the syntax 
+\family typewriter 
+.DS.OBJ
+\family default 
+.
+ In the latter case, the selection statement will be true if the queried
+ element falls within the specified distance of 
+\emph on 
+any
+\emph default 
+ of the object elements .
+\layout Subsubsection
+
+Object
+\layout Syntax
+
+OBJLIST
+\layout Standard
+
+This statement contains one or more (comma separated) object names of the
+ dataset itself.
+ The selection is true if any dataset element that is queried is contained
+ within one of the objects.
 \layout Subsection
 
 Ranges
+\layout Syntax
+
+(...) set P=V1:V2 -range prop=PROP[,src=SRC][,val=VAL1:VAL2][,clamp]
 \layout Standard
 
-A range is used to lineary map one property onto another
+A range is used to lineary map one property onto another.
+ It is appended to a 
+\family typewriter 
+set
+\family default 
+ statement, which must contain one property with a value
 \layout Subsection
 
 Transformations
@@ -4327,7 +4431,7 @@ load
 
 \layout Syntax
 
-load FILE [-name N] [-type T] [-swap]
+load FILE [-name N] [-type T] [SPECIFIC PARAMS]
 \layout Standard
 
 Probably the most important database manager command.
@@ -4371,6 +4475,27 @@ The file type given with
  lists the currently supported file formats, their recognized extension(s),
  the type and the kind of dataset that will be created.
  
+\emph on 
+NOTE:
+\emph default 
+ Files compressed with 
+\family typewriter 
+gzip
+\family default 
+ (extension 
+\family typewriter 
+.gz
+\family default 
+) are uncompressed on the fly.
+ It is not event necessary to append the 
+\family typewriter 
+.gz
+\family default 
+ extension to the filename in the load command.
+ 
+\layout Standard
+
+Depending on the file type, some other parameters can be given: 
 \layout Standard
 
 Files in binary format might need to be byte-swapped with 
@@ -4379,15 +4504,48 @@ Files in binary format might need to be byte-swapped with
 \family default 
 , depending on the processor architecture they were generated on and the
  processor architecture DINO is running on.
- The byte order of the supported architectures is as follows:
-\layout Description
-
+ The byte order of the supported architectures is as follows: 
+\series bold 
 Big\SpecialChar ~
-Endian: MIPS (irix) - MOTOROLA (linux-ppc) - SPARC (sun)
-\layout Description
-
+Endian
+\series default 
+: MIPS (irix), MOTOROLA (linux-ppc), SPARC (sun), 
+\series bold 
 Little\SpecialChar ~
-Endian: INTEL (linux-i386) - ALPHA (osf1)
+Endian
+\series default 
+: INTEL (linux-i386), ALPHA (osf1).
+ 
+\emph on 
+NOTE:
+\emph default 
+ For most binary formats, DINO will try to detect wether byte-swapping is
+ necessary, so this flag can be ommited in most cases.
+\layout Standard
+
+For structure dataset file formats, the parameter 
+\family typewriter 
+-conn CFLAG
+\family default 
+ will determine the connectivity rules applied upon startup (for more details
+ see 
+\family typewriter 
+reconnect
+\family default 
+ on p.
+\begin_inset LatexCommand \pageref{com_reconnect}
+
+\end_inset 
+
+).
+\layout Standard
+
+The parameter 
+\family typewriter 
+-conv
+\family default 
+ is specific for UHBD potentials - it causes a multiplication of each scalar
+ grid value with the scale parameter contained within the header.
 \layout RefEntry
 
 new
@@ -5546,7 +5704,7 @@ asc
 
 \layout Standard
 
-greyscale square TIFF image
+greyscale TIFF image
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -6723,9 +6881,14 @@ tfast
 \layout RefEntry
 
 reconnect
+\begin_inset LatexCommand \label{com_reconnect}
+
+\end_inset 
+
+
 \layout Syntax
 
-.DS reconnect [ncb] [nodist | notab]
+.DS reconnect CFLAG 
 \layout Standard
 
 Reruns connectivity algorithm on either the non-covalent bonds or on the
@@ -9475,7 +9638,7 @@ Structure Data-Unit Properties
 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="24" columns="3">
+<lyxtabular version="2" rows="27" columns="3">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
 <column alignment="left" valignment="top" leftline="true" rightline="false" width="85mm" special="">
@@ -9608,13 +9771,9 @@ AA
 \backslash 
 
 \latex default 
- for modes 
+ for mode 
 \family typewriter 
 custom
-\family default 
- and 
-\family typewriter 
-hsc
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -9662,7 +9821,7 @@ flag to turn culling on or off
 
 
 \family typewriter 
-detail
+detail1
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -9693,6 +9852,44 @@ hsc
 \layout Standard
 
 3
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+detail2
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+number of interpolation steps in spline, used for rendering modes 
+\family typewriter 
+sline
+\family default 
+, 
+\family typewriter 
+tube
+\family default 
+ and 
+\family typewriter 
+hsc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+6
 \end_inset 
 </cell>
 </row>
@@ -10293,6 +10490,73 @@ hsc
 \layout Standard
 
 1.0
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+tubew
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+diameter of tube for rendering modes 
+\family typewriter 
+tube
+\family default 
+ and 
+\family typewriter 
+hsc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+0.4
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+userad
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+flag to indicate that the atom radius is multiplied with the segment radius
+ for modes
+\family typewriter 
+ tube
+\family default 
+ and 
+\family typewriter 
+hsc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+off
 \end_inset 
 </cell>
 </row>
@@ -15726,6 +15990,174 @@ clearpage
 \layout Section
 
 Geometric Primitives
+\layout Chapter
+
+Exporting the Scene
+\layout RefEntry
+
+write
+\layout Standard
+
+Exports the current scene as a PNG raster image, as a PostScript file or
+ as a POVray scene.
+ While actually a 
+\family typewriter 
+scene
+\family default 
+ command, its aliased so 
+\family typewriter 
+scene
+\family default 
+ can be ommitted.
+\layout Subsubsection*
+
+PNG Raster Image
+\begin_float footnote 
+\layout Standard
+
+PNG provides a open-source, royalty-free, efficient graphics format.
+ See 
+\family typewriter 
+http://www.libpng.org/
+\end_float 
+\layout Syntax
+
+write FILE.png [-s (SIZE | WxH | VAL%)] [-a ACC] [-dump]
+\layout Standard
+
+Creates a raster image.
+ Unless 
+\family typewriter 
+-dump
+\family default 
+ is used (see below), an offline rendering context is created and the current
+ scene is rendered into it.
+ The dimensions of the offline rendering area can be set with 
+\family typewriter 
+-s
+\family default 
+: a single value denotes a square area (in pixels), two numbers interspaced
+ with 
+\family typewriter 
+x
+\family default 
+ stand for a rectangular area (in pixels), and a percentage value refers
+ to the corresponding relative size of the graphics window.
+ The maximum possible size depends on the X-Windows system, 2000x2000 should
+ work in most cases.
+ On OpenGL systems supporting accumulation buffers, the scene can be subjected
+ to scene antialiasing
+\begin_float footnote 
+\layout Standard
+
+from the OpenGL Programming Guide 3rd Edition
+\end_float 
+: The final image will be a blend of 
+\family typewriter 
+ACC
+\family default 
+ images.
+ Possible values for 
+\family typewriter 
+ACC
+\family default 
+ are 2,3,4,5,6,8,9,12 or 16.
+ The higher the number the better the final image will look, but rendering
+ time is increased accordingly.
+\layout Standard
+
+If the option 
+\family typewriter 
+-dump
+\family default 
+ is used, the pixel values of the graphics window will be written, including
+ parts of other windows partially obscuring it (therefore the graphics window
+ should be in the foreground).
+ This option is useful for OpenGL implementations that do not provide a
+ good offline-rendering context.
+ The size is fixed to the graphics window size, and scene antialiasing using
+ the accumulation buffer is not available.
+\layout Subsubsection
+
+PostScript
+\layout Syntax
+
+write FILE.ps
+\layout Standard
+
+Converts the current scene into a PostScript file.
+ The 3D primitives (points, lines and triangles) are displayed on the screen
+ - after transformation and projection - with x and y coordinates in screen
+ pixels and z coordinate normalized between 0 and 1.
+ These transformed primitives are collected, sorted from back to front and
+ then written as PostScript elements: again points, lines and triangles,
+ just 2D.
+ Several noteworthy points:
+\layout Enumerate
+
+The resulting scene is described by vectors and hence resolution independent
+ (but see note about triangles below).
+\layout Enumerate
+
+A complicated scene might take a long time to render because every PostScript
+ element is drawn, even if finally completely covered by other ones.
+\layout Enumerate
+
+Transparency is not possible with PostScript, any transparent object will
+ be opaque.
+\layout Enumerate
+
+Depth cueing does not work.
+\layout Enumerate
+
+Postscript triangles are unicolored.
+ DINO converts its gouraud shaded trianges into several unicolored ones
+\begin_float footnote 
+\layout Standard
+
+using the freely available 
+\family typewriter 
+gouraudtriangle
+\family default 
+ macro written by Frederic Delhoume (delhoume@ilog.fr)
+\end_float 
+.
+ This approximation might become apparent at high magnification.
+\layout Enumerate
+
+The BoundingBox is crudely set to the the window dimensions and might need
+ adjustment.
+\layout Standard
+
+PostScript export has been largely superseded by the POVray format (see
+ below).
+\layout Subsubsection
+
+POVray
+\layout Syntax
+
+write FILE.pov [-patch | -smooth | -mega | -nocolor]
+\layout Standard
+
+Exports the current scene as a POVray scene.
+ The 
+\emph on 
+Persistence of Vision Raytracer
+\emph default 
+ (
+\family typewriter 
+www.povray.org
+\family default 
+) is an extremely powerful tool to create stunningly beautiful raytraced
+ pictures.
+ Its freely available for all major platforms and is constantly being upgraded
+ and improved upon by a large community of enthusiastic users and developers.
+ An extensive tutorial on the DINO homepage (
+\family typewriter 
+www.dino3d.org
+\family default 
+) is devoted to POVray output and a duplication here would exceed the scope
+ of this reference manual.
 \layout Chapter
 \start_of_appendix 
 Glossary
