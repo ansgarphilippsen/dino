@@ -1,0 +1,109 @@
+#% Do not delete the line below; configure depends on this
+#  \DeclareLaTeXClass{dino}
+# Book textclass definition file. Taken from initial LyX source code
+# Author : Matthias Ettrich <ettrich@informatik.uni-tuebingen.de>
+# Transposed by Pascal André <andre@via.ecp.fr>
+# Heavily modifed and enhanced by serveral developers.
+
+# Input general definitions
+Input stdclass.inc
+
+Style Code
+  Margin                Static
+  LatexType             Environment
+  LatexName             code
+  NextNoIndent          1
+  LeftMargin            MMM
+  RightMargin           MMM
+  TopSep                0.5
+  ParSep                0.5
+  BottomSep             0.5
+  Align                 Block
+  AlignPossible         Block, Left, Right, Center
+  LabelType             No_Label
+  Font
+    Family		Typewriter
+		Size		small
+    Color		blue
+  EndFont
+End
+ 
+Style RefEntry
+	Margin 						Static
+	LatexType					Command
+	LatexName					refentry
+	NextNoIndent			1
+	TopSep						1.0
+	BottomSep					1.0
+	Font
+		Series					Bold
+		Size						Large
+		Color						blue
+	EndFont
+End
+
+Style Syntax
+  Margin                First_Dynamic
+  LatexType             Environment
+  LatexName             syntax
+  NextNoIndent          1
+  LabelType             Static
+	LabelString						"Syntax:"
+	LabelSep 							" "
+#	LeftMargin						"Syntax: "
+	LabelFont
+		Shape			italic
+		Color     magenta
+	EndFont
+  TextFont
+    Family		Typewriter
+    Color		magenta
+  EndFont
+End
+  
+# Global parameters.
+Sides		2
+PageStyle	fancy
+
+
+Style Standard
+  Margin  		Static
+  LatexType 		Paragraph
+  LatexName 		dummy
+  Align 		Block
+  AlignPossible 	Block, Left, Right, Center
+  LabelType 		No_Label
+  Spacing               onehalf
+  ParSkip 		1.0
+End
+
+# There is no abstract environment in book.cls
+NoStyle	Abstract
+	
+# a few changes to the bibliography
+Style Bibliography
+  TopSep		4
+  LabelString		Bibliography
+  # label font definition
+  LabelFont 
+    Series		Bold
+    Size		Huge
+  EndFont
+End
+
+Style clist
+  Margin		Static
+  LatexType		Item_Environment
+  LatexName		clist
+  NextNoIndent		1
+  LeftMargin		M
+  LabelSep		xx
+  ItemSep		0.2
+  TopSep		0.7
+  BottomSep		0.7
+  ParSep		0.3
+  Align			Block
+  AlignPossible		Block, Left
+  LabelType		Static
+  LabelString		*
+End

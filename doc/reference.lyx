@@ -1,6 +1,9 @@
 #LyX 1.1 created this file. For more info see http://www.lyx.org/
 \lyxformat 218
 \textclass dino
+\begin_preamble
+\setlength{\textwidth}{140mm}
+\end_preamble
 \language english
 \inputencoding auto
 \fontscheme times
@@ -8,8 +11,8 @@
 \float_placement !hbp
 \paperfontsize 10
 \spacing single 
-\papersize Default
-\paperpackage a4wide
+\papersize a4paper
+\paperpackage a4
 \use_geometry 0
 \use_amsmath 0
 \paperorientation portrait
@@ -75,8 +78,25 @@ arraystretch{1.2}
 \backslash 
 setlength
 \backslash 
-arrayrulewidth{0.15pt}
+arrayrulewidth{0.05mm}
 \newline 
+
+\backslash 
+setlength
+\backslash 
+tabcolsep{1mm}
+\newline 
+
+\newline 
+
+\begin_inset Info
+element: 'basic constituent part'
+unit: 'an individual thing; each of the individual components making up a larger whole'
+
+property: 'a characteristic of something'
+attribute: 'a quality or feature regarded as characterisitic or inherent'
+\end_inset 
+
 
 \layout Chapter
 
@@ -751,8 +771,8 @@ Lists all currently defined variables with their values.
 \begin_inset  Tabular
 <lyxtabular version="2" rows="18" columns="2">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="100mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="18mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="114mm" special="">
 <row topline="true" bottomline="false" newpage="false">
 <cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -774,7 +794,7 @@ value
 </cell>
 </row>
 <row topline="true" bottomline="true" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -782,7 +802,7 @@ value
 PI
 \end_inset 
 </cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -1108,7 +1128,7 @@ Predefined Variables and Aliases
 <lyxtabular version="2" rows="20" columns="2">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="25mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="105mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="107mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -1524,7 +1544,7 @@ scene autoslab
 
 Adjusts the front and back clipping plane to the minimal and maximal z value
  of the currently displayed objects.
- The coordinates of the object elements will be used, not of the 3D primitives.
+ The coordinates of the object units will be used, not of the 3D primitives.
 \layout RefEntry
 
 center
@@ -1812,10 +1832,10 @@ Translates VALUE along one of the major axis.
 \begin_inset  Tabular
 <lyxtabular version="2" rows="18" columns="4">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="8ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="20em" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="8ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="11ex" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="84mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="20mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -2696,7 +2716,7 @@ Displays all properties of this light.
 <lyxtabular version="2" rows="13" columns="4">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="75mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="79mm" special="">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
 <column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
 <row topline="true" bottomline="true" newpage="false">
@@ -3895,7 +3915,13 @@ Datasets
 Concepts
 \layout Subsection
 
-Addressing datasets
+Basic Data-Units
+\layout Standard
+
+Each dataset contains a number of basic data-units.
+\layout Subsection
+
+Addressing Datasets
 \layout Standard
 
 Every dataset has a unique name (set during loading or creation, see below).
@@ -3917,8 +3943,8 @@ Objects
 \layout Standard
 
 Objects are three dimensional representations of datasets.
- They are constructed from the dataset elements, resulting in a collection
- of 3D primitives which are displayed in the graphics window.
+ They are constructed from the data-units, resulting in a collection of
+ 3D primitives which are displayed in the graphics window.
  Objects are characterized by:
 \layout Description
 
@@ -3937,8 +3963,8 @@ Type Represents a specific way of converting and interpreting the
  structural data, resulting in different representations for the same dataset.
 \layout Description
 
-Selection Designates a subset of the dataset elements to be included in
- the object construction.
+Selection Designates a subset of the data-units to be included in the object
+ construction.
 \layout Description
 
 Dataset\SpecialChar ~
@@ -3980,10 +4006,8 @@ DS
 Properties
 \layout Standard
 
-Properties are name-value pairs characterizing dataset, objects and dataset-elem
-ents.
- The dataset-element properties can be divided into two classes: some are
- 
+Properties are name-value pairs characterizing dataset, objects and data-units.
+ The data-unit properties can be divided into two classes: some are 
 \emph on 
 copied
 \emph default 
@@ -4100,7 +4124,7 @@ OBJLIST: .OBJ[,.OBJ \SpecialChar \ldots{}
 There are three different selection statement types:
 \layout Enumerate
 
-element property PROP OP VAL[,VAL ...] VAL can be range
+data-unit property PROP OP VAL[,VAL ...] VAL can be range
 \layout Enumerate
 
 within DIST <> {x,y,z}[,{x,,y,z} ...] or DIST <> .DS.OBJ[,DS.OBJ ...]
@@ -4263,13 +4287,13 @@ NEW
 \begin_inset  Tabular
 <lyxtabular version="2" rows="23" columns="5">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="80mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="81mm" special="">
 <column alignment="left" valignment="center" leftline="false" rightline="true" width="16mm" special="">
 <column alignment="left" valignment="center" leftline="false" rightline="true" width="15mm" special="">
-<column alignment="left" valignment="center" leftline="false" rightline="true" width="12mm" special="">
-<column alignment="left" valignment="center" leftline="false" rightline="true" width="10mm" special="">
+<column alignment="left" valignment="center" leftline="false" rightline="true" width="10mm" special="c">
+<column alignment="left" valignment="center" leftline="false" rightline="true" width="8mm" special="c">
 <row topline="true" bottomline="true" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -5546,13 +5570,13 @@ Creates a new object.
 \emph on 
 shared
 \emph default 
- dataset-element properties can be assigned using 
+ data-unit properties can be assigned using 
 \family typewriter 
 -set
 \family default 
 .
- Finally, a subset of the dataset-elements used for object creation can
- be selected with 
+ Finally, a subset of the data-units used for object creation can be selected
+ with 
 \family typewriter 
 -sel
 \family default 
@@ -5592,7 +5616,7 @@ restrict
 .DS restrict SELECT_EXPR
 \layout Standard
 
-All dataset-elements that do 
+All data-units that do 
 \emph on 
 not
 \emph default 
@@ -5632,18 +5656,17 @@ set
 .DS set SET_EXPR [-sel SELECT_EXPR]
 \layout Standard
 
-Sets dataset or dataset-element properties (depending on which appear in
- 
+Sets dataset or data-units properties (depending on which appear in 
 \family typewriter 
 SET_EXPR
 \family default 
 ).
- A selection can be added to specify which elements are affected.
+ A selection can be added to specify which data-units are affected.
  
 \emph on 
 Shared
 \emph default 
- elements (see section 
+ data-units (see section 
 \begin_inset LatexCommand \vref{properties}
 
 \end_inset 
@@ -5652,7 +5675,7 @@ Shared
 \emph on 
 copied
 \emph default 
- elements change the default values for subsequent object (re-)creations.
+ data-units change the default values for subsequent object (re-)creations.
  Dataset properties are listed in tables 
 \begin_inset LatexCommand \vref{struct_ds_prop}
 
@@ -5681,23 +5704,23 @@ shared
 \emph on 
 copied
 \emph default 
- dataset-elements are listed in tables 
-\begin_inset LatexCommand \vref{struct_ele_prop}
+ data-units are listed in tables 
+\begin_inset LatexCommand \vref{struct_du_prop}
 
 \end_inset 
 
 , 
-\begin_inset LatexCommand \vref{scal_ele_prop}
+\begin_inset LatexCommand \vref{scal_du_prop}
 
 \end_inset 
 
 , 
-\begin_inset LatexCommand \vref{surf_ele_prop}
+\begin_inset LatexCommand \vref{surf_du_prop}
 
 \end_inset 
 
  and 
-\begin_inset LatexCommand \vref{topo_ele_prop}
+\begin_inset LatexCommand \vref{topo_du_prop}
 
 \end_inset 
 
@@ -5790,7 +5813,7 @@ Sets object properties or
 \emph on 
 copied
 \emph default 
- dataset-element properties (depending on which appear in 
+ data-units properties (depending on which appear in 
 \family typewriter 
 SET_EXPR
 \family default 
@@ -5823,23 +5846,23 @@ Object properties are listed in tables
 \emph on 
 copied
 \emph default 
- elements are listed in tables 
-\begin_inset LatexCommand \vref{struct_ele_prop}
+ data-units are listed in tables 
+\begin_inset LatexCommand \vref{struct_du_prop}
 
 \end_inset 
 
 , 
-\begin_inset LatexCommand \vref{scal_ele_prop}
+\begin_inset LatexCommand \vref{scal_du_prop}
 
 \end_inset 
 
 , 
-\begin_inset LatexCommand \vref{surf_ele_prop}
+\begin_inset LatexCommand \vref{surf_du_prop}
 
 \end_inset 
 
  and 
-\begin_inset LatexCommand \vref{topo_ele_prop}
+\begin_inset LatexCommand \vref{topo_du_prop}
 
 \end_inset 
 
@@ -5849,7 +5872,7 @@ copied
 \emph on 
 shared
 \emph default 
- element properties require a call to render (see below).
+ data-unit properties require a call to render (see below).
  
 \layout RefEntry
 
@@ -5880,9 +5903,8 @@ new
 \emph on 
 Copied
 \emph default 
- dataset-element properties will be regenerated from the default values,
- while object properties will only be modified if explicitely stated in
- 
+ data-unit properties will be regenerated from the default values, while
+ object properties will only be modified if explicitely stated in 
 \family typewriter 
 SET_EXPR
 \family default 
@@ -5954,9 +5976,9 @@ Changes the surface material of an object through material properties (table
 \begin_inset  Tabular
 <lyxtabular version="2" rows="6" columns="3">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="25mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="45mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="25mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="83mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="25mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -6135,6 +6157,14 @@ clearpage
 Structure Dataset
 \layout Subsection
 
+Basic Data-Unit
+\layout Standard
+
+The structure dataset contains individual atoms as its basic data-unit.
+ In addition, it contains their organization in the molecular architecture
+ and optionally several conformations.
+\layout Subsection
+
 Object Types
 \layout Description
 
@@ -6186,7 +6216,7 @@ They belong to the same chain and model.
 \layout Standard
 
 The selectable properties are listed in table 
-\begin_inset LatexCommand \vref{struct_ele_prop}
+\begin_inset LatexCommand \vref{struct_du_prop}
 
 \end_inset 
 
@@ -6843,14 +6873,14 @@ get
 \layout Standard
 
 Retrieves atom property (see table 
-\begin_inset LatexCommand \vref{struct_ele_prop}
+\begin_inset LatexCommand \vref{struct_du_prop}
 
 \end_inset 
 
 ).
 \layout Subsection
 
-Dataset, Object and Element Properties
+Dataset, Object and Data-Unit Properties
 \layout Standard
 
 Tables 
@@ -6859,11 +6889,11 @@ Tables
 \end_inset 
 
  and 
-\begin_inset LatexCommand \vref{struct_ele_prop}
+\begin_inset LatexCommand \vref{struct_du_prop}
 
 \end_inset 
 
- list all the dataset, object and basic element properties that are accessible
+ list all the dataset, object and data-unit properties that are accessible
  with the dataset and object commands 
 \family typewriter 
 set
@@ -7025,7 +7055,7 @@ sline
 , displaying secondary structure cartoon for proteins and nucleic acids.
  Protein traces are rendered according to their residue type (see table
  
-\begin_inset LatexCommand \vref{struct_ele_prop}
+\begin_inset LatexCommand \vref{struct_du_prop}
 
 \end_inset 
 
@@ -7122,7 +7152,7 @@ detail
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
 <column alignment="center" valignment="center" leftline="true" rightline="false" width="5mm" special="c">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="5mm" special="c">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="90mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="94mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -7700,11 +7730,11 @@ Structure Dataset and Object Properties
 <lyxtabular version="2" rows="26" columns="6">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="5mm" special="c">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="5mm" special="c">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="5mm" special="c">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="5mm" special="c">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="85mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="3mm" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="3mm" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="3mm" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="3mm" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="89mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -7779,7 +7809,7 @@ Description
 
 
 \emph on 
-element properties shared between dataset and objects
+data-unit properties shared between dataset and objects
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -8730,7 +8760,7 @@ z coordinate of atom position
 
 
 \emph on 
-element properties copied from dataset to object type connect
+data-unit properties copied from dataset to object type connect
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -8899,7 +8929,7 @@ Van der Waals radius of atom
 
 
 \emph on 
-element properties copied from dataset to object type trace
+data-unit properties copied from dataset to object type trace
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -9281,11 +9311,11 @@ R Property can be used in a range statement
 \layout Caption
 
 
-\begin_inset LatexCommand \label{struct_ele_prop}
+\begin_inset LatexCommand \label{struct_du_prop}
 
 \end_inset 
 
-Structure Element Properties
+Structure Data-Unit Properties
 \end_float 
 \layout Standard
 
@@ -10141,6 +10171,12 @@ clearpage
 Scalar Field Dataset
 \layout Subsection
 
+Basic Data-Unit
+\layout Standard
+
+The scalar field dataset 
+\layout Subsection
+
 Object types
 \layout Standard
 
@@ -10256,28 +10292,55 @@ trans
 add
 \layout Syntax
 
-.ds add .DS2
+.DS add .DS2
 \layout Standard
 
-Adds scalar values from DS2 to .ds.
+Adds scalar values from 
+\family typewriter 
+DS2
+\family default 
+ to 
+\family typewriter 
+DS
+\family default 
+.
+ The two grids must have equal dimensions.
 \layout RefEntry
 
 mul
 \layout Syntax
 
-.ds mul .DS2
+.DS mul .DS2
 \layout Standard
 
-Multiply scalar values from .DS2 with .ds
+Multiply scalar values from 
+\family typewriter 
+DS2
+\family default 
+ with 
+\family typewriter 
+DS
+\family default 
+.
+ The two grids must have equal dimensions.
 \layout RefEntry
 
 sub
 \layout Syntax
 
-.ds sub .DS2
+.DS sub .DS2
 \layout Standard
 
-Subtract scalar values of .DS2 from .ds 
+Subtract scalar values of 
+\family typewriter 
+DS2
+\family default 
+ from 
+\family typewriter 
+DS
+\family default 
+.
+ The two grids must have equal dimensions.
 \layout Subsection
 
 Object Commands
@@ -10321,15 +10384,21 @@ material
 \layout RefEntry
 
 write
+\begin_inset Info
+This needs some more coding work, especially the direction of
+the normals.
+\end_inset 
+
+
 \layout Syntax
 
-.ds.obj write FILE
+.DS.obj write FILE
 \layout Standard
 
 Export the object.
 \layout Subsection
 
-Dataset, Object and Element Properties
+Dataset, Object and Data-Unit Properties
 \layout Standard
 
 Tables 
@@ -10338,11 +10407,11 @@ Tables
 \end_inset 
 
  and 
-\begin_inset LatexCommand \vref{scal_ele_prop}
+\begin_inset LatexCommand \vref{scal_du_prop}
 
 \end_inset 
 
- list all the dataset, object and basic element properties that are accessible
+ list all the dataset, object and data-unit properties that are accessible
  with the dataset and object commands 
 \family typewriter 
 set
@@ -10394,13 +10463,13 @@ fill A continuous surface, lit from both sides.
 Object type grid:
 \layout Description
 
-on The grid points are shown as spheres, the radius depending on the element
+on The grid points are shown as spheres, the radius depending on the data-unit
  property 
 \family typewriter 
 rad
 \family default 
  (see table 
-\begin_inset LatexCommand \vref{scal_ele_prop}
+\begin_inset LatexCommand \vref{scal_du_prop}
 
 \end_inset 
 
@@ -11549,7 +11618,7 @@ Description
 
 
 \emph on 
-element properties shared between dataset and objects
+data-unit properties shared between dataset and objects
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -11820,7 +11889,7 @@ z coordinate of grid point
 
 
 \emph on 
-element properties copied from dataset to object type grid
+data-unit properties copied from dataset to object type grid
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -11992,7 +12061,7 @@ of spheres
 
 
 \emph on 
-element properties copied from dataset to object type slab
+data-unit properties copied from dataset to object type slab
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -12121,11 +12190,11 @@ R Property can be used in a range statement
 \layout Caption
 
 
-\begin_inset LatexCommand \label{scal_ele_prop}
+\begin_inset LatexCommand \label{scal_du_prop}
 
 \end_inset 
 
-Scalar Field Element Properties
+Scalar Field Data-Unit Properties
 \end_float 
 \layout Standard
 
@@ -12303,6 +12372,17 @@ clearpage
 Surface Dataset
 \layout Subsection
 
+Basic Data-Unit
+\layout Standard
+
+This dataset has a surface point as its basic data-unit, each characterized
+ by a vertex, a normal and optionally some attributes.
+ It also contains a list of point triplets which together form a triangle
+ face.
+ The faces have an inside and an outside, defined by the direction of the
+ surface normal and the orientation of the three vertices.
+\layout Subsection
+
 Object Types
 \layout Standard
 
@@ -12362,12 +12442,56 @@ trans
 \layout RefEntry
 
 attach
+\begin_inset LatexCommand \label{surf_attach}
+
+\end_inset 
+
+
+\begin_inset Info
+Inconsistency! In dbm commands, a dataset appearing as a
+parameter was not preceded with a dot, yet here it is.
+\end_inset 
+
+
 \layout Syntax
 
-.ds attach TARGET [-co DIST] | .ds attach none
+.DS attach .STRUCT [-co DIST] | .DS attach none
 \layout Standard
 
-Surface to structure attachment: 
+Surface to structure attachment: For each surface point, the atom of the
+ structure dataset .STRUCT that is
+\layout Enumerate
+
+unrestricted
+\layout Enumerate
+
+closest in space but within DIST 
+\latex latex 
+
+\backslash 
+AA
+\backslash 
+ 
+\latex default 
+(default 3
+\latex latex 
+
+\backslash 
+AA
+\latex default 
+) 
+\layout Standard
+
+will be assigned to to the surface point, extending its properties for selection
+ and range statements.
+ If no atom fulfills the above criteria, the assignment is not modified;
+ as a result, multiple attachment commands are cumulative.
+ The assignements are removed by specifying the parameter 
+\family typewriter 
+none
+\family default 
+ instead of a structure dataset.
+ 
 \layout Subsection
 
 Object Commands
@@ -12413,13 +12537,13 @@ material
 reverse
 \layout Syntax
 
-.ds.obj reverse
+.DS.OBJ reverse
 \layout Standard
 
-Reverses normals for this surface object.
+Swaps inside and outside for this surface object.
 \layout Subsection
 
-Dataset, Object and Element Properties
+Dataset, Object and Data-Unit Properties
 \layout Standard
 
 Tables 
@@ -12428,11 +12552,11 @@ Tables
 \end_inset 
 
  and 
-\begin_inset LatexCommand \vref{surf_ele_prop}
+\begin_inset LatexCommand \vref{surf_du_prop}
 
 \end_inset 
 
- list all the dataset, object and basic element properties that are accessible
+ list all the dataset, object and data-unit properties that are accessible
  with the dataset and object commands 
 \family typewriter 
 set
@@ -12443,8 +12567,8 @@ get
 \family default 
 , as well as available during selection or range statements.
  Note that for attached surface datasets, the selectable properties of the
- structure dataset are also available (table 
-\begin_inset LatexCommand \ref{struct_ele_prop}
+ structure data-units are also available (table 
+\begin_inset LatexCommand \ref{struct_du_prop}
 
 \end_inset 
 
@@ -12466,16 +12590,22 @@ typewriter
 .
 \layout Description
 
-fill (default)
+fill (default) The faces are rendered as filled and lit triangles.
 \layout Description
 
-lines
+lines Only the outlines of the triangular faces are drawn as lines of width
+ 
+\family typewriter 
+lw
+\family default 
+.
 \layout Description
 
-dots
-\layout Subsection
-
-Tables
+dots Only the vertices are draw as points of size 
+\family typewriter 
+ps
+\family default 
+.
 \layout Standard
 
 \begin_float wide-tab 
@@ -12483,12 +12613,12 @@ Tables
 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="9" columns="4">
+<lyxtabular version="2" rows="10" columns="4">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="20mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="2mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="2mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="90mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="104mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -12498,7 +12628,7 @@ Tables
 Property
 \end_inset 
 </cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
 \begin_inset Text
 
 \layout Standard
@@ -12510,7 +12640,7 @@ S
 
 \end_inset 
 </cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
 \begin_inset Text
 
 \layout Standard
@@ -12532,7 +12662,7 @@ Description
 </cell>
 </row>
 <row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="140mm" special="">
 \begin_inset Text
 
 \layout Standard
@@ -12571,6 +12701,48 @@ Dataset Properties
 \layout Standard
 
 center
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Geometric center of dataset
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rcen
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -12728,13 +12900,13 @@ smode
 
 \layout Standard
 
-selection mode, can be either 
+Selection mode, can be either 
 \family typewriter 
-atom
+any
 \family default 
  (default) or 
 \family typewriter 
-residue
+all
 \end_inset 
 </cell>
 </row>
@@ -12776,12 +12948,14 @@ trans
 
 \layout Standard
 
-Translation vector, default is zero
+Translation vector, default is 
+\family typewriter 
+{0,0,0}
 \end_inset 
 </cell>
 </row>
 <row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="140mm" special="">
 \begin_inset Text
 
 \layout Standard
@@ -12892,12 +13066,12 @@ Surface Dataset and Object Properties
 \begin_inset  Tabular
 <lyxtabular version="2" rows="8" columns="6">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="20mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="2mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="2mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="2mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="2mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="80mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="92mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -12965,14 +13139,14 @@ Description
 </cell>
 </row>
 <row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="140mm" special="">
 \begin_inset Text
 
 \layout Standard
 
 
 \emph on 
-element properties shared between dataset and objects
+data-unit properties shared between dataset and objects
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -13063,6 +13237,7 @@ x
 
 \layout Standard
 
+X coordinate of surface point
 \end_inset 
 </cell>
 </row>
@@ -13118,6 +13293,7 @@ y
 
 \layout Standard
 
+Y coordinate of surface point
 \end_inset 
 </cell>
 </row>
@@ -13173,6 +13349,7 @@ z
 
 \layout Standard
 
+Z coordinate of surface point
 \end_inset 
 </cell>
 </row>
@@ -13206,12 +13383,22 @@ special
 
 \layout Standard
 
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
 
 \end_inset 
 </cell>
@@ -13220,20 +13407,28 @@ special
 
 \layout Standard
 
-all shared structure dataset element properties (table ) can be used with
- an attached surface
+All 
+\emph on 
+shared
+\emph default 
+ structure datas-unit properties (table 
+\begin_inset LatexCommand \vref{struct_du_prop}
+
+\end_inset 
+
+) can be used with an attached surface.
 \end_inset 
 </cell>
 </row>
 <row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="140mm" special="">
 \begin_inset Text
 
 \layout Standard
 
 
 \emph on 
-element properties copied from dataset to object
+data-unit properties copied from dataset to object
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -13324,6 +13519,7 @@ color
 
 \layout Standard
 
+Color of surface point
 \end_inset 
 </cell>
 </row>
@@ -13360,11 +13556,11 @@ R Property can be used in a range statement
 \layout Caption
 
 
-\begin_inset LatexCommand \label{surf_ele_prop}
+\begin_inset LatexCommand \label{surf_du_prop}
 
 \end_inset 
 
-Surface Element Properties
+Surface Data-Unit Properties
 \end_float 
 \layout Standard
 
@@ -13373,10 +13569,10 @@ Surface Element Properties
 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="5" columns="3">
+<lyxtabular version="2" rows="7" columns="3">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="85mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="89mm" special="">
 <column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
 <row topline="true" bottomline="false" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -13411,13 +13607,45 @@ Default
 </cell>
 </row>
 <row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+light1 light2
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Mode that determines wether the surface is lit on the outside (
+\family typewriter 
+light1
+\family default 
+) or from both sides (
+\family typewriter 
+light2
+\family default 
+).
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+light1
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
 
-
-\family typewriter 
 lw
 \end_inset 
 </cell>
@@ -13426,6 +13654,37 @@ lw
 
 \layout Standard
 
+Linewidth for rendering mode 
+\family typewriter 
+line
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+ps
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Pointsize for rendering mode 
+\family typewriter 
+dots
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -13451,6 +13710,12 @@ solid
 
 \layout Standard
 
+Flag that determines wether the surface is considered solid, in which case
+ the interior is filled with 
+\family typewriter 
+solidc
+\family default 
+.
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -13458,6 +13723,7 @@ solid
 
 \layout Standard
 
+false
 \end_inset 
 </cell>
 </row>
@@ -13475,6 +13741,7 @@ solidc
 
 \layout Standard
 
+Color of solid interior
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -13502,7 +13769,7 @@ t
 
 \layout Standard
 
-transparency; 1.0 is fully opaque, 0.0 is fully transparent 
+transparency: 1.0 is fully opaque, 0.0 is fully transparent 
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -13540,13 +13807,79 @@ clearpage
 Topograph Dataset
 \layout Subsection
 
+Basic Data-Unit
+\layout Standard
+
+The topograph dataset consists of a two dimensional rectangular grid (dimensions
+ u x v), with a scalar height value at each grid-point.
+ The rectangular grid corners are initially located at positions 
+\family typewriter 
+
+\begin_inset Formula \( (-0.5\, -0.5\, 0) \)
+\end_inset 
+
+
+\family default 
+ and 
+\family typewriter 
+
+\begin_inset Formula \( (0.5\, 0.5\, 0) \)
+\end_inset 
+
+
+\family default 
+ (independent of the number of grid points), the initial coordinates of
+ the grid points calculated accordingly.
+ The height is always in the range of 0.0 to 1.0, the internal scaling depends
+ on the precision of the input file - for 8bit greyscale values, this is
+ the range from 0 to 255.
+\layout Standard
+
+Each grid point is assigned a 3D position: x- and y-coordinate are obtained
+ from the initial position on the grid multiplied with 
+\family typewriter 
+scalexy
+\family default 
+, the z-coordinate equals the height multiplied with 
+\family typewriter 
+scalez
+\family default 
+.
+\layout Subsection
+
 Object Types
 \layout Description
 
-surface 
+surface Continuous surface protruding from the grid plane, approximated
+ with triangles, based on the 3D position of each grid point and its adjacent
+ ones.
+ The sampling of the grid is controlled with 
+\family typewriter 
+step
+\family default 
+.
+ 
 \layout Description
 
-contour
+contour Contour lines at equal heights, from 
+\family typewriter 
+lstart
+\family default 
+ to 
+\family typewriter 
+lend
+\family default 
+ with 
+\family typewriter 
+lstep
+\family default 
+ sized steps, protruding from the grid plane.
+ The sampling of the grid is controlled with 
+\family typewriter 
+step
+\family default 
+.
+ 
 \layout Subsection
 
 Dataset Commands
@@ -13604,19 +13937,34 @@ trans
 attach
 \layout Syntax
 
-.ds attach .STRUCT [-co DIST] | .ds attach none
+.DS attach .STRUCT [-co DIST] | .DS attach none
 \layout Standard
 
-Attaches a topograph dataset to a structure dataset
+Attaches a topograph dataset to a structure dataset.
+ Funtionally identical to the equivalent command of the surface dataset
+ (see page 
+\begin_inset LatexCommand \pageref{surf_attach}
+
+\end_inset 
+
+).
 \layout RefEntry
 
 tex
+\begin_inset Info
+the amount of textures should not be limited
+the command might better be load (consistency)
+a removing command is needed (untex or unload)
+\end_inset 
+
+
 \layout Syntax
 
-.ds tex FILE [-name TEXNAME]
+.DS tex FILE [-name TEXNAME]
 \layout Standard
 
-Defines an image to be used as a surface texture
+Defines an image to be used as a surface texture.
+ If the name is omitted the base of the filename will be used.
 \layout Subsection
 
 Object Commands
@@ -13662,22 +14010,37 @@ material
 map
 \layout Syntax
 
-.ds.obj map TEXNAME
+.DS.obj map TEXNAME
 \layout Standard
 
-Maps texture named TEXNAME onto surface, only valid for object type surface.
+Maps texture named TEXNAME onto surface, only valid for object type 
+\family typewriter 
+surface
+\family default 
+.
+ The texture is 
+\emph on 
+modulated
+\emph default 
+ with the underlying surface: The color components at each point will be
+ multiplied, and the transparency is preserved.
+ Only one texture can be mapped onto a 
+\family typewriter 
+surface
+\family default 
+ object at a time.
 \layout RefEntry
 
 unmap
 \layout Syntax
 
-.ds.obj unmap
+.DS.obj unmap
 \layout Standard
 
-Unmaps the current texture from the object.
+Removes the current texture from the object.
 \layout Subsection
 
-Dataset, Object and Element Properties
+Dataset, Object and Data-Unit Properties
 \layout Standard
 
 Tables 
@@ -13686,11 +14049,11 @@ Tables
 \end_inset 
 
  and 
-\begin_inset LatexCommand \vref{topo_ele_prop}
+\begin_inset LatexCommand \vref{topo_du_prop}
 
 \end_inset 
 
- list all the dataset, object and basic element properties that are accessible
+ list all the dataset, object and data-unit properties that are accessible
  with the dataset and object commands 
 \family typewriter 
 set
@@ -13701,8 +14064,8 @@ get
 \family default 
 , as well as available during selection or range statements.
  Note that for attached topograph datasets, the selectable properties of
- the structure dataset are also available (table 
-\begin_inset LatexCommand \ref{struct_ele_prop}
+ the structure data-units are also available (table 
+\begin_inset LatexCommand \ref{struct_du_prop}
 
 \end_inset 
 
@@ -13715,25 +14078,39 @@ Render Modes and Properties
 Object type surface:
 \layout Description
 
-fill (default)
+fill (default) The faces are rendered as filled and lit triangles.
 \layout Description
 
-lines
+lines Only the outlines of the triangular faces are drawn as lines of width
+ 
+\family typewriter 
+lw
+\family default 
+.
 \layout Description
 
-dots
+dots Only the vertices are draw as points of size 
+\family typewriter 
+ps
+\family default 
+.
 \layout Paragraph
 
 Object type contour:
 \layout Description
 
-lines (default)
+lines (default) The contour lines are displayed, with a width of 
+\family typewriter 
+lw
+\family default 
+.
 \layout Description
 
-dots
-\layout Subsection
-
-Tables
+dots Only the endpoints of the lines are displayed, with a size of 
+\family typewriter 
+ps
+\family default 
+.
 \layout Standard
 
 \begin_float wide-tab 
@@ -13741,12 +14118,12 @@ Tables
 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="17" columns="4">
+<lyxtabular version="2" rows="18" columns="4">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="9ex" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="1ex" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="1ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="61ex" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="104mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -13756,7 +14133,7 @@ Tables
 Property
 \end_inset 
 </cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -13768,7 +14145,7 @@ S
 
 \end_inset 
 </cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -13986,6 +14363,7 @@ scalexy
 
 \layout Standard
 
+Scaling factor in xy plane
 \end_inset 
 </cell>
 </row>
@@ -14017,6 +14395,7 @@ scalez
 
 \layout Standard
 
+Scaling factor in z
 \end_inset 
 </cell>
 </row>
@@ -14058,7 +14437,9 @@ trans
 
 \layout Standard
 
-Translation vector, default is zero
+Translation vector, default is 
+\family typewriter 
+{0,0,0}
 \end_inset 
 </cell>
 </row>
@@ -14070,7 +14451,7 @@ Translation vector, default is zero
 
 
 \emph on 
-Object Properties
+Object Properties for type surface
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14138,7 +14519,7 @@ Geometric center of object
 
 \layout Standard
 
-color
+step
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14158,6 +14539,11 @@ color
 
 \layout Standard
 
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -14169,7 +14555,77 @@ color
 </cell>
 </row>
 <row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Object Properties for type contour
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+center
+\end_inset 
+</cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Geometric center of object
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -14223,12 +14679,22 @@ lstep
 
 \layout Standard
 
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
 
 \end_inset 
 </cell>
@@ -14254,12 +14720,22 @@ lstart
 
 \layout Standard
 
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
 
 \end_inset 
 </cell>
@@ -14278,37 +14754,6 @@ lstart
 \layout Standard
 
 lend
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-size
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14426,12 +14871,12 @@ Topograph Dataset and Object Properties
 \begin_inset  Tabular
 <lyxtabular version="2" rows="8" columns="6">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="9ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="59ex" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="" special="c">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="97mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -14506,7 +14951,7 @@ Description
 
 
 \emph on 
-element properties shared between dataset and objects
+data-unit properties shared between dataset and objects
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14566,11 +15011,6 @@ h
 
 \layout Standard
 
-
-\begin_inset Formula \( \bullet  \)
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14625,11 +15065,6 @@ x
 \begin_inset Text
 
 \layout Standard
-
-
-\begin_inset Formula \( \bullet  \)
-\end_inset 
-
 
 \end_inset 
 </cell>
@@ -14686,11 +15121,6 @@ y
 
 \layout Standard
 
-
-\begin_inset Formula \( \bullet  \)
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14746,11 +15176,6 @@ z
 
 \layout Standard
 
-
-\begin_inset Formula \( \bullet  \)
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14793,7 +15218,7 @@ z
 
 
 \emph on 
-element properties copied from dataset to object
+data-unit properties copied from dataset to object
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -14920,11 +15345,11 @@ R Property can be used in a range statement
 \layout Caption
 
 
-\begin_inset LatexCommand \label{topo_ele_prop}
+\begin_inset LatexCommand \label{topo_du_prop}
 
 \end_inset 
 
-Topograph Element Properties
+Topograph Data-Unit Properties
 \end_float 
 \layout Standard
 
@@ -14936,7 +15361,7 @@ Topograph Element Properties
 <lyxtabular version="2" rows="7" columns="3">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="85mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="99mm" special="">
 <column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
 <row topline="true" bottomline="false" newpage="false">
 <cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -15122,7 +15547,7 @@ transparency for object types contour and slab
 
 \layout Standard
 
-0.7
+1.0
 \end_inset 
 </cell>
 </row>
@@ -15205,6 +15630,9 @@ Material
 \layout Paragraph*
 
 Polygon Offset
+\layout Paragraph*
+
+Solid Surface
 \layout Paragraph*
 
 Spline

@@ -581,7 +581,7 @@ Three graphical representations of the scalar field dataset are provided:
 Surface Dataset
 \layout Standard
 
-This dataset has a surface point as its basic element, each characterized
+This dataset has a surface point as its basic data unit, each characterized
  by a vertex, a normal and optionally some attributes.
  It also contains a list of point triplets which together form a triangle
  face.
