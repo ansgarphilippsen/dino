@@ -291,14 +291,11 @@
 				F512CFFF0249799D01FB7A39,
 				F512D0040249799D01FB7A39,
 				F512D0050249799D01FB7A39,
-				F512D00B0249799D01FB7A39,
 				F512D00C0249799D01FB7A39,
 				F512D00D0249799D01FB7A39,
 				F512D00E0249799D01FB7A39,
-				F512D00F0249799D01FB7A39,
 				F512D0110249799D01FB7A39,
 				F512D0120249799D01FB7A39,
-				F512D0160249799D01FB7A39,
 				F512D0170249799D01FB7A39,
 				F512D0180249799D01FB7A39,
 				F512D0190249799D01FB7A39,
@@ -309,7 +306,6 @@
 				F512D01E0249799D01FB7A39,
 				F512D01F0249799D01FB7A39,
 				F512D0200249799D01FB7A39,
-				F512D0210249799D01FB7A39,
 				F512D0220249799D01FB7A39,
 				F512D0230249799D01FB7A39,
 				F512D0240249799D01FB7A39,
@@ -390,7 +386,6 @@
 				F512D0620249799D01FB7A39,
 				F512D0630249799D01FB7A39,
 				F512D0640249799D01FB7A39,
-				F512D0650249799D01FB7A39,
 				F512D0690249799D01FB7A39,
 				F512D06A0249799D01FB7A39,
 				F512D06E0249799D01FB7A39,
@@ -492,8 +487,6 @@
 		F512CF38024978B501FB7A39 = {
 			children = (
 				F512CF8B0249799D01FB7A39,
-				F512CF390249799D01FB7A39,
-				F512CF3A0249799D01FB7A39,
 				F512CF3B0249799D01FB7A39,
 				F512CF3C0249799D01FB7A39,
 				F512CF3D0249799D01FB7A39,
@@ -524,8 +517,6 @@
 				F512CF560249799D01FB7A39,
 				F512CF570249799D01FB7A39,
 				F512CF580249799D01FB7A39,
-				F512CF590249799D01FB7A39,
-				F512CF5A0249799D01FB7A39,
 				F512CF5B0249799D01FB7A39,
 				F512CF5C0249799D01FB7A39,
 				F512CF5D0249799D01FB7A39,
@@ -540,50 +531,23 @@
 				F512CF660249799D01FB7A39,
 				F512CF670249799D01FB7A39,
 				F512CF680249799D01FB7A39,
-				F512CF690249799D01FB7A39,
-				F512CF6A0249799D01FB7A39,
-				F512CF6B0249799D01FB7A39,
-				F512CF6C0249799D01FB7A39,
-				F512CF6D0249799D01FB7A39,
-				F512CF6E0249799D01FB7A39,
 				F512CF6F0249799D01FB7A39,
 				F512CF700249799D01FB7A39,
 				F512CF710249799D01FB7A39,
 				F512CF720249799D01FB7A39,
 				F512CF730249799D01FB7A39,
 				F512CF740249799D01FB7A39,
-				F512CF750249799D01FB7A39,
-				F512CF760249799D01FB7A39,
-				F512CF780249799D01FB7A39,
-				F512CF790249799D01FB7A39,
-				F512CF7A0249799D01FB7A39,
-				F512CF7B0249799D01FB7A39,
-				F512CF7C0249799D01FB7A39,
-				F512CF7D0249799D01FB7A39,
-				F512CF7E0249799D01FB7A39,
-				F512CF7F0249799D01FB7A39,
 				F512CF800249799D01FB7A39,
 				F512CF810249799D01FB7A39,
 				F512CF820249799D01FB7A39,
 				F512CF830249799D01FB7A39,
 				F512CF840249799D01FB7A39,
 				F512CF850249799D01FB7A39,
-				F512CF860249799D01FB7A39,
-				F512CF870249799D01FB7A39,
-				F512CF880249799D01FB7A39,
-				F512CF890249799D01FB7A39,
 				F512CF8A0249799D01FB7A39,
 				F512CF8C0249799D01FB7A39,
 				F512CF8D0249799D01FB7A39,
 				F512CF8E0249799D01FB7A39,
 				F512CF8F0249799D01FB7A39,
-				F512CF900249799D01FB7A39,
-				F512CF910249799D01FB7A39,
-				F512CF920249799D01FB7A39,
-				F512CF930249799D01FB7A39,
-				F512CF940249799D01FB7A39,
-				F512CF950249799D01FB7A39,
-				F512CF960249799D01FB7A39,
 				F512CF970249799D01FB7A39,
 				F512CF980249799D01FB7A39,
 				F512CF990249799D01FB7A39,
@@ -600,10 +564,8 @@
 				F512CFA40249799D01FB7A39,
 				F512CFA50249799D01FB7A39,
 				F512CFA60249799D01FB7A39,
-				F512CFA70249799D01FB7A39,
 				F512CFA80249799D01FB7A39,
 				F512CFA90249799D01FB7A39,
-				F512CFAA0249799D01FB7A39,
 				F512CFAB0249799D01FB7A39,
 				F512CFAC0249799D01FB7A39,
 				F512CFAD0249799D01FB7A39,
@@ -614,17 +576,11 @@
 				F512CFB20249799D01FB7A39,
 				F512CFB30249799D01FB7A39,
 				F512CFB40249799D01FB7A39,
-				F512CFB50249799D01FB7A39,
-				F512CFB60249799D01FB7A39,
-				F512CFB70249799D01FB7A39,
-				F512CFB80249799D01FB7A39,
 				F512CFB90249799D01FB7A39,
 				F512CFBA0249799D01FB7A39,
 				F512CFBB0249799D01FB7A39,
 				F512CFBC0249799D01FB7A39,
 				F512CFBD0249799D01FB7A39,
-				F512CFBE0249799D01FB7A39,
-				F512CFBF0249799D01FB7A39,
 				F512CFC00249799D01FB7A39,
 				F512CFC10249799D01FB7A39,
 				F512CFC20249799D01FB7A39,
@@ -669,18 +625,6 @@
 			name = DinoCore;
 			path = "";
 			refType = 4;
-		};
-		F512CF390249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = AppPlus.c;
-			path = ../../AppPlus.c;
-			refType = 2;
-		};
-		F512CF3A0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = AppPlus.h;
-			path = ../../AppPlus.h;
-			refType = 2;
 		};
 		F512CF3B0249799D01FB7A39 = {
 			isa = PBXFileReference;
@@ -862,18 +806,6 @@
 			path = ../../dino.h;
 			refType = 2;
 		};
-		F512CF590249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = extension.c;
-			path = ../../extension.c;
-			refType = 2;
-		};
-		F512CF5A0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = extension.h;
-			path = ../../extension.h;
-			refType = 2;
-		};
 		F512CF5B0249799D01FB7A39 = {
 			isa = PBXFileReference;
 			name = font_16.h;
@@ -958,42 +890,6 @@
 			path = ../../glw.h;
 			refType = 2;
 		};
-		F512CF690249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = GLwDrawA.c;
-			path = ../../GLwDrawA.c;
-			refType = 2;
-		};
-		F512CF6A0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = GLwDrawA.h;
-			path = ../../GLwDrawA.h;
-			refType = 2;
-		};
-		F512CF6B0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = GLwDrawAP.h;
-			path = ../../GLwDrawAP.h;
-			refType = 2;
-		};
-		F512CF6C0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = GLwMDrawA.c;
-			path = ../../GLwMDrawA.c;
-			refType = 2;
-		};
-		F512CF6D0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = GLwMDrawA.h;
-			path = ../../GLwMDrawA.h;
-			refType = 2;
-		};
-		F512CF6E0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = GLwMDrawAP.h;
-			path = ../../GLwMDrawAP.h;
-			refType = 2;
-		};
 		F512CF6F0249799D01FB7A39 = {
 			isa = PBXFileReference;
 			name = grid_db.c;
@@ -1028,66 +924,6 @@
 			isa = PBXFileReference;
 			name = grid_read.c;
 			path = ../../grid_read.c;
-			refType = 2;
-		};
-		F512CF750249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = grid.c;
-			path = ../../grid.c;
-			refType = 2;
-		};
-		F512CF760249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = grid.h;
-			path = ../../grid.h;
-			refType = 2;
-		};
-		F512CF780249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui_glut.c;
-			path = /Users/bernechs/work/Dino/Dino_vX/src/gui_glut.c;
-			refType = 0;
-		};
-		F512CF790249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui_glut.h;
-			path = /Users/bernechs/work/Dino/Dino_vX/src/gui_glut.h;
-			refType = 0;
-		};
-		F512CF7A0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui_java.c;
-			path = ../../gui_java.c;
-			refType = 2;
-		};
-		F512CF7B0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui_sdl.c;
-			path = ../../gui_sdl.c;
-			refType = 2;
-		};
-		F512CF7C0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui_sdl.h;
-			path = ../../gui_sdl.h;
-			refType = 2;
-		};
-		F512CF7D0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui_x11.c;
-			path = ../../gui_x11.c;
-			refType = 2;
-		};
-		F512CF7E0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui_x11.h;
-			path = ../../gui_x11.h;
-			refType = 2;
-		};
-		F512CF7F0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = gui.h;
-			path = ../../gui.h;
 			refType = 2;
 		};
 		F512CF800249799D01FB7A39 = {
@@ -1126,30 +962,6 @@
 			path = ../../input.h;
 			refType = 2;
 		};
-		F512CF860249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = jci.c;
-			path = ../../jci.c;
-			refType = 2;
-		};
-		F512CF870249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = jci.h;
-			path = ../../jci.h;
-			refType = 2;
-		};
-		F512CF880249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = joy.c;
-			path = ../../joy.c;
-			refType = 2;
-		};
-		F512CF890249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = joy.h;
-			path = ../../joy.h;
-			refType = 2;
-		};
 		F512CF8A0249799D01FB7A39 = {
 			isa = PBXFileReference;
 			name = joystick.c;
@@ -1184,48 +996,6 @@
 			isa = PBXFileReference;
 			name = mead.h;
 			path = ../../mead.h;
-			refType = 2;
-		};
-		F512CF900249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = om_glut.c;
-			path = ../../om_glut.c;
-			refType = 2;
-		};
-		F512CF910249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = om_glut.h;
-			path = ../../om_glut.h;
-			refType = 2;
-		};
-		F512CF920249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = om_sdl.c;
-			path = ../../om_sdl.c;
-			refType = 2;
-		};
-		F512CF930249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = om_sdl.h;
-			path = ../../om_sdl.h;
-			refType = 2;
-		};
-		F512CF940249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = om_x11.c;
-			path = ../../om_x11.c;
-			refType = 2;
-		};
-		F512CF950249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = om_x11.h;
-			path = ../../om_x11.h;
-			refType = 2;
-		};
-		F512CF960249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = om.h;
-			path = ../../om.h;
 			refType = 2;
 		};
 		F512CF970249799D01FB7A39 = {
@@ -1324,12 +1094,6 @@
 			path = ../../scal_mc_new_lookup.h;
 			refType = 2;
 		};
-		F512CFA70249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = scal_mc_new_lookup2.h;
-			path = ../../scal_mc_new_lookup2.h;
-			refType = 2;
-		};
 		F512CFA80249799D01FB7A39 = {
 			isa = PBXFileReference;
 			name = scal_mc_new.c;
@@ -1340,12 +1104,6 @@
 			isa = PBXFileReference;
 			name = scal_mc_new.h;
 			path = ../../scal_mc_new.h;
-			refType = 2;
-		};
-		F512CFAA0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = scal_mc_new2.c;
-			path = ../../scal_mc_new2.c;
 			refType = 2;
 		};
 		F512CFAB0249799D01FB7A39 = {
@@ -1408,30 +1166,6 @@
 			path = ../../set.h;
 			refType = 2;
 		};
-		F512CFB50249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = sgi_stereo.c;
-			path = ../../sgi_stereo.c;
-			refType = 2;
-		};
-		F512CFB60249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = sgi_stereo.h;
-			path = ../../sgi_stereo.h;
-			refType = 2;
-		};
-		F512CFB70249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = sgi_video.c;
-			path = ../../sgi_video.c;
-			refType = 2;
-		};
-		F512CFB80249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = sgi_video.h;
-			path = ../../sgi_video.h;
-			refType = 2;
-		};
 		F512CFB90249799D01FB7A39 = {
 			isa = PBXFileReference;
 			name = sglib.c;
@@ -1460,18 +1194,6 @@
 			isa = PBXFileReference;
 			name = shell.h;
 			path = ../../shell.h;
-			refType = 2;
-		};
-		F512CFBE0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = spacetec.c;
-			path = ../../spacetec.c;
-			refType = 2;
-		};
-		F512CFBF0249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = spacetec.h;
-			path = ../../spacetec.h;
 			refType = 2;
 		};
 		F512CFC00249799D01FB7A39 = {
@@ -1864,12 +1586,6 @@
 			settings = {
 			};
 		};
-		F512D00B0249799D01FB7A39 = {
-			fileRef = F512CF7F0249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F512D00C0249799D01FB7A39 = {
 			fileRef = F512CF810249799D01FB7A39;
 			isa = PBXBuildFile;
@@ -1888,12 +1604,6 @@
 			settings = {
 			};
 		};
-		F512D00F0249799D01FB7A39 = {
-			fileRef = F512CF870249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F512D0110249799D01FB7A39 = {
 			fileRef = F512CF8D0249799D01FB7A39;
 			isa = PBXBuildFile;
@@ -1902,12 +1612,6 @@
 		};
 		F512D0120249799D01FB7A39 = {
 			fileRef = F512CF8F0249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F512D0160249799D01FB7A39 = {
-			fileRef = F512CF960249799D01FB7A39;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1968,12 +1672,6 @@
 		};
 		F512D0200249799D01FB7A39 = {
 			fileRef = F512CFA60249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F512D0210249799D01FB7A39 = {
-			fileRef = F512CFA70249799D01FB7A39;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2310,12 +2008,6 @@
 		};
 		F512D0640249799D01FB7A39 = {
 			fileRef = F512CF840249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F512D0650249799D01FB7A39 = {
-			fileRef = F512CF860249799D01FB7A39;
 			isa = PBXBuildFile;
 			settings = {
 			};
