@@ -105,18 +105,10 @@ struct GUI
 
 };
 
-int guiInit(void (*)(int, char **), int*, char ***);
 int guiMInit(void (*)(int, char **), int*, char ***);
 
-int guiMainLoop(void);
-
-int guiResolveColor(const char *name, float *r, float *g, float *b);
-
-int guiMessage(char *m);
 int guiMessage2(char *m);
 
-void guiSwapBuffers(void);
 
-void guiCMICallback(const cmiToken *t);
 
 #endif

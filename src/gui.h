@@ -1,6 +1,8 @@
 #ifndef _GUI_H
 #define _GUI_H
 
+#include "gui_ext.h"
+
 #ifdef GLUT_GUI
 #include "gui_glut.h"
 #endif

@@ -18,10 +18,12 @@
 #include "dbm.h"
 #include "com.h"
 #include "shell.h"
-#include "gui.h"
 #include "gfx.h"
 #include "dino.h"
 #include "scene.h"
+#include "startup.h"
+
+#include "gui_ext.h"
 
 #ifdef USE_CMI
 #include "cmi.h"
@@ -34,7 +36,9 @@
 #endif
 
 
+#ifndef USE_CMI
 extern struct GUI gui;
+#endif
 
 const char usage[]={"Usage: dino [-debug] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
 
@@ -159,11 +163,15 @@ int main(int argc,char **argv)
 
   if(gfx_mode) {
     debmsg("calling guiInit");
+#ifdef USE_CMI
+    gf=guiInit(&argc, &argv);
+#else
     gf=guiInit(comWorkGfxCommand,&argc,&argv);
+#endif
   } else {
     return 0;
-    debmsg("calling guiMInit");
-    gf=guiMInit(comWorkGfxCommand, &argc, &argv);
+    //    debmsg("calling guiMInit");
+    //    gf=guiMInit(comWorkGfxCommand, &argc, &argv);
   }
 
   /* go through options */
@@ -282,8 +290,10 @@ void dinoExit(int n)
     system("/usr/gfx/setmon -n 72HZ");
 #endif
 #ifdef LINUX
+#ifndef USE_CMI
   if(strlen(gui.gdbm_tmpfile)>0)
     remove(gui.gdbm_tmpfile);
+#endif
 #endif
   exit(n);
 }

@@ -20,14 +20,12 @@
 #include "grid_db.h"
 #include "geom_db.h"
 #include "mat.h"
-#include "gui.h"
 #include "om.h"
 #include "write.h"
 #include "writePS.h"
 #include "Cmalloc.h"
 #include "cgfx.h"
 #include "scene.h"
-#include "menu.h"
 #include "glw.h"
 #include "symm.h"
 #include "cl.h"
@@ -38,8 +36,11 @@
 #include "pick.h"
 
 #ifdef USE_CMI
-#include "cmi.h"
 #include "input.h"
+#include "cmi.h"
+#include "gui_ext.h"
+#else
+#include "gui.h"
 #endif
 
 #ifdef EXPO
@@ -49,7 +50,9 @@ struct GLOBAL_COM com;
 
 extern struct DBM dbm;
 extern struct GFX gfx;
+#ifndef USE_CMI
 extern struct GUI gui;
+#endif
 extern struct SHELL shell;
 extern struct SCENE scene;
 
@@ -97,6 +100,24 @@ int comInit()
 #ifdef LINUX
   char joyname[128];
 #endif
+
+#ifdef USE_CMI
+  struct TRANSFORM_LIST_COMMAND mouse[]={
+    {0, CMI_BUTTON1_MASK, TRANS_ROTY, -0.5},
+    {1, CMI_BUTTON1_MASK, TRANS_ROTX, -0.5},
+    {0, CMI_BUTTON1_MASK | CMI_SHIFT_MASK, TRANS_TRAX, -1.0},
+    {1, CMI_BUTTON1_MASK | CMI_SHIFT_MASK, TRANS_TRAY, 1.0},
+    {0, CMI_BUTTON2_MASK , TRANS_TRAZ, -0.2},
+    {1, CMI_BUTTON2_MASK , TRANS_TRAZ, -0.5},
+    {0, CMI_BUTTON1_MASK | CMI_BUTTON2_MASK, TRANS_ROTZ, 1.0},
+    {1, CMI_BUTTON1_MASK | CMI_BUTTON2_MASK, TRANS_ROTZ, -1.0},
+    {0, CMI_BUTTON2_MASK | CMI_SHIFT_MASK, TRANS_SLABN, 0.2},
+    {0, CMI_BUTTON2_MASK | CMI_SHIFT_MASK, TRANS_SLABF, 0.2},
+    {0, CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_SHIFT_MASK, TRANS_SLABN, 0.2},
+    {0, CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_SHIFT_MASK, TRANS_SLABF, -0.2},
+    {-1, 0, 0, 0}
+  };
+#else
   struct TRANSFORM_LIST_COMMAND mouse[]={
     {0, GUI_BUTTON1_MASK, TRANS_ROTY, -0.5},
     {1, GUI_BUTTON1_MASK, TRANS_ROTX, -0.5},
@@ -114,6 +135,7 @@ int comInit()
 #endif
     {-1, 0, 0, 0}
   };
+#endif
 
   struct TRANSFORM_LIST_COMMAND dials[]={
     {0, 0, TRANS_ROTX, 0.05},
@@ -172,7 +194,11 @@ int comInit()
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_MOUSE;
+#ifdef USE_CMI
+  com.tlist[tc].mask=CMI_CNTRL_MASK;
+#else
   com.tlist[tc].mask=GUI_CNTRL_MASK;
+#endif
   strcpy(com.tlist[tc].name,"mouse2");
   for(i=0;mouse[i].axis!=-1;i++)
     memcpy(&com.tlist[tc].command[i],&mouse[i],
@@ -189,7 +215,11 @@ int comInit()
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_DIALS;
+#ifdef USE_CMI
+  com.tlist[tc].mask=CMI_CNTRL_MASK;
+#else
   com.tlist[tc].mask=GUI_CNTRL_MASK;
+#endif
   strcpy(com.tlist[tc].name,"dials2");
   for(i=0;dials[i].axis!=-1;i++)
     memcpy(&com.tlist[tc].command[i],&dials[i],
@@ -206,7 +236,11 @@ int comInit()
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_SPACEBALL;
+#ifdef USE_CMI
+  com.tlist[tc].mask=CMI_CNTRL_MASK;
+#else
   com.tlist[tc].mask=GUI_CNTRL_MASK;
+#endif
   strcpy(com.tlist[tc].name,"spaceball2");
   for(i=0;spaceball[i].axis!=-1;i++)
     memcpy(&com.tlist[tc].command[i],&spaceball[i],
@@ -249,9 +283,12 @@ int comWorkPrompt(int word_count, char ** word_list)
   char *s_menu="menu.";
   struct SYMM_INFO s;
   int errflag=0;
-  long t;
+  long tt;
   struct timeval tv;
   struct timezone tz;
+#ifdef USE_CMI
+  cmiToken t;
+#endif
 
   comReturn(NULL);
 
@@ -387,12 +424,14 @@ int comWorkPrompt(int word_count, char ** word_list)
   } else if(!strcmp(word_list[0],"bench")) {
     if(com.benchmark==0) {
       gettimeofday(&tv,&tz);
-      t=tv.tv_sec*1000000L+tv.tv_usec;
-      com.t=t;
+      tt=tv.tv_sec*1000000L+tv.tv_usec;
+      com.t=tt;
       com.t2=1;
       com.benchmark=1;
     } else {
+
       guiMessage(" ");
+
       com.benchmark=0;
     }
   } else {
@@ -599,10 +638,13 @@ void comTimeProc()
   int i;
   struct timeval tv;
   struct timezone tz;
-  long t;
+  long tt;
   long diff;
   char mess[256];
   float fps;
+#ifdef USE_CMI
+  cmiToken t;
+#endif
 
   /* this function is called periodically through the gui */
   shellWork();
@@ -627,19 +669,24 @@ void comTimeProc()
 #endif
 
   if(gfx.spin) {
+#ifdef USE_CMI
+    comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,0,gfx.sdx);
+    comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,1,gfx.sdy);
+#else
     comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,0,gfx.sdx);
     comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,1,gfx.sdy);
+#endif
     comRedraw();
   }
 
   if(com.benchmark) {
     gettimeofday(&tv,&tz);
-    t=tv.tv_sec*1000000L+tv.tv_usec;
-    diff=t-com.t;
+    tt=tv.tv_sec*1000000L+tv.tv_usec;
+    diff=tt-com.t;
     if(diff<500000) {
       com.t2++;
     } else {
-      com.t=t;
+      com.t=tt;
       fps=(float)com.t2*1000000.0/((float)diff);
       com.t2=1;
       sprintf(mess,"%.3f fps",fps);
@@ -719,7 +766,13 @@ void comMessage(const char *s)
 {
   shellOut(s);
 }
+#ifdef USE_CMI
+int comPick(int screenx, int screeny, int flag)
+{
+  return 0;
+}
 
+#else
 int comPick(int screenx, int screeny, int flag)
 {
   int i,j,f,l;
@@ -1024,6 +1077,7 @@ int comPick(int screenx, int screeny, int flag)
 #endif
   return 0;
 }
+#endif
 
 int comCustom(double value)
 {
@@ -1045,6 +1099,7 @@ int comGetColor(const char *val, float *r, float *g, float *b)
 	(*g)=(float)v[1];
 	(*b)=(float)v[2];
   } else {
+    // TODO FOR CMI !!
     if(guiResolveColor(val,r,g,b)!=0) {
 	(*r)=0.0;
 	(*g)=0.0;
@@ -1135,78 +1190,83 @@ float comGetProperty(dbmNode *src,const char *prop,float *pos)
   return 0.0;
 }
 
-int comNewObj(const char *db, const char *name)
-{
-  if(gui.om_flag)
-    return(omAddObj(db,name));
-  else
-    return 0;
-}
-
-int comDelObj(const char *db, const char *name)
-{
-  if(gui.om_flag)
-    return(omDelObj(db,name));
-  else
-    return 0;
-}
-
-int comHideObj(const char *db, const char *name)
-{
-  if(gui.om_flag)
-    return(omHideObj(db,name));
-  else
-  return 0;
-}
-
-int comShowObj(const char *db, const char *name)
-{
-  if(gui.om_flag)
-    return(omShowObj(db,name));
-  else
-    return 0;
-}
-
-
-/*********************************
-int comObjCommand(char *db, char *obj, char *command)
-{
-  char target[256],*cc;
-  int wc;
-  char **wl;
-  
-  cc=strdup(command);
-  dbmSplit(cc,' ',&wc,&wl);
-
-  sprintf(target,"%s.%s",db,obj);
-
-  comWorkObject(target,wc,wl);
-
-  Cfree(cc);
-  return 0;
-}
-*********************************/
-
 int comRawCommand(const char *c)
 {
   shellWriteLog(c);
   return shellWorkPrompt(c,-1,NULL);
 }
 
+int comNewObj(const char *db, const char *name)
+{
+#ifdef USE_CMI
+  return 0;
+#else
+  if(gui.om_flag)
+    return(omAddObj(db,name));
+  else
+    return 0;
+#endif
+}
+
+int comDelObj(const char *db, const char *name)
+{
+#ifdef USE_CMI
+  return 0;
+#else
+  if(gui.om_flag)
+    return(omDelObj(db,name));
+  else
+    return 0;
+#endif
+}
+
+int comHideObj(const char *db, const char *name)
+{
+#ifdef USE_CMI
+  return 0;
+#else
+  if(gui.om_flag)
+    return(omHideObj(db,name));
+  else
+  return 0;
+#endif
+}
+
+int comShowObj(const char *db, const char *name)
+{
+#ifdef USE_CMI
+  return 0;
+#else
+  if(gui.om_flag)
+    return(omShowObj(db,name));
+  else
+    return 0;
+#endif
+}
+
+
 int comNewDB(const char *name)
 {
+#ifdef USE_CMI
+  return 0;
+#else
   if(gui.om_flag)
     return(omAddDB(name));
   else
     return 0;
+#endif
 }
 
 int comDelDB(const char *name)
 {
+#ifdef USE_CMI
+  return 0;
+#else
   if(gui.om_flag)
     return(omDelDB(name));
   else
     return 0;
+#endif
 }
 
 int comIsDB(const char *name)
@@ -1314,7 +1374,7 @@ int comWrite(int wc,char **wl)
       } else if(clStrchr(scal,'x')) {
 	comMessage("\nnot implemented yet");
       } else {
-	scale=atof(scal)/(float)gui.win_width;
+	scale=atof(scal)/(float)gfx.win_width;
 	/*
 	sprintf(message,"\nwrite: specify %% for scale value (e.g. 200%%)");
 	comMessage(message);
@@ -1701,15 +1761,6 @@ int comPlay(dbmNode *node, int command)
   return 0;
 }
 
-int comGrabInput(int device, comInputFunc f, void *p)
-{
-  if(device==GUI_DIALS) {
-    com.dial_input=f;
-    com.dial_ptr=p;
-  }
-  return 0;
-}
-
 char com_return_buf[256];
 
 void comReturn(const char *r)
@@ -1734,7 +1785,11 @@ int comTransform(int device, int mask, int axis, int ivalue)
   int i,j,mask2,axis_flag;
   double value=(double)ivalue;
 
+#ifdef USE_CMI
+  mask &= CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_BUTTON3_MASK | CMI_BUTTON4_MASK | CMI_SHIFT_MASK | CMI_CNTRL_MASK | CMI_LOCK_MASK;
+#else
   mask &= GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_BUTTON3_MASK | GUI_BUTTON4_MASK | GUI_SHIFT_MASK | GUI_CNTRL_MASK | GUI_LOCK_MASK;
+#endif
 
 #ifdef EXPO
   apIdleReset();

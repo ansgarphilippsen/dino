@@ -160,14 +160,10 @@ struct GUI
 #endif
 };
 
-int guiInit(void (*)(int, char **), int*, char ***);
+// other declarations already in gui_ext.h
+
 int guiMInit(void (*)(int, char **), int*, char ***);
 
-int guiMainLoop(void);
-
-int guiResolveColor(const char *name, float *r, float *g, float *b);
-
-int guiMessage(char *m);
 int guiMessage2(char *m);
 
 void guiRegisterCustomEvent(Window w, guiCustomFunc f, void *ptr);

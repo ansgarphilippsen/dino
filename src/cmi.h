@@ -30,6 +30,7 @@ enum {
   CMI_RESIZE,   // window resize (int[2])
 
   // TARGET_GUI
+  CMI_MESSAGE,  // send message (char *)
   CMI_NEW,
   CMI_DEL,
   CMI_REN,

@@ -54,13 +54,11 @@
 #include "dino.h"
 #include "com.h"
 #include "gfx.h"
-#include "gui.h"
 #include "shell.h"
 #include "scene.h"
 #include "cl.h"
 
 extern struct GFX gfx;
-extern struct GUI gui;
 extern struct SHELL shell;
 extern struct SCENE scene;
 

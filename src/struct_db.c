@@ -1,18 +1,19 @@
 #include <GL/gl.h>
 
+#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <ctype.h>
 #include <math.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #include "dino.h"
 #include "struct_db.h"
 #include "struct_obj.h"
 #include "struct_read.h"
 #include "dbm.h"
-#include "gui.h"
 #include "shell.h"
 #include "com.h"
 #include "rex.h"
@@ -24,6 +25,7 @@
 #include "gfx.h"
 #include "cl.h"
 #include "xplor.h"
+#include "gui_ext.h"
 
 extern struct GFX gfx;
 

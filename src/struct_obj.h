@@ -79,6 +79,7 @@ int structObjRenew(structObj *obj, Set *set, Select *sel);
 
 int structObjRender(structObj *obj, int wc, char **wl);
 int structObjCp(structObj *o1, structObj *o2);
+int structObjDelete(structObj *o1);
 
 int structObjConnect(struct DBM_STRUCT_NODE *n, structObj *o, Select *);
 int structObjTrace(struct DBM_STRUCT_NODE *n, structObj *o, Select *);

@@ -18,7 +18,6 @@
 
 #include "dino.h"
 #include "gfx.h"
-#include "gui.h"
 #include "com.h"
 #include "dbm.h"
 #include "xtal.h"
@@ -30,12 +29,16 @@
 #include "Cmalloc.h"
 #include "scene.h"
 
+
 #ifdef USE_CMI
 #include "cmi.h"
+#include "gui_ext.h"
+#else
+#include "gui.h"
 #endif
 
 extern struct SCENE scene;
-extern struct GUI gui;
+//extern struct GUI gui;
 struct GFX gfx;
 
 extern int debug_mode,gfx_mode;
@@ -424,6 +427,7 @@ int gfxGLInit(void)
   
 int gfxRedraw() 
 {
+#ifndef USE_CMI
   if (gui.stereo_mode==GUI_STEREO_SPLIT) {
     glwDrawBuffer(GLW_STEREO_RIGHT);
     gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
@@ -451,12 +455,15 @@ int gfxRedraw()
     comDBRedraw();
 #endif
   } else {
+#endif
     glwDrawBuffer(GLW_STEREO_CENTER);
     gfxSetProjection(gfx.stereo_view);
     gfxSceneRedraw(1);
     
     comDBRedraw();
+#ifndef USE_CMI
   }
+#endif
 
   guiSwapBuffers();
   
@@ -564,8 +571,13 @@ int gfxSceneRedraw(int clear)
 
 int gfxSetViewport(void)
 {
+#ifdef USE_CMI
+  glViewport(0,0,gfx.win_width, gfx.win_height);
+  gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;
+#else
   glViewport(0,0,gui.win_width, gui.win_height);
   gfx.aspect=(double)gui.win_width/(double)gui.win_height;
+#endif
   gfxSetProjection(gfx.stereo_view);
   return 0;
 }
@@ -573,6 +585,18 @@ int gfxSetViewport(void)
 int gfxSetProjection(int view)
 {
   GLdouble iod,fd;
+#ifdef USE_CMI
+  if(view==GFX_LEFT) {
+    iod=-gfx.eye_dist;
+    fd=gfx.eye_offset;
+  } else if(view==GFX_RIGHT) {
+    iod=gfx.eye_dist;
+    fd=gfx.eye_offset;
+  } else {
+    iod=0.0;
+    fd=0.0;
+  }
+#else
   if(view==GFX_LEFT) {
     iod=-gui.eye_dist;
     fd=gui.eye_offset;
@@ -583,6 +607,7 @@ int gfxSetProjection(int view)
     iod=0.0;
     fd=0.0;
   }
+#endif
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -676,12 +701,12 @@ int gfxSetup(void)
 int gfxResizeEvent(void)
 {
 #ifdef TRANSP_NEW
-  gfx.save_buf_size=(gui.win_width)*gui.win_height;
+  gfx.save_buf_size=(gfx.win_width)*gfx.win_height;
   gfx.save_buf=Crecalloc(gfx.save_buf,gfx.save_buf_size,sizeof(float));
   //  fprintf(stderr,"\n%d", gfx.save_buf_size);
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
-  glOrtho(0,0,gui.win_width,gui.win_height,1,1);
+  glOrtho(0,0,gfx.win_width,gfx.win_height,1,1);
   glGetDoublev(GL_PROJECTION_MATRIX,gfx.pmat);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
@@ -695,7 +720,7 @@ int gfxSaveDepthBuffer(void)
   //  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
   //  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   //  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glReadPixels(0,0,gui.win_width,gui.win_height,
+  glReadPixels(0,0,gfx.win_width,gfx.win_height,
 	       GL_ALPHA,GL_FLOAT,
 	       gfx.save_buf);
   //  glPopClientAttrib(); 
@@ -717,7 +742,7 @@ int gfxRestoreDepthBuffer(void)
   glLoadIdentity();
   
   glRasterPos2f(0.0,0.0);
-  glDrawPixels(gui.win_width,gui.win_height,
+  glDrawPixels(gfx.win_width,gfx.win_height,
 	       GL_ALPHA,GL_FLOAT,
 	       gfx.save_buf);
   glPopMatrix();

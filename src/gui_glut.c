@@ -525,8 +525,11 @@ static int guiInitRGB()
   return 0;
 }
 
-
+#ifdef USE_CMI
+int guiInit(int *argc, char ***argv)
+#else
 int guiInit(void (*func)(int, char **), int *argc, char ***argv)
+#endif
 {
 #ifdef USE_CMI
   cmiToken t;
@@ -568,8 +571,6 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   glutSpaceballRotateFunc(gui_spaceball_rotation_func);
   glutDialsFunc(gui_dials_func);
 
-
-
   glutTimerFunc(5,gui_timer,0);
 
   debmsg("glut: setting up user menu");
@@ -595,8 +596,9 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   /* set back to main gfx */
   glutSetWindow(gui.glut_main);
 
-
+#ifndef USE_CMI
   gui.callback=func;
+#endif
   gui.redraw=0;
   gui.stereo_available=0;
   gui.stereo_mode=GUI_STEREO_OFF;
@@ -630,6 +632,7 @@ void guiCMICallback(const cmiToken *t)
   if(t->target==CMI_TARGET_GUI) {
     switch(t->command) {
     case CMI_REFRESH: gui.redraw++; break;
+    case CMI_MESSAGE: guiMessage((char *)t->value); break;
     }
   }
 }
