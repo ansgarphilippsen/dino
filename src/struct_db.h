@@ -108,7 +108,7 @@ struct STRUCT_ATOM_CHEM {
 #define STRUCT_SBA 0x10 // SBridge acceptor
 #define STRUCT_BUILD_TAG 0x20
 
-#define STRUCT_MAX_BOND_PER_ATOM 8
+#define STRUCT_MAX_BOND_PER_ATOM 12
 
 #define STRUCT_CONN_IMPL 1<<0
 #define STRUCT_CONN_EXPL 1<<1
