@@ -13,7 +13,7 @@
 
 int surfNewNode(dbmSurfNode *node)
 {
-  node->restrict=NULL;
+  node->restrict2=NULL;
 
   node->attach_cutoff=4.0;
   node->attach_flag=0;
@@ -342,7 +342,7 @@ int surfComRestrict(dbmSurfNode *node, int wc, char **wl)
 
   // reset restriction !!!
   for(i=0;i<node->vc;i++)
-    node->v[i].restrict=0;
+    node->v[i].restrict2=0;
 
   // check each atom
   c=0;
@@ -353,7 +353,7 @@ int surfComRestrict(dbmSurfNode *node, int wc, char **wl)
       return -1;
     }
     if(ret==0) {
-      node->v[i].restrict=1;
+      node->v[i].restrict2=1;
       c++;
    }
   }
@@ -594,7 +594,7 @@ int surfIsSelected(dbmSurfNode *node, struct SURF_VERTICE *vert, Select *sel)
 {
   int i,ec,ret;
 
-  if(vert->restrict)
+  if(vert->restrict2)
     return 0;
 
   if(sel==NULL)
@@ -942,7 +942,7 @@ int surfAttach(dbmSurfNode *node, dbmNode *attach, int iflag)
 		if(dz2<=dist) {
 		  ndist=dx2+dy2+dz2;
 		  if(ndist<dist) {
-		    if(!cap->restrict) {
+		    if(!cap->restrict2) {
 		      dist=ndist;
 		      ap=cap;
 		    }

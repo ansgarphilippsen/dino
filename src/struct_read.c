@@ -1745,7 +1745,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     cap->zz=ae->z;
     cap->bfac=ae->c1;
     cap->weight=ae->c2;
-    cap->restrict=0;
+    cap->restrict2=0;
     cap->flag=0;
 
     strcpy(cap->chem.element,ae->element);

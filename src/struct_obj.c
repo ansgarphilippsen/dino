@@ -1320,7 +1320,7 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
 	  if(mode==SEL_RESIDUE && hit) {
 	    for(ac=0;ac<crp->atom_count;ac++) {
 	      cap=crp->atom[ac];
-	      if(!cap->restrict) {
+	      if(!cap->restrict2) {
 		if(pass==1) {
 		  memcpy(&obj->atom[obj_ac].prop,&cap->def_prop,sizeof(struct STRUCT_ATOM_PROP));
 		  obj->atom[obj_ac].label=0;

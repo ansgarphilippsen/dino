@@ -49,7 +49,7 @@ enum {SURF_PROP_COLOR,
 
 typedef struct DBM_SURF_NODE {
   DBM_NODE_COMMON_HEADER
-  Select *restrict;
+  Select *restrict2;
   float attach_cutoff;
   int attach_flag;
   union DBM_NODE *last_attach;

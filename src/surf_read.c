@@ -92,7 +92,7 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
     matfNormalize(sn->v[vn].n,sn->v[vn].n); 
     sn->v[vn].id=id;
     sn->v[vn].num=vn;
-    sn->v[vn].restrict=0;
+    sn->v[vn].restrict2=0;
 
     for(k=0;k<PROP_MAX_VALUES;k++)
       sn->v[vn].cprop[k]=0.0;
@@ -162,7 +162,7 @@ int mspRead(FILE *f, union DBM_NODE *node)
     sn->v[vn].n[1]=(float)atof(d5);
     sn->v[vn].n[2]=(float)atof(d6);
     sn->v[vn].num=vn;
-    sn->v[vn].restrict=0;
+    sn->v[vn].restrict2=0;
     for(k=0;k<PROP_MAX_VALUES;k++)
       sn->v[vn].cprop[k]=0.0;
   }
@@ -439,7 +439,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
 
 	vert[vc].attach_node=NULL;
 	vert[vc].attach_element=0;
-	vert[vc].restrict=0;
+	vert[vc].restrict2=0;
 	entry[i].vert_p=vc;
 	for(k=0;k<PROP_MAX_VALUES;k++)
 	  vert[vc].cprop[k]=entry[i].c[k];
@@ -559,7 +559,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    vert[vc].num=vc;
 	    vert[vc].attach_node=NULL;
 	    vert[vc].attach_element=0;
-	    vert[vc].restrict=0;
+	    vert[vc].restrict2=0;
 	    entry[i].vertm_p=vc;
 	    for(k=0;k<PROP_MAX_VALUES;k++)
 	      vert[vc].cprop[k]=cprop[k];
@@ -726,7 +726,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int flag)
 	    vert[i].p[2]);
     */
     vert[i].num=i;
-    vert[i].restrict=0;
+    vert[i].restrict2=0;
     for(k=0;k<PROP_MAX_VALUES;k++)
       vert[i].cprop[k]=0.0;
   }

@@ -27,7 +27,7 @@ struct SURF_VERTICE {
   union DBM_NODE *attach_node;
   int attach_element;
   //  struct STRUCT_ATOM *ap;
-  int restrict;
+  int restrict2;
   /*
     this is the ideal implementation 
     of custom properties, but not 
