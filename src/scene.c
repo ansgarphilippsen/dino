@@ -752,6 +752,27 @@ int sceneCommand(int wc, char **wl)
 	gfx.transform.tra[1]=v1[13];
 	gfx.transform.tra[2]=v1[14];
 	comRedraw();
+      } else if(!strcmp(prop,"rtc")) {
+	/**********************
+	     set rot trans cen
+	**********************/
+	if(strlen(op)==0) {
+	  sprintf(message,"\nscene: missing operator");
+	  comMessage(message);
+	  return -1;
+	}
+	if(strlen(val)==0) {
+	  sprintf(message,"\nscene: missing value");
+	  comMessage(message);
+	  return -1;
+	}
+	if(strcmp(op,"=")) {
+	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  comMessage(message);
+	  return -1;
+	}
+	transSetAll(&gfx.transform, val);
+	comRedraw();
       } else {
 	sprintf(message,"\nunknown expression %s%s%s",prop,op,val);
 	comMessage(message);
@@ -806,6 +827,8 @@ int sceneCommand(int wc, char **wl)
 	      v1[8],v1[9],v1[10],0.0,
 	      v2[0],v2[1],v2[2],1.0);
 
+    } else if(!strcmp(wl[1],"rtc")) {
+      sprintf(message,transGetAll(&gfx.transform));
     } else if(!strcmp(wl[1],"eyedist")){
       sprintf(message,"%g",gui.eye_dist);
     } else if(!strcmp(wl[1],"fov")){
