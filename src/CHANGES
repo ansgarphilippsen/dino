@@ -1,3 +1,11 @@
+fixed unclean exit that could cause a crash under linux
+
+fixed bug in scalar-field selection
+
+fixed bug in CONECT record for pdb read in
+
+fixed bug in geom dataset with faulty return message handling
+
 fixed geom tube object
 
 added renderDefault function to really set all render properties to

@@ -7,3 +7,14 @@ add command "source" for "@" functionality
 
 read 5 chars for chain in CHARMM .crd file format
 
+transformation not taken into account for scalar grid and slab!! (also
+when using center)
+
+bug: CA trace does not honor different model
+
+symobj export to POV
+
+add near and far to rtc
+
+make sure that only protein or na residues are part of CA trace !!
+
