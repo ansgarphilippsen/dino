@@ -1,3 +1,7 @@
+current scene rtc is writte to logfile upon exit
+
+added scene property rtc
+
 added transparency and/or filter to pov output where missing 
 
 grasp surface file support
@@ -5,11 +9,11 @@ grasp surface file support
 initial size of main window adjusts to maximal vertical resolution
 
 added three ops: dist angle torsion and implemented their functionality to
-user menu
+user menu (torsion does not show sign correctly!) 
 
 script commands are not put in history
 
-only top-level commands get writte to logfile
+only top-level commands get written to logfile
 
 only error-free commands get written to logfile
 
