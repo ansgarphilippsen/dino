@@ -1,0 +1,57 @@
+TODO LIST FOR DINO
+
+This should be implemented / fixed asap
+=======================================
+
+*ALPHA*.dinorc
+
+scalar field dataset offset !!!!!!!
+
+naming detail vs detail2
+
+add flag to -range that will either clamp or ignore outside values
+
+*ALPHA* add helix cylinders!
+
+*OK* render bw=0 resp sr=0 should deactivate cyl resp sphere rendering
+
+*DIFFICULT* delay calculation of triangles for isocontours until 
+  render fill is called for the first time!
+
+struct write should honor restriction
+
+check POVray output
+
+check PDB loading (esp multi-model)
+
+apply transformation to surface normals
+
+check transparency for lines/contour (back/front sorting)
+
+*OK* transparent hsc == new coloring code
+
+*OK* render intpol not working
+
+check colors on SGI
+
+delete should accept wildcards
+
+new picking not working -> back to old
+
+scene:lightN grab INPUTDEVICE
+
+set labels on/off with command plus selection possible
+
+use '-arch XXX' flag for load to identify architecture and to 
+automatically decide wether to swap or not (MIPS ALPHA PPC INTEL and MSB 
+and LSB)
+ 
+relink against static motif on linux
+
+rewrite POV output to accept cgfx VA
+
+write image file from scalar-field slab
+
+struct restrc affects surf after attachment -> bug or feature ???
+
+*OK* use -sel -select -selection

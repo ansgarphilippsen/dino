@@ -1,0 +1,75 @@
+NOTES FOR DINO
+
+These are some ideas / concepts for future work
+===============================================
+
+-----
+
+CMI - common message interface
+
+interface between
+ - dino backend  (COM)
+ - opengl window (GFX)
+ - other gui     (GUI)
+
+these three parts register callbacks (done)
+instead of calling a subroutine from GUI to the other two or vice-versa, a
+message system is used (partially done)
+only a few direct gui* calls are defined in gui_ext.h, gui.h is no longer
+accessed by COM or GFX (mostly done)
+struct GUI is no longer accessed by COM or GFX, relevant fields
+should be put into struct GFX (partially done)
+
+----
+
+solidification algorithm to more objects, e.g isocontours
+
+add statements to load command to control how connectivity is done
+bitflags:
+1: residue/atom name db connectivity
+2: explicit connect stamements in file
+4: implicit distance based connectivity
+e.g. '-connect 7' results in default connectivity 
+
+
+color surface by concavity (add new surf property conc)
+
+allow lights to be grabbed
+
+
+------------
+plugin mechanism:
+ - register a callback as command for
+  - global (called without param, available from user menu)
+  - scene (called without param, available from user menu AND scene om)
+  - generic dataset, special dataset, generic object, specific object
+    (called with pointer to ds or obj, available from om under spec cat)
+
+int (cb_func*)(void *ptr)
+
+cb_register(char *name,int type, cb_func)
+
+#define CB_TYPE_GLOBAL     (1<<0)
+#define CB_TYPE_SCENE      (1<<1)
+#define CB_TYPE_STRUCT_DS  (1<<3)
+#define CB_TYPE_STRUCT_OBJ (1<<4)
+..
+#define CB_TYPE_ALL_DS  CB_TYPE_STRUCT_DS  | DB_TYPE....
+#define CB_TYPE_ALL_OBJ CB_TYPE_STRUCT_OBJ | DB_TYPE....
+
+see dlopen(3)
+
+------------
+
+secondary structure definition
+
+a) plugin that uses simple or DSSP derived algorithm
+b) extract info from PDB file
+c) allow DSSP file to be read (either during load or as addon to ds, similar to
+trj)
+d) provide 'jiffy' to convert DSSP output into DINO syntax
+
+------------
+
+-sel -select -selection
+
