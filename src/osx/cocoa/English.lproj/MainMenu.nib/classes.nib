@@ -1,0 +1,19 @@
+{
+    IBClasses = (
+        {
+            CLASS = CLIView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {dinoController = Controller; }; 
+            SUPERCLASS = NSView; 
+        }, 
+        {
+            CLASS = Controller; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {dinoCLI = CLIView; dinoGL = DinoGLView; statusBox = NSTextField; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = DinoGLView; LANGUAGE = ObjC; SUPERCLASS = NSOpenGLView; }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
