@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		080E96DDFE201D6D7F000001 = {
 			children = (
@@ -15,10 +15,9 @@
 				F528331902491AD301FB7A39,
 				F52A76D002C09DA9019813D9,
 				F52A76D102C09DCE019813D9,
-				F59061F702BE8B6C019813D9,
+				F777710102C37CF601981365,
+				F52C79980323E2DF01FB7A39,
 				F52A76C902C08DA2019813D9,
-				F52A76BE02BF961D019813D9,
-				F52A76BF02BF961D019813D9,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -139,13 +138,15 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				F5FF217003240B7301FB7A39,
 				F5156BD40313F99901A966FA,
 				F5156BD60313F9E201A966FA,
 				F52A76D602C0F691019813D9,
 				F52A76D802C0F691019813D9,
+				F5CA7FA9032679F901FB7A39,
 			);
 			isa = PBXGroup;
-			name = Interface;
+			name = Resources;
 			path = "";
 			refType = 4;
 		};
@@ -196,15 +197,21 @@
 			productName = Dino;
 			productReference = 17587328FF379C6511CA2CBB;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>Dino</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Dino Manual</string>
+	<key>CFBundleHelpBookName</key>
+	<string>Dino Help</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.dino</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -212,7 +219,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.8-5</string>
+	<string>0.8.5</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -302,13 +309,13 @@
 				F52A76D202C09E67019813D9,
 				F77770FE02C37CCA01981365,
 				F777710602C37CF601981365,
-				F777710702C37CF601981365,
 				F777710802C37CF601981365,
 				F777710902C37CF601981365,
 				F5B2A2130312F28101A1B05C,
+				F57E2A4C03254FA101FB7A39,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		29B97328FDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -317,10 +324,11 @@
 				F52A76DB02C0F691019813D9,
 				F5156BD50313F99901A966FA,
 				F5156BD70313F9E201A966FA,
-				F5EFC2A4031434D201FB7A39,
+				F5FF217103240B7301FB7A39,
+				F5CA7FCC032679F901FB7A39,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		29B9732BFDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -398,7 +406,7 @@
 				F5B2A2140312F28101A1B05C,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		29B9732DFDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -407,7 +415,7 @@
 				F52833300249212601FB7A39,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //290
 //291
@@ -474,10 +482,13 @@
 				F512CF4E0249799D01FB7A39,
 				F512CF4F0249799D01FB7A39,
 				F512CF500249799D01FB7A39,
+				F77770FC02C37CCA01981365,
+				F77770FD02C37CCA01981365,
 				F512CF510249799D01FB7A39,
 				F512CF520249799D01FB7A39,
 				F512CF530249799D01FB7A39,
 				F512CF540249799D01FB7A39,
+				F777710002C37CF601981365,
 				F512CF550249799D01FB7A39,
 				F512CF560249799D01FB7A39,
 				F512CF570249799D01FB7A39,
@@ -542,6 +553,10 @@
 				F512CFB40249799D01FB7A39,
 				F512CFB90249799D01FB7A39,
 				F512CFBA0249799D01FB7A39,
+				F777710202C37CF601981365,
+				F777710302C37CF601981365,
+				F777710402C37CF601981365,
+				F777710502C37CF601981365,
 				F512CFC00249799D01FB7A39,
 				F512CFC10249799D01FB7A39,
 				F512CFC20249799D01FB7A39,
@@ -581,14 +596,6 @@
 				F512CFE40249799D01FB7A39,
 				F512CFE50249799D01FB7A39,
 				F512CFE60249799D01FB7A39,
-				F77770FC02C37CCA01981365,
-				F77770FD02C37CCA01981365,
-				F777710002C37CF601981365,
-				F777710102C37CF601981365,
-				F777710202C37CF601981365,
-				F777710302C37CF601981365,
-				F777710402C37CF601981365,
-				F777710502C37CF601981365,
 			);
 			isa = PBXGroup;
 			name = DinoCore;
@@ -2240,18 +2247,6 @@
 			settings = {
 			};
 		};
-		F52A76BE02BF961D019813D9 = {
-			isa = PBXFileReference;
-			name = gui_x11.c;
-			path = /Users/bernechs/work/Dino/dino/src/X11/gui_x11.c;
-			refType = 0;
-		};
-		F52A76BF02BF961D019813D9 = {
-			isa = PBXFileReference;
-			name = gui_x11.h;
-			path = /Users/bernechs/work/Dino/dino/src/X11/gui_x11.h;
-			refType = 0;
-		};
 		F52A76C002BF9671019813D9 = {
 			fileRef = 29B97316FDCFA39411CA2CEA;
 			isa = PBXBuildFile;
@@ -2392,11 +2387,16 @@
 			settings = {
 			};
 		};
-		F59061F702BE8B6C019813D9 = {
+		F52C79980323E2DF01FB7A39 = {
 			isa = PBXFileReference;
-			name = gui_ext.h;
-			path = /Users/bernechs/work/Dino/dino/src/gui_ext.h;
-			refType = 0;
+			path = TODO_Cocoa;
+			refType = 4;
+		};
+		F57E2A4C03254FA101FB7A39 = {
+			fileRef = F777710102C37CF601981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F590620602BE8C02019813D9 = {
 			fileRef = F512CF4D0249799D01FB7A39;
@@ -2428,8 +2428,25 @@
 			settings = {
 			};
 		};
-		F5EFC2A4031434D201FB7A39 = {
-			fileRef = 17587328FF379C6511CA2CBB;
+		F5CA7FA9032679F901FB7A39 = {
+			includeInIndex = 1;
+			isa = PBXFolderReference;
+			path = "Dino Manual";
+			refType = 2;
+		};
+		F5CA7FCC032679F901FB7A39 = {
+			fileRef = F5CA7FA9032679F901FB7A39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5FF217003240B7301FB7A39 = {
+			isa = PBXFileReference;
+			path = README.rtf;
+			refType = 2;
+		};
+		F5FF217103240B7301FB7A39 = {
+			fileRef = F5FF217003240B7301FB7A39;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2477,8 +2494,8 @@
 		F777710102C37CF601981365 = {
 			isa = PBXFileReference;
 			name = gui_ext.h;
-			path = ../../gui_ext.h;
-			refType = 2;
+			path = /Users/bernechs/work/Dino/dino/src/gui_ext.h;
+			refType = 0;
 		};
 		F777710202C37CF601981365 = {
 			isa = PBXFileReference;
@@ -2506,12 +2523,6 @@
 		};
 		F777710602C37CF601981365 = {
 			fileRef = F777710002C37CF601981365;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F777710702C37CF601981365 = {
-			fileRef = F777710102C37CF601981365;
 			isa = PBXBuildFile;
 			settings = {
 			};

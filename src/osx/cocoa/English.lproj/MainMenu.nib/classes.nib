@@ -7,7 +7,16 @@
             SUPERCLASS = NSView; 
         }, 
         {
-            ACTIONS = {runScript = id; setWorkingDirectory = id; }; 
+            ACTIONS = {
+                autoslab = id; 
+                calcAngle = id; 
+                calcDist = id; 
+                calcTorsion = id; 
+                centerCP = id; 
+                centerCS = id; 
+                runScript = id; 
+                setWorkingDirectory = id; 
+            }; 
             CLASS = Controller; 
             LANGUAGE = ObjC; 
             OUTLETS = {dinoCLI = CLIView; dinoGL = DinoGLView; statusBox = NSTextField; }; 
