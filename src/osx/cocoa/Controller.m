@@ -23,30 +23,21 @@ static id dinoController;
 {
     [dinoCLI setCommandHandler:dinoController];
 
+    guiInit(0,0);
     cmiInitGL();
     cmiResize([dinoGL frame].size.width,[dinoGL frame].size.height);
-
-    gui_reshape([dinoGL frame].size.width,[dinoGL frame].size.height);
     
     controlTimer=[[NSTimer timerWithTimeInterval: 0.01 target: self selector: @selector(timerControl) userInfo: nil repeats: YES ] retain];
- [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
-/*	
-    [NSTimer scheduledTimerWithTimeInterval: 0.1 target: self selector: @selector(timerControl) userInfo: NULL repeats: NO];
-*/
-    
-   [self updateStatusBox:@"Ready"];    
+
+    [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
+
+    [self updateStatusBox:@"Ready"];    
 
 }
 
 - (void)timerControl
 {
-    gui_timer(NULL);
-
- //   [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
-
-/*
-    [NSTimer scheduledTimerWithTimeInterval: 0.1 target: self selector: @selector(timerControl) userInfo: NULL  repeats: NO];
-*/
+    guiTimeProc(NULL);
 }
 
 
@@ -58,16 +49,10 @@ static id dinoController;
     shellParseRaw([theCommand cString],0);
 }
 
-- (void) putText:(unsigned char *)tmp
+- (void) commandResult:(const char *)tmp
 {
     [dinoCLI putText:[NSString stringWithCString:tmp]];  
 }
-
-//------------------------------------------------------
-// Mouse Events 
-
-
-
 
 //------------------------------------------------------
 // Update Display
@@ -79,12 +64,17 @@ static id dinoController;
 
 - (void)swapBuffers
 {
-    [dinoGL swapBuffers];
+    [[dinoGL openGLContext] flushBuffer];
 }
 
 - (void)updateStatusBox:(NSString *)text
 {
     [statusBox setObjectValue:text];
 }
+
+
+//------------------------------------------------------
+// Mouse Events
+
 
 @end

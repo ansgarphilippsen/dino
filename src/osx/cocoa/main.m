@@ -14,12 +14,14 @@
 #include "dino.h"
 #include "cmi.h"
 #include "gui_ext.h"
+#include "gfx.h"
 
 int main(int argc, const char *argv[])
 {
-  cmiInit();
-  if(dinoMain(argc, argv)<0) return -1;
-  
-  return NSApplicationMain(argc, argv);
+    dinoParseArgs(argc,argv);
+    cmiInit();
+    gfxInit();
+    if(dinoMain(argc, argv)<0) return -1;
 
+    return NSApplicationMain(argc, argv);
 }

@@ -7,22 +7,12 @@
     return self;
 }
 
-// IMPLEMENT reshape instance method
-
-// this might be better implemented with update instance method
 - (void)drawRect:(NSRect)rect
 {
 //    fprintf(stderr,"drawRect (%p) (%fx%f)\n",[NSOpenGLContext currentContext],rect.size.width,rect.size.height);
-    gui_reshape((int)rect.size.width,(int)rect.size.height);
-    gui_redraw();
+    cmiResize((int)rect.size.width,(int)rect.size.height);
+    cmiRedraw();
 }
-
-- (id)swapBuffers
-{
-    // Update the GL context
-    [[self openGLContext] flushBuffer];
-   
-}   
  
 //---------------------------------------------------------------------------------
 // mouse control
@@ -50,7 +40,6 @@
   NSPoint pt = [theEvent locationInWindow];
   gui_mouse_drag(1,(int)pt.x,(int)pt.y);
 }
-
 
 
 @end

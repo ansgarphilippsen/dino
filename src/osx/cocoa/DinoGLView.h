@@ -7,7 +7,7 @@
 #include <OpenGL/glext.h>
 #include <OpenGL/CGLRenderers.h>
 
-#include "gui_osx.h"
+#include "cmi.h"
 
 @interface DinoGLView : NSOpenGLView
 {
@@ -19,7 +19,6 @@
 
 // Overrides
 - (id)initWithFrame:(NSRect) frameRect;
-- (id)swapBuffers;
 - (void)drawRect:(NSRect)rect;
 
 // These are standard methods in NSView.

@@ -4,8 +4,6 @@
 #import <Cocoa/Cocoa.h>
 #include <sys/time.h>
 
-#import  "Controller.h"
-#import  "DinoGLView.h"
 #include "gui_ext.h"
 
 #define GUI_NONE 0
@@ -73,5 +71,6 @@ struct GUI
   struct GUI_KEY_EVENT key_event[GUI_MAX_KEY_EVENTS];
 };
 
+void guiTimeProc();
 
 #endif

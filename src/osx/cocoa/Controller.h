@@ -11,8 +11,8 @@
 
 @interface Controller : NSObject
 {
-    IBOutlet CLIView *dinoCLI;
     IBOutlet DinoGLView *dinoGL;
+    IBOutlet CLIView *dinoCLI;
     IBOutlet NSTextField *statusBox;
     NSTimer *controlTimer;
 }
@@ -24,12 +24,11 @@
 - (void)timerControl;
 // CLI Interaction
 - (void)command:(NSString *)theCommand from:(id)sender;
-- (void)putText:(unsigned char *)text;
-// Mouse Control 
-
+- (void)commandResult:(const char *)text;
 // Update Display
 - (void)updateDisplay;
 - (void)swapBuffers;
 - (void)updateStatusBox:(NSString *)text;
+// Mouse Control 
 
 @end
