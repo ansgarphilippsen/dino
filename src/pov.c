@@ -30,6 +30,12 @@ static int writePOVTransform(transMat *m, float *v1, float *v2,int f)
   float tmp[3];
   double in[4],out[4];
 
+  // if raw flag do not transform
+  if(write_pov_flag & WRITE_POV_RAW) {
+    v2[0]=v1[0];    v2[1]=v1[1];    v2[2]=v1[2];
+    return 1;
+  }
+
   tmp[0]=v1[0];
   tmp[1]=v1[1];
   tmp[2]=v1[2];
@@ -431,6 +437,10 @@ static int writePOVStructObj(FILE *f, structObj *obj, int k,float *lim)
 
   if(k==0) {
     fprintf(f,"// object .%s.%s\n",obj->node->name, obj->name);
+    if(write_pov_flag & WRITE_POV_RAW) {
+      fprintf(f,"// center of mass at %f %f %f\n",
+	      obj->center[0], obj->center[1], obj->center[2]);
+    }
     fprintf(f,"#declare %s = 1;\n",obj_name);
     fprintf(f,"#declare %s = texture {\n",tex_name);
     if(write_pov_mode==WRITE_POV_NOCOLOR) {
@@ -637,6 +647,10 @@ static int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
 
   if(k==0) {
     fprintf(f,"// object .%s.%s\n",obj->node->name, obj->name);
+    if(write_pov_flag & WRITE_POV_RAW) {
+      fprintf(f,"// center of mass at %f %f %f\n",
+	      obj->center[0], obj->center[1], obj->center[2]);
+    }
     fprintf(f,"#declare %s = 1;\n",obj_name);
     
     fprintf(f,"#declare %s = texture {\n",tex_name);
@@ -1324,6 +1338,7 @@ int writePOV(FILE *fpov, FILE *finc,char *fpovn, int flag, int mode, int version
   write_pov_flag=flag;
   write_pov_mode=mode;
   write_pov_ver=version;
+
   
   lim[0]=lim[1]=lim[2]=-1e9;
   lim[3]=lim[4]=lim[5]=1e9;

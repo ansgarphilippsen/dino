@@ -22,7 +22,7 @@
 
 #define WRITE_POV_PLANE 0x1
 #define WRITE_POV_BOX   0x2
-#define WRITE_POV_DEF   0x4
+#define WRITE_POV_RAW   0x4
 
 #define WRITE_VA_POINTS 1
 #define WRITE_VA_LINES 2
