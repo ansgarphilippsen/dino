@@ -1,4 +1,6 @@
+re-implemented spaceball and dialbox (both via xinput)
 
+added scaling for mouse, spaceball and dials to .dinorc file
 
 added .dcd as CHARMM trj extension
 

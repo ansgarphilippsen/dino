@@ -26,6 +26,7 @@ struct OM_DS_ENTRY {
   char name[256];
   struct OM_OBJ_ENTRY obj[256];
   int oc, ncol;
+  int obj_show;
 };
 
 struct OM_POPUP_ENTRY {

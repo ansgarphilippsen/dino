@@ -88,23 +88,31 @@ int omInit(int icf)
   om.s1_color=BlackPixel(om.dpy,om.scrn);
   om.s2_color=BlackPixel(om.dpy,om.scrn);
 
-  if(XParseColor(om.dpy,om.cm,"slategray3",&color)!=0) {
+  // om bg color
+  if(XParseColor(om.dpy,om.cm,"#a9c2d3",&color)!=0) {
     if(XAllocColor(om.dpy,om.cm,&color)!=0)
       om.bg_color=color.pixel;
   }
-  if(XParseColor(om.dpy,om.cm,"slategray1",&color)!=0) {
+
+  // popup hilight
+  if(XParseColor(om.dpy,om.cm,"#c9e2e3",&color)!=0) {
     if(XAllocColor(om.dpy,om.cm,&color)!=0)
       om.bg2_color=color.pixel;
   }
-  if(XParseColor(om.dpy,om.cm,"black",&color)!=0) {
+  // ds border color
+  if(XParseColor(om.dpy,om.cm,"#092223",&color)!=0) {
     if(XAllocColor(om.dpy,om.cm,&color)!=0)
       om.bd_color=color.pixel;
   }
-  if(XParseColor(om.dpy,om.cm,"slategray4",&color)!=0) {
+
+  // button dark-shade
+  if(XParseColor(om.dpy,om.cm,"#698283",&color)!=0) {
     if(XAllocColor(om.dpy,om.cm,&color)!=0)
       om.s1_color=color.pixel;
   }
-  if(XParseColor(om.dpy,om.cm,"slategray2",&color)!=0) {
+
+  // button light shade
+  if(XParseColor(om.dpy,om.cm,"#d9f2f3",&color)!=0) {
     if(XAllocColor(om.dpy,om.cm,&color)!=0)
       om.s2_color=color.pixel;
   }
@@ -265,20 +273,27 @@ int omRecreate(void)
       all objects and the ds name
     */
     om.ds[i].width=boxw;
-    om.ds[i].height=(boxh+boxs2)*(om.ds[i].oc+1)-boxs2+2;
+    if(om.ds[i].obj_show) {
+      om.ds[i].height=(boxh+boxs2)*(om.ds[i].oc+1)-boxs2+2;
+    } else {
+      om.ds[i].height=boxh+2;
+    }
     om.ds[i].w=XCreateSimpleWindow(om.dpy,om.top,
 				   0,0,
 				   om.ds[i].width,om.ds[i].height,
 				   2,
 				   om.bd_color,om.bg_color);
-				   
-    /* creat the subwindows that take the objects */ 
-    for(j=0;j<om.ds[i].oc;j++) {
-      om.ds[i].obj[j].width=boxw-10;
-      om.ds[i].obj[j].height=boxh;
-      om.ds[i].obj[j].w=XCreateSimpleWindow(om.dpy,om.top,
-					    0,0,boxw-10,boxh,0,
-					    om.bd_color,om.bg_color);
+
+    if(om.ds[i].obj_show) {
+    
+      /* creat the subwindows that take the objects */ 
+      for(j=0;j<om.ds[i].oc;j++) {
+	om.ds[i].obj[j].width=boxw-10;
+	om.ds[i].obj[j].height=boxh;
+	om.ds[i].obj[j].w=XCreateSimpleWindow(om.dpy,om.top,
+					      0,0,boxw-10,boxh,0,
+					      om.bd_color,om.bg_color);
+      }
     }
   }
 
@@ -299,6 +314,7 @@ int omArrange(void)
   int theight;
   int x,y,width,height;
   int boxh,boxs2;
+  int oox=0;
 
   boxh=om.boxh;
   boxs2=1;
@@ -356,9 +372,13 @@ int omArrange(void)
     width=om.boxw-2;
     height=om.ds[i].height;
     XMoveResizeWindow(om.dpy,om.ds[i].w,x,y,width,height);
-    for(j=0;j<om.ds[i].oc;j++) {
-      y=j*(om.boxh+1)+boxh+1+om.ds[i].y;
-      XMoveResizeWindow(om.dpy,om.ds[i].obj[j].w,x+4,y,om.boxw-6,om.boxh);
+    if(om.ds[i].obj_show) {
+      for(j=0;j<om.ds[i].oc;j++) {
+	y=j*(om.boxh+1)+boxh+1+om.ds[i].y;
+	XMoveResizeWindow(om.dpy,om.ds[i].obj[j].w,
+			  x+4+oox,y,
+			  om.boxw-6-oox*2,om.boxh);
+      }
     }
   }
   return 0;
@@ -394,6 +414,28 @@ void omEvent(Window w, XEvent *event, void *ptr)
 
 }
 
+static void draw_arrowd(Display *dsp, Drawable d, GC g, int x,int y,int w,int h)
+{
+  XPoint point[3];
+  
+  point[0].x=x;  point[0].y=y+h;
+  point[1].x=x-w;  point[1].y=y-h;
+  point[2].x=x+w;  point[2].y=y-h;
+
+  XFillPolygon(dsp,d,g,point,3,Convex,CoordModeOrigin);
+}
+
+static void draw_arrowr(Display *dsp, Drawable d, GC g, int x,int y,int w,int h)
+{
+  XPoint point[3];
+  
+  point[0].x=x+w;  point[0].y=y;
+  point[1].x=x-w;  point[1].y=y-h;
+  point[2].x=x-w;  point[2].y=y+h;
+
+  XFillPolygon(dsp,d,g,point,3,Convex,CoordModeOrigin);
+}
+
 int omExposeEvent()
 {
   int i,j,tx,ty;
@@ -404,52 +446,58 @@ int omExposeEvent()
   objh=om.boxh;
   
   strcpy(label,"scene");
-  tx=(om.boxw-XTextWidth(om.xfs,label,strlen(label)))/2;
-  tx=4;
+  //tx=(om.boxw-XTextWidth(om.xfs,label,strlen(label)))/2;
+  tx=12;
   ty=om.boxh-(om.boxh-om.xfs->ascent+om.xfs->descent)/2;
 
   XClearWindow(om.dpy,om.scene.w);
   XDrawString(om.dpy,om.scene.w,om.gc,tx,ty,label,strlen(label));
 
   for(i=0;i<om.ds_count;i++) {
-    tx=4;
-    strcpy(label,om.ds[i].name);
+    tx=12;
     XClearWindow(om.dpy,om.ds[i].w);
+    if(om.ds[i].obj_show) {
+      draw_arrowd(om.dpy,om.ds[i].w,om.gc,6,objh/2+4,4,3);
+    } else {
+      draw_arrowr(om.dpy,om.ds[i].w,om.gc,7,objh/2+2,3,5);
+    }
+    strcpy(label,om.ds[i].name);
     XDrawString(om.dpy,om.ds[i].w,om.gc,tx,ty,label,strlen(label));
-    
-    XSetLineAttributes(om.dpy,om.gc,2,LineSolid,CapRound,JoinRound);
-    for(j=0;j<om.ds[i].oc;j++) {
-      tx=12;
-      strcpy(label,om.ds[i].obj[j].name);
-      XClearWindow(om.dpy,om.ds[i].obj[j].w);
-      /* draw the label */
-      XDrawString(om.dpy,om.ds[i].obj[j].w,om.gc,tx,ty,label,strlen(label));
-      /* draw the shadow box */
-      if(om.ds[i].obj[j].show) {
-	XSetForeground(om.dpy,om.gc,om.s1_color);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  1,0,1,objh);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  1,0,objw,0);
-	XSetForeground(om.dpy,om.gc,om.s2_color);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  1,objh,objw,objh);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  objw,0,objw,objh);
-      } else {
-	XSetForeground(om.dpy,om.gc,om.s2_color);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  1,0,1,objh);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  1,0,objw,0);
-	XSetForeground(om.dpy,om.gc,om.s1_color);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  1,objh,objw,objh);
-	XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
-		  objw,0,objw,objh);
-      }
-      XSetForeground(om.dpy,om.gc,om.fg_color);
 
+    XSetLineAttributes(om.dpy,om.gc,2,LineSolid,CapRound,JoinRound);
+    if(om.ds[i].obj_show) {
+      for(j=0;j<om.ds[i].oc;j++) {
+	tx=12;
+	strcpy(label,om.ds[i].obj[j].name);
+	XClearWindow(om.dpy,om.ds[i].obj[j].w);
+	/* draw the label */
+	XDrawString(om.dpy,om.ds[i].obj[j].w,om.gc,tx,ty,label,strlen(label));
+	/* draw the shadow box */
+	if(om.ds[i].obj[j].show) {
+	  XSetForeground(om.dpy,om.gc,om.s1_color);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    1,0,1,objh);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    1,0,objw,0);
+	  XSetForeground(om.dpy,om.gc,om.s2_color);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    1,objh,objw,objh);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    objw,0,objw,objh);
+	} else {
+	  XSetForeground(om.dpy,om.gc,om.s2_color);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    1,0,1,objh);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    1,0,objw,0);
+	  XSetForeground(om.dpy,om.gc,om.s1_color);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    1,objh,objw,objh);
+	  XDrawLine(om.dpy,om.ds[i].obj[j].w,om.gc,
+		    objw,0,objw,objh);
+	}
+	XSetForeground(om.dpy,om.gc,om.fg_color);
+      }
     }
   }
   XSetLineAttributes(om.dpy,om.gc,1,LineSolid,CapButt,JoinMiter);
@@ -489,31 +537,37 @@ int omButtonEvent(XButtonEvent *event,int mp)
 	    XMoveWindow(om.dpy,om.pwin,event->x_root,event->y_root);
 	    XMapRaised(om.dpy,om.pwin);
 	  }
+	} else if(event->button==1 && mp==1) {
+	  om.ds[i].obj_show = abs(om.ds[i].obj_show-1);
+	  omRecreate();
 	}
+	
 	break;
       } else {
-	for(j=0;j<om.ds[i].oc;j++)
-	  if(event->subwindow==om.ds[i].obj[j].w) {
-	    sprintf(om.pbase,".%s.%s",om.ds[i].name,om.ds[i].obj[j].name);
-	    if(mp==1 && event->button==1) {
-	      /* toggle the state */
-	      if(om.ds[i].obj[j].show) {
-		sprintf(command,"%s hide",om.pbase);
-		//comRawCommand(command);
-		cmiCommand(command);
-	      } else {
-		sprintf(command,"%s show",om.pbase);
-		//comRawCommand(command);
-		cmiCommand(command);
+	if(om.ds[i].obj_show) {
+	  for(j=0;j<om.ds[i].oc;j++)
+	    if(event->subwindow==om.ds[i].obj[j].w) {
+	      sprintf(om.pbase,".%s.%s",om.ds[i].name,om.ds[i].obj[j].name);
+	      if(mp==1 && event->button==1) {
+		/* toggle the state */
+		if(om.ds[i].obj[j].show) {
+		  sprintf(command,"%s hide",om.pbase);
+		  //comRawCommand(command);
+		  cmiCommand(command);
+		} else {
+		  sprintf(command,"%s show",om.pbase);
+		  //comRawCommand(command);
+		  cmiCommand(command);
+		}
 	      }
+	      if(mp==1 && event->button==3) {
+		om.pflag=1;
+		om.pwin=om.obj_popup.top;
+		XMoveWindow(om.dpy,om.pwin,event->x_root,event->y_root);
+		XMapRaised(om.dpy,om.pwin);
+	      }
+	      break; /* if subwindow was found */
 	    }
-	    if(mp==1 && event->button==3) {
-	      om.pflag=1;
-	      om.pwin=om.obj_popup.top;
-	      XMoveWindow(om.dpy,om.pwin,event->x_root,event->y_root);
-	      XMapRaised(om.dpy,om.pwin);
-	    }
-	    break; /* if subwindow was found */
 	  }
       }
     }
@@ -564,6 +618,7 @@ int omAddDB(const char *name)
     }
   strcpy(om.ds[om.ds_count].name,name);
   om.ds[om.ds_count].oc=0;
+  om.ds[om.ds_count].obj_show=1;
   om.ds_count++;
   omRecreate();
   return 0;

@@ -63,7 +63,7 @@ endif
 
 CC   = gcc
 CCP  = g++
-COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused $(JAVA_INC)
+COPT = -O2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused $(JAVA_INC)
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(MALLOCLIB) $(LIBGLW) $(LIBSTATIC) $(JAVA_LIBS)
 
 SRC += joy.c
