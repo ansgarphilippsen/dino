@@ -10,10 +10,9 @@
 {
     NSOpenGLPixelFormatAttribute attrs[] = {
         NSOpenGLPFADoubleBuffer,
-//	NSOpenGLPFAColorSize, 8,
 	NSOpenGLPFADepthSize, 1,
-//	NSOpenGLPFASampleBuffers, 1,  
-//	NSOpenGLPFASamples, 8,        // same as colorsize ??
+        NSOpenGLPFAStencilSize, 1,
+//        NSOpenGLPFAAccumSize, 8,
 	NSOpenGLPFAMaximumPolicy,
         nil };
     NSOpenGLPixelFormat *pixFmt;

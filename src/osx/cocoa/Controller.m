@@ -231,6 +231,8 @@ static id dinoController;
     unsigned memSize;
     NSOpenGLPixelFormat *pixFmt;
     NSOpenGLPixelFormatAttribute attrs[] = {
+        NSOpenGLPFAStencilSize, 1,	
+//        NSOpenGLPFAAccumSize, 8,
 	NSOpenGLPFAOffScreen,
 	nil };
 
@@ -242,10 +244,9 @@ static id dinoController;
 	memPointer=malloc(memSize);
 	[offScreenContext setOffScreen:memPointer width:(long)width height:(long)height rowbytes:(long)rowBytes];
 	[offScreenContext makeCurrentContext];
-	return 1;
+        return 1;
     }
     else{
-	[self showCommandResult:@"Initialization of the offscreen context failed."];
 	return 0;
     }
 	    
