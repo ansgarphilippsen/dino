@@ -6,23 +6,63 @@
 
 #include <png.h>
 
+#include "dino.h"
 #include "write.h"
 #include "com.h"
 #include "Cmalloc.h"
 #include "gui_ext.h"
+#include "gfx.h"
 
+extern struct GFX gfx;
+extern int debug_mode;
 
 static int write_png(struct WRITE_IMAGE *img,char *name);
 static int get_image(struct WRITE_IMAGE *img);
 
 int writeFile(char *name, struct WRITE_PARAM *p)
 {
+  int ow,oh;
   struct WRITE_IMAGE img;
 
   memcpy(&img.param,p,sizeof(struct WRITE_PARAM));
 
   if(img.param.dump && !img.param.accum) {
     get_image(&img);
+  } else {
+    // create offscreen rendering context
+    debmsg("creating offscreen rendering context");
+    guiCreateOffscreenContext(img.param.width,img.param.height,img.param.accum);
+
+    // initial gl
+    debmsg("initializing GL");
+    gfxGLInit();
+
+    // draw into offscreen context
+    debmsg("drawing into offscreen context");
+    ow=gfx.win_width;
+    oh=gfx.win_height;
+    glDrawBuffer(GL_FRONT);
+    gfx.win_width=img.param.width;
+    gfx.win_height=img.param.height;
+    gfxSetViewport();
+    gfxSetProjection(gfx.current_view);
+    gfxSceneRedraw(1);
+    comDBRedraw();
+
+    // get image
+    debmsg("retrieving image");
+    get_image(&img);
+
+    // destry offscreen context
+    debmsg("destroying offscreen context");
+    guiDestroyOffscreenContext();
+    
+    // restore old gfx settings
+    debmsg("restoring settings");
+    gfx.win_width=ow;
+    gfx.win_height=oh;
+    gfxSetViewport();
+
   }
 
 

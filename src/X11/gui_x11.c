@@ -53,7 +53,7 @@ user menu
 #endif
 
 static int init_main(int argc, char **argv);
-static XVisualInfo *init_visual(int sf,int st, int af);
+static XVisualInfo *init_visual(int df, int sf,int st, int af);
 static Colormap get_colormap(XVisualInfo *vinfo);
 static void glx_init(Widget ww, XtPointer clientData, XtPointer call);
 static void glx_expose(Widget ww, XtPointer clientData, XtPointer call);
@@ -179,19 +179,19 @@ int guiInit(int argc, char **argv)
 #endif
   
   // try with stencil buffer
-  vi=init_visual(use_stereo,1,0);
+  vi=init_visual(1,use_stereo,1,0);
   if(!vi) {
     gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-    vi=init_visual(use_stereo,0,0);
+    vi=init_visual(1,use_stereo,0,0);
   }
 
 
 #ifdef SGI_STEREO
   if(!vi && use_stereo) {
-    vi=init_visual(0,1,0);
+    vi=init_visual(1,0,1,0);
     if(!vi) {
       gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-      vi=init_visual(0,0,0);
+      vi=init_visual(1,0,0,0);
     }
 
     stereo_available=SGI_STEREO_LOW;
@@ -825,7 +825,7 @@ static int init_colordb()
   find the best X11 visual available
 */
 
-static XVisualInfo *init_visual(int use_stereo, int use_stencil, int use_accum)
+static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, int use_accum)
 {
   int buf[64];
   int bufc=0,i,j,k;
@@ -844,7 +844,8 @@ static XVisualInfo *init_visual(int use_stereo, int use_stencil, int use_accum)
     debmsg("stereo deactivated");
   }
 #endif
-  buf[bufc++]=GLX_DOUBLEBUFFER;
+  if(dbl_flag)
+    buf[bufc++]=GLX_DOUBLEBUFFER;
 #ifdef RENDER_SOLID
   if(use_stencil) {
     buf[bufc++]=GLX_STENCIL_SIZE;
@@ -1608,12 +1609,12 @@ static XVisualInfo *get_offscreen_visual(int af)
   }
 
   if(af) {
-    vi=init_visual(0,use_stencil,1);
+    vi=init_visual(0,0,use_stencil,1);
     if(!vi) {
       cmiMessage("could not find visual with accumulation buffer\n");
     }
   } else {
-    vi=init_visual(0,use_stencil,0);
+    vi=init_visual(0,0,use_stencil,0);
   }
   return vi;
 }
