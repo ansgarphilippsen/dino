@@ -48,7 +48,6 @@
     eventType = CMI_BUTTON_PRESS;
     mask = CMI_BUTTON1_MASK;
     if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
-    if(flags & NSControlKeyMask) mask = CMI_BUTTON3_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
 
@@ -71,7 +70,6 @@
     eventType = CMI_BUTTON_RELEASE;
     mask = CMI_BUTTON1_MASK;
     if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
-    if(flags & NSControlKeyMask) mask = CMI_BUTTON3_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
@@ -94,7 +92,6 @@
     eventType = CMI_MOTION;
     mask = CMI_BUTTON1_MASK;
     if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
-    if(flags & NSControlKeyMask) mask = CMI_BUTTON3_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
@@ -157,60 +154,6 @@
     eventType = CMI_MOTION;
     mask = CMI_BUTTON2_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
-
-    pt = [self convertPoint:pt fromView:nil];
-    px = pt.x;
-    py = frame.size.height - pt.y;
-
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
-}
-
-- (void)rightMouseDown:(NSEvent *)theEvent
-{
-    int eventType, mask;
-    float px, py;
-
-    NSPoint pt = [theEvent locationInWindow];
-    NSRect frame = [self frame];
-
-    eventType = CMI_BUTTON_PRESS;
-    mask = CMI_BUTTON3_MASK;
-
-    pt = [self convertPoint:pt fromView:nil];
-    px = pt.x;
-    py = frame.size.height - pt.y;
-
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
-}
-
-- (void)rightMouseUp:(NSEvent *)theEvent
-{
-    int eventType, mask;
-    float px, py;
-
-    NSPoint pt = [theEvent locationInWindow];
-    NSRect frame = [self frame];
-
-    eventType = CMI_BUTTON_RELEASE;
-    mask = CMI_BUTTON3_MASK;
-
-    pt = [self convertPoint:pt fromView:nil];
-    px = pt.x;
-    py = frame.size.height - pt.y;
-
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
-}
-
-- (void)rightMouseDragged:(NSEvent *)theEvent
-{
-    int eventType, mask;
-    float px, py;
-
-    NSPoint pt = [theEvent locationInWindow];
-    NSRect frame = [self frame];
-
-    eventType = CMI_MOTION;
-    mask = CMI_BUTTON3_MASK;
 
     pt = [self convertPoint:pt fromView:nil];
     px = pt.x;
