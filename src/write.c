@@ -22,7 +22,7 @@ static int get_image(struct WRITE_IMAGE *img);
 
 int writeFile(char *name, struct WRITE_PARAM *p)
 {
-  int ow,oh;
+  int ow,oh,cn;
   struct WRITE_IMAGE img;
 
   memcpy(&img.param,p,sizeof(struct WRITE_PARAM));
@@ -33,7 +33,8 @@ int writeFile(char *name, struct WRITE_PARAM *p)
   } else {
     // create offscreen rendering context
     debmsg("creating offscreen rendering context");
-    guiCreateOffscreenContext(img.param.width,img.param.height,img.param.accum);
+    cn=guiCreateOffscreenContext(img.param.width,img.param.height,
+				 img.param.accum);
 
     // initial gl
     debmsg("initializing GL");
@@ -61,7 +62,7 @@ int writeFile(char *name, struct WRITE_PARAM *p)
 
     // destry offscreen context
     debmsg("destroying offscreen context");
-    guiDestroyOffscreenContext();
+    guiDestroyOffscreenContext(cn);
     
     // restore old gfx settings
     debmsg("restoring settings");

@@ -31,7 +31,7 @@ int guiMessage(char *m);
 
 //int guiGetImage(struct WRITE_IMAGE *img);
 int guiCreateOffscreenContext(int w, int h, int af);
-int guiDestroyOffscreenContext(void);
+int guiDestroyOffscreenContext(int n);
 
 void guiSwapBuffers(void);
 

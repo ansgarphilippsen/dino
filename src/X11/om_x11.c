@@ -59,7 +59,7 @@ static struct OM_POPUP_LIST om_user_list[]={
   {NULL,NULL}
 };
 
-int omInit(void)
+int omInit(int icf)
 {
   XSetWindowAttributes xswa;
   XGCValues gcv;
@@ -118,18 +118,6 @@ int omInit(void)
   om.pflag=0;
   om.ncol=1;
 
-  /* test */
-  /*********************
-  om.ds_count=1;
-  strcpy(om.ds[0].name,"test1");
-  om.ds[0].oc=2;
-  strcpy(om.ds[0].obj[0].name,"aaaaa");
-  om.ds[0].obj[0].show=1;
-  strcpy(om.ds[0].obj[1].name,"bbbbb");
-  om.ds[0].obj[1].show=0;
-  *********************/
-
-
   /* define the font */
   if((om.xfs=XLoadQueryFont(om.dpy,font_name))==NULL)
     if((om.xfs=XLoadQueryFont(om.dpy,backup_font_name))==NULL) {
@@ -161,7 +149,12 @@ int omInit(void)
 
   /* WM interactions */ 
   xwmh=XAllocWMHints();
-  xwmh->flags=0;
+  if(icf)
+    xwmh->initial_state=3;
+  else
+    xwmh->initial_state=1;
+
+  xwmh->flags=StateHint;
 
   xsh=XAllocSizeHints();
   xsh->flags=PMinSize;

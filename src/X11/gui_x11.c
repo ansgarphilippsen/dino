@@ -52,7 +52,7 @@ user menu
 #include "gui_terminal.h"
 #endif
 
-static int init_main(int argc, char **argv);
+static int init_main();
 static XVisualInfo *init_visual(int df, int sf,int st, int af);
 static Colormap get_colormap(XVisualInfo *vinfo);
 static void glx_init(Widget ww, XtPointer clientData, XtPointer call);
@@ -77,6 +77,15 @@ static int init_colordb(void);
 #endif
 
 struct GUI gui;
+
+#define MAX_OFFSCREEN_CONTEXT 8
+
+static struct _OFFSCREEN_CONTEXT {
+  int used;
+  Pixmap pm;
+  GLXPixmap glx_pm;
+}offscreen_context_list[MAX_OFFSCREEN_CONTEXT];
+static int offscreen_context_count=0;
 
 extern struct OBJECT_MENU om;
 extern struct USER_MENU um;
@@ -120,6 +129,7 @@ int guiInit(int argc, char **argv)
   int use_stereo;
   int stereo_available=0;
   XVisualInfo *vi;
+  int icf=0;
 #ifdef SGI
   int ev,er;
 #endif
@@ -130,12 +140,15 @@ int guiInit(int argc, char **argv)
   int ev,er;
 #endif
 
-  // check command line for gui specific flags
-  for(i=0;i<argc;i++) {
-    if(clStrcmp(argv[i],"-nostereo")) {
-      nostereo=1;
-    }
-  }
+  for(i=0;i<MAX_OFFSCREEN_CONTEXT;i++)
+    offscreen_context_list[i].used=0;
+
+  for(i=0;i<argc;i++)
+    if(clStrcmp(argv[i],"-iconic"))
+      icf=1;
+  
+  if(gfx_flags & DINO_FLAG_NOSTEREO)
+    nostereo=1;
 
   // register cmi callbacks for GUI
   cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback);
@@ -145,141 +158,163 @@ int guiInit(int argc, char **argv)
   init_colordb();
 #endif
 
-  // initialize main X11 widgets
-  if(init_main(argc,argv)<0) {
-    return -1;
-  }    
-  
+  if(gfx_flags & DINO_FLAG_NOGFX) {
+    gui.dpy=XOpenDisplay(NULL);
+  } else {
+    // open top level app
+    debmsg("guiInit: opening top level app widget");
+    gui.top=XtOpenApplication(&gui.app,"dino",NULL,0,
+			      &argc,argv,
+			      fallback_resources,
+			      //topLevelShellWidgetClass,
+			      appPlusShellWidgetClass,
+			      NULL,0
+			      );
+    debmsg("guiInit: setting display");
+    gui.dpy=XtDisplay(gui.top); 
+  }
+
   debmsg("guiInit: checking GLX availability");
   if(!glXQueryExtension(gui.dpy,NULL,NULL)) {
     fprintf(stderr,"GLX extension is not available\n");
     gui.om_flag=0;
     return -1;
   }
- 
-  debmsg("guiInit: initializing om\n");
-  omInit();
-  gui.om_flag=1;
-
-  //  pad_init();
-
-  debmsg("guiInit: searching for visual");
-  /* 
-     Find the best visual
-  */
   
-#ifdef SGI_STEREO
-  if(nostereo==0 && XSGIStereoQueryExtension(gui.dpy,&ev,&er) ) {
-    debmsg("using stereo");
-    use_stereo=1;
-    stereo_available=SGI_STEREO_HIGH;
+  if(gfx_flags & DINO_FLAG_NOGFX) {
+    debmsg("creating offscreen rendering context");
+    gui.glxwindow=RootWindow(gui.dpy,DefaultScreen(gui.dpy));
+    guiCreateOffscreenContext(500,500,0);
+    gui.glxcontext=glXGetCurrentContext();
+    gui.om_flag=0;
   } else {
-    stereo_available=SGI_STEREO_NONE;
-  }
-#endif
-  
-  // try with stencil buffer
-  vi=init_visual(1,use_stereo,1,0);
-  if(!vi) {
-    gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-    vi=init_visual(1,use_stereo,0,0);
-  }
+    // initialize main X11 widgets
+    if(init_main()<0) {
+      return -1;
+    }    
+    debmsg("guiInit: initializing om\n");
+    omInit(icf);
+    gui.om_flag=1;
 
-
+    //  pad_init();
+    
+    debmsg("guiInit: searching for visual");
+    /* 
+       Find the best visual
+    */
+    
 #ifdef SGI_STEREO
-  if(!vi && use_stereo) {
-    vi=init_visual(1,0,1,0);
+    if(nostereo==0 && XSGIStereoQueryExtension(gui.dpy,&ev,&er) ) {
+      debmsg("using stereo");
+      use_stereo=1;
+      stereo_available=SGI_STEREO_HIGH;
+    } else {
+      stereo_available=SGI_STEREO_NONE;
+    }
+#endif
+    
+    // try with stencil buffer
+    vi=init_visual(1,use_stereo,1,0);
     if(!vi) {
       gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-      vi=init_visual(1,0,0,0);
+      vi=init_visual(1,use_stereo,0,0);
     }
-
-    stereo_available=SGI_STEREO_LOW;
-  }
-#endif
-
-  gui.visinfo=vi;
-
-  if(!gui.visinfo) {
-    cmiMessage("fatal error: no suitable visual found\n");
-    return -1;
-  }
-
+    
+    
 #ifdef SGI_STEREO
-  if(stereo_available==SGI_STEREO_HIGH) {
-    cmiMessage("HighEnd stereo detected\n");
-    gui.stereo_available=1;
-  } else if(stereo_available==SGI_STEREO_LOW) {
-    cmiMessage("LowEnd stereo detected\n");
-    gui.stereo_available=1;
-  } else {
-    gui.stereo_available=0;
-  }
+    if(!vi && use_stereo) {
+      vi=init_visual(1,0,1,0);
+      if(!vi) {
+	gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
+	vi=init_visual(1,0,0,0);
+      }
+      
+      stereo_available=SGI_STEREO_LOW;
+    }
+#endif
+    
+    gui.visinfo=vi;
+    
+    if(!gui.visinfo) {
+      cmiMessage("fatal error: no suitable visual found\n");
+      return -1;
+    }
+    
+#ifdef SGI_STEREO
+    if(stereo_available==SGI_STEREO_HIGH) {
+      cmiMessage("HighEnd stereo detected\n");
+      gui.stereo_available=1;
+    } else if(stereo_available==SGI_STEREO_LOW) {
+      cmiMessage("LowEnd stereo detected\n");
+      gui.stereo_available=1;
+    } else {
+      gui.stereo_available=0;
+    }
 #else
-  gui.stereo_available=0;
+    gui.stereo_available=0;
 #endif
-
-
-  debmsg("guiInit: setting colormap");
-  gui.cmap=get_colormap(gui.visinfo);
-
-  debmsg("guiInit: creating and initializing GLX area");
-  gui.glxwin=XtVaCreateManagedWidget("glxwin",
-				     glwMDrawingAreaWidgetClass,
-				     gui.frame,
-				     GLwNvisualInfo, gui.visinfo,
-				     XtNcolormap, gui.cmap,
-				     NULL);
-
-  /* 
-     Add callbacks for the glx widget 
-  */
-  XtAddCallback(gui.glxwin, GLwNginitCallback, glx_init, NULL);
-  XtAddCallback(gui.glxwin, GLwNexposeCallback, glx_expose, NULL);
-  XtAddCallback(gui.glxwin, GLwNresizeCallback, glx_resize, NULL);
-  XtAddCallback(gui.glxwin, GLwNinputCallback, glx_input, NULL);
-
-  /*
-    The main window is now ready
-  */
-  debmsg("guiInit: calling XtRealizeWidget");
-  XtRealizeWidget(gui.top);
-  
-  /*
-    make the created GLX window the current
-    GLX context
-  */
-  debmsg("guiInit: making GLX window current context");
-  GLwDrawingAreaMakeCurrent(gui.glxwin, gui.glxcontext);
-
+    
+    
+    debmsg("guiInit: setting colormap");
+    gui.cmap=get_colormap(gui.visinfo);
+    
+    debmsg("guiInit: creating and initializing GLX area");
+    gui.glxwin=XtVaCreateManagedWidget("glxwin",
+				       glwMDrawingAreaWidgetClass,
+				       gui.frame,
+				       GLwNvisualInfo, gui.visinfo,
+				       XtNcolormap, gui.cmap,
+				       NULL);
+    
+    /* 
+       Add callbacks for the glx widget 
+    */
+    XtAddCallback(gui.glxwin, GLwNginitCallback, glx_init, NULL);
+    XtAddCallback(gui.glxwin, GLwNexposeCallback, glx_expose, NULL);
+    XtAddCallback(gui.glxwin, GLwNresizeCallback, glx_resize, NULL);
+    XtAddCallback(gui.glxwin, GLwNinputCallback, glx_input, NULL);
+    
+    /*
+      The main window is now ready
+    */
+    debmsg("guiInit: calling XtRealizeWidget");
+    XtRealizeWidget(gui.top);
+    
+    /*
+      make the created GLX window the current
+      GLX context
+    */
+    debmsg("guiInit: making GLX window current context");
+    GLwDrawingAreaMakeCurrent(gui.glxwin, gui.glxcontext);
+    
 #ifdef SGI_STEREO
-  if(stereo_available!=SGI_STEREO_NONE) {
-    debmsg("guiInit: initializing stereo");
-    if(SGIStereoInit(gui.dpy,XtWindow(gui.glxwin),stereo_available)<0) {
-      cmiMessage("error during stereo initialization, LowEnd stereo forced\n");
+    if(stereo_available!=SGI_STEREO_NONE) {
+      debmsg("guiInit: initializing stereo");
+      if(SGIStereoInit(gui.dpy,XtWindow(gui.glxwin),stereo_available)<0) {
+	cmiMessage("error during stereo initialization, LowEnd stereo forced\n");
+      }
     }
-  }
 #endif
-
-  /*
-    assign callback function
-  */
-  //gui.callback=func;
-  
-  /*
-    check for a dialbox
-  */
-
-  debmsg("guiInit: checking for extra input devices");
-  if(dialbox_init()) {
-    cmiMessage("Dialbox detected\n");
+    
+    /*
+      assign callback function
+    */
+    //gui.callback=func;
+    
+    /*
+      check for a dialbox
+    */
+    
+    debmsg("guiInit: checking for extra input devices");
+    if(dialbox_init()) {
+      cmiMessage("Dialbox detected\n");
+    }
+    if(spaceball_init()) {
+      if(gui.spaceballDevice!=NULL)
+	cmiMessage("Spaceball detected\n");
+    }
+    
   }
-  if(spaceball_init()) {
-    if(gui.spaceballDevice!=NULL)
-      cmiMessage("Spaceball detected\n");
-  }
-
-
   /*
     reset redraw flag
   */
@@ -326,22 +361,11 @@ int guiInit(int argc, char **argv)
   set up the main gfx window
 */
 
-static int init_main(int argc, char **argv)
+static int init_main()
 {
   XmString xms;
   Arg arg[10];
 
-  // open top level app
-  debmsg("guiInit: opening top level app widget");
-  gui.top=XtOpenApplication(&gui.app,"dino",NULL,0,
-			    &argc,argv,
-			    fallback_resources,
-			    //			    topLevelShellWidgetClass,
-			    appPlusShellWidgetClass,
-			    NULL,0
-			    );
-  debmsg("guiInit: setting display");
-  gui.dpy=XtDisplay(gui.top);
 
   
   /* 
@@ -476,10 +500,13 @@ int guiMainLoop()
 
     XtAppNextEvent(gui.app,&event);
 
-    /* check for multiple expose events */
-    if(event.type==Expose) {
+    switch(event.type) {
+    case Expose:
       if(event.xexpose.count>0)
 	continue;
+      break;
+      //case MapNotify: fprintf(stderr,"map\n"); break;
+      //case UnmapNotify: fprintf(stderr,"unmap\n"); break;
     }
 
     /*
@@ -1559,13 +1586,24 @@ static int pad_init()
 }
 
 
-static Pixmap offscreen_pixmap;
-static GLXPixmap glx_pixmap;
-
 int guiCreateOffscreenContext(int w, int h, int af)
 {
+  int i;
   XVisualInfo *visinfo;
   GLXContext glx_context;
+  struct _OFFSCREEN_CONTEXT *oc;
+
+  for(i=0;i<MAX_OFFSCREEN_CONTEXT;i++)
+    if(!offscreen_context_list[i].used) {
+      break;
+    }
+  
+  if(i==MAX_OFFSCREEN_CONTEXT) {
+    cmiMessage("error: maximal offscreen context count reached");
+    return -1;
+  }
+  
+  oc=&offscreen_context_list[i];
 
   // get visual
   if((visinfo=get_offscreen_visual(af))==NULL) {
@@ -1579,21 +1617,28 @@ int guiCreateOffscreenContext(int w, int h, int af)
   }
 
   // create X pixmap
-  offscreen_pixmap=XCreatePixmap(gui.dpy,gui.glxwindow,w,h,visinfo->depth);
+  oc->pm=XCreatePixmap(gui.dpy,gui.glxwindow,w,h,visinfo->depth);
 
   // convert to glx pixmap
-  glx_pixmap=glXCreateGLXPixmap(gui.dpy, visinfo, offscreen_pixmap);
+  oc->glx_pm=glXCreateGLXPixmap(gui.dpy, visinfo, oc->pm);
 
-  glXMakeCurrent(gui.dpy,glx_pixmap,glx_context);
+  glXMakeCurrent(gui.dpy,oc->pm,glx_context);
 
-  return 0;
+  oc->used=1;
+  return i;
 }
 
-int guiDestroyOffscreenContext()
+int guiDestroyOffscreenContext(int c)
 {
-  glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
-  glXDestroyGLXPixmap(gui.dpy,glx_pixmap);
-  XFreePixmap(gui.dpy,offscreen_pixmap);
+  struct _OFFSCREEN_CONTEXT *oc;
+  if(c<offscreen_context_count) {
+    if(offscreen_context_list[c].used) {
+      oc=&offscreen_context_list[c];
+      glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
+      glXDestroyGLXPixmap(gui.dpy,oc->glx_pm);
+      XFreePixmap(gui.dpy,oc->pm);
+    }
+  }
   return 0;
 }
 

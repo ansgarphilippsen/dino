@@ -105,6 +105,7 @@ int dinoParseArgs(int argc, char **argv)
       } else if(!strcmp(argv[i],"-nostencil")) {
 	gfx_flags+=DINO_FLAG_NOSTENCIL;
       } else if(!strcmp(argv[i],"-nogfx")) {
+	//fprintf(stderr,"-nogfx is not yet supported\n");
 	gfx_flags+=DINO_FLAG_NOGFX;
       } else if(!strcmp(argv[i],"-vidmode")) {
         if(i+1>=argc) {

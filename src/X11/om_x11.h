@@ -85,7 +85,7 @@ struct OBJECT_MENU {
   char pbase[256];
 };
 
-int omInit(void);
+int omInit(int icf);
 
 int omRecreate(void);
 int omArrange(void);
