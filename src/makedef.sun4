@@ -1,0 +1,15 @@
+ARCH=SUN
+
+CC   = gcc
+GOPT = -g 
+WOPT =
+
+CINC = -I../extras/include
+COPT = $(GOPT) $(WOPT) ${CINC} $(OPTIONS) -D $(ARCH)
+SLIB = ../extras/lib/libpng.a ../extras/lib/libz.a ../extras/lib/libtiff.a
+
+LIBS = 	-lc -lGLw -lGLU -lGL \
+	-lXi -lXm -lXt -lXmu -lXext -lX11 \
+	-lm $(MALLOCLIB)
+LOPT = $(LIBS)
+

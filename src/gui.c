@@ -24,9 +24,6 @@ const char version_string[]="0.8.3d";
 #ifdef DEC
 #include <ndbm.h>
 #endif
-#ifdef SUN
-#include <ndbm.h>
-#endif
 
 #include <X11/Xlib.h>
 #include <Xm/XmAll.h>
