@@ -1754,6 +1754,7 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
 
     if(acount==-1) {
       acount=ac;
+      fprintf(stderr,"%d\n",acount);
       fptr=Ccalloc(sizeof(float),acount*3);
       tptr=Crecalloc(NULL,sizeof(struct STRUCT_TRJ_POSITION),acount*fmax);
     } else {
