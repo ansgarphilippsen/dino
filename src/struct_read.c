@@ -1751,15 +1751,21 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
   acount=-1;
   while(!feof(f)) {
     fread(&ac,sizeof(int),1,f);
+    if(sf) {
+      swap_4b((unsigned char *)&acount);
+    }
 
     if(acount==-1) {
       acount=ac;
-      fprintf(stderr,"%d\n",acount);
+      if(acount <1 || acount>1e6) {
+	comMessage("\nerror: binposTrjRead: nonsense atom count");
+	return -1;
+      }
       fptr=Ccalloc(sizeof(float),acount*3);
       tptr=Crecalloc(NULL,sizeof(struct STRUCT_TRJ_POSITION),acount*fmax);
     } else {
       if(ac!=acount) {
-	comMessage("\natom count missmatch error");
+	comMessage("\nerror: binposTrjRead: atom count missmatch error");
 	Cfree(fptr);
 	Cfree(tptr);
 	return -1;
@@ -1767,6 +1773,8 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
     }
 
     fread(fptr,sizeof(float),acount*3,f);
+    if(sf)
+      swap_4bs((unsigned char *)fptr,acount*3);
     for(ac=0;ac<acount;ac++) {
       tpos=(fcount*acount+ac);
       (tptr+tpos)->x=fptr[ac*3+0];
