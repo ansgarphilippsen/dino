@@ -1431,7 +1431,7 @@ int structObjGenVA(structObj *obj)
     sto=0.0;
   }
 
-  if(sr>bw)
+  if(sr>=bw)
     for(i=0;i<obj->atom_count;i++) {
       col[0]=obj->atom[i].prop.r;
       col[1]=obj->atom[i].prop.g;
