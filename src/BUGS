@@ -1,0 +1,24 @@
+known problems for DINO v0.8.3
+------------------------------
+
+- .struct.obj render hsc,detail=1 will coredump (use detail > 1)
+
+- rigid body transformation properties not uniquely named (eg center + rcen)
+
+- occasional crashes on the SGIs when moving the scene with the mouse. This
+  seems to be a bug in the X-windows event handling. FIX: turn off all object
+  before moving, rotate the scene (left-click and move mouse some), then turn
+  objects back on
+
+- writing large (e.g. 400%) TIFF files does not scale correctly (use PNG)
+
+- TIFF not compressed (use PNG)
+
+- offscreen rendering on linux missmatches graphics display, use
+  ImageMagick program 'import' to get a screendump
+
+- POVray output only partial for geom objects
+
+- POVray output only renders filled triangles for surface and topo objects
+
+- accumulation (-a) flag of write does not work 
