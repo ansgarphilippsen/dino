@@ -6,9 +6,9 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <malloc.h>
 
 #include "mat.h"
+#include "Cmalloc.h"
 
 #include "scal_db.h"
 #include "scal_obj.h"
@@ -16,11 +16,14 @@
 #include "scal_iso.h"
 
 static int iso(scalObj *obj);
+static int add_point(scalObj *obj, float xyz[3]);
 static void add_face(scalObj *obj, int i1, int i2, int i3);
 static int gen_coord(scalObj *obj, float l1, float l2, int u1, int v1, int w1, int u2, int v2, int w2);
+static void gen_faces(scalObj *obj);
 
 int scalIso(scalObj *obj, Select *sel)
 {
+  // selection is currently ignored
   return iso(obj);
 }
 
@@ -128,32 +131,66 @@ static int iso(scalObj *obj)
   int i;
   int ustart,vstart,wstart;
   int usize,vsize,wsize;
-  int u,v,w,uc,vc,wc;
+  int uc,vc,wc;
   int *cip,*nip;
   int pcode;
-  float cval[8],level;
-  int step;
+  float cval[8],level=obj->level;
+  int step=obj->step;
   int tri_num,tri_count;
   int tri_index[3],cor1,cor2,vert_id,coord_id;
-  
-  
   struct SCAL_ISO_CUBE *layer, *ccube, *ncube;
 
-  // allocate with +1, the size check below not necessary
-  layer = malloc((usize+1)*(vsize+1)*sizeof(struct SCAL_ISO_CUBE));
+  // delete old gfx components
+  if(obj->point_count>0)
+    Cfree(obj->point);
+  if(obj->line_count>0)
+    Cfree(obj->line);
+  if(obj->face_count>0)
+    Cfree(obj->face);
+
+  obj->line_count=0;
+
+  // prepare points
+  obj->point_max=1000;
+  obj->point = Crealloc(NULL,obj->point_max*sizeof(struct SCAL_POINT));
+  obj->point_count=0;
+
+  // prepare face
+  obj->face_max=1000;
+  obj->face = Crealloc(NULL,obj->face_max*sizeof(struct SCAL_FACE));
+  obj->face_count=0;
+
+  // get limits
+  ustart=obj->u_start;
+  usize=obj->u_end-ustart+1;
+  vstart=obj->v_start;
+  vsize=obj->v_end-vstart+1;
+  wstart=obj->w_start;
+  wsize=obj->w_end-wstart+1;
+  
+  // allocate with +1, then boundary check below is not necessary
+  layer = Cmalloc((usize+1)*(vsize+1)*sizeof(struct SCAL_ISO_CUBE));
+
+  // reset layer once
+  for(vc=0;vc<vsize+1;vc++) {
+    for(uc=0;uc<usize+1;uc++) {
+      for(i=0;i<28;i++) {
+	layer[uc+vc*usize].coord_index[i]=-1;
+      }
+    }
+  }
   
   // main loop through w-dimension
   for(wc=0;wc<wsize;wc++) {
+    
     // make current uv-layer
-
     // copy & reset
     for(vc=0;vc<vsize;vc++) {
       for(uc=0;uc<usize;uc++) {
 	ccube = &layer[uc+vc*usize];
-	ccube->pcode=0;
 	// current index pointer
 	cip = ccube[uc+vc*usize].coord_index;
-	// copy neighbour coord-indices
+	// copy neighbour coord-indices from w to w+1
 	cip[0]=cip[22]; cip[1]=cip[23]; cip[3]=cip[25]; 
 	cip[7]=cip[25]; cip[8]=cip[26]; cip[13]=cip[27]; 
 	// reset the rest
@@ -163,6 +200,14 @@ static int iso(scalObj *obj)
 	cip[18]=-1; cip[19]=-1; cip[20]=-1; cip[21]=-1; 
 	cip[22]=-1; cip[23]=-1; cip[24]=-1; cip[25]=-1; 
 	cip[26]=-1; cip[27]=-1;
+	/*
+	fprintf(stderr,"w %d\n",wc);
+	for(i=0;i<28;i++) {
+	  fprintf(stderr,"%2d ",cip[i]);
+	}
+	fprintf(stderr,"\n");
+	*/
+
       }
     }
 
@@ -183,7 +228,6 @@ static int iso(scalObj *obj)
 	  // calculate the 8bit pattern code
 	  if(cval[i]>level) pcode += (1<<i);
 	}
-	ccube->pcode=pcode;
 
 	// get the amount of triangles as found in the lookup table
 	tri_num = mc_edge_lookup_table[pcode].count;
@@ -201,16 +245,19 @@ static int iso(scalObj *obj)
 	    // coordinate id
 	    coord_id = ccube->coord_index[vert_id];
 	    // if not yet generated, create new
-	    if(coord_id==-1) {
+	    if(coord_id<0) {
 	      coord_id = gen_coord(obj,
 				   cval[cor1],cval[cor2],
-				   u+cc_offsets[cor1][0]*step,
-				   v+cc_offsets[cor1][1]*step,
-				   w+cc_offsets[cor1][2]*step,
-				   u+cc_offsets[cor2][0]*step,
-				   v+cc_offsets[cor2][1]*step,
-				   w+cc_offsets[cor2][2]*step);
-
+				   uc+ustart+cc_offsets[cor1][0]*step,
+				   vc+vstart+cc_offsets[cor1][1]*step,
+				   wc+wstart+cc_offsets[cor1][2]*step,
+				   uc+ustart+cc_offsets[cor2][0]*step,
+				   vc+vstart+cc_offsets[cor2][1]*step,
+				   wc+wstart+cc_offsets[cor2][2]*step);
+	      /*
+	      fprintf(stderr,"%d %d %d - %d %d:  %d\n",
+		      u,v,w, cor1,cor2, coord_id);
+	      */
 	      ccube->coord_index[vert_id] = coord_id;
 	    }
 	    tri_index[i] = coord_id;
@@ -240,23 +287,131 @@ static int iso(scalObj *obj)
 	nip[4] = cip[20];
 	nip[3] = cip[21];
 	nip[22] = cip[27];
+
 	
 
       } // uc
     } // vc
   } // wc
+
+  // make faces from indices
+  gen_faces(obj);
+
+  fprintf(stderr,"generated %d points and %d faces\n",
+	  obj->point_count,obj->face_count);
+
   return 0;
 }
 
 
-static void add_face(scalObj *obj, int i1, int i2, int i3)
-{
-
-}
 
 
 static int gen_coord(scalObj *obj, float l1, float l2, int u1, int v1, int w1, int u2, int v2, int w2)
 {
-  float level = obj->level;
-  return -1;
+  float d1,d2,r;
+  float uvw[3],xyz[3];
+
+  d1 = (l1-l2);
+
+  if(d1==0.0) {
+    // this should actually never happen!
+    return -1;
+  }
+
+  d2 = (obj->level-l2);
+  r=d2/d1;
+
+  uvw[0] = (float)u2+r*(float)(u1-u2);
+  uvw[1] = (float)v2+r*(float)(v1-v2);
+  uvw[2] = (float)w2+r*(float)(w1-w2);
+
+  // temp: check limits
+  if((uvw[0]<(float)u1 && uvw[0]<(float)u2) ||
+     (uvw[0]>(float)u1 && uvw[0]>(float)u2) ||
+     (uvw[1]<(float)v1 && uvw[1]<(float)v2) ||
+     (uvw[1]>(float)v1 && uvw[1]>(float)v2) ||
+     (uvw[2]<(float)w1 && uvw[2]<(float)w2) ||
+     (uvw[2]>(float)w1 && uvw[2]>(float)w2)) {
+    fprintf(stderr,"%d %d %d %.4g | %d %d %d %.4g | %.4g %.4g | %.4g %.4g %.4g\n",
+	    u1,v1,w1,l1,
+	    u2,v2,w2,l2,
+	    obj->level,r,
+	    uvw[0],uvw[1],uvw[2]);
+  }
+
+  scalUVWtoXYZf(obj->field, uvw, xyz);
+
+  return add_point(obj,xyz);
+}
+
+static int add_point(scalObj *obj, float xyz[3])
+{
+  if(obj->point_count>=obj->point_max) {
+    obj->point_max*=2;
+    obj->point = Crealloc(obj->point,obj->point_max*sizeof(struct SCAL_POINT));
+  }
+  obj->point[obj->point_count].v[0]=xyz[0];
+  obj->point[obj->point_count].v[1]=xyz[1];
+  obj->point[obj->point_count].v[2]=xyz[2];
+
+  //fprintf(stderr,"(%g %g %g)\n",xyz[0],xyz[1],xyz[2]);
+
+  obj->point_count++;
+  return (obj->point_count-1);
+}
+
+static void add_face(scalObj *obj, int i1, int i2, int i3)
+{
+  if(obj->face_count>=obj->face_max) {
+    obj->face_max*=2;
+    obj->face = Crealloc(obj->face,obj->face_max*sizeof(struct SCAL_FACE));
+  }
+  if(i1<0 || i2<0 || i3<0) {
+    fprintf(stderr,"negative coord index!\n");
+  } else {
+    obj->face[obj->face_count].pi0 = i1;
+    obj->face[obj->face_count].pi1 = i2;
+    obj->face[obj->face_count].pi2 = i3;
+    obj->face_count++;
+  }
+}
+
+static void gen_faces(scalObj *obj)
+{
+  int i,k;
+  struct SCAL_FACE *f;
+  float v1[3],v2[3],n1[3];
+
+  for(i=0;i<obj->face_count;i++) {
+    f=&obj->face[i];
+    
+    // vertices
+    for(k=0;k<3;k++) {
+      f->v1[k] = obj->point[f->pi0].v[k];
+      f->v2[k] = obj->point[f->pi1].v[k];
+      f->v3[k] = obj->point[f->pi2].v[k];
+
+    }
+    // normals
+    v1[0]=f->v2[0] - f->v1[0];
+    v1[1]=f->v2[1] - f->v1[1];
+    v1[2]=f->v2[2] - f->v1[2];
+    v2[0]=f->v3[0] - f->v1[0]; 
+    v2[1]=f->v3[1] - f->v1[1]; 
+    v2[2]=f->v3[2] - f->v1[2];
+    matfCalcCross(v1,v2,n1);
+    matfNormalize(n1,n1);
+    for(k=0;k<3;k++) {
+      f->n1[k]=n1[k];
+      f->n2[k]=n1[k];
+      f->n3[k]=n1[k];
+    }
+
+    // color
+    for(k=0;k<4;k++) {
+      f->c1[k]=1.0;
+      f->c2[k]=1.0;
+      f->c3[k]=1.0;
+    }
+  }
 }

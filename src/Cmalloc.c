@@ -76,14 +76,16 @@ void Cfree(void *p)
   }
 }
 
-void *Crecalloc(void *p, size_t nelem, size_t elsize)
+void *Crealloc(void *p, size_t size)
 {
-  size_t size;
-  size=nelem*elsize;
-
 #ifdef CMALLOC_VERBOSE
   fprintf(stderr,"RECALLOC (%p) %.2f kb\n",p,size/1024.0);
 #endif
 
   return realloc(p,size);
+}
+
+void *Crecalloc(void *p, size_t nelem, size_t elsize)
+{
+  return Crealloc(p,nelem*elsize);
 }

@@ -183,9 +183,9 @@ depend:
 snapshot: dino
 	gzip < ../bin/dino > ../bin/dino-0.8.5-$(DATE).$(MACH).gz
 
-gen_mc_table: gen_mc_table.c
-	$(CC) gen_mc_table.c -o gen_mc_table
-#	./gen_mc_table > scal_mc_tet_table.h
+iso_tab: gen_iso_table.c
+	$(CC) gen_iso_table.c -o gen_iso_table
+	-./gen_iso_table > scal_iso_table.h
 
 
 all: clean depend dino

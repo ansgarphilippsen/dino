@@ -95,8 +95,6 @@ static int tetrahed[][6] = {
 
 static int tetrahed_num=6;
 
-
-
 /*
   alternative tetr subdivision taken from
   www.informatik.uni-leipzig.de/ cgip/lehre/ss02/vorl10.pdf
@@ -126,12 +124,13 @@ static void print_lentry(char *buf, int a1, int a2, int b1, int b2);
 int main(int argc, char **argv)
 {
   int c;
-  fprintf(stdout,"static struct _MC_EDGE_LOOKUP_TABLE {\n  int count;\n  int tab[%d][6];\n} mc_edge_lookup_table[] = {\n",max_tri_entry);
+  fprintf(stdout,"static struct _ISO_EDGE_LOOKUP_TABLE {\n  int count;\n  int tab[%d][6];\n} iso_edge_lookup_table[] = {\n",max_tri_entry);
   for(c=0;c<256;c++) {
     gen_tab(c, 1);
   }
   fprintf(stdout,"};\n");
-  
+
+  return 0;
 }
 
 /*
