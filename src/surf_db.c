@@ -652,43 +652,36 @@ int surfEvalPOV(dbmSurfNode *node, struct SURF_VERTICE *vert, POV *pov)
 	    clStrcmp(pov->prop,"cp9")) {
     prop=SURF_SEL_CP;
     cpropn=atoi(pov->prop+2);
-  } else {
-    if(clStrcmp(pov->prop,"anum"))
-      prop=SURF_SEL_ANUM;
-    else if(clStrcmp(pov->prop,"aname"))
-      prop=SURF_SEL_ANAME;
-    else if(clStrcmp(pov->prop,"rnum"))
-      prop=SURF_SEL_RNUM;
-    else if(clStrcmp(pov->prop,"rname"))
-      prop=SURF_SEL_RNAME;
-    else if(clStrcmp(pov->prop,"chain"))
-      prop=SURF_SEL_CHAIN;
-    else if(clStrcmp(pov->prop,"model"))
-      prop=SURF_SEL_MODEL;
-    else if(clStrcmp(pov->prop,"occ") ||
-	    clStrcmp(pov->prop,"weight"))
-      prop=SURF_SEL_OCC;
-    else if(clStrcmp(pov->prop,"bfac"))
-      prop=SURF_SEL_BFAC;
-    else if(clStrcmp(pov->prop,"ele"))
-      prop=SURF_SEL_ELE;
-    else {
-      sprintf(message,"error: %s: unknown property %s\n",node->name, pov->prop);
-      comMessage(message);
-      return -1;
-    }
+  } else if (clStrcmp(pov->prop,"anum") ||
+	     clStrcmp(pov->prop,"aname") ||
+	     clStrcmp(pov->prop,"rnum") ||
+	     clStrcmp(pov->prop,"rtype") ||
+	     clStrcmp(pov->prop,"rname") ||
+	     clStrcmp(pov->prop,"class") ||
+	     clStrcmp(pov->prop,"chain") ||
+	     clStrcmp(pov->prop,"model") ||
+	     clStrcmp(pov->prop,"occ") ||
+	     clStrcmp(pov->prop,"weight") ||
+	     clStrcmp(pov->prop,"bfac") ||
+	     clStrcmp(pov->prop,"ele")) {
+      
     if(!node->attach_flag) {
-      sprintf(message,"error: %s: need attached structure for property %s\n",node->name, pov->prop);
+      sprintf(message,"error: %s: need attached structure for property %s\n",
+	      node->name, pov->prop);
       comMessage(message);
       return -1;
     }
-    if(vert->attach_node==NULL)
+    if(vert->attach_node==NULL) {
       return 0;
-    ret=structEvalAtomPOV(&vert->attach_node->structNode,
-			  &vert->attach_node->structNode.atom[vert->attach_element],
+    } else {
+      return structEvalAtomPOV(&vert->attach_node->structNode,
+			       &vert->attach_node->structNode.atom[vert->attach_element],
 			  pov);
-
-    return ret;
+    }
+  } else {
+    sprintf(message,"error: %s: unknown property %s\n",node->name, pov->prop);
+    comMessage(message);
+    return -1;
   }
 
   op=pov->op;

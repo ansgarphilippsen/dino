@@ -1,3 +1,5 @@
+fixed missing atom properties for attached surface selection
+
 fixed povray fog output for non-black backgrounds
 
 tweaked several informative messages
