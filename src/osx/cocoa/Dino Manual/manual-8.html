@@ -1,0 +1,808 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="manual.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> 8 Scalar Field Dataset</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=3 WIDTH="100%" BGCOLOR="#FFFF99" NOSAVE >
+<tr VALIGN=CENTER NOSAVE>
+<td VALIGN=CENTER NOSAVE><b><tt><font size=-1><a href="http://www.bioz.unibas.ch/~xray/dino">DINO:
+Visualizing Structural Biology</a></font></tt></b></td>
+
+<td VALIGN=CENTER NOSAVE>
+<table CELLSPACING=0 CELLPADDING=0 WIDTH="100%" NOSAVE >
+<tr ALIGN=CENTER VALIGN=CENTER NOSAVE>
+<td NOSAVE>
+<center><A HREF="manual.html">Table of Contents</a></center>
+</td>
+
+<td NOSAVE>
+<center><A HREF="manual-7.html">Previous</a></center>
+</td>
+
+<td>
+<center><A HREF="manual-9.html">Next</a></center>
+</td>
+</tr>
+</table>
+</td>
+
+<td VALIGN=CENTER NOSAVE>
+<div align=right><b><tt><font size=-1>User Manual</font></tt></b></div>
+</td>
+</tr>
+</table>
+
+<H2 CLASS="Heading1">
+<A NAME="pgfId-433215"></A>8 Scalar Field Dataset</H2>
+<P CLASS="Body">
+<A NAME="pgfId-425514"></A>The scalar field dataset is a 3-dimensional grid that contains a single scalar value at each grid point. To visualize it fully would require a 4-dimensional representation, which is currently beyond the capabilities of a computer workstation One interpretation is called iso-contouring, which creates an iso-surface from the scalar field with each point on the surface (ideally) having the same scalar value. Another interpretation is to draw each grid-point with its scalar value represented as a point of varying thickness, or to blend the grid points as a texture (as exploited in medical resonance imaging, also called volume rendering).</P>
+<P CLASS="Body">
+<A NAME="pgfId-425515"></A>The grid is regular, but needs not be cubic. It can consist of arbitrary axis a, b and c with arbitrary angles <LANG CLASS="greek">
+&#945;</LANG>
+, <LANG CLASS="greek">
+&#946;</LANG>
+  and <LANG CLASS="greek">
+&#947;</LANG>
+ . Its origin (grid point 0,0,0) will be mapped to some point in cartesian space (offset).</P>
+<P CLASS="Body">
+<A NAME="pgfId-425516"></A>Probably the three most common uses for scalar fields in structural biology are electron density from x-ray data, 3D reconstructions from electron microscopy and electrostatic potential maps from theoretical calculations.</P>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-430423"></A><A NAME="85564"></A>Scalar Field Dataset and Object Properties
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430427"></A>Property</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433687"></A>S<A HREF="#pgfId-433698" CLASS="footnote">1</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433689"></A>G<A HREF="#pgfId-433701" CLASS="footnote">2</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430429"></A>Description</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="4">
+<P CLASS="CellBody">
+<A NAME="pgfId-430431"></A>Dataset Properties</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433747"></A>center</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433749"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433751"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433753"></A>geometric center of dataset</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433739"></A>rot</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433741"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433743"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433745"></A>rotation matrix, default is identity</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433731"></A>trans</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433733"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433735"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433737"></A>translation vector, default is identity</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433723"></A>edge</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433725"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433727"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433729"></A>value used beyond defined grid-point, default is 0.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433770"></A>scale</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433772"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433774"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433776"></A>scalar factor that is multiplied with every coordinate prior to object creation, existing objects must be renewed, default is 1.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="4">
+<P CLASS="CellBody">
+<A NAME="pgfId-433715"></A>Object Properties</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433707"></A>center</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433709"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433711"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433713"></A>center of object, default is center of dataset</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433808"></A>size</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433810"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433812"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433814"></A>size of object in grid-units; can be either a scalar (cubic size) or in form of {xs,ys,zs}, default is 30</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433800"></A>level</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433802"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433804"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433806"></A>(object type contour) contour level, if s is appended then value is interpreted as sigma (standard deviation) units, default is 0.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433792"></A>step</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433794"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433796"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433798"></A>step-size along grid during object creation, default is 1</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433784"></A>color</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433786"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433788"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433790"></A>(object type contour) uniform color for object, default is white</P>
+</TD>
+</TR>
+</TABLE>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-430419"></A>8.1 <A NAME="31162"></A>Scalar Field Objects</H3>
+<P CLASS="Body">
+<A NAME="pgfId-430446"></A>A scalar field object is created with the command <TT CLASS="Code">
+new</TT>
+. In contrast to the structure and surface dataset, the <TT CLASS="Code">
+-set</TT>
+ parameter is quite important, while the selection is not often employed. </P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425520"></A><EM>Syntax:</EM> .scal new [-name NAME] [-type T][-selection SEL][-set SET]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425521"></A>NAME defaults to the name of the dataset. SET can be any of the settables object properties (see <A HREF="manual-8.html#85564" CLASS="XRef">Table 15 (P. 38)</A>). There are two scalar field object types:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425522"></A><TT CLASS="Code">
+contour</TT>
+: creates an iso-surface around <TT CLASS="Code">
+center</TT>
+, with dimensions <TT CLASS="Code">
+size</TT>
+, at the scalar value <TT CLASS="Code">
+level</TT>
+, using a step-size of <TT CLASS="Code">
+step</TT>
+. This is the default type.</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425523"></A><TT CLASS="Code">
+grid</TT>
+: creates a grid around <TT CLASS="Code">
+center</TT>
+, with dimensions <TT CLASS="Code">
+size</TT>
+, using a step-size of <TT CLASS="Code">
+step</TT>
+, the resulting points are displayed with radius <TT CLASS="Code">
+radius</TT>
+</LI>
+</UL>
+
+<PRE CLASS="Example"><A NAME="pgfId-425524"></A><EM>Example:</EM> .scal new -name m -set center=[.struct], size=40,level=1.5s, color=blue</PRE>
+<PRE CLASS="Example"><A NAME="pgfId-425525"></A>         .scal new -name g -type grid -set size=40</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425526"></A>Although a selection can already be given during object creation, its maybe easier to call a renew (to keep the lines short):</P>
+<PRE CLASS="Example"><A NAME="pgfId-425527"></A><EM>Example:</EM> .scal.m renew -sel 10&lt;&gt;.struct.inhib</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425528"></A>All scalar field object properties except color will not take immediate effect, only when a renew (see below) is called. This is usually combined:</P>
+<PRE CLASS="Example"><A NAME="pgfId-425529"></A><EM>Example: </EM>.map new -name m -set center=[.map],size=40,level=1.0s
+         // change the size
+         .map.m renew -set size=50
+         // change the level
+         .map.m renew -set level=1.2s</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-433839"></A>&nbsp;</P>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-433842"></A>Scalar Field Dataset Element Properties
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433852"></A>property</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433854"></A>S<A HREF="#pgfId-433926" CLASS="footnote">3</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433856"></A>G<A HREF="#pgfId-433929" CLASS="footnote">4</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433858"></A>L<A HREF="#pgfId-433932" CLASS="footnote">5</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433860"></A>R<A HREF="#pgfId-433939" CLASS="footnote">6</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433916"></A>Description</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433862"></A>color</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433864"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433866"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433868"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433870"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433918"></A>(for object type grid) color of individual grid point</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433872"></A>radius</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433874"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433876"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433878"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433880"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433920"></A>(for object type grid) radius of individual grid point</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-433882"></A>v</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433884"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433886"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433888"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433890"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433922"></A>absolut value</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-425534"></A>8.2 Scalar Field Dataset Commands</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425535"></A>Following are all scalar field dataset commands:</P>
+<P CLASS="Body">
+<A NAME="pgfId-434271"></A><TT CLASS="Code">
+new</TT>
+: create a new object (<A HREF="manual-8.html#31162" CLASS="XRef">see &quot;8.1 Scalar Field Objects&quot; on page 38</A>).</P>
+<P CLASS="List2">
+<A NAME="pgfId-425537"></A><TT CLASS="Code">
+set get</TT>
+: retrieve or modify a dataset property (<A HREF="manual-8.html#85564" CLASS="XRef">Table 15 (P. 38)</A>).</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-434278"></A><EM>Syntax:</EM> .scal set PV[, PV ...] 
+        .scal get P</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425540"></A><TT CLASS="Code">
+restrict</TT>
+: shadow out a subset of the dataset which will not be considered in selection or property setting (<A HREF="manual-5.html#58995" CLASS="XRef">see &quot;5.1.7 Dataset Restriction&quot; on page 25</A>).</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425541"></A><EM>Syntax:</EM> .scal restrict SELECTION</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425542"></A><TT CLASS="Code">
+delete</TT>
+: remove one or more objects.</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425543"></A><EM>Syntax:</EM> .scal delete obj [obj2 ...]</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425544"></A><TT CLASS="Code">
+grab reset fix center</TT>
+: transformation related commands (<A HREF="manual-5.html#82704" CLASS="XRef">see &quot;5.1.8 Transformation&quot; on page 25</A>).</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-434288"></A>8.3 Scalar Field Object Commands</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425546"></A>Commands directed against a scalar field object are issued as</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425547"></A><EM>Syntax:</EM> .scal.obj command [parameters]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425548"></A>Following is a list of all scalar field object commands:</P>
+<P CLASS="List2">
+<A NAME="pgfId-425549"></A><TT CLASS="Code">
+renew</TT>
+: Similar to new command, except the type and name are already determined, so only selection and setting is possible. If either selection or setting (or both) are omitted, the current selection resp. setting is maintained (<A HREF="manual-5.html#29182" CLASS="XRef">see &quot;5.1.5 Modifying Objects&quot; on page 23</A>).</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425550"></A><EM>Syntax:</EM> .scal.obj renew [-selection SEL] [-set SET]</PRE>
+<PRE CLASS="Example"><A NAME="pgfId-425551"></A><EM>Example:</EM> .map.m renew -set level=1.2s, size=50, color=blue</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425552"></A><TT CLASS="Code">
+show hide</TT>
+: turns display of the object in the graphics window on or off. Identical to clicking on the object name in the object menu (<A HREF="manual-4.html#29987" CLASS="XRef">see &quot;4.12 The GUI&quot; on page 20</A>)</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425553"></A><EM>Syntax:</EM> .scal.obj show
+        .scal.obj hide</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425555"></A><TT CLASS="Code">
+set get</TT>
+: modify or retrieve scalar field object properties (See <A HREF="manual-8.html#85564" CLASS="XRef">Table 15 (P. 38)</A> and <A HREF="manual-5.html#29182" CLASS="XRef">see &quot;5.1.5 Modifying Objects&quot; on page 23</A>)</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425556"></A><EM>Syntax:</EM> .scal.obj get P
+        .scal.obj set PV [-selection SEL] [-range [src=SRC][,PROP=prop][val=VAL1:VAL2]]</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425558"></A><TT CLASS="Code">
+render</TT>
+: modifies the graphical appearance of an object (<A HREF="manual-8.html#77491" CLASS="XRef">see &quot;8.4 Render &amp; Graphical Appearance&quot; on page 40</A>)</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-425559"></A>8.4 <A NAME="77491"></A>Render &amp; Graphical Appearance</H3>
+<P CLASS="Body">
+<A NAME="pgfId-434027"></A>The command render modifies the graphical appearance of a scalar field dataset object:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425560"></A><EM>Syntax:</EM> .scal.obj render PV [,PV ...]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-434030"></A>The render properties that can be used for the scalar field dataset objects are given in <A HREF="manual-8.html#91828" CLASS="XRef">Table 17 (P. 41)</A>. Depending on the object type (<TT CLASS="Code">
+contour</TT>
+ or <TT CLASS="Code">
+grid</TT>
+), different rendering modes are available, specified as:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-434031"></A><EM>Syntax:</EM> .scal.obj render MODE</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-434032"></A>where mode is one of:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425562"></A><TT CLASS="Code">
+dot</TT>
+: (for type <TT CLASS="Code">
+contour</TT>
+) vertices are displayed as points only</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425563"></A><TT CLASS="Code">
+line</TT>
+: (for type <TT CLASS="Code">
+contour</TT>
+) default mode, faces are outlined</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425564"></A><TT CLASS="Code">
+fill</TT>
+: (for type <TT CLASS="Code">
+contour</TT>
+) faces are filled and lit</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425565"></A><TT CLASS="Code">
+on / off</TT>
+: (for type <TT CLASS="Code">
+grid</TT>
+) turns rendering on (spheres) or off (points)</LI>
+</UL>
+
+<P CLASS="Body">
+<A NAME="pgfId-434405"></A>&nbsp;</P>
+<P CLASS="Body">
+<A NAME="pgfId-434409"></A>Material parameters can be modified with the command <TT CLASS="Code">
+material</TT>
+ (<A HREF="manual-5.html#26888" CLASS="XRef">see &quot;5.1.6 Graphical Appearance&quot; on page 24</A>).</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-425566"></A>8.5 Mapping Scalar Fields to Surfaces</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425567"></A>DINO provides an easy way to map scalar field values to a surface. This can be accomplished by using the surface object command <TT CLASS="Code">
+set</TT>
+ with <TT CLASS="Code">
+-range</TT>
+ and as <TT CLASS="Code">
+src</TT>
+ the scalar field. Following is a generic example, assuming a surface named <TT CLASS="Code">
+surf</TT>
+ and an electrostatic potential as a scalar field dataset called <TT CLASS="Code">
+pot</TT>
+</P>
+<PRE CLASS="Example"><A NAME="pgfId-425568"></A>// load surf ...
+// load pot ...
+.surf new -name all            // generate surface object
+.surf.all set color=red:white -range src=.pot, val=-5:0
+.surf.all set color=red:red   -range src=.pot, val=-999:-5
+.surf.all set color=white:blue -range src=.pot, val= 0:5
+.surf.all set color=blue:blue -range src=.pot, val=5::999</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-434299"></A>&nbsp;</P>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-434303"></A><A NAME="91828"></A>Scalar Field Dataset Object Render Properties
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434313"></A>Property</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434318"></A>C<A HREF="#pgfId-434317" CLASS="footnote">7</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434323"></A>G<A HREF="#pgfId-434322" CLASS="footnote">8</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434325"></A>Description</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434327"></A>Default</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434329"></A>fast</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434331"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434333"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434335"></A>turns off point and line antialiasing to increase drawing speed</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434337"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434339"></A>light1</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434341"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434343"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434345"></A>lighting is only applied to the front face, leaving the backside practically unlit and dark</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434347"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434349"></A>light2</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434351"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434353"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434355"></A>lighting is applied to both sides of the surface</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434357"></A>X</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434359"></A>lw</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434361"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434363"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434365"></A>linewidth</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434367"></A>1.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434369"></A>nice</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434371"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434373"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434375"></A>turns on point and line antialiasing</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434377"></A>X</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434379"></A>ps</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434381"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434383"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434385"></A>pointsize</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434387"></A>1.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434389"></A>t</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434391"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434393"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434395"></A>transparency, 1.0 is opaque, 0.0 is fully transparent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434397"></A>1.0</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+<HR>
+<DIV CLASS="footnotes">
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+1.</SPAN>
+<A NAME="pgfId-433698"></A>indicates that this property can be modified with <TT CLASS="Code">
+set</TT>
+</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+2.</SPAN>
+<A NAME="pgfId-433701"></A>indicates that this property can be modified with <TT CLASS="Code">
+get</TT>
+</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+3.</SPAN>
+<A NAME="pgfId-433926"></A>indicates that this property can be modified with set</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+4.</SPAN>
+<A NAME="pgfId-433929"></A>indicates that this property can be modified with get</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+5.</SPAN>
+<A NAME="pgfId-433932"></A>indicates a selectable property</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+6.</SPAN>
+<A NAME="pgfId-433939"></A>inidicates a property that can be used in a range statement</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+7.</SPAN>
+<A NAME="pgfId-434317"></A>applicable to object type contour</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+8.</SPAN>
+<A NAME="pgfId-434322"></A>applicable to object type grid</P>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,886 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="manual.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> 5 The Datasets</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=3 WIDTH="100%" BGCOLOR="#FFFF99" NOSAVE >
+<tr VALIGN=CENTER NOSAVE>
+<td VALIGN=CENTER NOSAVE><b><tt><font size=-1><a href="http://www.bioz.unibas.ch/~xray/dino">DINO:
+Visualizing Structural Biology</a></font></tt></b></td>
+
+<td VALIGN=CENTER NOSAVE>
+<table CELLSPACING=0 CELLPADDING=0 WIDTH="100%" NOSAVE >
+<tr ALIGN=CENTER VALIGN=CENTER NOSAVE>
+<td NOSAVE>
+<center><A HREF="manual.html">Table of Contents</a></center>
+</td>
+
+<td NOSAVE>
+<center><A HREF="manual-4.html">Previous</a></center>
+</td>
+
+<td>
+<center><A HREF="manual-6.html">Next</a></center>
+</td>
+</tr>
+</table>
+</td>
+
+<td VALIGN=CENTER NOSAVE>
+<div align=right><b><tt><font size=-1>User Manual</font></tt></b></div>
+</td>
+</tr>
+</table>
+
+<H2 CLASS="Heading1">
+<A NAME="pgfId-429057"></A>5 The Datasets</H2>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-429058"></A>5.1 Common Concepts</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425259"></A>The structural biology data consists of basic elements which are specifically related to each other. In the structure dataset, the basic element is the atom, which is usually organized into residues, which in turn are optionally organized as chains, which in turn are optionally organized into models. In the scalar field and the surface topography, each grid point is the basic element, arranged into a regular 3-dimensional array (scalar field) or 2-dimensional plane (surface topography). The basic element of the surface is the vertex (coordinate in 3D space), which is organized into faces (triangles). A key property of all elements - apart from dataset specific ones - is that they all have a defined position in space.</P>
+<P CLASS="Body">
+<A NAME="pgfId-435343"></A>&nbsp;</P>
+
+
+
+<P CLASS="Body">
+<A NAME="pgfId-425260"></A>A dataset can be thought of as a block of memory that holds the data. To visualize the data, objects are created from the dataset, which are displayed in the graphics window. Just as there is no limit to the number of datasets that can be loaded, there is no limit to the number if objects that can be created from a single dataset.</P>
+<P CLASS="Body">
+<A NAME="pgfId-425261"></A>Now we have three different layers of the data: the dataset, the object and the individual data element. The object and the element always belong to a specific dataset. The three layers are addressed (given commands) in the following way:</P>
+<P CLASS="Body">
+<A NAME="pgfId-425262"></A><EM CLASS="Emphasis">
+dataset</EM>
+: the name of the dataset, preceded with a dot, then the command with its (optional) parameters</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425263"></A>.dataset command [parameters ...]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425264"></A><EM CLASS="Emphasis">
+object</EM>
+: dot-datasetname-dot-objectname command (optional) parameters</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425265"></A>.dataset.object command [parameters ...]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425266"></A><EM CLASS="Emphasis">
+data element</EM>
+: dot-datasetname-colon-element command (optional) parameters.   This is only implemented so far for the structure dataset (see below)</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425267"></A>.dataset:element command [parameters ...]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425268"></A>Wildcards (* and ?) can be used in the dataset and object names to match multiple datasets resp. objects. For example, to hide all objects with one command use</P>
+<PRE CLASS="Example"><A NAME="pgfId-425269"></A>.*.* hide</PRE>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425270"></A>5.1.1 Prototype</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425271"></A>The following scheme outlines the basic steps for displaying your data:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425272"></A>load a file, its content is stored as a dataset</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425273"></A>create a new object of a specific type from the dataset, optionally applying a selection and/or setting object properties</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425274"></A>center object on the screen</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425275"></A>modify object properties with set, optionally applying a selection and/or a range criteria</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425276"></A>change the rendering state<BR>
+</LI>
+</UL>
+
+<PRE CLASS="Example"><A NAME="pgfId-429194"></A><EM>Example:</EM> load myo.pdb
+         .myo new -name prot -sel rnum=1:146 
+         scene center [.myo.prot] 
+         .myo.prot set color=cyan -sel aname=C*  
+         .myo.prot render custom,sr=0.25,bw=0.15</PRE>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425282"></A>5.1.2 Creating Objects</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425283"></A>After a dataset is loaded objects can be created from it. This is accomplished with the dataset command <TT CLASS="Code">
+new</TT>
+. During object creation the name and type of the object as well as object properties can be set and a selection can be applied.</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425284"></A><EM>Syntax:</EM> .dataset new [-name N] [-type T] [-selection SEL] [-set S]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425285"></A>As a default, the name of the dataset is used and all elements are selected. The default type and object properties depend on the dataset (see below).</P>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425286"></A>5.1.3 Properties</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425287"></A>The scene, dataset, objects and elements are all characterized by properties, e.g. the background color, the selection mode, the object color, the position in space, etc.</P>
+<P CLASS="Body">
+<A NAME="pgfId-436060"></A>When an object is created from a dataset, some element properties are shared and some are copied. To retrieve the shared properties, the data-element command <TT CLASS="Code">
+get</TT>
+ is used. To modify the shared properties, the dataset command <TT CLASS="Code">
+set</TT>
+ is employed, optionally with a selection. To modify a copied property, the object command <TT CLASS="Code">
+set</TT>
+ or the dataset command <TT CLASS="Code">
+set</TT>
+ is used; usage on the dataset level will change the default.</P>
+<PRE CLASS="Example"><A NAME="pgfId-436061"></A>// retrieve shared property (e.g. bfac)
+.struct:A.114.CA get bfac</PRE>
+<PRE CLASS="Example"><A NAME="pgfId-436062"></A>// set shared property (e.g. rtype)
+.struct set rtype=helix -sel rnum=1:14,20:35</PRE>
+<PRE CLASS="Example"><A NAME="pgfId-436067"></A>// set copied property (e.g. color)
+.struct.obj set color=green -sel ele=C  // for object only
+.struct set color=green -sel ele=C   // default coloring</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425288"></A>The different properties are described in tables below, specifiying wether they belong to the dataset, object or element.</P>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425289"></A>5.1.4 Selection Syntax</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425290"></A>DINO features a powerful selection syntax. A selection consists of one or more PVs connected by logical operators <TT CLASS="Code">
+and</TT>
+ (or <TT CLASS="Code">
+&amp;</TT>
+) and <TT CLASS="Code">
+or</TT>
+ (or <TT CLASS="Code">
+|</TT>
+) , optionally grouped by parenthesis ( ). A PV is in principle build up from a property, and operator and one or more (comma-separated) values and can be lead by a <TT CLASS="Code">
+not</TT>
+ (or <TT CLASS="Code">
+!</TT>
+).</P>
+<P CLASS="Body">
+<A NAME="pgfId-425291"></A>There are three principle types of PV used for selection:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425292"></A>standard: property is one of the selectable dataset properties, operator is one of <TT CLASS="Code">
+=</TT>
+ (equal), <TT CLASS="Code">
+!=</TT>
+ (not equal), <TT CLASS="Code">
+&gt;</TT>
+ (larger) , <TT CLASS="Code">
+&gt;=</TT>
+ (larger or equal), <TT CLASS="Code">
+&lt;</TT>
+ (smaller), <TT CLASS="Code">
+&lt;=</TT>
+(smaller or equal) and the value is either a single word or a range (two words separated by a colon <TT CLASS="Code">
+value1:value2</TT>
+<A HREF="#pgfId-431188" CLASS="footnote">1</A>). The selectable properties are specific to each dataset</LI>
+</UL>
+
+<PRE CLASS="Example"><A NAME="pgfId-431222"></A>ele=C   rnum=1,4,7,8    anum=1:1000   bfac&lt;30</PRE>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425293"></A>within: this selection is applied when the operator is <TT CLASS="Code">
+&lt;&gt;</TT>
+. The property is a distance <TT CLASS="Code">
+R</TT>
+ in &Aring; and the value can be either a coordinate (in the form <TT CLASS="Code">
+{x,y,z}</TT>
+) or an object (in the form <TT CLASS="Code">
+.object</TT>
+ (for own objects)   or <TT CLASS="Code">
+.dataset.object</TT>
+). For the coordinate, the selection is true if the element is within a sphere of radius <TT CLASS="Code">
+R</TT>
+ around point <TT CLASS="Code">
+{x,y,z}</TT>
+. For the object, the selection is true if the element is within distance <TT CLASS="Code">
+R</TT>
+ from any part of the object<A HREF="#pgfId-431207" CLASS="footnote">2</A>.</LI>
+</UL>
+
+<PRE CLASS="Example"><A NAME="pgfId-431205"></A>6&lt;&gt;{12.0,3.6,-39.7}
+10&lt;&gt;.struct.obj</PRE>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425294"></A>object: the PV is contains only to the value, which starts with a dot and is interpreted as an object (from the same dataset). Multiple objects can be given, separated by commas. The selection will be true if the element is already present in that object. (Under special   circumstances, a value in the form <TT CLASS="Code">
+.dataset.object</TT>
+ can be given,  see attachments below).</LI>
+</UL>
+
+<P CLASS="Body">
+<A NAME="pgfId-431232"></A>Following is a collection of selection statements to clarify the sytnax:</P>
+<PRE CLASS="Code"><A NAME="pgfId-431233"></A>.struct new -sel rnum=1:100  // select residues 1 to 100
+.struct new -sel not chain=C,D,E  // all except chains C,D and E
+.struct new -sel (rnum=7,12,43 &amp; !aname=C,N,O)
+.scal new -sel 10&lt;&gt;[.struct.obj] // select around center of object
+.scal new -sel 10&lt;&gt;.struct.obj   // select around limits of object
+.surf new -sel .a,.b,.c       // effectively merges three objects</PRE>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425299"></A>5.1.5 <A NAME="29182"></A>Modifying Objects</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425300"></A>An object can be modified with the commands <TT CLASS="Code">
+renew</TT>
+ and <TT CLASS="Code">
+set</TT>
+. Former carries similar functionality  as the dataset command <TT CLASS="Code">
+new</TT>
+, expect the name and type are fixed, and the selection and object properties will default to current selection and properties of the object if not explicetly specified.</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425301"></A><EM>Syntax:</EM> .dataset.object renew [-selection SEL] [-set S]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425302"></A>Calling <TT CLASS="Code">
+renew</TT>
+ without any parameter re-creates the object, which is sometimes useful, e.g. after the dataset restriction changes (see below).</P>
+<P CLASS="Body">
+<A NAME="pgfId-425303"></A>The command <TT CLASS="Code">
+set</TT>
+ can be used on datasets and objects to modify properties with a comma seperated list of PVs, either in the context of <TT CLASS="Code">
+renew</TT>
+ or by itself:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425304"></A><EM>Syntax:</EM> .dataset.object set PV1[,PV2 ...] [-selection SEL] [-range RANGE]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425305"></A>It can optionally carry the flags <TT CLASS="Code">
+-selection</TT>
+ and/or <TT CLASS="Code">
+-range</TT>
+. If a selection is used, only the properties of the matching elements will be modified:</P>
+<PRE CLASS="Example"><A NAME="pgfId-425306"></A><EM>Example:</EM> // color all carbon atoms of this structure object in cyan
+         .struct.all set color=cyan -sel aname=C* </PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425308"></A>The option <TT CLASS="Code">
+-range</TT>
+ allows to linearly map a property of the same or another dataset to an object property (usually color). Up to three properties for <TT CLASS="Code">
+-range</TT>
+ need to be specified: <TT CLASS="Code">
+src</TT>
+, <TT CLASS="Code">
+prop</TT>
+ and <TT CLASS="Code">
+val</TT>
+.</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425309"></A><EM>Syntax:</EM> .ds.obj set color=color1:color2 -range [src=SRC][,prop=PROP][,val=VAL1:VAL2]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425310"></A>The range properties have the following meaning:</P>
+<P CLASS="List3">
+<A NAME="pgfId-425311"></A><TT CLASS="Code">
+src</TT>
+: The source dataset where to get the property from. If this is omitted or just a single dot, then the dataset of the object is used.</P>
+<P CLASS="List3">
+<A NAME="pgfId-425312"></A><TT CLASS="Code">
+prop</TT>
+: The property from the dataset which is used for mapping, this is specific to each dataset (see below). If omitted, the default mappable property for the specific dataset is used.</P>
+<P CLASS="List3">
+<A NAME="pgfId-425313"></A><TT CLASS="Code">
+val</TT>
+: A range which is to be mapped. Values outside this range are  ignored. If omitted, the value range used is undefined.</P>
+<P CLASS="Body">
+<A NAME="pgfId-425314"></A>In the tables below the R column denotes a property that can be used for applying a range: the structure dataset for instance allows <TT CLASS="Code">
+bfac</TT>
+, so to color a structure object according to b-factor one would use</P>
+<PRE CLASS="Example"><A NAME="pgfId-425315"></A><EM>Example:</EM> .strc.obj set color=blue:red -range prop=bfac,val=0:80
+         // note that 'src' is not needed</PRE>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425316"></A>5.1.6 <A NAME="26888"></A>Graphical Appearance</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425317"></A>The way an object is displayed in the graphics window is managed with the commands <TT CLASS="Code">
+render</TT>
+ and <TT CLASS="Code">
+material</TT>
+.  </P>
+<PRE CLASS="Syntax"><A NAME="pgfId-432900"></A><EM>Syntax:</EM> .ds.obj render PV[,PV]
+         .ds.obj material [amb=COL],[diff=COL],[spec=COL],[shin=N],[EMM=COL]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-432904"></A>The render properties are explained in more detail in the individual dataset sections below.</P>
+<P CLASS="Body">
+<A NAME="pgfId-432935"></A>The material properties characterise how the objects interact with the light sources. <TT CLASS="Code">
+COL</TT>
+ is either a full <TT CLASS="Code">
+{r,g,b}</TT>
+ triplet or a single (grey) value. <TT CLASS="Code">
+N</TT>
+  is a number between 0 and 128.</P>
+<P CLASS="List3">
+<A NAME="pgfId-432936"></A><TT CLASS="Code">
+amb</TT>
+: defines how much of the ambient lightsource component is reflected from the material; ambient reflection is independent of the position of the light</P>
+<P CLASS="List3">
+<A NAME="pgfId-432941"></A><TT CLASS="Code">
+diff</TT>
+: defines how much of the diffuse lightsource component is reflected from the material; diffuse reflection is dependent on the position of the light </P>
+<P CLASS="List3">
+<A NAME="pgfId-432942"></A><TT CLASS="Code">
+spec</TT>
+: defines how much of the specular lightsource component is reflected from the material; specular reflection produces highlights</P>
+<P CLASS="List3">
+<A NAME="pgfId-432943"></A><TT CLASS="Code">
+shin</TT>
+: shininess component, determines the brightness and size of the highlight, the higher the number, the brighter and narrower the highlight.</P>
+<P CLASS="List3">
+<A NAME="pgfId-432944"></A><TT CLASS="Code">
+emm</TT>
+: simulates light emmision, but does not act as a lightsource</P>
+<P CLASS="Body">
+<A NAME="pgfId-432945"></A>For more information concering material properties and the interaction with the lightsources, consult an OpenGL reference (e.g. OpenGL Programming Manual 3rd Ed pp201).</P>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425318"></A>5.1.7 <A NAME="58995"></A>Dataset Restriction</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425319"></A>Elements in the dataset can be restricted, so that they are not taken into account during subsequent commands.</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425320"></A><EM>Syntax:</EM> .dataset restrict SELECTION</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425321"></A>All elements that do NOT match the selection are excluded from the dataset. To unrestrict the dataset, call restrict with * as selection.</P>
+<PRE CLASS="Example"><A NAME="pgfId-425322"></A><EM>Example:</EM> .myo restrict not rname=HEM // this residue is excluded
+         .myo restrict *             // restriction is off</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425324"></A>A restriction in one dataset can have an effect on other datasets as well (see e.g. attachment below). The default is an unrestricted dataset.</P>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425325"></A>5.1.8 <A NAME="82704"></A>Transformation</H4>
+<P CLASS="Body">
+<A NAME="pgfId-425326"></A>Each dataset can be transformed individually with a rotation and a translation inside the global coordinate system. There are the following ways to transform:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-431256"></A> Set the properties <TT CLASS="Code">
+rot</TT>
+ and <TT CLASS="Code">
+trans</TT>
+ for absolute transformation</LI>
+</UL>
+
+<PRE CLASS="Syntax"><A NAME="pgfId-431263"></A><EM>Syntax:</EM> .dataset set rot={{a,b,c},{d,e,f},{g,h,i}},trans={x,y,z}</PRE>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-431257"></A>Use the commands <TT CLASS="Code">
+rotx</TT>
+, <TT CLASS="Code">
+roty</TT>
+, <TT CLASS="Code">
+rotz</TT>
+ resp. <TT CLASS="Code">
+transx</TT>
+, <TT CLASS="Code">
+transy</TT>
+, <TT CLASS="Code">
+transz</TT>
+ for relative transformation</LI>
+</UL>
+
+<PRE CLASS="Syntax"><A NAME="pgfId-431268"></A><EM>Syntax:</EM> .dataset rotN angle
+        .dataset transN value</PRE>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425328"></A>Grab an input device</LI>
+</UL>
+
+<PRE CLASS="Syntax"><A NAME="pgfId-425329"></A><EM>Syntax:</EM> .dataset grab INPUTDEVICE</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-435352"></A><TT CLASS="Code">
+INPUTDEVICE</TT>
+ is one of <TT CLASS="Code">
+mouse</TT>
+, <TT CLASS="Code">
+mouse2</TT>
+, <TT CLASS="Code">
+dials</TT>
+, <TT CLASS="Code">
+dials2</TT>
+, <TT CLASS="Code">
+spaceball</TT>
+, <TT CLASS="Code">
+spaceball2</TT>
+ (<A HREF="manual-4.html#23974" CLASS="XRef">see &quot;4.10 Input&quot; on page 20</A>). </P>
+<P CLASS="Body">
+<A NAME="pgfId-435365"></A>To reset or fix the transformation:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-435355"></A><EM>Syntax:</EM> .dataset reset
+        .dataset fix</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-435349"></A><TT CLASS="Code">
+reset</TT>
+ will set the transformation back to identity. <TT CLASS="Code">
+fix</TT>
+ will apply the transformation to the dataset elements and then set the transformation back to identity. </P>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-430216"></A>5.2 Database Manager</H3>
+<P CLASS="Body">
+<A NAME="pgfId-430221"></A>There are two ways to create a dataset: loading a file or issuing the <TT CLASS="Code">
+new</TT>
+ command. Currently, the geometric primitives dataset can only be created with <TT CLASS="Code">
+new</TT>
+ and all others (structure, scalar field, surface, topography) must be loaded from a file.</P>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-425335"></A>5.2.1 Loading Datasets</H4>
+<PRE CLASS="Syntax"><A NAME="pgfId-425337"></A><EM>Syntax:</EM> load file.ext [-type T] [-name N] [-swap]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425338"></A>The type is guessed from the extension (see  <A HREF="manual-5.html#31189" CLASS="XRef">Table 7 (P. 26)</A>) or can be explicitly set with the <TT CLASS="Code">
+-type</TT>
+ flag. Files can be gzipped, this will be recognized and the file gunzipped on the fly (adding the <TT CLASS="Code">
+.gz</TT>
+ extension to <TT CLASS="Code">
+file.ext</TT>
+ is not necessary). If no <TT CLASS="Code">
+name</TT>
+ is given, the filename without extension will be used. The option <TT CLASS="Code">
+-swap</TT>
+ swaps the binary values from LSB to MSB or vice versa. Use this when exchanging binary files between platforms that have a different byte order (e.g. SGI and Linux). See <A HREF="manual-5.html#31189" CLASS="XRef">Table 7 (P. 26)</A> for all supported formats.</P>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-429940"></A><A NAME="31189"></A>Database Manager supported file formats
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429950"></A>extensions</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429952"></A>type</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429954"></A>description</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429956"></A>dataset</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429958"></A>format</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429960"></A>.pdb .ent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429962"></A>pdb</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429964"></A>Brookhaven / RCSB PDB coordinates</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429966"></A>structure</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429968"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429970"></A>.xpl</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429972"></A>xplorc</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429974"></A>XPLOR 3.x coordinate file</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429976"></A>structure</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429978"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429980"></A>.cnsc</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429982"></A>cnsc</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429984"></A>CNS 0.9 coordinate file</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429986"></A>structure</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429988"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429990"></A>.crd</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-429992"></A>charmm</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429994"></A>CHARMM coordinate file</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429996"></A>structure</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-429998"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430000"></A>.pqr</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430002"></A>pqr</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430004"></A>MEAD coordinate file</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430006"></A>structure</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430008"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430010"></A>.map</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430012"></A>ccp4</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430014"></A>CCP4 electron density and mask</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430016"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430018"></A>binary</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430020"></A>.xmp .xmap</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430022"></A>xplorb</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430024"></A>XPLOR 3.x binary electron density map</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430026"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430028"></A>binary</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430030"></A>.cmp .cmap</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430032"></A>cnsb</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430034"></A>CNS 0.9 binary electron density map</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430036"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430038"></A>binary</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430040"></A>.uhb .uhbd .pot</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430042"></A>uhbd</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430044"></A>UHBD potential</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430046"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430048"></A>binary</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430050"></A>.fld .mead</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430052"></A>mead</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430054"></A>MEAD field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430056"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430058"></A>binary</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430060"></A>.grd .ins</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430062"></A>delphi</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430064"></A>DELPHI electrostatic potential</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430066"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430068"></A>binary</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430070"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430072"></A>xplora</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430074"></A>XPLOR 3.x ASCII map</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430076"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430078"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430080"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430082"></A>cnsa</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430084"></A>CNS 0.9 ASCII map</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430086"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430088"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430090"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430092"></A>delphig</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430094"></A>DELPHI-like 64^3 fixed map (i.e. from GRASP)</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430096"></A>scalar field</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430098"></A>binary</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430100"></A>.face + .vert</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430102"></A>msms</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430104"></A>MSMS output</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430106"></A>surface</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430108"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430110"></A>.vet .msp</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430112"></A>msp</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430114"></A>MSP output</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430116"></A>surface</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430118"></A>ASCII</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430120"></A>.tiff</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-430122"></A>topo</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430124"></A>square greyscale TIFF image</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430126"></A>topography</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-430128"></A>n.a.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-429917"></A>5.2.2 <A NAME="97398"></A>Creating Datasets</H4>
+<P CLASS="Body">
+<A NAME="pgfId-429911"></A>In future versions, all datasets can be created from scratch, but at the moment this is restricted to the geometric primitives dataset:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-429899"></A><EM>Syntax:</EM> new TYPE [-name N]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-429900"></A>If the name is not given, the dataset type will be used.</P>
+<PRE CLASS="Example"><A NAME="pgfId-429901"></A><EM>Example:</EM> new geom -name g</PRE>
+</DIV>
+<DIV>
+<H4 CLASS="Heading3">
+<A NAME="pgfId-432878"></A>5.2.3 Other commands</H4>
+<P CLASS="Body">
+<A NAME="pgfId-432882"></A>A dataset can be removed with <TT CLASS="Code">
+delete</TT>
+ and renamed with <TT CLASS="Code">
+rename</TT>
+. <EM CLASS="Emphasis">
+Note</EM>
+ that there is no dot in front of the dataset names:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425347"></A><EM>Syntax:</EM> delete dataset
+        rename old new</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425349"></A><TT CLASS="Code">
+list</TT>
+ will display all currently loaded datasets.</P>
+</DIV>
+</DIV>
+<HR>
+<DIV CLASS="footnotes">
+<DIV CLASS="footnote">
+<P CLASS="Footnote">
+<SPAN CLASS="footnoteNumber">
+1.</SPAN>
+<A NAME="pgfId-431188"></A>In previous DINO versions, the range could also be expressed as <TT CLASS="Code">
+&lt;value1,value2&gt;</TT>
+. This old syntax is no longer supported!</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="Footnote">
+<SPAN CLASS="footnoteNumber">
+2.</SPAN>
+<A NAME="pgfId-431207"></A>To be more precise, within distance <TT CLASS="Code">
+R</TT>
+ from any element in the object, e.g. for a structure object the atoms, a surface object the vertices etc...</P>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

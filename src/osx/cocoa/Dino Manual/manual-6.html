@@ -1,0 +1,1591 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 5.5/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="manual.css" CHARSET="ISO-8859-1" TYPE="text/css">
+<TITLE> 6 Structure Dataset </TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=3 WIDTH="100%" BGCOLOR="#FFFF99" NOSAVE >
+<tr VALIGN=CENTER NOSAVE>
+<td VALIGN=CENTER NOSAVE><b><tt><font size=-1><a href="http://www.bioz.unibas.ch/~xray/dino">DINO:
+Visualizing Structural Biology</a></font></tt></b></td>
+
+<td VALIGN=CENTER NOSAVE>
+<table CELLSPACING=0 CELLPADDING=0 WIDTH="100%" NOSAVE >
+<tr ALIGN=CENTER VALIGN=CENTER NOSAVE>
+<td NOSAVE>
+<center><A HREF="manual.html">Table of Contents</a></center>
+</td>
+
+<td NOSAVE>
+<center><A HREF="manual-5.html">Previous</a></center>
+</td>
+
+<td>
+<center><A HREF="manual-7.html">Next</a></center>
+</td>
+</tr>
+</table>
+</td>
+
+<td VALIGN=CENTER NOSAVE>
+<div align=right><b><tt><font size=-1>User Manual</font></tt></b></div>
+</td>
+</tr>
+</table>
+
+<H2 CLASS="Heading1">
+<A NAME="pgfId-431291"></A>6 Structure Dataset </H2>
+<P CLASS="Body">
+<A NAME="pgfId-425351"></A>The structure dataset is probably the most complex of all datasets present in DINO. Its most basic element is the atom. There are two different ways to think about the organization of atoms in this dataset. In one organization, all atoms are in a list and carry properties such as position, name, number, chemical-info (element, charge, vdW-radius), residue-name, residue-number, chain-id, model etc .... Another way is to envision a hierarchy where the structure dataset consists of of or more models, each model consists of one or more chains, each chain consists of one or more residues and each residue is build up from atoms, which carry atom-only properties such as position, chemical-info, name and number.</P>
+<P CLASS="Body">
+<A NAME="pgfId-425352"></A>Most file-formats use the first representation. DINO internaly uses the second way to organize the structural data, but for selection and direct addressing purposes, its easier to think about it in the first way.</P>
+<P CLASS="Body">
+<A NAME="pgfId-431796"></A>Additionally, a trajectory can be loaded into a structure dataset. A trajectory consists of a collection of frames, each with the same set of atoms but different coordinates for each atom (see also below). The trajectory can be played while retaining full interactivity.</P>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-432045"></A><A NAME="18909"></A>Structure Dataset and Object Properties
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432049"></A>Property</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432061"></A>S<A HREF="#pgfId-432072" CLASS="footnote">1</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432063"></A>G<A HREF="#pgfId-432075" CLASS="footnote">2</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432051"></A>Description</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="4">
+<P CLASS="CellBody">
+<A NAME="pgfId-432053"></A>Dataset Properties</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432134"></A>center</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432136"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432138"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432140"></A>center of rotation, default equals center of gravity</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432126"></A>rot</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432128"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432130"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432132"></A>rotation matrix</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432118"></A>trans</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432120"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432122"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432124"></A>translation vector</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432110"></A>smode</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432112"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432114"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432116"></A>selection mode, either atom or residue<TT CLASS="Code">
+,</TT>
+ default is atom</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432102"></A>tfast</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432104"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432106"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432108"></A>fast updates of trajectories, cannot be used with render mode custom, default is on</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="4">
+<P CLASS="CellBody">
+<A NAME="pgfId-432094"></A>Object Properties</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432086"></A>center</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432088"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432090"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432092"></A>geometric center of object</P>
+</TD>
+</TR>
+</TABLE>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-431799"></A><A NAME="63013"></A>Structure Dataset Element Properties
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431811"></A>Property</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431816"></A>S<A HREF="#pgfId-431815" CLASS="footnote">3</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431821"></A>G<A HREF="#pgfId-431820" CLASS="footnote">4</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431826"></A>L<A HREF="#pgfId-431825" CLASS="footnote">5</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431831"></A>R<A HREF="#pgfId-431830" CLASS="footnote">6</A></P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431833"></A>Description</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="6">
+<P CLASS="CellBody">
+<A NAME="pgfId-431835"></A>element properties shared between dataset and object; modified with .dataset set</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431847"></A>aname</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431849"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431851"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431853"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431855"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431857"></A>atom name as present in coordinate file</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431859"></A>anum</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431861"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431863"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431865"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431867"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431869"></A>atom number as present in coordinate file</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431871"></A>bfac</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431873"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431875"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431877"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431879"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431881"></A>crystallographic temperature factor (if present)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431883"></A>chain</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431885"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431887"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431889"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431891"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431893"></A>alphanumeric chain id</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-432538"></A>class</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432540"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432542"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432544"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432546"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432548"></A>class of structure: protein, na or misc</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431895"></A>ele</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431897"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431899"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431901"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431903"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431905"></A>chemical element symbol</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431907"></A>model</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431909"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431911"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431913"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431915"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431917"></A>model number</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431919"></A>rname</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431921"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431923"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431925"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431927"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431929"></A>residue name as present in coordinate file</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431931"></A>rnum</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431933"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431935"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431937"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431939"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431941"></A>residue number</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431943"></A>rtype</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431945"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431947"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431949"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431951"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431953"></A>residue type: coil (default), helix or strand</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431955"></A>weight  occ</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431957"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431959"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431961"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431963"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431965"></A>weight or crystallographic occupancy (if present)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431967"></A>xyz</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431969"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431971"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431973"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431975"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431977"></A>position of atom</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431979"></A>x</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431981"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431983"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431985"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431987"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431989"></A>x-coordinate of atom</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-431991"></A>y</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431993"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431995"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431997"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-431999"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432001"></A>y-coordinate of atom</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-432003"></A>z</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432005"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432007"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432009"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432011"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432013"></A>z-coordinate of atom</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="6">
+<P CLASS="CellBody">
+<A NAME="pgfId-432015"></A>element properties copied from dataset to object, setting on the dataset changes default</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-432027"></A>color</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432029"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432031"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432033"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432035"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432037"></A>color, either a color name or an explicit {r,g,b} triplet</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-432154"></A>vdwr</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432156"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432158"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432160"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432162"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-432164"></A>VdWaals radius</P>
+</TD>
+</TR>
+</TABLE>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-425360"></A>6.1 <A NAME="28793"></A>Structure Objects</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425361"></A>New structure objects are created with <TT CLASS="Code">
+new</TT>
+. There are two object types for the structure dataset:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-425362"></A><TT CLASS="Code">
+connect</TT>
+: Connects atoms with bonds using the chemical connectivity, this is the default object type, all selection properties are considered.</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-425363"></A><TT CLASS="Code">
+trace</TT>
+: The central atoms of each residue (<TT CLASS="Code">
+CA</TT>
+ for proteins, <TT CLASS="Code">
+C3'</TT>
+ for nucleic acids) are connected to each other in their sequential order according to residue-numbers. A discontinuity in the residue numbering or a change in chain identifier causes a break in the trace. The selection properties <TT CLASS="Code">
+aname</TT>
+, <TT CLASS="Code">
+anum</TT>
+ and <TT CLASS="Code">
+ele</TT>
+ have no effect.</LI>
+</UL>
+
+<PRE CLASS="Syntax"><A NAME="pgfId-425364"></A><EM>Syntax:</EM> .struct new [-name NAME][-type TYPE][-set SET] [-selection SEL]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425365"></A><TT CLASS="Code">
+NAME</TT>
+ defaults to the dataset name. <TT CLASS="Code">
+TYPE</TT>
+ defaults to <TT CLASS="Code">
+connect</TT>
+. Object properties that can be set are listed in <A HREF="manual-6.html#18909" CLASS="XRef">Table 8 (P. 27)</A>. A selection with selectable atom properties (column L in <A HREF="manual-6.html#63013" CLASS="XRef">Table 9 (P. 28)</A>) can be given.</P>
+<P CLASS="CellBody-Prop">
+<PRE CLASS="Example">
+<A NAME="pgfId-430228"></A><EM>Example:</EM> load myo.pdb
+         .myo new -name all
+         .myo new -name ca -type trace
+         .myo new -name prot -sel not rname=HEM
+         .myo new -name helix1 -type trace -sel rnum=4:14
+</PRE>
+
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-425371"></A>6.2 Structure Dataset Commands</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425372"></A>Following are all structure dataset commands:</P>
+<P CLASS="List3">
+<A NAME="pgfId-433230"></A><TT CLASS="Code">
+new</TT>
+: creates a new object (<A HREF="manual-6.html#28793" CLASS="XRef">see &quot;6.1 Structure Objects&quot; on page 27</A>)</P>
+<P CLASS="List3">
+<A NAME="pgfId-425374"></A><TT CLASS="Code">
+set get</TT>
+: retrieves or modifies a dataset property (columns S and G in <A HREF="manual-6.html#18909" CLASS="XRef">Table 8 (P. 27)</A>)</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425375"></A><EM>Syntax:</EM> .struct set PV[, PV ...] 
+        .struct get P</PRE>
+<P CLASS="List3">
+<A NAME="pgfId-425377"></A><TT CLASS="Code">
+restrict</TT>
+: shadow out a subset of the dataset which will not be considered in selection or property setting (<A HREF="manual-5.html#58995" CLASS="XRef">see &quot;5.1.7 Dataset Restriction&quot; on page 25</A>).</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425378"></A><EM>Syntax:</EM> .struct restrict SELECTION</PRE>
+<P CLASS="List3">
+<A NAME="pgfId-425379"></A><TT CLASS="Code">
+delete</TT>
+: remove one or more objects</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425380"></A><EM>Syntax:</EM>.struct delete obj [obj2 ...]</PRE>
+<P CLASS="List3">
+<A NAME="pgfId-425381"></A><TT CLASS="Code">
+load step play stop</TT>
+: trajectory related commands (<A HREF="manual-6.html#50447" CLASS="XRef">see &quot;6.6 Trajectories&quot; on page 31</A>)</P>
+<P CLASS="List3">
+<A NAME="pgfId-425382"></A><TT CLASS="Code">
+grab reset fix center</TT>
+: transformation related commands (<A HREF="manual-5.html#82704" CLASS="XRef">see &quot;5.1.8 Transformation&quot; on page 25</A>)<TT CLASS="Code">
+; reset</TT>
+ additionally can have the parameters <TT CLASS="Code">
+all</TT>
+ (default) or <TT CLASS="Code">
+center</TT>
+, the latter will set the center of rotation back to the center of geometry after a modification with <TT CLASS="Code">
+scene set center</TT>
+</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-434439"></A><EM>Syntax:</EM>.struct reset [all | center]</PRE>
+<PRE CLASS="Example"><A NAME="pgfId-434443"></A><EM>Example:</EM> .struct grab dials          // dial input moves dataset
+         .struct set center=[$CS]
+         // rotation now around current selection
+         .struct reset center
+         // rotation now around geometric center of dataset
+         scene grab dials         // dial input back to camera</PRE>
+<P CLASS="List3">
+<A NAME="pgfId-425383"></A><TT CLASS="Code">
+write</TT>
+: writes the dataset into a file (<EM CLASS="Emphasis">
+taking restriction into account</EM>
+!)</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425384"></A><EM>Syntax:</EM> .struct write file.ext [-type T]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425385"></A>The type of the file is recognized by its extension if not explicitly given. Supported types with extensions are listed in <A HREF="manual-6.html#97627" CLASS="XRef">Table 10 (P. 29)</A>. </P>
+<P CLASS="List3">
+<A NAME="pgfId-430751"></A><TT CLASS="Code">
+connect</TT>
+: Adds a bond between two atoms (<A HREF="manual-6.html#74508" CLASS="XRef">see &quot;6.5 Connectivity&quot; on page 31</A>).</P>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-434422"></A><A NAME="97627"></A>Structure Dataset Write formats
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434426"></A>extension</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434646"></A>type</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434428"></A>description</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434430"></A>.pdb</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434648"></A>pdb</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434432"></A>RCSB / Brookhaven PDB format</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434674"></A>.xpl</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434676"></A>xplorc</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434678"></A>XPLOR / CNS format</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434668"></A>.crd</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434670"></A>charmm</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434672"></A>CHARMM format</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434662"></A>.xyzr</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody-Prop">
+<A NAME="pgfId-434664"></A>xyzr</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-434666"></A>suitable as input for MSMS</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-430239"></A>6.3 Structure Object Commands</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425388"></A>Structure object commands are issued as:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425389"></A><EM>Syntax:</EM> .struct.obj command [parameters]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425390"></A>Following is a list of all structure object commands:</P>
+<P CLASS="List2">
+<A NAME="pgfId-425391"></A><TT CLASS="Code">
+renew</TT>
+: Similar to dataset command <TT CLASS="Code">
+new</TT>
+, except the type and name are already determined, so only selection and setting is possible. If either selection or setting (or both) are omitted, the current selection resp. setting is maintained (<A HREF="manual-5.html#29182" CLASS="XRef">see &quot;5.1.5 Modifying Objects&quot; on page 23</A>).</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425392"></A><EM>Syntax:</EM> .struct.obj renew [-selection SEL] [-set SET]</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425393"></A><TT CLASS="Code">
+show hide</TT>
+: turns display of the object in the graphics window on or off. Identical to clicking on the object name in the object menu (<A HREF="manual-4.html#29987" CLASS="XRef">see &quot;4.12 The GUI&quot; on page 20</A>).</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425394"></A><EM>Syntax:</EM> .struct.obj show
+        .struct.obj hide</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425396"></A><TT CLASS="Code">
+clear</TT>
+: removes all labels. Hint: use <TT CLASS="Code">
+.struct.* clear</TT>
+ to get rid of all labels.</P>
+<P CLASS="List2">
+<A NAME="pgfId-425397"></A><TT CLASS="Code">
+set get</TT>
+: modify or retrieve structure object properties (columns S and G in <A HREF="manual-6.html#18909" CLASS="XRef">Table 8 (P. 27)</A> under structure object properties and <A HREF="manual-5.html#29182" CLASS="XRef">see &quot;5.1.5 Modifying Objects&quot; on page 23</A>). </P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425398"></A><EM>Syntax:</EM> .struct.obj get P
+        .struct.obj set PV [-selection SEL] [-range [src=SRC][,PROP=prop][val=VAL1:VAL2]]</PRE>
+<PRE CLASS="Example"><A NAME="pgfId-425400"></A><EM>Example:</EM> .myo.all set color=cyan -sel ele=C
+         .myo.ca set color=green:purple -range prop=rnum,val=1:146</PRE>
+<P CLASS="List2">
+<A NAME="pgfId-425402"></A><TT CLASS="Code">
+render</TT>
+: modifies the graphical appearance of an object (<A HREF="manual-6.html#51969" CLASS="XRef">see &quot;6.7 Render &amp; Graphical Appearance&quot; on page 32</A>)</P>
+<P CLASS="List2">
+<A NAME="pgfId-425403"></A><TT CLASS="Code">
+write</TT>
+: Similar to the the dataset command <TT CLASS="Code">
+write</TT>
+, the same file-types are supported (see <A HREF="manual-6.html#97627" CLASS="XRef">Table 10 (P. 29)</A>). Only the atoms in the object are written and the dataset restriction is ignored.</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425404"></A><EM>Syntax:</EM> .struct.obj write file.ext [-type T]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425405"></A>If no command is given, then <TT CLASS="Code">
+get center</TT>
+ is used. This is an useful shortcut for e.g. centering the object in the graphics window:</P>
+<PRE CLASS="Example"><A NAME="pgfId-425406"></A><EM>Example:</EM> // these two are identical
+         scene center [.myo.all get center]
+         scene center [.myo.all]</PRE>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-425409"></A>6.4 Structure Element Commands</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425410"></A>The syntax for addressing an element in a structure dataset is</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425411"></A><EM>Syntax:</EM> .struct:ELEMENT command [parameters]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425412"></A>The format of ELEMENT depends on the dataset itself, to be more precise whether chain and/or model are present. The general format is</P>
+<PRE CLASS="Code"><A NAME="pgfId-425413"></A><TT CLASS="Code">ELEMENT = [model.][chain.][rnum.]aname</TT>
+</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425414"></A><TT CLASS="Code">
+model</TT>
+, <TT CLASS="Code">
+chain</TT>
+ and <TT CLASS="Code">
+rnum</TT>
+ are only required if the structure dataset contains different models, chains and/or residues. The atom name is case sensitive and must be entered as present in the coordinate file.</P>
+<PRE CLASS="Example"><A NAME="pgfId-425415"></A>// no chain or model
+.struct:143.CA
+// chain also present
+.struct:B.99.N
+// model and chain present
+.struct:3.A.76.O
+// model but no chain
+.struct:2.81.CB</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425423"></A>Since the dataset 'knows' if a chain or model is present, it expects a certain format. No wild-cards can be used.</P>
+<P CLASS="Body">
+<A NAME="pgfId-425424"></A>The only command implemented so far is get, which retrieves an atom property:</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425425"></A><EM>Syntax:</EM> .struct:[model.][chain.][rnum.]aname get PROPERTY</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425426"></A>If no command is given, <TT CLASS="Code">
+get xyz</TT>
+ (the coordinate of the atom) is assumed.</P>
+<PRE CLASS="Example"><A NAME="pgfId-432837"></A><EM>Example:</EM> scene center [.myo:148.FE] 
+         // is equal to [.myo:148.FE get xyz]</PRE>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-432847"></A>6.5 <A NAME="74508"></A>Connectivity</H3>
+<DIV>
+<H4 CLASS="Heading5">
+<A NAME="pgfId-432848"></A>auto-connectivity</H4>
+<P CLASS="Body">
+<A NAME="pgfId-433286"></A>As mentioned above, a structure dataset is automatically created when loading a file which contains coordinate-data.  Although most coordinate-files do not contain explicit connectivity information, the connectivity is implicitly given by:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-432849"></A>The relationships between atoms as defined by chain-id, residue-number, residue-name and atom-name</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-432850"></A>The distance between two atoms, which is different for bonded atoms and atoms in vdW contact.</LI>
+</UL>
+
+<P CLASS="Body">
+<A NAME="pgfId-432851"></A>DINO uses an auto-connectivity routine that exploits both implicit and explicit connectivity rules. It contains an internal connectivity table for the 20 amino-acids and the 5 bases, including a rule which atoms connect residues n and n+1<A HREF="#pgfId-432854" CLASS="footnote">7</A> . If an atom is encountered that is not defined by the internal connectivity table, it is connected to all atoms that lie within CUTOFF of its position; where CUTOFF is defined as the sum of the two van der Waals radii divided by two. Additionally, connectivity defined in the coordinate-file is considered (e.g. CONECT in PDB). As a consequence, disulfide bridges must be either explicitely defined with CONECT, or the atom name of the cystein sulfur (normally SG) must be changed to force distance-based connectivity (e.g. into SS).</P>
+</DIV>
+<DIV>
+<H4 CLASS="Heading5">
+<A NAME="pgfId-432858"></A>manual connectivity</H4>
+<P CLASS="Body">
+<A NAME="pgfId-432855"></A>The structure dataset command <TT CLASS="Code">
+connect</TT>
+ can be utilized to connect two atoms together</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-432860"></A><EM>Syntax:</EM> .struct connect ELEMENT1 ELEMENT2</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-432866"></A><TT CLASS="Code">
+ELEMENT</TT>
+ is a structure dataset element in the form as explained in the direct access section above.</P>
+<PRE CLASS="Example"><A NAME="pgfId-432867"></A><EM>Example:</EM> .struct connect A.13.SG B.156.SG</PRE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-432839"></A>6.6 <A NAME="50447"></A>Trajectories</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425429"></A>Trajectories are an addition to a structure dataset. They provide a collection of frames which contain new coordinates for each atom of the structure dataset. First a trajectory needs to be loaded from a file</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425430"></A><EM>Syntax:</EM> .struct load file.ext [-type T] [-swap]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425431"></A>If the type is not given, it is guessed from the extension. Currently, CHARMM (extension <TT CLASS="Code">
+.trj</TT>
+ type <TT CLASS="Code">
+charmm</TT>
+) and CNS (extension <TT CLASS="Code">
+.crd</TT>
+, type <TT CLASS="Code">
+cns</TT>
+) trajectories are supported The parameter <TT CLASS="Code">
+-swap</TT>
+ can be used to apply byte-order swapping to the trajectory.</P>
+<P CLASS="Body">
+<A NAME="pgfId-425432"></A>Once trajectories are loaded, they can be played continuously or each frame can be looked at one by one.</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-425433"></A><EM>Syntax:</EM> .struct play [-wait w] [-begin b] [-end e] [-step s] [-mode m]
+        .struct stop
+        .struct step [n]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-425436"></A><TT CLASS="Code">
+wait</TT>
+ denotes the number of wait-cycles until the next frame is displayed, default is 0. <TT CLASS="Code">
+begin</TT>
+ and <TT CLASS="Code">
+end</TT>
+ specify from which to which frame the trajectory shall run, default is 1 to max. <TT CLASS="Code">
+mode</TT>
+ can be <TT CLASS="Code">
+loop</TT>
+ (default) or <TT CLASS="Code">
+rock</TT>
+.</P>
+<P CLASS="Body">
+<A NAME="pgfId-425437"></A>While the trajectory is playing, full interactivity is available.</P>
+<P CLASS="Body">
+<A NAME="pgfId-425438"></A>The structure dataset property <TT CLASS="Code">
+tfast</TT>
+ can be used to turn off the recalculation of internal parameters needed for render mode custom. This will considerably speed up trajectory display, but will only work if all structure dataset objects are not in render mode <TT CLASS="Code">
+custom</TT>
+. This flag is true (fast trajectory) per default.</P>
+</DIV>
+<DIV>
+<H3 CLASS="Heading2">
+<A NAME="pgfId-425439"></A>6.7 <A NAME="51969"></A>Render &amp; Graphical Appearance</H3>
+<P CLASS="Body">
+<A NAME="pgfId-425440"></A>The command <TT CLASS="Code">
+render</TT>
+ modifies the graphical appearance of an object: </P>
+<PRE CLASS="Syntax"><A NAME="pgfId-432953"></A><EM>Syntax:</EM> .struct.obj render PV [,PV ...]</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-432946"></A>The render properties applicable to the structure dataset objects are given in <A HREF="manual-6.html#86033" CLASS="XRef">Table 11 (P. 33)</A>. Depending on the type of object (connect or trace), several rendering modes are available, specified as</P>
+<PRE CLASS="Syntax"><A NAME="pgfId-432971"></A><EM>Syntax:</EM> .struct.obj render MODE</PRE>
+<P CLASS="Body">
+<A NAME="pgfId-432972"></A>Modes:</P>
+<UL>
+
+<LI CLASS="UList">
+<A NAME="pgfId-432973"></A><TT CLASS="Code">
+simple</TT>
+ (default mode for <TT CLASS="Code">
+connect</TT>
+ and <TT CLASS="Code">
+trace</TT>
+): bonds are drawn as lines with width <TT CLASS="Code">
+linew</TT>
+, each half colored according to the color of the connecting atom.</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-432980"></A><TT CLASS="Code">
+custom</TT>
+ (<TT CLASS="Code">
+connect</TT>
+ and <TT CLASS="Code">
+trace</TT>
+): bonds are drawn as cylinders with width <TT CLASS="Code">
+bw</TT>
+, atoms are drawn as spheres with radius <TT CLASS="Code">
+sr</TT>
+</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-432981"></A><TT CLASS="Code">
+cpk</TT>
+ (<TT CLASS="Code">
+connect</TT>
+): atoms are displayed as spheres with a radius of their <TT CLASS="Code">
+vdwr</TT>
+</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-432999"></A><TT CLASS="Code">
+tube</TT>
+ (<TT CLASS="Code">
+trace</TT>
+): backbone is rendered as spline tube of radius bw and axial ratio of tuber</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-432987"></A><TT CLASS="Code">
+hsc</TT>
+ (<TT CLASS="Code">
+trace</TT>
+):secondary structure rendering of protein or dna trace; a continuous spline with interpolation runs exactly through the atom positions.<BR>
+<EM>protein rendering:</EM> coils as tubes of radius bw and axial ratio of tuber, helices with width helixw and thickness helixt, and strands with width strandw and thickness strandt<BR>
+<EM>dna rendering:</EM> backbone as tubes of radius bw and axial ratio of tuber, purines and pyrimidines are cartoonlike displayed with approximate tilting of the sugar and the base</LI>
+<LI CLASS="UList">
+<A NAME="pgfId-432984"></A><TT CLASS="Code">
+sline</TT>
+ (<TT CLASS="Code">
+trace</TT>
+): continuous spline displayed as line with linewidth <TT CLASS="Code">
+lw</TT>
+</LI>
+</UL>
+
+<P CLASS="Body">
+<A NAME="pgfId-432962"></A>Additionally, the command <TT CLASS="Code">
+material</TT>
+ can be used to change the material settings, this has been described above, <A HREF="manual-5.html#26888" CLASS="XRef">see &quot;5.1.6 Graphical Appearance&quot; on page 24</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-433014"></A>&nbsp;</P>
+<TABLE BORDER="1">
+<CAPTION>
+
+<A NAME="pgfId-433019"></A><A NAME="86033"></A>Structure Dataset Object Render Properties
+</CAPTION>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433039"></A>Property</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433041"></A>C</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433043"></A>T</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433045"></A>Description</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433047"></A>Default</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433049"></A><TT CLASS="Code">
+arrowt</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433051"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433053"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433055"></A>width of arrow of strand in hsc rendering, expressed as ratio to strandw</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433057"></A>0.5</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433059"></A><TT CLASS="Code">
+bw</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433061"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433063"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433065"></A>bondwidth, affects modes custom, tube and hsc</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433067"></A>0.2</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433069"></A><TT CLASS="Code">
+detail</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433071"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433073"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433075"></A>number of spline interpolations for modes hsc, tube and sline, increase for better quality</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433077"></A>5</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433079"></A><TT CLASS="Code">
+detail2</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433081"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433083"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433085"></A>number of spherical interpolations for spheres and circular subdivisions (per 90deg) for modes custom, hsc and tube</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433087"></A>3</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433089"></A><TT CLASS="Code">
+fast</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433091"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433093"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433095"></A>turns off point and line antialiasing to increase drawing speed</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433097"></A>&nbsp;</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433099"></A><TT CLASS="Code">
+helixt</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433101"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433103"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433105"></A>helix thickness in mode hsc</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433107"></A>0.3</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433109"></A><TT CLASS="Code">
+helixw</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433111"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433113"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433115"></A>helix width in mode <TT CLASS="Code">
+hsc</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433117"></A>1.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433119"></A><TT CLASS="Code">
+intpol</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433121"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433123"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433125"></A>if this flag is true, colors will be smoothly interpolated on segments for render modes <TT CLASS="Code">
+sline</TT>
+, <TT CLASS="Code">
+tube</TT>
+ and <TT CLASS="Code">
+hsc</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433127"></A>true</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433129"></A><TT CLASS="Code">
+lw</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433131"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433133"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433135"></A>linewidth, will accept fractional values, but effect depends on hardware implementation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433137"></A>1.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433139"></A><TT CLASS="Code">
+nice</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433141"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433143"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433145"></A>point and line antialiasing is active</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433147"></A>X</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433149"></A><TT CLASS="Code">
+sr</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433151"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433153"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433155"></A>sphere radius in custom mode</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433157"></A>0.2</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433159"></A><TT CLASS="Code">
+strandm</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433161"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433163"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433165"></A>strand method in mode hsc, 0 is default, 1 causes smoothing</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433167"></A>0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433169"></A><TT CLASS="Code">
+strandt</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433171"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433173"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433175"></A>strand thickness in mode <TT CLASS="Code">
+hsc</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433177"></A>0.3</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433179"></A><TT CLASS="Code">
+strandw</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433181"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433183"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433185"></A>strand width in mode <TT CLASS="Code">
+hsc</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433187"></A>1.2</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433189"></A><TT CLASS="Code">
+t</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433191"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433193"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433195"></A>transparency, 1.0 is opaque, 0.0 fully transparent; works on lines in modes <TT CLASS="Code">
+simple</TT>
+ and <TT CLASS="Code">
+sline</TT>
+; works also for modes <TT CLASS="Code">
+hsc</TT>
+ and <TT CLASS="Code">
+tube</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433197"></A>1.0</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433199"></A><TT CLASS="Code">
+tuber</TT>
+</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433201"></A>&nbsp;</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433203"></A>X</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433205"></A>axial ratio of tube cross section</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CellBody">
+<A NAME="pgfId-433207"></A>1.0</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+<HR>
+<DIV CLASS="footnotes">
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+1.</SPAN>
+<A NAME="pgfId-432072"></A>indicates that this property can be modified with set</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+2.</SPAN>
+<A NAME="pgfId-432075"></A>indicates that this property can be retrieved with get</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+3.</SPAN>
+<A NAME="pgfId-431815"></A>indicates wether this property can bet changed with set</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+4.</SPAN>
+<A NAME="pgfId-431820"></A>indicates wether this property can be retrieved with get</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+5.</SPAN>
+<A NAME="pgfId-431825"></A>indicates a selectable property	</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="TableFootnote">
+<SPAN CLASS="footnoteNumber">
+6.</SPAN>
+<A NAME="pgfId-431830"></A>indicates a property that can be used in a range statement</P>
+</DIV>
+<DIV CLASS="footnote">
+<P CLASS="Footnote">
+<SPAN CLASS="footnoteNumber">
+7.</SPAN>
+<A NAME="pgfId-432854"></A>The structure of this internal table is quite simple.In a future version of DINO, users will be able to supply their own connectivity for custom residues.</P>
+</DIV>
+</DIV>
+</BODY>
+</HTML>
