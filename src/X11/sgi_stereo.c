@@ -115,27 +115,43 @@ int SGIStereoInit(Display *display, GLXDrawable drawable, int am)
   }
 
   if(video_mode==0) {
+
+    // first look for 1280x1024 stereo mode
     for(i=0;i<vc;i++) {
-      if(rex("102*x768*",vl[i])) {
+      if(rex("128*x*",vl[i])) {
 	sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[i]);
 	SGIStereoExtractResolution(vl[i],\
 				   &SGIStereo.resx,&SGIStereo.resy);
 	break;
       }
     }
+
     if(i==vc) {
-      /*
-	video mode with 102*x768* not found, take first one
-      */
-      sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[0]);
-      SGIStereoExtractResolution(vl[0],\
-				 &SGIStereo.resx,&SGIStereo.resy);
+      // then for 1024x768
+      for(i=0;i<vc;i++) {
+	if(rex("102*x768*",vl[i])) {
+	  sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[i]);
+	  SGIStereoExtractResolution(vl[i],\
+				     &SGIStereo.resx,&SGIStereo.resy);
+	  break;
+	}
+      }
+
+      if(i==vc) {
+	/*
+	  no def vidmode found, using first one
+	*/
+	sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[0]);
+	SGIStereoExtractResolution(vl[0],\
+				   &SGIStereo.resx,&SGIStereo.resy);
+      }
     }
   }
   sprintf(message,"using stereo command: %s",stereo_command);
   strcpy(SGIStereo.stereo_high,stereo_command);
   debmsg(message);
 
+  // quick hack!!
   if(SGIStereo.resx==1025)
     SGIStereo.y_offset=256;
   else
