@@ -1269,7 +1269,7 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
     fprintf(f,"}\n");
   }
 
-  fprintf(f,"}\n");  
+  //fprintf(f,"}\n");  
 
   fprintf(f,"#end\n");
 
