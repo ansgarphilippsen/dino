@@ -2105,8 +2105,9 @@ static void prep_symview(structObj* obj)
 void structObjRecalcCenter(structObj* obj)
 {
   float x,y,z,v[4];
-  v[3]=1.0;
   int i;
+
+  v[3]=1.0;
 
   x=0;y=0;z=0;
   for(i=0;i<obj->atom_count;i++) {
