@@ -145,7 +145,9 @@ int dinoMain(int argc,char **argv)
   debmsg("calling sceneInit");
   sceneInit();
 
-#ifndef NEW_SHELL
+#ifdef NEW_SHELL
+  shellInit();
+#else
   debmsg("calling shellInit");
   shellInit((shell_callback)comWorkPrompt,logfile);
 #endif

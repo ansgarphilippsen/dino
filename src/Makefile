@@ -61,7 +61,7 @@ endif
 
 ifneq (,$(findstring NEW_SHELL,$(OPTIONS)))
 SRC += gui_terminal.c shell_raw.c shell_command.c
-LOPT += -lcurses
+#LOPT += 
 else
 ifneq (,$(findstring TCL_SHELL,$(OPTIONS)))
 SRC += shell_tcl.c

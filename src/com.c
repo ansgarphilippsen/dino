@@ -35,7 +35,8 @@
 #include "pick.h"
 
 #ifndef NEW_SHELL
-#include "shell_raw.h"
+#include "gui_terminal.h"
+#include "shell_command.h"
 #else
 #include "shell.h"
 #endif
@@ -651,7 +652,9 @@ void comTimeProc()
   cmiToken t;
 #endif
 
-#ifndef NEW_SHELL
+#ifdef NEW_SHELL
+  shellTimeProc();
+#else
   /* this function is called periodically through the gui */
   shellWork();
 #endif
@@ -771,7 +774,9 @@ void comDBRedraw()
 
 void comMessage(const char *s)
 {
-#ifndef NEW_SHELL
+#ifdef NEW_SHELL
+  shellOut(s);
+#else
   shellOut(s);
 #endif
 }
@@ -1744,7 +1749,9 @@ int comGetMinMaxSlab()
 
 int comWriteCharBuf(char c)
 {
-#ifndef NEW_SHELL
+#ifdef NEW_SHELL
+  guitAddChar(c);
+#else
   shellAddChar(c);
 #endif
   return 0;
