@@ -118,6 +118,7 @@
 				4A9504CCFFE6A4B311CA0CBA,
 				4A9504CDFFE6A4B311CA0CBA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 29B97314FDCFA39411CA2CEA;
 			projectDirPath = "";
@@ -139,6 +140,7 @@
 			refType = 4;
 		};
 		29B97316FDCFA39411CA2CEA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = main.m;
 			refType = 4;
@@ -235,7 +237,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 1;
 		};
 		29B97327FDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -267,7 +268,6 @@
 				F512D0040249799D01FB7A39,
 				F512D0050249799D01FB7A39,
 				F512D00C0249799D01FB7A39,
-				F512D00D0249799D01FB7A39,
 				F512D00E0249799D01FB7A39,
 				F512D0110249799D01FB7A39,
 				F512D0120249799D01FB7A39,
@@ -313,7 +313,6 @@
 				F777710602C37CF601981365,
 				F777710802C37CF601981365,
 				F777710902C37CF601981365,
-				F5B2A2130312F28101A1B05C,
 				F52A76C102BF9B93019813D9,
 				F530F040034928A301FB7A39,
 				F52A76C202BF9B93019813D9,
@@ -326,6 +325,8 @@
 				F52A76CC02C08DDC019813D9,
 				F56D6CCB034CC48001FB7A39,
 				F56D6CCD034CC48001FB7A39,
+				56597ECE0438BD1E00FB7A39,
+				56268E1A0466D3D6009854CB,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -334,11 +335,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				F52A76DA02C0F691019813D9,
-				F52A76DB02C0F691019813D9,
 				F5156BD50313F99901A966FA,
 				F5156BD70313F9E201A966FA,
 				F5FF217103240B7301FB7A39,
 				F5CA802D0326860901FB7A39,
+				F5B1506E03A5392201FB7A39,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,7 +371,6 @@
 				F512D05B0249799D01FB7A39,
 				F512D05C0249799D01FB7A39,
 				F512D0620249799D01FB7A39,
-				F512D0630249799D01FB7A39,
 				F512D0640249799D01FB7A39,
 				F512D0690249799D01FB7A39,
 				F512D06A0249799D01FB7A39,
@@ -409,7 +409,6 @@
 				F77770FF02C37CCA01981365,
 				F777710A02C37CF601981365,
 				F777710B02C37CF601981365,
-				F5B2A2140312F28101A1B05C,
 				F52A76C002BF9671019813D9,
 				F52A76C402BF9B93019813D9,
 				F530F041034928A301FB7A39,
@@ -420,6 +419,8 @@
 				F52A76CE02C08DDC019813D9,
 				F52A76CF02C08DDC019813D9,
 				F56D6CD0034CC98A01FB7A39,
+				56597ECD0438BD1E00FB7A39,
+				56268E190466D3D6009854CB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,6 +468,68 @@
 //4A2
 //4A3
 //4A4
+//560
+//561
+//562
+//563
+//564
+		56268E170466D3D6009854CB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = io_gromacs.c;
+			path = /Users/bernechs/work/Dino/dino/src/io_gromacs.c;
+			refType = 0;
+		};
+		56268E180466D3D6009854CB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = io_gromacs.h;
+			path = /Users/bernechs/work/Dino/dino/src/io_gromacs.h;
+			refType = 0;
+		};
+		56268E190466D3D6009854CB = {
+			fileRef = 56268E170466D3D6009854CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		56268E1A0466D3D6009854CB = {
+			fileRef = 56268E180466D3D6009854CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		56597ECB0438BD1E00FB7A39 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = io_spider.c;
+			path = ../../io_spider.c;
+			refType = 2;
+		};
+		56597ECC0438BD1E00FB7A39 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = io_spider.h;
+			path = ../../io_spider.h;
+			refType = 2;
+		};
+		56597ECD0438BD1E00FB7A39 = {
+			fileRef = 56597ECB0438BD1E00FB7A39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		56597ECE0438BD1E00FB7A39 = {
+			fileRef = 56597ECC0438BD1E00FB7A39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//560
+//561
+//562
+//563
+//564
 //F50
 //F51
 //F52
@@ -474,8 +537,6 @@
 //F54
 		F512CF38024978B501FB7A39 = {
 			children = (
-				F5B2A2110312F28101A1B05C,
-				F5B2A2120312F28101A1B05C,
 				F512CF3B0249799D01FB7A39,
 				F512CF3C0249799D01FB7A39,
 				F512CF3D0249799D01FB7A39,
@@ -521,20 +582,22 @@
 				F512CF640249799D01FB7A39,
 				F512CF650249799D01FB7A39,
 				F512CF660249799D01FB7A39,
-				F512CF670249799D01FB7A39,
 				F512CF680249799D01FB7A39,
 				F512CF6F0249799D01FB7A39,
 				F512CF700249799D01FB7A39,
 				F512CF710249799D01FB7A39,
 				F512CF720249799D01FB7A39,
 				F512CF730249799D01FB7A39,
+				F512CF670249799D01FB7A39,
 				F512CF740249799D01FB7A39,
 				F512CF800249799D01FB7A39,
 				F512CF810249799D01FB7A39,
-				F512CF820249799D01FB7A39,
-				F512CF830249799D01FB7A39,
 				F512CF840249799D01FB7A39,
 				F512CF850249799D01FB7A39,
+				56268E170466D3D6009854CB,
+				56268E180466D3D6009854CB,
+				56597ECB0438BD1E00FB7A39,
+				56597ECC0438BD1E00FB7A39,
 				F512CF8C0249799D01FB7A39,
 				F512CF8D0249799D01FB7A39,
 				F512CF8E0249799D01FB7A39,
@@ -622,774 +685,889 @@
 			refType = 4;
 		};
 		F512CF3B0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = bspline.c;
 			path = ../../bspline.c;
 			refType = 2;
 		};
 		F512CF3C0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = bspline.h;
 			path = ../../bspline.h;
 			refType = 2;
 		};
 		F512CF3D0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = build.c;
 			path = ../../build.c;
 			refType = 2;
 		};
 		F512CF3E0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = build.h;
 			path = ../../build.h;
 			refType = 2;
 		};
 		F512CF3F0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ccp4.c;
 			path = ../../ccp4.c;
 			refType = 2;
 		};
 		F512CF400249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ccp4.h;
 			path = ../../ccp4.h;
 			refType = 2;
 		};
 		F512CF410249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cgfx.c;
 			path = ../../cgfx.c;
 			refType = 2;
 		};
 		F512CF420249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cgfx.h;
 			path = ../../cgfx.h;
 			refType = 2;
 		};
 		F512CF430249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = charmm.c;
 			path = ../../charmm.c;
 			refType = 2;
 		};
 		F512CF440249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = charmm.h;
 			path = ../../charmm.h;
 			refType = 2;
 		};
 		F512CF450249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cl.c;
 			path = ../../cl.c;
 			refType = 2;
 		};
 		F512CF460249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cl.h;
 			path = ../../cl.h;
 			refType = 2;
 		};
 		F512CF470249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = clist_all.h;
 			path = ../../clist_all.h;
 			refType = 2;
 		};
 		F512CF480249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = clist.h;
 			path = ../../clist.h;
 			refType = 2;
 		};
 		F512CF490249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Cmalloc.c;
 			path = ../../Cmalloc.c;
 			refType = 2;
 		};
 		F512CF4A0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Cmalloc.h;
 			path = ../../Cmalloc.h;
 			refType = 2;
 		};
 		F512CF4B0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cmi.c;
 			path = ../../cmi.c;
 			refType = 2;
 		};
 		F512CF4C0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cmi.h;
 			path = ../../cmi.h;
 			refType = 2;
 		};
 		F512CF4D0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = com.c;
 			path = ../../com.c;
 			refType = 2;
 		};
 		F512CF4E0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = com.h;
 			path = ../../com.h;
 			refType = 2;
 		};
 		F512CF4F0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = conn.c;
 			path = ../../conn.c;
 			refType = 2;
 		};
 		F512CF500249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = conn.h;
 			path = ../../conn.h;
 			refType = 2;
 		};
 		F512CF510249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cubearray.c;
 			path = ../../cubearray.c;
 			refType = 2;
 		};
 		F512CF520249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = cubearray.h;
 			path = ../../cubearray.h;
 			refType = 2;
 		};
 		F512CF530249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = dbm.c;
 			path = ../../dbm.c;
 			refType = 2;
 		};
 		F512CF540249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = dbm.h;
 			path = ../../dbm.h;
 			refType = 2;
 		};
 		F512CF550249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = delphi.c;
 			path = ../../delphi.c;
 			refType = 2;
 		};
 		F512CF560249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = delphi.h;
 			path = ../../delphi.h;
 			refType = 2;
 		};
 		F512CF570249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = dino.c;
 			path = ../../dino.c;
 			refType = 2;
 		};
 		F512CF580249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = dino.h;
 			path = ../../dino.h;
 			refType = 2;
 		};
 		F512CF5B0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = font_16.h;
 			path = ../../font_16.h;
 			refType = 2;
 		};
 		F512CF5C0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = font_24.h;
 			path = ../../font_24.h;
 			refType = 2;
 		};
 		F512CF5D0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = geom_db.c;
 			path = ../../geom_db.c;
 			refType = 2;
 		};
 		F512CF5E0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = geom_db.h;
 			path = ../../geom_db.h;
 			refType = 2;
 		};
 		F512CF5F0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = geom_gfx.c;
 			path = ../../geom_gfx.c;
 			refType = 2;
 		};
 		F512CF600249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = geom_gfx.h;
 			path = ../../geom_gfx.h;
 			refType = 2;
 		};
 		F512CF610249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = geom_obj.c;
 			path = ../../geom_obj.c;
 			refType = 2;
 		};
 		F512CF620249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = geom_obj.h;
 			path = ../../geom_obj.h;
 			refType = 2;
 		};
 		F512CF630249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = gfx.c;
 			path = ../../gfx.c;
 			refType = 2;
 		};
 		F512CF640249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = gfx.h;
 			path = ../../gfx.h;
 			refType = 2;
 		};
 		F512CF650249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = glf.c;
 			path = ../../glf.c;
 			refType = 2;
 		};
 		F512CF660249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = glf.h;
 			path = ../../glf.h;
 			refType = 2;
 		};
 		F512CF670249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = glw.c;
 			path = ../../glw.c;
 			refType = 2;
 		};
 		F512CF680249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = glw.h;
 			path = ../../glw.h;
 			refType = 2;
 		};
 		F512CF6F0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = grid_db.c;
 			path = ../../grid_db.c;
 			refType = 2;
 		};
 		F512CF700249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = grid_db.h;
 			path = ../../grid_db.h;
 			refType = 2;
 		};
 		F512CF710249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = grid_gfx.c;
 			path = ../../grid_gfx.c;
 			refType = 2;
 		};
 		F512CF720249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = grid_obj.c;
 			path = ../../grid_obj.c;
 			refType = 2;
 		};
 		F512CF730249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = grid_obj.h;
 			path = ../../grid_obj.h;
 			refType = 2;
 		};
 		F512CF740249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = grid_read.c;
 			path = ../../grid_read.c;
 			refType = 2;
 		};
 		F512CF800249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = help.c;
 			path = ../../help.c;
 			refType = 2;
 		};
 		F512CF810249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = help.h;
 			path = ../../help.h;
 			refType = 2;
 		};
-		F512CF820249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = imagick.c;
-			path = ../../imagick.c;
-			refType = 2;
-		};
-		F512CF830249799D01FB7A39 = {
-			isa = PBXFileReference;
-			name = imagick.h;
-			path = ../../imagick.h;
-			refType = 2;
-		};
 		F512CF840249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = input.c;
 			path = ../../input.c;
 			refType = 2;
 		};
 		F512CF850249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = input.h;
 			path = ../../input.h;
 			refType = 2;
 		};
 		F512CF8C0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = mat.c;
 			path = ../../mat.c;
 			refType = 2;
 		};
 		F512CF8D0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = mat.h;
 			path = ../../mat.h;
 			refType = 2;
 		};
 		F512CF8E0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = mead.c;
 			path = ../../mead.c;
 			refType = 2;
 		};
 		F512CF8F0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = mead.h;
 			path = ../../mead.h;
 			refType = 2;
 		};
 		F512CF970249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = pick.h;
 			path = ../../pick.h;
 			refType = 2;
 		};
 		F512CF980249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = pov_macro.h;
 			path = ../../pov_macro.h;
 			refType = 2;
 		};
 		F512CF990249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = pov.c;
 			path = ../../pov.c;
 			refType = 2;
 		};
 		F512CF9A0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = pov.h;
 			path = ../../pov.h;
 			refType = 2;
 		};
 		F512CF9B0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = prop.c;
 			path = ../../prop.c;
 			refType = 2;
 		};
 		F512CF9C0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = prop.h;
 			path = ../../prop.h;
 			refType = 2;
 		};
 		F512CF9D0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = render.c;
 			path = ../../render.c;
 			refType = 2;
 		};
 		F512CF9E0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = render.h;
 			path = ../../render.h;
 			refType = 2;
 		};
 		F512CF9F0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = rex.c;
 			path = ../../rex.c;
 			refType = 2;
 		};
 		F512CFA00249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = rex.h;
 			path = ../../rex.h;
 			refType = 2;
 		};
 		F512CFA10249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_db.c;
 			path = ../../scal_db.c;
 			refType = 2;
 		};
 		F512CFA20249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_db.h;
 			path = ../../scal_db.h;
 			refType = 2;
 		};
 		F512CFA30249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_gfx.c;
 			path = ../../scal_gfx.c;
 			refType = 2;
 		};
 		F512CFA40249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_gfx.h;
 			path = ../../scal_gfx.h;
 			refType = 2;
 		};
 		F512CFA50249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_mc_new_lookup_35.h;
 			path = ../../scal_mc_new_lookup_35.h;
 			refType = 2;
 		};
 		F512CFA60249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_mc_new_lookup.h;
 			path = ../../scal_mc_new_lookup.h;
 			refType = 2;
 		};
 		F512CFA80249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_mc_new.c;
 			path = ../../scal_mc_new.c;
 			refType = 2;
 		};
 		F512CFA90249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_mc_new.h;
 			path = ../../scal_mc_new.h;
 			refType = 2;
 		};
 		F512CFAB0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_obj.c;
 			path = ../../scal_obj.c;
 			refType = 2;
 		};
 		F512CFAC0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_obj.h;
 			path = ../../scal_obj.h;
 			refType = 2;
 		};
 		F512CFAD0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_read.c;
 			path = ../../scal_read.c;
 			refType = 2;
 		};
 		F512CFAE0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_read.h;
 			path = ../../scal_read.h;
 			refType = 2;
 		};
 		F512CFAF0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_write.c;
 			path = ../../scal_write.c;
 			refType = 2;
 		};
 		F512CFB00249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_write.h;
 			path = ../../scal_write.h;
 			refType = 2;
 		};
 		F512CFB10249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scene.c;
 			path = ../../scene.c;
 			refType = 2;
 		};
 		F512CFB20249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scene.h;
 			path = ../../scene.h;
 			refType = 2;
 		};
 		F512CFB30249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = set.c;
 			path = ../../set.c;
 			refType = 2;
 		};
 		F512CFB40249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = set.h;
 			path = ../../set.h;
 			refType = 2;
 		};
 		F512CFB90249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = sglib.c;
 			path = ../../sglib.c;
 			refType = 2;
 		};
 		F512CFBA0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = sglib.h;
 			path = ../../sglib.h;
 			refType = 2;
 		};
 		F512CFC00249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = startup.c;
 			path = ../../startup.c;
 			refType = 2;
 		};
 		F512CFC10249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = startup.h;
 			path = ../../startup.h;
 			refType = 2;
 		};
 		F512CFC20249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_common.h;
 			path = ../../struct_common.h;
 			refType = 2;
 		};
 		F512CFC30249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_db.c;
 			path = ../../struct_db.c;
 			refType = 2;
 		};
 		F512CFC40249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_db.h;
 			path = ../../struct_db.h;
 			refType = 2;
 		};
 		F512CFC50249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_gfx.c;
 			path = ../../struct_gfx.c;
 			refType = 2;
 		};
 		F512CFC60249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_gfx.h;
 			path = ../../struct_gfx.h;
 			refType = 2;
 		};
 		F512CFC70249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_obj.c;
 			path = ../../struct_obj.c;
 			refType = 2;
 		};
 		F512CFC80249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_obj.h;
 			path = ../../struct_obj.h;
 			refType = 2;
 		};
 		F512CFC90249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_read.c;
 			path = ../../struct_read.c;
 			refType = 2;
 		};
 		F512CFCA0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_read.h;
 			path = ../../struct_read.h;
 			refType = 2;
 		};
 		F512CFCB0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_write.c;
 			path = ../../struct_write.c;
 			refType = 2;
 		};
 		F512CFCC0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = struct_write.h;
 			path = ../../struct_write.h;
 			refType = 2;
 		};
 		F512CFCD0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_db.c;
 			path = ../../surf_db.c;
 			refType = 2;
 		};
 		F512CFCE0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_db.h;
 			path = ../../surf_db.h;
 			refType = 2;
 		};
 		F512CFCF0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_gfx.c;
 			path = ../../surf_gfx.c;
 			refType = 2;
 		};
 		F512CFD00249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_gfx.h;
 			path = ../../surf_gfx.h;
 			refType = 2;
 		};
 		F512CFD10249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_obj.c;
 			path = ../../surf_obj.c;
 			refType = 2;
 		};
 		F512CFD20249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_obj.h;
 			path = ../../surf_obj.h;
 			refType = 2;
 		};
 		F512CFD30249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_read.c;
 			path = ../../surf_read.c;
 			refType = 2;
 		};
 		F512CFD40249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_read.h;
 			path = ../../surf_read.h;
 			refType = 2;
 		};
 		F512CFD50249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_write.c;
 			path = ../../surf_write.c;
 			refType = 2;
 		};
 		F512CFD60249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = surf_write.h;
 			path = ../../surf_write.h;
 			refType = 2;
 		};
 		F512CFD70249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = symm.c;
 			path = ../../symm.c;
 			refType = 2;
 		};
 		F512CFD80249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = symm.h;
 			path = ../../symm.h;
 			refType = 2;
 		};
 		F512CFD90249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = transform.c;
 			path = ../../transform.c;
 			refType = 2;
 		};
 		F512CFDA0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = transform.h;
 			path = ../../transform.h;
 			refType = 2;
 		};
 		F512CFDB0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = uhbd.c;
 			path = ../../uhbd.c;
 			refType = 2;
 		};
 		F512CFDC0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = uhbd.h;
 			path = ../../uhbd.h;
 			refType = 2;
 		};
 		F512CFDD0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = vect_db.h;
 			path = ../../vect_db.h;
 			refType = 2;
 		};
 		F512CFDE0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = vrml.c;
 			path = ../../vrml.c;
 			refType = 2;
 		};
 		F512CFDF0249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = vrml.h;
 			path = ../../vrml.h;
 			refType = 2;
 		};
 		F512CFE00249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = write.c;
 			path = ../../write.c;
 			refType = 2;
 		};
 		F512CFE10249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = write.h;
 			path = ../../write.h;
 			refType = 2;
 		};
 		F512CFE20249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = writePS.c;
 			path = ../../writePS.c;
 			refType = 2;
 		};
 		F512CFE30249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = writePS.h;
 			path = ../../writePS.h;
 			refType = 2;
 		};
 		F512CFE40249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = xplor.c;
 			path = ../../xplor.c;
 			refType = 2;
 		};
 		F512CFE50249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = xplor.h;
 			path = ../../xplor.h;
 			refType = 2;
 		};
 		F512CFE60249799D01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = xtal.h;
 			path = ../../xtal.h;
@@ -1553,12 +1731,6 @@
 		};
 		F512D00C0249799D01FB7A39 = {
 			fileRef = F512CF810249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F512D00D0249799D01FB7A39 = {
-			fileRef = F512CF830249799D01FB7A39;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1953,12 +2125,6 @@
 			settings = {
 			};
 		};
-		F512D0630249799D01FB7A39 = {
-			fileRef = F512CF820249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F512D0640249799D01FB7A39 = {
 			fileRef = F512CF840249799D01FB7A39;
 			isa = PBXBuildFile;
@@ -2175,6 +2341,7 @@
 			};
 		};
 		F5156BD60313F9E201A966FA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Credits.html;
 			refType = 2;
@@ -2186,21 +2353,25 @@
 			};
 		};
 		F528331502491AB001FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Controller.h;
 			refType = 4;
 		};
 		F528331602491AB001FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Controller.m;
 			refType = 4;
 		};
 		F528331902491AD301FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = DinoGLView.h;
 			refType = 4;
 		};
 		F528331A02491AD301FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = DinoGLView.m;
 			refType = 4;
@@ -2219,36 +2390,42 @@
 			refType = 4;
 		};
 		F528331F02491C4901FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CLIView.h;
 			path = "3rd Party classes/CLI/CLIView.h";
 			refType = 2;
 		};
 		F528332002491C4901FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CLIView.m;
 			path = "3rd Party classes/CLI/CLIView.m";
 			refType = 2;
 		};
 		F528332102491C4901FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ShellView.h;
 			path = "3rd Party classes/CLI/ShellView.h";
 			refType = 2;
 		};
 		F528332202491C4901FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ShellView.m;
 			path = "3rd Party classes/CLI/ShellView.m";
 			refType = 2;
 		};
 		F528332302491C4901FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = StrBuffer.h;
 			path = "3rd Party classes/CLI/StrBuffer.h";
 			refType = 2;
 		};
 		F528332402491C4901FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = StrBuffer.m;
 			path = "3rd Party classes/CLI/StrBuffer.m";
@@ -2297,6 +2474,7 @@
 			};
 		};
 		F52A76C902C08DA2019813D9 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = GUI_HOWTO;
 			path = /Users/bernechs/work/Dino/dino/GUI_HOWTO;
@@ -2339,6 +2517,7 @@
 			};
 		};
 		F52A76D002C09DA9019813D9 = {
+			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = gui_osx.m;
@@ -2346,6 +2525,7 @@
 			usesTabs = 1;
 		};
 		F52A76D102C09DCE019813D9 = {
+			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			path = gui_osx.h;
@@ -2389,6 +2569,7 @@
 			refType = 4;
 		};
 		F52A76D902C0F691019813D9 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
@@ -2400,23 +2581,20 @@
 			settings = {
 			};
 		};
-		F52A76DB02C0F691019813D9 = {
-			fileRef = F52A76D602C0F691019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F52C79980323E2DF01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = TODO_Cocoa;
 			refType = 4;
 		};
 		F530F03E034928A301FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = OMController.h;
 			refType = 2;
 		};
 		F530F03F034928A301FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = OMController.m;
 			refType = 2;
@@ -2434,6 +2612,7 @@
 			};
 		};
 		F537E919034356CC01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = gui_terminal.h;
 			path = ../../gui_terminal.h;
@@ -2446,11 +2625,13 @@
 			};
 		};
 		F550C2F403400B2A01808B89 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = DinoObject.h;
 			refType = 4;
 		};
 		F550C2F503400B2A01808B89 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = DinoObject.m;
 			refType = 4;
@@ -2468,18 +2649,21 @@
 			};
 		};
 		F56D6C40034CC48001FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_iso_table.h;
 			path = ../../scal_iso_table.h;
 			refType = 2;
 		};
 		F56D6C41034CC48001FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_iso.c;
 			path = ../../scal_iso.c;
 			refType = 2;
 		};
 		F56D6C42034CC48001FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = scal_iso.h;
 			path = ../../scal_iso.h;
@@ -2510,12 +2694,14 @@
 			};
 		};
 		F588E97A03532DEB01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NOTES;
 			path = ../../../NOTES;
 			refType = 2;
 		};
 		F588E97B03532DEB01FB7A39 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = TODO;
 			path = ../../../TODO;
@@ -2527,26 +2713,8 @@
 			settings = {
 			};
 		};
-		F5B2A2110312F28101A1B05C = {
-			isa = PBXFileReference;
-			name = brix.c;
-			path = ../../brix.c;
-			refType = 2;
-		};
-		F5B2A2120312F28101A1B05C = {
-			isa = PBXFileReference;
-			name = brix.h;
-			path = ../../brix.h;
-			refType = 2;
-		};
-		F5B2A2130312F28101A1B05C = {
-			fileRef = F5B2A2120312F28101A1B05C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5B2A2140312F28101A1B05C = {
-			fileRef = F5B2A2110312F28101A1B05C;
+		F5B1506E03A5392201FB7A39 = {
+			fileRef = F52A76D602C0F691019813D9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2585,12 +2753,14 @@
 //F73
 //F74
 		F77770FC02C37CCA01981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = colors.c;
 			path = ../../colors.c;
 			refType = 2;
 		};
 		F77770FD02C37CCA01981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = colors.h;
 			path = ../../colors.h;
@@ -2609,36 +2779,42 @@
 			};
 		};
 		F777710002C37CF601981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = dbm_common.h;
 			path = ../../dbm_common.h;
 			refType = 2;
 		};
 		F777710102C37CF601981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = gui_ext.h;
 			path = ../../gui_ext.h;
 			refType = 2;
 		};
 		F777710202C37CF601981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = shell_command.c;
 			path = ../../shell_command.c;
 			refType = 2;
 		};
 		F777710302C37CF601981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = shell_command.h;
 			path = ../../shell_command.h;
 			refType = 2;
 		};
 		F777710402C37CF601981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = shell_raw.c;
 			path = ../../shell_raw.c;
 			refType = 2;
 		};
 		F777710502C37CF601981365 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = shell_raw.h;
 			path = ../../shell_raw.h;
