@@ -74,6 +74,8 @@ typedef struct STRUCT_OBJ {
 
   transList transform_list;
 
+  float center[3];
+
   int symview,symcount;
 }structObj;
 
@@ -111,5 +113,7 @@ int structObjGrab(structObj *obj, int wc, char **wl);
 int structObjDel(structObj *obj);
 
 void structObjUpdateSymview(structObj* obj);
+
+void structObjRecalcCenter(structObj* obj);
 
 #endif

@@ -288,6 +288,8 @@ int structObjComRenew(structObj *obj, int wc, char **wl)
     memcpy(&obj->select,&sel,sizeof(Select));
   }
 
+  structObjRecalcCenter(obj);
+
   com_render(obj,0,NULL);
   
   setDelete(&set);
@@ -679,23 +681,7 @@ int structObjGet(structObj *obj, char *prop)
   dbmStructNode *node=obj->node;
 
   if(!strcmp(prop,"center")) {
-    x=0;y=0;z=0;
-    for(i=0;i<obj->atom_count;i++) {
-      x+=obj->atom[i].ap->p->x;
-      y+=obj->atom[i].ap->p->y;
-      z+=obj->atom[i].ap->p->z;
-    }
-    if(obj->atom_count>0) {
-      v[0]=x/(double)obj->atom_count;
-      v[1]=y/(double)obj->atom_count;
-      v[2]=z/(double)obj->atom_count;
-    } else {
-      v[0]=0.0;
-      v[1]=0.0;
-      v[2]=0.0;
-    }
-    transApplyf(&node->transform,v);
-    sprintf(message,"{%.5f,%.5f,%.5f}",v[0],v[1],v[2]);
+    sprintf(message,"{%.5f,%.5f,%.5f}",obj->center[0],obj->center[1],obj->center[2]);
     comReturn(message);
   } else {
     sprintf(message,"%s: get: unknown parameter %s\n", obj->name,prop);
@@ -2114,4 +2100,31 @@ static void prep_symview(structObj* obj)
   } else {
     transListDelete(&obj->transform_list);
   }
+}
+
+void structObjRecalcCenter(structObj* obj)
+{
+  float x,y,z,v[4];
+  v[3]=1.0;
+  int i;
+
+  x=0;y=0;z=0;
+  for(i=0;i<obj->atom_count;i++) {
+    x+=obj->atom[i].ap->p->x;
+    y+=obj->atom[i].ap->p->y;
+    z+=obj->atom[i].ap->p->z;
+  }
+  if(obj->atom_count>0) {
+    v[0]=x/(double)obj->atom_count;
+    v[1]=y/(double)obj->atom_count;
+    v[2]=z/(double)obj->atom_count;
+  } else {
+    v[0]=0.0;
+    v[1]=0.0;
+    v[2]=0.0;
+  }
+  transApplyf(&obj->node->transform,v);
+  obj->center[0]=v[0];
+  obj->center[1]=v[1];
+  obj->center[2]=v[2];
 }
