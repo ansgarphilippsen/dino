@@ -1167,8 +1167,9 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
 	      obj->point[i].c[2], 
 	      fi_name,1.0-obj->point[i].c[3],
 	      tp_name,1.0-obj->point[i].c[3]);
-      fprintf(f,"}\n");
+      fprintf(f,"}\n"); // sphere {
     }
+    fprintf(f,"}\n"); // union {
   }
   for(i=0;i<obj->line_count;i++) {
     if(obj->render.stipple_flag) {
@@ -1245,7 +1246,7 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
 	if(matfCalcLen(stipple_dir)>ll)
 	  break;
       }
-    } else {
+    } else { // stipple flag
       if(!writePOVTransform(&obj->node->transform,obj->line[i].v1,v1,1)) continue;
       if(!writePOVTransform(&obj->node->transform,obj->line[i].v2,v2,1)) continue;
       writePOVCheckLim(v1,lim);
@@ -1266,7 +1267,7 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
 	    obj->line[i].c[2], 
 	    fi_name,1.0-obj->line[i].c[3],
 	    tp_name,1.0-obj->line[i].c[3]);
-    fprintf(f,"}\n");
+    fprintf(f,"}\n"); // stipple union or non-stipple cylinder
   }
 
   //fprintf(f,"}\n");  
