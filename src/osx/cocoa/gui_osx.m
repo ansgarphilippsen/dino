@@ -41,40 +41,6 @@ int guiQueryStereo(void)
     return 0;
 }
 
-int guiCreateOffscreenContext(int width, int height, int af)
-{
-    long rowbytes;
-    NSOpenGLContext *offscreenContext;
-    NSOpenGLPixelFormat *pixFmt;
-    NSOpenGLPixelFormatAttribute attrs[] = {
-	NSOpenGLPFAOffScreen,
-	NSOpenGLPFAColorSize, 16,
-	NSOpenGLPFAAlphaSize, 16,
-	NSOpenGLPFADepthSize, 16,
-	NSOpenGLPFAStencilSize, 8,
-	NSOpenGLPFAAccumSize, 32,
-        nil };
-
-    rowbytes = width * 11;
-    
-    pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
-    offscreenContext = [[NSOpenGLContext alloc] initWithFormat:pixFmt shareContext:nil];
-    [offscreenContext setOffScreen: width:(long)width height:(long)height rowbytes:(long)rowbytes];
-
-    [offscreenContext makeCurrentContext];
-    
-    return 0;
-}
-
-int guiDestroyOffscreenContext(int c)
-{
-//    [[NSOpenGLContext currentContext] clearDrawable];
-//    [[NSOpenGLContext currentContext] dealloc];
-//    [[Controller dinoController] resetCurrentContext];
-    
-    return 0;
-}
-
 int guiInit(int argc, char **argv)
 {
     char major[8],minor[8];
@@ -102,6 +68,20 @@ int guiInit(int argc, char **argv)
     }
 
   //initialization completed
+    return 0;
+}
+
+int guiCreateOffscreenContext(int width, int height, int af)
+{
+    int n=0;
+
+    n=[[Controller dinoController] offScreenContextWidth:width Height:height Accum:af];
+    return n;
+}
+
+int guiDestroyOffscreenContext(int c)
+{
+    [[Controller dinoController] releaseOffScreenContext];
     return 0;
 }
 

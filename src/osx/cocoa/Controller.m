@@ -1,7 +1,7 @@
 #import "Controller.h"
 
 static id dinoController;
-   
+
 @implementation Controller
 
 //------------------------------------------------------
@@ -74,6 +74,44 @@ static id dinoController;
 
 - (void)resetCurrentContext
 {
+    [[dinoGL openGLContext] makeCurrentContext];
+}
+
+//------------------------------------------------------
+// OffScreen OpenGL Context
+
+- (int)offScreenContextWidth:(int)width Height:(int)height Accum:(int)af
+{
+    int n, rowBytes, pixDepth=32;
+    unsigned memSize;
+    NSOpenGLPixelFormat *pixFmt;
+    NSOpenGLPixelFormatAttribute attrs[] = {
+	NSOpenGLPFAOffScreen,
+//	NSOpenGLPFAStencilSize, 8,
+//	NSOpenGLPFAAccumSize, pixDepth,
+	nil };
+
+    pixFmt = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];
+    offScreenContext = [[[NSOpenGLContext alloc] initWithFormat:pixFmt shareContext:nil] autorelease];
+    if(offScreenContext != nil){
+	rowBytes = width * pixDepth/8;
+	memSize = height * rowBytes;
+	memPointer=malloc(memSize);
+	[offScreenContext setOffScreen:memPointer width:(long)width height:(long)height rowbytes:(long)rowBytes];
+	[offScreenContext makeCurrentContext];
+	n=1;
+    }
+    else{
+	fprintf(stderr,"Initialization of the offscreen context failed.\n");
+	n =0;
+    }
+	    
+    return n;
+}
+
+- (void)releaseOffScreenContext
+{
+    free((void *)memPointer);
     [[dinoGL openGLContext] makeCurrentContext];
 }
 

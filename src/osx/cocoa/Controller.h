@@ -14,7 +14,10 @@
     IBOutlet DinoGLView *dinoGL;
     IBOutlet CLIView *dinoCLI;
     IBOutlet NSTextField *statusBox;
+
     NSTimer *controlTimer;
+    NSOpenGLContext *offScreenContext;
+    void *memPointer;
 }
 
 // Initializatiion
@@ -30,5 +33,8 @@
 - (void)swapBuffers;
 - (void)updateStatusBox:(NSString *)text;
 - (void)resetCurrentContext;
+// OffScrenn OpenGL Context
+- (int)offScreenContextWidth:(int)width Height:(int)height Accum:(int)af;
+- (void)releaseOffScreenContext;
 
 @end
