@@ -8,12 +8,13 @@
 
 // Overrides
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 
 @end
 
 @interface OMController : NSObject
 {
-    IBOutlet NSScrollView  *dinoOM;
+    IBOutlet NSOutlineView *dinoOM;
     IBOutlet NSButton      *toggleButton;
 
     NSMutableArray         *dataSetList;
@@ -32,6 +33,7 @@
 - (void)omHideObj:(NSString *)name ofDB:(NSString *)db;
 - (void)omShowObj:(NSString *)name ofDB:(NSString *)db;
 - (IBAction)toggleDinoObject:(id)sender;
+- (IBAction)centerOnTarget:(id)sender;
 // OutlineView data source (for Object menu)
 - (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item;
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item;

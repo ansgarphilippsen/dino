@@ -14,6 +14,14 @@ static id dinoOMController;
     return YES;
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+    int row = [self rowAtPoint:[self convertPoint:[theEvent locationInWindow] fromView:nil]];
+    [self selectRow:row byExtendingSelection:NO];
+    return [self menu];
+}
+
+
 @end
 
 @implementation OMController
@@ -130,6 +138,24 @@ static id dinoOMController;
 	}
     }
 }
+
+- (IBAction)centerOnTarget:(id)sender
+{
+    NSString *obj,*parent;
+    int row = [dinoOM selectedRow];
+    obj = [[dinoOM itemAtRow:row] name];
+    parent = [[dinoOM itemAtRow:row] parentDataSet];
+    
+    if(![parent isEqual:@"None"]){
+        NSString *theCommand = [NSString localizedStringWithFormat:@"scene center [.%@.%@]",parent,obj];
+        [[Controller dinoController] command:theCommand from:(id)sender];
+    }else if([parent isEqual:@"None"]){
+        NSString *dataSet = obj;
+        NSString *theCommand = [NSString localizedStringWithFormat:@"scene center [.%@]",dataSet];
+        [[Controller dinoController] command:theCommand from:(id)sender];
+    }	
+}
+
 
 //------------------------------------------------------
 // OutlineView data source

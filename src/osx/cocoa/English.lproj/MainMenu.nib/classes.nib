@@ -47,7 +47,7 @@
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = GFXWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
         {
-            ACTIONS = {toggleDinoObject = id; }; 
+            ACTIONS = {centerOnTarget = id; toggleDinoObject = id; }; 
             CLASS = OMController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
