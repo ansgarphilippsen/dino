@@ -3,13 +3,13 @@
 \textclass dino
 \language english
 \inputencoding auto
-\fontscheme newcent
+\fontscheme times
 \graphics default
 \float_placement !hbp
 \paperfontsize 10
 \spacing single 
-\papersize a4paper
-\paperpackage a4
+\papersize Default
+\paperpackage a4wide
 \use_geometry 0
 \use_amsmath 0
 \paperorientation portrait
@@ -26,6 +26,11 @@
 \layout Title
 
 DINO v0.9 Reference Manual
+\newline 
+
+\family typewriter 
+\size larger 
+www.dino3d.org
 \layout Author
 
 
@@ -70,231 +75,662 @@ arraystretch{1.2}
 \backslash 
 setlength
 \backslash 
-arrayrulewidth{0.2pt}
+arrayrulewidth{0.15pt}
 \newline 
 
 \layout Chapter
 
-Syntax Definitions
+Installation and Startup
 \layout Section
 
-Basics
+Installation
 \layout Standard
 
-Object oriented: target command parameters
+DINO is distributed in binary form for several platforms: 
 \layout Standard
 
-EXPRESSION
+and can be downloaded from the DINO homepage at 
+\family typewriter 
+www.dino3d.org
 \layout Standard
 
-ASSIGNMENT
-\layout Standard
-
-COMPARISON
+Requirements:
 \layout Section
 
-Properties
-\layout Standard
-
-
-\emph on 
-SET_EXPR
-\emph default 
- := 
-\emph on 
-SET_STATEMENT
-\emph default 
- [,
-\emph on 
- SET_STATEMENT
-\emph default 
- ...] 
-\layout Standard
-
-
-\emph on 
-SET_STATEMENT
-\emph default 
- := 
-\emph on 
-SET_PROPERTY
-\emph default 
- 
-\emph on 
-SET_OP SET_VALUE
-\layout Standard
-
-
-\emph on 
-SET_PROPERTY
-\emph default 
- := see tables below
-\layout Standard
-
-
-\emph on 
-SET_OP
-\emph default 
- := = | += | -= | *= | /=
-\layout Standard
-
-
-\emph on 
-SET_VALUE 
-\emph default 
-:= see tables below
+Command Line Arguments
 \layout Section
 
-Selection
+Manual Conventions
 \layout Standard
 
-A SELECT_EXPR is build up from SELECT_STATEMENTS, combined with boolean
- operators and parenthesis
+In a 
+\emph on 
+Syntax
+\emph default 
+ statement, several characters have a special meaning:
+\layout Description
+
+
+\family typewriter 
+CAPITAL
+\family default 
+ letters indicate placeholders
+\layout Description
+
+
+\family typewriter 
+[]
+\family default 
+ square brackets enclose optional parts
+\layout Description
+
+
+\family typewriter 
+|
+\family default 
+ the horizontal bar denotes a logical 'or':
+\begin_deeper 
+\layout Itemize
+
+in square brackets this means 
+\emph on 
+one of these statements or none
+\layout Itemize
+
+in round brackets this means 
+\emph on 
+exactly one of these statements
+\layout Itemize
+
+without brackets it separates different syntaxes altogether
+\end_deeper 
+\layout Description
+
+\SpecialChar \ldots{}
+ ellipsis stand for an arbitrary amount of similar statements
 \layout Standard
 
-SELECT_STATEMENT := 
-\layout Standard
+The abbreviation POV stands for Property Operator Value.
+\layout Chapter
 
-SELECT_PROP SELECT_OP SELECT_VALUES [,SELECT_VALUES ..] |
-\newline 
-WITHIN_STATEMENT | 
-\newline 
-OBJECT
-\layout Standard
-
-SELECT_PROP: see tables below
-\layout Standard
-
-SELECT_OP := = | != | < | <= | > | >= | 
-\layout Standard
-
-SELECT_VALUES := SELECT_VAL | SELECT_VAL:SELECT_VAL
-\layout Standard
-
-WITHIN_STATEMENT := FLOAT <> WITHIN_TARGET
-\layout Standard
-
-WITHIN_TARGET := POINT | OBJECT
-\layout Standard
-
-POINT := {x,y,z}
-\layout Standard
-
-OBJECT := .DS.OBJ
+Shell, Scene and GUI
 \layout Section
 
-Range
+Shell Navigation
 \layout Standard
 
-RANGE_EXPR := SOURCE,RANGE_PROP,RANGE_VAL
+Commands are typed into the terminal.
+ Keystrokes occuring in the graphics window are routed directly to the terminal.
+ Special keys:
 \layout Standard
-
-SOURCE := .DS
-\layout Standard
-
-RANGE_PROP := see tables below
-\layout Standard
-
-RANGE_VAL := VALUE : VALUE
-\layout Section
-
-Render
-\layout Section
-
-Material
-\layout Standard
-
-MATERIAL_EXPR := MATERIAL_SETTING [,MATERIAL_SETTING ...]
-\layout Standard
-
-MATERIAL_SETTING := MATERIAL_PROPERTY = MATERIAL_VALUE
-\layout Standard
-
-MATERIAL_PROPERTY:= see table 
-\begin_inset LatexCommand \vref{material_prop}
-
-\end_inset 
-
-
-\layout Standard
-
-MATERIAL_VALUE:= see table 
-\begin_inset LatexCommand \vref{material_prop}
-
-\end_inset 
-
-
-\layout Section
-
-Light
-\layout Standard
-
-LIGHT_EXPRESSION := LIGHT LIGHT_STATEMENT
-\layout Standard
-
-LIGHT := scene:light0 to scene:light7
-\layout Standard
-
-LIGHT_STATEMENT := 
-\newline 
-on | 
-\newline 
-off | 
-\newline 
- local | 
-\newline 
-global | 
-\newline 
-show |
-\newline 
-set LIGHT_SETTING [,LIGHT_SETTING]
-\newline 
-get LIGHT_PROPERTY
-\layout Standard
-
-LIGHT_SETTING :=
-\newline 
-on | off | local | global | LIGHT_PROPERTY=LIGHT_VALUE
-\layout Standard
-
-LIGHT_PROPERTY := see table 
-\begin_inset LatexCommand \vref{light_prop}
-
-\end_inset 
-
-
-\layout Standard
-
-LIGHT_VALUE := see table 
-\begin_inset LatexCommand \vref{light_prop}
-
-\end_inset 
-
-
-\layout Section
-
-Predefined Variables and Aliases
-\layout Subsection*
-
-Variables
-\layout Standard
-
+\align center 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="14" columns="2">
+<lyxtabular version="2" rows="4" columns="2">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="false" rightline="false" width="" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="100mm" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="" special="">
 <row topline="false" bottomline="false" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
 
-var
+
+\begin_inset Formula \( \leftarrow  \)
+\end_inset 
+
+ 
+\begin_inset Formula \( \rightarrow  \)
+\end_inset 
+
+
 \end_inset 
 </cell>
-<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Move cursor within command line
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \uparrow  \)
+\end_inset 
+
+ 
+\begin_inset Formula \( \downarrow  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Navigate the history of previous commands
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+DEL
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Removes character the cursor is positioned on
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+BKSPC
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Removes character just right of the cursor
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Section
+
+Shell Commands
+\layout RefEntry
+
+!
+\layout Syntax
+
+!SHELLCOMMAND
+\layout Standard
+
+Abbreviation for the shell command 
+\family typewriter 
+system
+\family default 
+ (see below).
+\layout RefEntry
+
+@
+\layout Syntax
+
+@SCRIPTFILE
+\layout Standard
+
+Causes to specified 
+\family typewriter 
+SCRIPTFILE
+\family default 
+ to be parsed, each line interpreted as a command.
+ To spread a single command over several lines, use the backslash as the
+ last character to protect the following newline.
+ The commands 
+\family typewriter 
+break
+\family default 
+ and 
+\family typewriter 
+pause
+\family default 
+ (see below) are only valid during execution of a scriptfile.
+\layout RefEntry
+
+$
+\layout Syntax
+
+$VAR
+\layout Standard
+
+Expands variable 
+\family typewriter 
+VAR
+\family default 
+ to its value.
+ Characters following immediately afterwards cannot be one of a-z, A-Z or
+ 0-9
+\begin_float footnote 
+\layout Standard
+
+system call 
+\family typewriter 
+isalnum()
+\end_float 
+ (because they would be interpreted as part of the variable name).
+ Variables can be nested, i.e.
+ 
+\family typewriter 
+$$var
+\family default 
+ would first expand 
+\family typewriter 
+$var
+\family default 
+, and then try to expand the result again as a variable.
+\layout RefEntry
+
+//
+\layout Syntax
+
+// COMMENT
+\layout Standard
+
+Ignores the rest of the line up to a newline, allowing comments to be added
+ to scripts.
+\layout RefEntry
+
+
+\backslash 
+
+\layout Syntax
+
+
+\backslash 
+X
+\layout Standard
+
+Protects character 
+\family typewriter 
+X
+\family default 
+ from being interpreted, e.g.
+ a newline in a script, a dollar sign, brackets or quotes
+\layout RefEntry
+
+[]
+\layout Syntax
+
+[SUBCOMMAND]
+\layout Standard
+
+Allows nested commands.
+ The square brackets are part of the syntax! The expression contained in
+ 
+\family typewriter 
+SUBCOMMAND
+\family default 
+ is first evaluated as a command by itself, and then, if no error occurred,
+ the result replaces the 
+\family typewriter 
+[SUBCOMMAND]
+\family default 
+ expression.
+ This can be arbitrarily nested.
+ Especially useful in combination with the 
+\family typewriter 
+echo
+\family default 
+ command; e.g printing the current value of the global transformation: 
+\layout Code
+
+echo [scene get mmat]
+\layout RefEntry
+
+;
+\layout Syntax
+
+COMMAND1 ; COMMAND2
+\layout Standard
+
+The semicolon can be used to seperate individual commands that appear on
+ the same line.
+\layout RefEntry
+
+alias
+\layout Syntax
+
+alias ABBR EXPR
+\layout Standard
+
+Sets an alias, with the effect that if 
+\family typewriter 
+ABBR
+\family default 
+ appears as the first word in a command, it is replaced by 
+\family typewriter 
+EXPR
+\family default 
+.
+ 
+\family typewriter 
+ABBR
+\family default 
+ must be a single word, 
+\family typewriter 
+EXPR
+\family default 
+ can be several words.
+ The resulting EXPR is 
+\emph on 
+not
+\emph default 
+ parsed for aliases again.
+\layout RefEntry
+
+bench
+\layout Syntax
+
+bench
+\layout Standard
+
+Continuously forces graphics updates and writes out how many frames per
+ second are displayed (FPS).
+ Can be used to qualitatively benchmark DINO's / OpenGL's graphics capabilities.
+ Calling 
+\family typewriter 
+bench
+\family default 
+ a second time will turn it off again.
+\layout RefEntry
+
+break
+\layout Syntax
+
+break
+\layout Standard
+
+Stops script execution and returns to the caller.
+ Has no effect interactively.
+\layout RefEntry
+
+cd
+\layout Syntax
+
+cd PATH
+\layout Standard
+
+Changes the working directory to 
+\family typewriter 
+PATH
+\family default 
+.
+ If 
+\family typewriter 
+PATH
+\family default 
+ is omitted the directory is reset to the initial startup directory.
+\layout RefEntry
+
+clear
+\layout Syntax
+
+clear
+\layout Standard
+
+Removes all entries from the RPN stack.
+\layout RefEntry
+
+dup
+\layout Syntax
+
+dup
+\layout Standard
+
+Duplicates the topmost RPN stack entry.
+\layout RefEntry
+
+echo
+\layout Syntax
+
+echo EXPRESSION [> file | >> file]
+\layout Standard
+
+Prints 
+\family typewriter 
+EXPRESSION
+\family default 
+, evaluating all subcommands and expanding all variables first.
+ Output can be optionally redirected (
+\family typewriter 
+> FILE
+\family default 
+) or appended (
+\family typewriter 
+>> FILE
+\family default 
+) to a file.
+\layout RefEntry
+
+exit
+\layout Syntax
+
+exit
+\layout Standard
+
+See 
+\family typewriter 
+quit.
+\layout RefEntry
+
+opr
+\layout Syntax
+
+opr OP1 [OP2 ...]
+\layout Standard
+
+Applies one or several operators to the RPN stack.
+ See table 
+\begin_inset LatexCommand \vref{shell_stack_op}
+
+\end_inset 
+
+ for a list of all operators.
+\layout RefEntry
+
+pause
+\layout Syntax
+
+pause
+\layout Standard
+
+Halts script execution until a key is pressed.
+ If the key is 
+\family typewriter 
+ESC
+\family default 
+, script execution will be aborted.
+ Has no effect interactively.
+\layout RefEntry
+
+peek
+\layout Syntax
+
+peek
+\layout Standard
+
+Returns the topmost value from the RPN stack without removing it.
+\layout RefEntry
+
+pop
+\layout Syntax
+
+pop [VAR [,VAR2 ...]]
+\layout Standard
+
+Returns and removes the topmost value(s) from the RPN stack, optionally
+ writing them in the comma-separated variable names given after the 
+\family typewriter 
+pop
+\family default 
+ command.
+ If no variable is provided, returns and removes only the topmost value.
+\layout RefEntry
+
+push
+\layout Syntax
+
+push W1 [W2 ...]
+\layout Standard
+
+Pushes all words (from left to right) onto the RPN stack, the rightmost
+ word will be on top.
+\layout RefEntry
+
+pwd
+\layout Syntax
+
+pwd
+\layout Standard
+
+Displays current working directory.
+\layout RefEntry
+
+quit
+\layout Syntax
+
+quit
+\layout Standard
+
+See 
+\family typewriter 
+exit.
+\layout RefEntry
+
+set
+\layout Syntax
+
+set VAR EXPR
+\layout Standard
+
+Assigns 
+\family typewriter 
+EXPR
+\family default 
+ to the variable 
+\family typewriter 
+VAR
+\family default 
+ (see also 
+\family typewriter 
+$
+\family default 
+ above).
+\layout RefEntry
+
+show
+\layout Syntax
+
+show
+\layout Standard
+
+Lists the current RPN stack on the terminal.
+\layout RefEntry
+
+swap
+\layout Syntax
+
+swap
+\layout Standard
+
+Swaps the two topmost entries on the RPN stack.
+\layout RefEntry
+
+system
+\layout Syntax
+
+system EXPR
+\layout Standard
+
+Executes 
+\family typewriter 
+EXPR
+\family default 
+ as a shell command and returns after it has completed.
+\layout RefEntry
+
+unalias
+\layout Syntax
+
+unalias ABBR
+\layout Standard
+
+Removes the alias entry for 
+\family typewriter 
+ABBR
+\family default 
+ (see also 
+\family typewriter 
+alias
+\family default 
+ above).
+\layout RefEntry
+
+unset
+\layout Syntax
+
+unset VAR
+\layout Standard
+
+Removes the variable VAR (see also 
+\family typewriter 
+set
+\family default 
+ above).
+\layout RefEntry
+
+var
+\layout Syntax
+
+var
+\layout Standard
+
+Lists all currently defined variables with their values.
+\layout Standard
+
+\begin_float wide-tab 
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="18" columns="2">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="100mm" special="">
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Variables
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -303,7 +739,7 @@ value
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="false" newpage="false">
+<row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -321,7 +757,7 @@ PI
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -340,7 +776,7 @@ protein
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -358,7 +794,7 @@ dna
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -376,7 +812,7 @@ rna
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -394,7 +830,7 @@ aliphatic
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -412,7 +848,7 @@ aromatic
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -430,7 +866,7 @@ basic
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -448,7 +884,7 @@ basic2
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -466,7 +902,7 @@ acidic
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -484,7 +920,7 @@ acidic2
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -523,7 +959,7 @@ polar2
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -541,41 +977,26 @@ hydrophobic
 \end_inset 
 </cell>
 </row>
-</lyxtabular>
-
-\end_inset 
-
-
-\layout Subsection*
-
-Aliases
-\layout Standard
-
-
-\begin_inset  Tabular
-<lyxtabular version="2" rows="4" columns="2">
-<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="top" leftline="false" rightline="true" width="" special="">
-<column alignment="left" valignment="top" leftline="false" rightline="false" width="" special="">
-<row topline="false" bottomline="true" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
 
-alias
+
+\emph on 
+Aliases
 \end_inset 
 </cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
 
-expansion
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="true" bottomline="false" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -593,7 +1014,7 @@ scene stereo
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -611,7 +1032,7 @@ scene mono
 \end_inset 
 </cell>
 </row>
-<row topline="false" bottomline="false" newpage="false">
+<row topline="false" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
@@ -634,351 +1055,407 @@ scene write
 \end_inset 
 
 
-\layout Chapter
+\layout Caption
 
-Command Reference
-\layout Section
 
-Shell
-\layout RefEntry
+\begin_inset LatexCommand \label{predef}
 
-!
-\layout Syntax
+\end_inset 
 
-!SHELLCOMMAND
+Predefined Variables and Aliases
+\end_float 
 \layout Standard
 
-Abbreviation for the shell command 
-\family typewriter 
-system
-\family default 
-.
-\layout RefEntry
-
-@
-\layout Syntax
-
-@FILE
+\begin_float wide-tab 
 \layout Standard
 
-Causes to specified 
-\family typewriter 
-FILE
-\family default 
- to be parsed, each line interpreted as a command.
-\layout RefEntry
 
-$
-\layout Syntax
+\begin_inset  Tabular
+<lyxtabular version="2" rows="20" columns="2">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="25mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="105mm" special="">
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-$VAR
 \layout Standard
 
-Expands variable 
-\family typewriter 
-VAR
-\family default 
- to its value.
-\layout RefEntry
 
-//
-\layout Syntax
+\emph on 
+unary operators
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-// COMMENT
 \layout Standard
 
-Ignores the rest of the line up to a newline.
- 
-\layout RefEntry
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-
-\backslash 
-
-\layout Syntax
-
-
-\backslash 
-X
 \layout Standard
 
-Protects character 
-\family typewriter 
-X
-\family default 
- from being interpreted, e.g.
- a newline in a script.
-\layout RefEntry
++-
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-[]
-\layout Syntax
-
-[SUBCOMMAND]
 \layout Standard
 
-Nested commands.
- The expression contained in 
-\family typewriter 
-SUBCOMMAND
-\family default 
- is first evaluated as a command by itself, and then, if no error occurred,
- the result replaces the expression with the brackets.
-\layout RefEntry
+changes the sign on scalars, elements of vector or matrix
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-alias
-\layout Syntax
-
-alias ABBR EXPR
 \layout Standard
 
-If
-\family typewriter 
- ABBR
-\family default 
- appears as the first word on a line or in a subcommand, it is replaced
- by 
-\family typewriter 
-EXPR
-\family default 
-.
- 
-\family typewriter 
-ABBR
-\family default 
- must be a single word, 
-\family typewriter 
-EXPR
-\family default 
- can be several words.
-\layout RefEntry
+inc, dec
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-bench
-\layout Syntax
-
-bench
 \layout Standard
 
-Continuously forces graphics updates and writes out how many frames per
- second can be displayed (FPS).
- Can be used to qualitatively benchmark DINO's / OpenGL's graphics capabilities.
- Calling 
-\family typewriter 
-bench
-\family default 
- a second time will turn it off again.
-\layout RefEntry
+increases, resp.
+ decreases scalar, elements of vector or matrix by one
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-break
-\layout Syntax
-
-break
 \layout Standard
 
-Stops script execution and returns to the caller.
- Has no effect interactively.
-\layout RefEntry
+abs
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-cd
-\layout Syntax
-
-cd PATH
 \layout Standard
 
-Changes the working directory to PATH
-\layout RefEntry
+return absolute of scalar or length of vector, invalid for matrices
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-clear
-\layout Syntax
-
-clear
 \layout Standard
 
-Removes all entries from the RPN stack
-\layout RefEntry
+inv
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-dup
-\layout Syntax
-
-dup
 \layout Standard
 
-Duplicates the topmost RPN stack entry
-\layout RefEntry
+inverse of scalar, invalid for vectors and matrices
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-echo
-\layout Syntax
-
-echo EXPRESSION [> file]
 \layout Standard
 
-prints 
-\family typewriter 
-EXPRESSION
-\family default 
-, evaluating all subcommands and expanding all variables first.
- Output can be optionally redirected to a 
-\family typewriter 
-FILE
-\family default 
-.
-\layout RefEntry
+log, ln, exp, sqrt
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-exit
-\layout Syntax
-
-exit
 \layout Standard
 
-See 
-\family typewriter 
-quit
-\layout RefEntry
+calculates the decimal resp natural logarithm, exponential function or square
+ root of scalar, invalid for vector or matrix
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-opr
-\layout Syntax
-
-opr OP1 [OP2 ...]
 \layout Standard
 
-Applies one or several operators to the RPN stack.
- See Table X for a list of all operators.
-\layout RefEntry
+sin, cos, tan, 
+\newline 
+asin, acos, atan
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-pause
-\layout Syntax
-
-pause
 \layout Standard
 
-Halts script execution until a key is pressed.
- If the key is 
-\family typewriter 
-ESC
-\family default 
-, script execution will be aborted.
- Has no effect interactively.
-\layout RefEntry
+trigonometric functions for scalars, invalid for vector or matrix
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-peek
-\layout Syntax
-
-peek
 \layout Standard
 
-Returns the topmost value from the RPN stack without removing it.
-\layout RefEntry
+int, float
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-pop
-\layout Syntax
-
-pop [VAR1 [VAR2] ...]
 \layout Standard
 
-Returns and removes the topmost value(s) from the RPN stack, optionally
- writing them in the variables given after the 
-\family typewriter 
-pop
-\family default 
- command.
- If no variable is given, returns and removes only the topmost value.
-\layout RefEntry
+returns the integer part or float, or forces return of float
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-push
-\layout Syntax
-
-push W1 [W2 ...]
 \layout Standard
 
-Pushes all words (from left to right) onto the RPN stack, the rightmost
- word will be on top.
-\layout RefEntry
+det
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-pwd
-\layout Syntax
-
-pwd
 \layout Standard
 
-Displays current working directory
-\layout RefEntry
+returns determinant of matrix, invalid for scalar and vector
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-quit
-\layout Syntax
-
-quit
 \layout Standard
 
-See exit
-\layout RefEntry
 
-set
-\layout Syntax
+\emph on 
+binary operators
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-set VAR EXPR
 \layout Standard
 
-Assigns EXPR to the variable VAR
-\layout RefEntry
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-show
-\layout Syntax
-
-show
 \layout Standard
 
-Lists the current RPN stack on the terminal.
-\layout RefEntry
++, -
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-swap
-\layout Syntax
-
-swap
 \layout Standard
 
-Swaps the two topmost entries on the RPN stack
-\layout RefEntry
+basic addition and subtraction, vectors and matrices must have identical
+ elements
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-system
-\layout Syntax
-
-system EXPR
 \layout Standard
 
-Executes 
-\family typewriter 
-EXPR
-\family default 
- as a shell command and returns after it has completed.
-\layout RefEntry
+*
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-unalias
-\layout Syntax
-
-unalias ABBR
 \layout Standard
 
-Removes the alias entry for 
-\family typewriter 
-ABBR
-\family default 
-.
-\layout RefEntry
+multiplication, valid combinations: scalar*scalar, scalar*vector, scalar*matrix,
+ vector*vector (dot product), vector*matrix, matrix*matrix
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-unset
-\layout Syntax
-
-unset VAR
 \layout Standard
 
-Removes the variable VAR.
-\layout RefEntry
+/
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-var
-\layout Syntax
-
-var
 \layout Standard
 
-Lists all currently defined variables.
+simple division, valid combinations: scalar/scalar, vector/scalar, matrix/scalar
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+pow
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+power of x (1st position) to y (2nd position)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+x
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+calculates cross product between two vectors
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+special
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+dist
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+angle
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+torsion
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rmat
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Requires a direction vector V and a scalar value S, returns the rotation
+ matrix of a S degree rotation around axis V
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{shell_stack_op}
+
+\end_inset 
+
+Shell RPN Stack Operators
+\end_float 
 \layout Standard
 
 
@@ -989,6 +1466,9 @@ clearpage
 \layout Section
 
 Scene
+\layout Subsection
+
+Scene Commands
 \layout RefEntry
 
 autoslab
@@ -999,17 +1479,25 @@ scene autoslab
 
 Adjusts the front and back clipping plane to the minimal and maximal z value
  of the currently displayed objects.
+ The coordinates of the object elements will be used, not of the 3D primitives.
 \layout RefEntry
 
 center
 \layout Syntax
 
-scene center {x,y,z}
+scene center {X,Y,Z}
 \layout Standard
 
 Centers the global rotation on the coordinates provided by 
 \family typewriter 
-{x,y,z}
+{X,Y,Z}
+\family default 
+.
+ Predestined for combination with a subprompt (see above) such as (as explained
+ below, the geometric center of an object is return if no command is given):
+\layout Code
+
+scene center [.ds.obj]
 \layout RefEntry
 
 get
@@ -1018,12 +1506,12 @@ get
 scene get PROP
 \layout Standard
 
-Returns the scene property PROP, see table 
+Returns the scene property PROP (see table 
 \begin_inset LatexCommand \vref{scene_prop}
 
 \end_inset 
 
-.
+).
 \layout RefEntry
 
 grab
@@ -1032,7 +1520,13 @@ grab
 scene grab INPUTDEVICE
 \layout Standard
 
-Grabs INPUTDEVICE.
+Grabs INPUTDEVICE (see 
+\begin_inset LatexCommand \vref{gui}
+
+\end_inset 
+
+), routing its transformations to the scene camera.
+ Upon startup, all available input devices are grabbed by the scene.
 \layout RefEntry
 
 hide
@@ -1072,7 +1566,7 @@ Displays
 \family typewriter 
 EXPR
 \family default 
- in the status bar.
+ in the status bar on the bottom of the graphics window.
 \layout RefEntry
 
 peek
@@ -1081,7 +1575,7 @@ peek
 scene peek
 \layout Standard
 
-Returns the topmost scene entry value without removing it.
+Returns the topmost scene stack entry without removing it.
 \layout RefEntry
 
 pop
@@ -1108,9 +1602,41 @@ reset
 scene reset [rot] [trans] [cent] [clip]
 \layout Standard
 
-Resets the scene transformation: The rotation matrix is set to identity,
- the translation vector to zero, the center of rotation to the origin, the
- near clipping plane to 10.0 and the far clipping plane to 1000.0.
+Resets the scene transformation.
+ If no additional keyword is provided, everything is reset, otherwise only
+ the specified components:
+\layout Description
+
+
+\family typewriter 
+rot
+\family default 
+ The rotation matrix is set to identity
+\layout Description
+
+
+\family typewriter 
+trans
+\family default 
+ The translation vector is set to zero 
+\family typewriter 
+{0,0,0}
+\layout Description
+
+
+\family typewriter 
+cent
+\family default 
+ The center of rotation is set to the origin 
+\family typewriter 
+{0,0,0}
+\layout Description
+
+
+\family typewriter 
+clip
+\family default 
+ the near clipping plane is set to 10.0, the far clipping plane to 1000.0.
 \layout RefEntry
 
 rot
@@ -1119,9 +1645,9 @@ rot
 scene (rotx | roty | rotz) ANGLE
 \layout Standard
 
-Rotates the scene around one of the major axis by
+Rotates the scene around one of the major axis by 
 \family typewriter 
- ANGLE
+ANGLE
 \family default 
  degrees.
 \layout RefEntry
@@ -1129,16 +1655,15 @@ Rotates the scene around one of the major axis by
 set
 \layout Syntax
 
-scene set POV[,POV ...]
+scene set POV [,POV ...]
 \layout Standard
 
-Sets one or more scene properties.
- See table 
+Sets one or more scene properties (see table 
 \begin_inset LatexCommand \vref{scene_prop}
 
 \end_inset 
 
-.
+).
 \layout RefEntry
 
 show
@@ -1152,6 +1677,7 @@ Turns display of all objects
 on
 \emph default 
 .
+ This is the default.
 \layout RefEntry
 
 showcp
@@ -1164,8 +1690,12 @@ Displays a marker for the position stored in
 \family typewriter 
 $CP
 \family default 
-.
- 
+ (see also 
+\begin_inset LatexCommand \vref{gui}
+
+\end_inset 
+
+).
 \layout RefEntry
 
 spin
@@ -1175,6 +1705,9 @@ scene spin
 \layout Standard
 
 Toggles scene spinning on and off.
+ If active, the scene will rotate in the direction of the last rotation
+ induced with the mouse.
+ 
 \layout RefEntry
 
 split
@@ -1184,6 +1717,22 @@ scene split
 \layout Standard
 
 Toggles stereo display using split screen on and off.
+ The orientation is for cross-eye stereo
+\begin_float footnote 
+\layout Standard
+
+If you see stereo by moving your eyes outwards (I'm impressed), you can
+ use the split screen stereo by negating the eyedist parameter, e.g.
+ 
+\family typewriter 
+scene set eyedist=-150
+\end_float 
+.
+ During split screen mode, 
+\family typewriter 
+scene write
+\family default 
+ (see below) will actually generate a stereo image as seen on the screen.
 \layout RefEntry
 
 stereo
@@ -1198,6 +1747,8 @@ Toggles hardware stereo on and off.
 scene
 \family default 
  can be omitted.
+ This is currently only supported on equipped SGI systems.
+ The availability of hardware stereo mode will be reported during startup.
 \layout RefEntry
 
 trans
@@ -1207,25 +1758,6 @@ scene (transx | transy | transz) VALUE
 \layout Standard
 
 Translates VALUE along one of the major axis.
-\layout RefEntry
-
-write
-\layout Syntax
-
-\SpecialChar ~
-
-\newline 
-[scene] write FILE.png [-s SIZE] [-a ACC] [-dump]
-\layout Syntax
-
-[scene] write FILE.ps
-\layout Syntax
-
-[scene] write FILE.pov [-patch | -smooth | -mega | -nocolor]
-\layout Standard
-
-Exports the current scene as a PNG raster image, as a PostScript file or
- as a POVray scene.
 \layout Standard
 
 \begin_float wide-tab 
@@ -1865,6 +2397,245 @@ center
 
 Scene Properties
 \end_float 
+\layout Subsection
+
+Scene Export
+\layout RefEntry
+
+write
+\layout Standard
+
+Exports the current scene as a PNG raster image, as a PostScript file or
+ as a POVray scene.
+ This command is aliased so 
+\family typewriter 
+scene
+\family default 
+ can be ommitted
+\layout Subsubsection*
+
+PNG Raster Image
+\begin_float footnote 
+\layout Standard
+
+PNG provides a open-source, royalty-free, efficient graphics format.
+ See 
+\family typewriter 
+http://www.libpng.org/pub/png
+\end_float 
+\layout Syntax
+
+write FILE.png [-s (SIZE | WxH | VAL%)] [-a ACC] [-dump]
+\layout Standard
+
+Creates a raster image.
+ Unless 
+\family typewriter 
+-dump
+\family default 
+ is used (see below), an offline rendering context is created and the current
+ scene is rendered into it.
+ The dimensions of the offline rendering area can be set with 
+\family typewriter 
+-s
+\family default 
+: a single value denotes a square area (in pixels), two numbers interspaced
+ with 
+\family typewriter 
+x
+\family default 
+ stand for a rectangular area (in pixels), and a percentage value refers
+ to the corresponding relative size of the graphics window.
+ The maximum possible size depends on the X-Windows system, 2000x2000 should
+ work in most cases.
+ On OpenGL systems supporting accumulation buffers, the scene can be subjected
+ to scene antialiasing
+\begin_float footnote 
+\layout Standard
+
+from the OpenGL Programming Guide 3rd Edition
+\end_float 
+: The final image will be a blend of 
+\family typewriter 
+ACC
+\family default 
+ images.
+ Possible values for 
+\family typewriter 
+ACC
+\family default 
+ are 2,3,4,5,6,8,9,12 or 16.
+ The higher the number the better the final image will look, but rendering
+ time is increased accordingly.
+\layout Standard
+
+If the option 
+\family typewriter 
+-dump
+\family default 
+ is used, the pixel values of the graphics window will be written, including
+ parts of other windows partially obscuring it (therefore the graphics window
+ should be in the foreground).
+ This option is useful for OpenGL implementations that do not provide a
+ good offline-rendering context.
+ The size is fixed to the graphics window size, and scene antialiasing using
+ the accumulation buffer is not available.
+\layout Subsubsection
+
+PostScript
+\layout Syntax
+
+write FILE.ps
+\layout Standard
+
+Converts the current scene into a PostScript file.
+ The 3D primitives (points, lines and triangles) are displayed on the screen
+ - after transformation and projection - with x and y coordinates in screen
+ pixels and z coordinate normalized between 0 and 1.
+ These transformed primitives are collected, sorted from back to front and
+ then written as PostScript elements: again points, lines and triangles,
+ just 2D.
+ Several noteworthy points:
+\layout Enumerate
+
+The resulting scene is described by vectors and hence resolution independent
+ (but see note about triangles below).
+\layout Enumerate
+
+A complicated scene might take a long time to render because every PostScript
+ element is drawn, even if finally completely covered by other ones.
+\layout Enumerate
+
+Transparency is not possible with PostScript, any transparent object will
+ be opaque.
+\layout Enumerate
+
+Depth cueing does not work.
+\layout Enumerate
+
+Postscript triangles are unicolored.
+ DINO converts its gouraud shaded trianges into several unicolored ones
+\begin_float footnote 
+\layout Standard
+
+using the freely available 
+\family typewriter 
+gouraudtriangle
+\family default 
+ macro written by Frederic Delhoume (delhoume@ilog.fr)
+\end_float 
+.
+ This approximation might become apparent at high magnification.
+\layout Enumerate
+
+The BoundingBox is crudely set to the the window dimensions and might need
+ adjustment.
+\layout Standard
+
+PostScript export has been largely superseded by the POVray format (see
+ below).
+\layout Subsubsection
+
+POVray
+\layout Syntax
+
+write FILE.pov [-patch | -smooth | -mega | -nocolor]
+\layout Standard
+
+Exports the current scene as a POVray scene.
+ The 
+\emph on 
+Persistence of Vision Raytracer
+\emph default 
+ (
+\family typewriter 
+www.povray.org
+\family default 
+) is an extremely powerful tool to create stunningly beautiful raytraced
+ pictures.
+ Its freely available for all major platforms and is constantly being upgraded
+ and improved upon by a large community of enthusiastic users and developers.
+ An extensive tutorial on the DINO homepage (
+\family typewriter 
+www.dino3d.org
+\family default 
+) is devoted to POVray output and a duplication here would exceed the scope
+ of this reference manual.
+\layout Subsection
+
+Lighting
+\layout Standard
+
+Initially, only one lightsource is on (number 0).
+ There are six more that can be used.
+\layout Standard
+
+
+\family typewriter 
+LIGHT := scene:light
+\shape italic 
+N
+\shape default 
+ ; 
+\shape italic 
+N
+\shape default 
+ := 0-7
+\layout RefEntry
+
+on
+\layout Syntax
+
+LIGHT on
+\layout Standard
+
+Turns the specified lightsource on
+\layout RefEntry
+
+off
+\layout Syntax
+
+LIGHT off
+\layout Standard
+
+Turns the specified lightsource off
+\layout RefEntry
+
+get
+\layout Syntax
+
+LIGHT get PROP
+\layout Standard
+
+Retrieves a light property (see table 
+\begin_inset LatexCommand \vref{light_prop}
+
+\end_inset 
+
+).
+\layout RefEntry
+
+set
+\layout Syntax
+
+LIGHT set PROP1[,PROP2 ...]
+\layout Standard
+
+Sets one or more light properties (see table 
+\begin_inset LatexCommand \vref{light_prop}
+
+\end_inset 
+
+).
+\layout RefEntry
+
+show
+\layout Syntax
+
+LIGHT show
+\layout Standard
+
+Displays all properties of this light.
 \layout Standard
 
 \begin_float wide-tab 
@@ -1874,10 +2645,10 @@ Scene Properties
 \begin_inset  Tabular
 <lyxtabular version="2" rows="13" columns="4">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="25mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="45mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="25mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="25mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="75mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
 <row topline="true" bottomline="true" newpage="false">
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -1913,12 +2684,16 @@ default other
 </cell>
 </row>
 <row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
 
-on off
+on 
+\shape italic 
+or
+\shape default 
+ off
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -1952,7 +2727,11 @@ off
 
 \layout Standard
 
-global local
+global 
+\shape italic 
+or
+\shape default 
+ local
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -2009,7 +2788,7 @@ pos
 
 \layout Standard
 
-{0.1,0.2,1.0,0.0}
+{.1,.2,1,0}
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -2017,7 +2796,7 @@ pos
 
 \layout Standard
 
-{0.0,0.0,1.0,0.0}
+{0,0,1,0}
 \end_inset 
 </cell>
 </row>
@@ -2344,6 +3123,185 @@ spot direction
 
 Light Properties
 \end_float 
+\layout Subsection
+
+Additional Clipping Planes
+\layout Standard
+
+In addition to the front and back clipping plane, six additional clipping
+ planes in arbitrary position can be specified.
+\layout Standard
+
+
+\family typewriter 
+CLIP := scene:clip
+\shape italic 
+N
+\shape default 
+ ; 
+\shape italic 
+N
+\shape default 
+ :=0-5
+\layout RefEntry
+
+on
+\layout Syntax
+
+CLIP on
+\layout Standard
+
+Turns specified clipping plane on.
+\layout RefEntry
+
+off
+\layout Syntax
+
+CLIP off
+\layout Standard
+
+Turns specified clipping plane off.
+\layout RefEntry
+
+set
+\layout Syntax
+
+CLIP set PROP1[,PROP2 ...]
+\layout Standard
+
+Sets on or more clipping plane properties (seet table 
+\begin_inset LatexCommand \vref{clip_prop}
+
+\end_inset 
+
+).
+\layout RefEntry
+
+get
+\layout Syntax
+
+CLIP get PROP
+\layout Standard
+
+Retrieves a clipping plane property (see table 
+\begin_inset LatexCommand \vref{clip_prop}
+
+\end_inset 
+
+).
+\layout RefEntry
+
+grab
+\layout Syntax
+
+CLIP grab INPUTDEVICE
+\layout Standard
+
+Routes all transformations from INPUTDEVICE to specified clipping plane.
+\layout Standard
+
+\begin_float wide-tab 
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="3" columns="3">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="" special="">
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Property
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Explanation
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Default
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+pos
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Position of the clipping plane
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+{0,0,0}
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+dir
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Direction of the plane normal
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+{0,0,1}
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{clip_prop}
+
+\end_inset 
+
+Clipping Plane Properties
+\end_float 
 \layout Standard
 
 
@@ -2353,7 +3311,666 @@ Light Properties
 clearpage
 \layout Section
 
-Database Manager
+
+\begin_inset LatexCommand \label{gui}
+
+\end_inset 
+
+GUI
+\layout Standard
+
+All keypresses occuring in the graphics window are routed directly to the
+ DINO shell prompt.
+ 
+\layout Standard
+
+The following input devices are available, if installed:
+\layout Itemize
+
+
+\family typewriter 
+mouse
+\family default 
+ (& 
+\family typewriter 
+mouse2
+\family default 
+)
+\layout Itemize
+
+
+\family typewriter 
+dialbox
+\family default 
+ (& 
+\family typewriter 
+dialbox2
+\family default 
+)
+\layout Itemize
+
+
+\family typewriter 
+spaceball
+\family default 
+ (& 
+\family typewriter 
+spaceball2
+\family default 
+)
+\layout Standard
+
+The 
+\family typewriter 
+*2
+\family default 
+ variants are in combination with the 
+\emph on 
+Ctrl
+\emph default 
+ modifier key.
+ The transformations caused by these input devices are per default routed
+ to the scene, modifying the camera view.
+ The dataset command 
+\family typewriter 
+grab
+\family default 
+ (see 
+\begin_inset LatexCommand \vref{gen_ds_com}
+
+\end_inset 
+
+) can be used to re-route the transformations to a dataset.
+\layout Paragraph
+
+Mouse 
+\layout Standard
+
+Clicking
+\begin_float footnote 
+\layout Standard
+
+time between mouse button press and release < 200ms
+\end_float 
+ the left mouse button in the graphics window has the following effects:
+\layout Enumerate
+
+A line 
+\begin_inset Formula \( \mathcal{L} \)
+\end_inset 
+
+ is constructed that is perpendicular to the xy plane and goes through the
+ current mouse position.The middle point of the intersection of line 
+\begin_inset Formula \( \mathcal{L} \)
+\end_inset 
+
+ with the near and far clipping plane is stored in the variable 
+\family typewriter 
+CP
+\family default 
+ (for current point)
+\layout Enumerate
+
+Of all atoms of 
+\emph on 
+shown
+\emph default 
+ structure objects that are within 0.2 
+\latex latex 
+
+\backslash 
+AA
+\backslash 
+
+\latex default 
+ of line 
+\begin_inset Formula \( \mathcal{L} \)
+\end_inset 
+
+ and that are between the near and far clipping plane, the one closest to
+ the near clipping plane is selected:
+\begin_deeper 
+\layout Enumerate
+
+its numeric form (.ds:#number) is stored in the variable 
+\family typewriter 
+CS
+\family default 
+ (current selection) and pushed onto the scene stack
+\layout Enumerate
+
+its position is stored in the variable 
+\family typewriter 
+CP
+\family default 
+, overriding the calculated point above
+\layout Enumerate
+
+its name is displayed in the status bar
+\layout Enumerate
+
+its label is toggled if the shift key was pressed during the mouse click
+\end_deeper 
+\layout Standard
+
+Depressing the right mouse button in the graphics window will cause the
+ user menu to appear.
+ 
+\layout Standard
+\align left 
+The table below lists the effects of mouse movement in the graphics window,
+ depending on the mouse button(s) and modifier keys pressed.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="7" columns="2">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="center" valignment="top" leftline="true" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="" special="">
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Mouse Input Settings
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Left MB
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rotate x+y
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Middle MB
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+translate z (slow and fast)
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Left MB & Middle MB
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rotate z
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Left MB & Shift
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+translate x+y
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Middle MB & Shift
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+slab width
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Left MB & Middle MB & Shift
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+slab translation
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Paragraph
+
+Dialbox 
+\layout Standard
+
+The table below lists the settings of the eight dials on a standard dialbox.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="5" columns="4">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="right" valignment="top" leftline="true" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
+<column alignment="left" valignment="top" leftline="false" rightline="true" width="" special="">
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Dialbox Settings
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+slab width
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+slab translate
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rotate z
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+translate z
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rotate y
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+translate y
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rotate x
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \odot  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+translate x
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Paragraph
+
+Spaceball 
+\layout Standard
+
+A spaceball combines the three translational and rotational axes into one
+ device, and hence is much better suited for 3D navigation than the mouse
+ or dialbox.
+\layout Standard
+
+
+\latex latex 
+
+\backslash 
+clearpage
+\layout Chapter
+
+Datasets
+\layout Section
+
+Concepts
+\layout Subsection
+
+Objects
+\layout Standard
+
+objects are 3D representation of datasets
+\layout Subsection
+
+Properties
+\layout Standard
+
+copied and shared element properties
+\layout Subsection
+
+Selection
+\layout Standard
+
+A selection is build up from individual selection statements, connected
+ through boolean operators, optionally employing parenthesis to group statements.
+\layout Standard
+
+Recursive definition for a selection
+\layout Standard
+
+SELECTION: (SELECTION)
+\layout Standard
+
+SELECTION: not SELECTION
+\layout Standard
+
+SELECTION: SELECTION and SELECTION
+\layout Standard
+
+SELECTION: SELECTION or SELECTION
+\layout Standard
+
+SELECTION: STATEMENT
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+STATEMENT: PROP OP VALUELIST
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+VALUELIST: VALUES[,VALUES \SpecialChar \ldots{}
+]
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+VALUES: VALUE | VALUE:VALUE
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+STATEMENT: DIST <> COORDLIST | DIST <> DSOBJLIST
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+COORDLIST: {x,y,z}[,{x,y,z} \SpecialChar \ldots{}
+]
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+DSOBJLOST: .DS.OBJ[,.DS.OBJ \SpecialChar \ldots{}
+]
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+STATEMENT: OBJLIST
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+OBJLIST: .OBJ[,.OBJ \SpecialChar \ldots{}
+]
+\layout Standard
+
+There are three different selection statement types:
+\layout Enumerate
+
+element property PROP OP VAL[,VAL ...] VAL can be range
+\layout Enumerate
+
+within DIST <> {x,y,z}[,{x,,y,z} ...] or DIST <> .DS.OBJ[,DS.OBJ ...]
+\layout Enumerate
+
+object .OBJ[,.OBJ ...]
+\layout Subsection
+
+Ranges
+\layout Standard
+
+A range is used to lineary map one property onto another
+\layout Subsection
+
+Transformations
+\layout Section
+
+Database Manager Commands
 \layout RefEntry
 
 delete
@@ -3579,7 +5196,7 @@ Supported File Formats and their Dataset Types
 clearpage
 \layout Section
 
-Datasets and Objects
+Generic Commands
 \layout Subsection
 
 
@@ -3587,7 +5204,12 @@ Datasets and Objects
 
 \end_inset 
 
-General Dataset Commands
+Generic Dataset Commands
+\layout Standard
+
+Ommiting a command will be interpreted as 
+\family typewriter 
+.DS get center
 \layout RefEntry
 
 del
@@ -3699,7 +5321,12 @@ VALUE
 
 \end_inset 
 
-General Object Commands
+Generic Object Commands
+\layout Standard
+
+Ommiting a command will be interpreted as 
+\family typewriter 
+.DS.OBJ get center
 \layout RefEntry
 
 get
@@ -4098,6 +5725,124 @@ load
 \layout Standard
 
 Loads a trajectory file as an addon to the structure.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="4" columns="3">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="center" leftline="false" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="90mm" special="">
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+type
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+ext
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+description
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+charmm
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+.trj
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+CHARMM trajectory
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+cns
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+.crd
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+CNS trajectory
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+dino
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+.dtrj
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+DINO trajectory
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
 \layout RefEntry
 
 play
@@ -4145,6 +5890,158 @@ write
 \layout Standard
 
 Writes all unrestricted atoms of the dataset into a file.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="5" columns="3">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="center" leftline="false" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="90mm" special="">
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+type
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+ext
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+description
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+pdb
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+.pdb
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+PDB coordinate file
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+cnsc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+.xpl
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+CNS/X-PLOR coodinate file
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+xplorc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+.xpl
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+CNS/X-PLOR coordinate file
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+charmmc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+.crd
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+CHARMM coordinate file
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
 \layout Subsection
 
 Object Commands
@@ -4208,15 +6105,30 @@ Writes all atoms of the object into a file.
 Individual atoms
 \layout Standard
 
-Target: 
+Individual atoms are addressed as 
 \family typewriter 
-.DS:[MODEL.][CHAIN.]RESIDUE.ATOM
+.DS:ATOM
+\family default 
+, where ATOM is one of
+\layout Itemize
+
+
+\family typewriter 
+[MODEL.][CHAIN.]RESIDUE.ATOM
+\layout Itemize
+
+#NUMBER
+\layout Standard
+
+Ommiting a command will be interpreted as 
+\family typewriter 
+.DS:ATOM get xyz
 \layout RefEntry
 
 get
 \layout Syntax
 
-.DS:* get PROP
+.DS:ATOM get PROP
 \layout Standard
 
 Retrieve atom property (see table 
@@ -7395,30 +9307,88 @@ Export the object.
 \layout Subsection
 
 Dataset, Object and Element Properties
+\layout Standard
+
+Tables 
+\begin_inset LatexCommand \vref{scal_ds_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{scal_ele_prop}
+
+\end_inset 
+
+ list all the dataset, object and basic element properties that are accessible
+ with the dataset and object commands 
+\family typewriter 
+set
+\family default 
+ and/or 
+\family typewriter 
+get
+\family default 
+, as well as available during selection or range statements.
 \layout Subsection
 
 Render Modes and Properties
+\layout Standard
+
+The render properties (in 
+\family typewriter 
+typewriter
+\family default 
+ font) mentioned below are listed in table 
+\begin_inset LatexCommand \vref{scal_render_prop}
+
+\end_inset 
+
+.
 \layout Paragraph
 
 Object type contour:
 \layout Description
 
-dots
+dots Only the points on the unit cell edges, corresponding to the iso-contour
+ value, are displayed, with a size of 
+\family typewriter 
+ps
+\family default 
+.
 \layout Description
 
-lines (default)
+lines (default) The points on the unit cell edges are connected with lines
+ of width 
+\family typewriter 
+lw
+\family default 
+.
 \layout Description
 
-fill
+fill A continuous surface, lit from both sides.
 \layout Paragraph
 
 Object type grid:
 \layout Description
 
-on
+on The grid points are shown as spheres, the radius depending on the element
+ property 
+\family typewriter 
+rad
+\family default 
+ (see table 
+\begin_inset LatexCommand \vref{scal_ele_prop}
+
+\end_inset 
+
+).
 \layout Description
 
-off
+off (default) The grid points are shown as points of size 
+\family typewriter 
+ps
+\family default 
+.
 \layout Paragraph
 
 Object type slab:
@@ -7430,6 +9400,170 @@ none
 \layout Subsection
 
 Tables
+\layout Standard
+
+\begin_float wide-tab 
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="5" columns="3">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="85mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\shape italic 
+Render Properties
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+Property
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+Description
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+Default
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+ps
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Point size for render mode dots, object type contour
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+lw
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Line width for render mode lines, object type contour
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+t
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+transparency for object types contour and slab
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+0.7
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{scal_render_prop}
+
+\end_inset 
+
+Scalar Field Object Render Modes and Properties
+\end_float 
 \layout Standard
 
 \begin_float wide-tab 
@@ -8750,372 +10884,6 @@ Scalar Field Element Properties
 \end_float 
 \layout Standard
 
-\begin_float wide-tab 
-\layout Standard
-
-
-\begin_inset  Tabular
-<lyxtabular version="2" rows="13" columns="3">
-<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
-<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
-<column alignment="left" valignment="top" leftline="true" rightline="false" width="85mm" special="">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-
-\shape italic 
-Object type 
-\family typewriter 
-\shape default 
-contour
-\family default 
-\shape italic 
- render modes
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-dots
-\end_inset 
-</cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-lines
-\end_inset 
-</cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="true" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-fill
-\end_inset 
-</cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-
-\shape italic 
-Object type 
-\family typewriter 
-\shape default 
-grid
-\family default 
-\shape italic 
- render modes
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-on
-\end_inset 
-</cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="true" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-off
-\end_inset 
-</cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-
-\shape italic 
-Render Properties
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-Property
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-Description
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-
-\series bold 
-Default
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-light1
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-light2
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="false" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-ps
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="true" newpage="false">
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-
-\family typewriter 
-t
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset 
-
-
-\layout Caption
-
-
-\begin_inset LatexCommand \label{scal_render_prop}
-
-\end_inset 
-
-Scalar Field Object Render Modes and Properties
-\end_float 
-\layout Standard
-
 
 \latex latex 
 
@@ -9194,15 +10962,102 @@ Surface to structure attachment:
 \layout Subsection
 
 Object Commands
+\layout Standard
+
+For generic commands 
+\family typewriter 
+get
+\family default 
+, 
+\family typewriter 
+hide
+\family default 
+, 
+\family typewriter 
+show
+\family default 
+, 
+\family typewriter 
+set
+\family default 
+, 
+\family typewriter 
+renew
+\family default 
+, 
+\family typewriter 
+render
+\family default 
+, and 
+\family typewriter 
+material
+\family default 
+ see 
+\begin_inset LatexCommand \vref{gen_obj_com}
+
+\end_inset 
+
+.
+ Specific surface object commands follow:
+\layout RefEntry
+
+reverse
+\layout Syntax
+
+.ds.obj reverse
+\layout Standard
+
+Reverses normals for this surface object.
 \layout Subsection
 
 Dataset, Object and Element Properties
+\layout Standard
+
+Tables 
+\begin_inset LatexCommand \vref{surf_ds_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{surf_ele_prop}
+
+\end_inset 
+
+ list all the dataset, object and basic element properties that are accessible
+ with the dataset and object commands 
+\family typewriter 
+set
+\family default 
+ and/or 
+\family typewriter 
+get
+\family default 
+, as well as available during selection or range statements.
+ Note that for attached surface datasets, the selectable properties of the
+ structure dataset are also available (table 
+\begin_inset LatexCommand \ref{struct_ele_prop}
+
+\end_inset 
+
+).
 \layout Subsection
 
 Render Modes and Properties
+\layout Standard
+
+The render properties (in 
+\family typewriter 
+typewriter
+\family default 
+ font) mentioned below are listed in table 
+\begin_inset LatexCommand \vref{scal_render_prop}
+
+\end_inset 
+
+.
 \layout Description
 
-fill
+fill (default)
 \layout Description
 
 lines
@@ -10104,11 +11959,422 @@ Surface Element Properties
 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="8" columns="3">
+<lyxtabular version="2" rows="5" columns="3">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
 <column alignment="left" valignment="top" leftline="true" rightline="false" width="85mm" special="">
 <column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+Property
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+Description
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+Default
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+lw
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+solid
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+solidc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+{1,1,1}
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+t
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+transparency; 1.0 is fully opaque, 0.0 is fully transparent 
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{surf_render_prop}
+
+\end_inset 
+
+Surface Object Render Modes and Properties
+\end_float 
+\layout Standard
+
+
+\latex latex 
+
+\backslash 
+clearpage
+\layout Section
+
+Topograph Dataset
+\layout Subsection
+
+Object Types
+\layout Description
+
+surface 
+\layout Description
+
+contour
+\layout Subsection
+
+Dataset Commands
+\layout Standard
+
+For the generic commands 
+\family typewriter 
+del
+\family default 
+, 
+\family typewriter 
+fix
+\family default 
+, 
+\family typewriter 
+get
+\family default 
+, 
+\family typewriter 
+grab
+\family default 
+, 
+\family typewriter 
+new
+\family default 
+, 
+\family typewriter 
+reset
+\family default 
+, 
+\family typewriter 
+restrict
+\family default 
+, 
+\family typewriter 
+rot
+\family default 
+, 
+\family typewriter 
+set
+\family default 
+, and 
+\family typewriter 
+trans
+\family default 
+ see 
+\begin_inset LatexCommand \vref{gen_ds_com}
+
+\end_inset 
+
+.
+ Special topograph dataset commands follow:
+\layout RefEntry
+
+attach
+\layout Syntax
+
+.ds attach .STRUCT [-co DIST] | .ds attach none
+\layout Standard
+
+Attaches a topograph dataset to a structure dataset
+\layout RefEntry
+
+tex
+\layout Syntax
+
+.ds tex FILE [-name TEXNAME]
+\layout Standard
+
+Defines an image to be used as a surface texture
+\layout Subsection
+
+Object Commands
+\layout Standard
+
+For generic commands 
+\family typewriter 
+get
+\family default 
+, 
+\family typewriter 
+hide
+\family default 
+, 
+\family typewriter 
+show
+\family default 
+, 
+\family typewriter 
+set
+\family default 
+, 
+\family typewriter 
+renew
+\family default 
+, 
+\family typewriter 
+render
+\family default 
+, and 
+\family typewriter 
+material
+\family default 
+ see 
+\begin_inset LatexCommand \vref{gen_obj_com}
+
+\end_inset 
+
+.
+ Specific topograph object commands follow:
+\layout RefEntry
+
+map
+\layout Syntax
+
+.ds.obj map TEXNAME
+\layout Standard
+
+Maps texture named TEXNAME onto surface, only valid for object type surface.
+\layout RefEntry
+
+unmap
+\layout Syntax
+
+.ds.obj unmap
+\layout Standard
+
+Unmaps the current texture from the object.
+\layout Subsection
+
+Dataset, Object and Element Properties
+\layout Standard
+
+Tables 
+\begin_inset LatexCommand \vref{topo_ds_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{topo_ele_prop}
+
+\end_inset 
+
+ list all the dataset, object and basic element properties that are accessible
+ with the dataset and object commands 
+\family typewriter 
+set
+\family default 
+ and/or 
+\family typewriter 
+get
+\family default 
+, as well as available during selection or range statements.
+ Note that for attached topograph datasets, the selectable properties of
+ the structure dataset are also available (table 
+\begin_inset LatexCommand \ref{struct_ele_prop}
+
+\end_inset 
+
+).
+\layout Subsection
+
+Render Modes and Properties
+\layout Paragraph
+
+Object type surface:
+\layout Description
+
+fill (default)
+\layout Description
+
+lines
+\layout Description
+
+dots
+\layout Paragraph
+
+Object type contour:
+\layout Description
+
+lines (default)
+\layout Description
+
+dots
+\layout Subsection
+
+Tables
+\layout Standard
+
+\begin_float wide-tab 
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="17" columns="4">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="9ex" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="1ex" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="1ex" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="61ex" special="">
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Property
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
+\begin_inset Text
+
+\layout Standard
+
+S
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="none" width="1ex" special="">
+\begin_inset Text
+
+\layout Standard
+
+G
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
 <row topline="true" bottomline="false" newpage="false">
 <cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -10116,8 +12382,15 @@ Surface Element Properties
 \layout Standard
 
 
-\shape italic 
-Object render modes
+\emph on 
+Dataset Properties
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
 \end_inset 
 </cell>
 <cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -10141,10 +12414,259 @@ Object render modes
 
 \layout Standard
 
-dots
+center
 \end_inset 
 </cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Center of rotation, default is the geometric center
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rot
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+3x3 rotation matrix, default is identity
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+rtc
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+4x4 compact rotation, translation and center matrix
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+scalexy
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+scalez
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+trans
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Translation vector, default is zero
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Object Properties
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -10165,10 +12687,723 @@ dots
 
 \layout Standard
 
-lines
+center
 \end_inset 
 </cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Geometric center of object
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+color
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+level
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+lstep
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+lstart
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+lend
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+size
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+step
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+S: Property can be modified with 
+\family typewriter 
+set
+\family default 
+
+\newline 
+
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+G: Property can be obtained with 
+\family typewriter 
+get
+\layout Caption
+
+
+\begin_inset LatexCommand \label{topo_ds_prop}
+
+\end_inset 
+
+Topograph Dataset and Object Properties
+\end_float 
+\layout Standard
+
+\begin_float wide-tab 
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="8" columns="6">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="9ex" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="1ex" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="59ex" special="">
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Property
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+S
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+G
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+L
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+R
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+element properties shared between dataset and objects
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+h
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+x
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+y
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+z
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+element properties copied from dataset to object
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -10189,17 +13424,43 @@ lines
 
 \layout Standard
 
-fill
+color
 \end_inset 
 </cell>
-<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" rotate="false" usebox="none" width="95mm" special="">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula \( \bullet  \)
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
 
 \end_inset 
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
 
 \layout Standard
@@ -10207,6 +13468,57 @@ fill
 \end_inset 
 </cell>
 </row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+S Property can be modified with set
+\newline 
+
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+G Property can be retrieved with get
+\newline 
+
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+L Property can be used in a selection statement
+\newline 
+
+\begin_inset Formula \( ^{\ast } \)
+\end_inset 
+
+R Property can be used in a range statement
+\layout Caption
+
+
+\begin_inset LatexCommand \label{topo_ele_prop}
+
+\end_inset 
+
+Topograph Element Properties
+\end_float 
+\layout Standard
+
+\begin_float wide-tab 
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="7" columns="3">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="85mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm" special="">
 <row topline="true" bottomline="false" newpage="false">
 <cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
 \begin_inset Text
@@ -10271,9 +13583,59 @@ Default
 
 \layout Standard
 
+ps
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
 
-\family typewriter 
+\layout Standard
+
+Point size for render mode dots, object type contour
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
 lw
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Line width for render mode lines, object type contour
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+polyf
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -10288,7 +13650,32 @@ lw
 
 \layout Standard
 
-1.0
+0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+polyu
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+0
 \end_inset 
 </cell>
 </row>
@@ -10308,7 +13695,7 @@ t
 
 \layout Standard
 
-transparency; 1.0 is fully opaque, 0.0 is fully transparent 
+transparency for object types contour and slab
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
@@ -10316,7 +13703,7 @@ transparency; 1.0 is fully opaque, 0.0 is fully transparent
 
 \layout Standard
 
-1.0
+0.7
 \end_inset 
 </cell>
 </row>
@@ -10328,11 +13715,11 @@ transparency; 1.0 is fully opaque, 0.0 is fully transparent
 \layout Caption
 
 
-\begin_inset LatexCommand \label{surf_render_prop}
+\begin_inset LatexCommand \label{topo_render_prop}
 
 \end_inset 
 
-Surface Object Render Modes and Properties
+Topograph Object Render Properties
 \end_float 
 \layout Standard
 
@@ -10343,19 +13730,62 @@ Surface Object Render Modes and Properties
 clearpage
 \layout Section
 
-Topograph Dataset
-\layout Subsection
+Geometric Primitives
+\layout Chapter
 
-Object Types
+Glossary
+\layout Paragraph*
+
+Antialiasing
 \layout Standard
 
-surface
+point and line aa
 \layout Standard
 
-contour
-\layout Subsection
+full scene aa
+\layout Paragraph*
 
-Tables
+Attachment
+\layout Paragraph*
+
+Circular Subdivisions
+\newline 
+
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align center \pextra_type 2 \pextra_alignment 0 \pextra_start_minipage 1 \pextra_widthp 100
+
+
+\begin_inset Figure size 242 54
+file circ_div.eps
+flags 9
+
+\end_inset 
+
+
+\layout Paragraph*
+
+Depth Cueing
+\layout Paragraph*
+
+Lighting
+\layout Standard
+
+ambient diffuse specular
+\layout Standard
+
+attenuation
+\layout Paragraph*
+
+Material
+\layout Paragraph*
+
+Polygon Offset
+\layout Paragraph*
+
+Spline
+\layout Paragraph*
+
+Transparency
 \layout Standard
 
 
@@ -10363,12 +13793,6 @@ Tables
 
 \backslash 
 clearpage
-\layout Section
-
-Geometric Primitives
-\layout Chapter*
-
-Index
 \layout Standard
 
 
