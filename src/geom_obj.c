@@ -35,7 +35,7 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
     geomObjRegen(obj);
   } else if(!strcmp(wl[0],"get")) {
     geomObjGet(obj,wc-1,wl+1);
-  } else if(obj,!strcmp(wl[0],"set")) {
+  } else if(!strcmp(wl[0],"set")) {
     strcpy(set,"");
     for(i=1;i<wc;i++) {
       strcat(set,wl[i]);
