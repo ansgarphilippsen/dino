@@ -283,7 +283,7 @@ int scalDrawObj(scalObj *obj)
     glBindTexture(GL_TEXTURE_2D, obj->slab.texname);
 
     glBegin(GL_QUADS);
-    glColor4f(1,1,1,1);
+    glColor4f(1.0,1.0,1.0,1.0);
     glTexCoord2f(0.0,0.0);
     glVertex3dv(obj->slab.bound[0]);
     glTexCoord2f(1.0,0.0);

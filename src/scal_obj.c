@@ -26,6 +26,7 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 {
   char message[256];
   char *empty_com[]={"get","center"};
+  int i;
 
   if(wc<=0) {
     wc=2;
@@ -69,7 +70,18 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 	comMessage("\ninvalid render mode");
 	return -1;
       }
+      for(i=0;i<obj->point_count;i++)
+	obj->point[i].c[3]=obj->render.transparency;
 
+    } else if(obj->type==SCAL_SLAB) {
+      for(i=0;i<obj->slab.pointc;i++)
+	obj->slab.tex[i*4+3]=(unsigned char)obj->render.transparency*255;
+      glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
+      glTexImage2D(GL_TEXTURE_2D,0,
+		   GL_RGBA,
+		   obj->slab.usize,obj->slab.vsize,0,
+		   GL_RGBA,GL_UNSIGNED_BYTE,
+		   obj->slab.tex);
     }
     comRedraw();
   } else if(!strcmp(wl[0],"material")) {
@@ -488,11 +500,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		obj->slab.tex[ec*4+0]=(unsigned char)(255.0*((r2-r)*frac2+r));
 		obj->slab.tex[ec*4+1]=(unsigned char)(255.0*((g2-g)*frac2+g));
 		obj->slab.tex[ec*4+2]=(unsigned char)(255.0*((b2-b)*frac2+b));
+		obj->slab.tex[ec*4+3]=(unsigned char)(255.0*obj->render.transparency);
 	      }
 	    } else {
 	      obj->slab.tex[ec*4+0]=(unsigned char)(r*255.0);
 	      obj->slab.tex[ec*4+1]=(unsigned char)(g*255.0);
 	      obj->slab.tex[ec*4+2]=(unsigned char)(b*255.0);
+	      obj->slab.tex[ec*4+3]=(unsigned char)(255.0*obj->render.transparency);
 	    }
 	  }
 	  glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
@@ -594,7 +608,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       if(obj->type==SCAL_SLAB) {
 	os=atoi(val->val1);
 	if(os!=1 && os!=2 && os!=4 && os!=8 && os!=16 &&
-	   os!=32 && os!=64 && os!=128 && os!=256 && os!=512) {
+	   os!=32 && os!=64 && os!=128 && os!=256 && os!=512 && os!=1024) {
 	  comMessage("\ninvalid size ignored");
 	} else {
 	  obj->slab.usize=os;
@@ -1039,6 +1053,7 @@ int scalSlabIntersect(scalObj *obj)
   double dir[3],dist,axis1[3],axis2[3],mindist[2],maxdist[2],diff[3];
   int u,v;
   double fu,fv,len1,len2,xyz[3],uvw[3];
+  float pos[3],res;
 
   matNormalize(obj->slab.dir,dir);
 
@@ -1179,11 +1194,18 @@ int scalSlabIntersect(scalObj *obj)
       xyz[0]=obj->slab.bound[0][0]+axis1[0]*fu*len1+axis2[0]*fv*len2;
       xyz[1]=obj->slab.bound[0][1]+axis1[1]*fu*len1+axis2[1]*fv*len2;
       xyz[2]=obj->slab.bound[0][2]+axis1[2]*fu*len1+axis2[2]*fv*len2;
+      /*
       scalXYZtoUVW(obj->field,xyz,uvw);
       obj->slab.data[v*obj->slab.usize+u]=scalReadField(obj->field,
 							(int)uvw[0],
 							(int)uvw[1],
 							(int)uvw[2]);
+      */
+      pos[0]=(float)xyz[0];
+      pos[1]=(float)xyz[1];
+      pos[2]=(float)xyz[2];
+      scalGetRangeXYZVal(obj->node, "", pos, &res);
+      obj->slab.data[v*obj->slab.usize+u]=res;
     }
   }
 
@@ -1191,7 +1213,7 @@ int scalSlabIntersect(scalObj *obj)
     obj->slab.tex[i*4+0]=255;
     obj->slab.tex[i*4+1]=255;
     obj->slab.tex[i*4+2]=255;
-    obj->slab.tex[i*4+3]=255;
+    obj->slab.tex[i*4+3]=(unsigned char)(obj->render.transparency*255);
   }
 
   glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
