@@ -91,8 +91,11 @@ int pdbRead(FILE *f,dbmNode *node)
       add_atom_entry(&pdb,&tmpae);
     } else if(clStrcmp(record,"CONECT")) {
       d1=0;
-      sscanf(line,"%6c%5c%5c%5c%5c%5c",
-	     record,c1,c2,c3,c4,c5);
+      for(i=0;i<5;i++) c1[i] = line[i+6];
+      for(i=0;i<5;i++) c2[i] = line[i+11];
+      for(i=0;i<5;i++) c3[i] = line[i+16];
+      for(i=0;i<5;i++) c4[i] = line[i+21];
+      for(i=0;i<5;i++) c5[i] = line[i+26];
       c1[5]='\0';
       c2[5]='\0';
       c3[5]='\0';
