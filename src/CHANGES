@@ -1,3 +1,7 @@
+fixed: assert "sel->compiled" in scal_db.c
+
+fixed: non-standard atom name related crashes
+
 fixed: transformation is taken into account for scalar field <> selection
 
 coord write honors transformation and symmetry settings

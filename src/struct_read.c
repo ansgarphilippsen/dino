@@ -76,17 +76,17 @@ int pdbRead(FILE *f,dbmNode *node)
 	record[i]=line[i];
     }
     record[6]='\0';
-    if(!strcmp(record,"MODEL")) {
+    if(clStrcmp(record,"MODEL")) {
       if(model_count==-1)
 	model_count=0;
       model_count++;
-    } else if(!strcmp(record,"ATOM") ||
-	      !strcmp(record,"HETATM")) {
+    } else if(clStrcmp(record,"ATOM") ||
+	      clStrcmp(record,"HETATM")) {
       tmpae.mnum=model_count;
       clStrcpy(tmpae.mname,"");
       line_to_atom_entry(&tmpae,line, STRUCT_FILE_FORMAT_PDB);
       add_atom_entry(&pdb,&tmpae);
-    } else if(!strcmp(record,"CONECT")) {
+    } else if(clStrcmp(record,"CONECT")) {
       d1=0;
       sscanf(line,"%6c%5c%5c%5c%5c%5c",
 	     record,c1,c2,c3,c4,c5);
@@ -109,7 +109,7 @@ int pdbRead(FILE *f,dbmNode *node)
 	  }
 	}
       }
-    } else if(!strcmp(record,"CRYST1")) {
+    } else if(clStrcmp(record,"CRYST1")) {
       pdb_cryst_flag=1;
       for(i=0;i<9;i++)
 	num[i]=line[7+i];
@@ -146,7 +146,7 @@ int pdbRead(FILE *f,dbmNode *node)
 	num[i]=line[67+i];
       num[i]='\0';
       pdb_cryst.z=atoi(num);
-    } else if(!strcmp(record,"ENDMDL")) {
+    } else if(clStrcmp(record,"ENDMDL")) {
     } else if(clStrcmp(record,"HELIX") ||
 	      clStrcmp(record,"SHEET")) {
       line_to_secs_entry(&tmpse,line);
@@ -197,7 +197,7 @@ static int check_element(char *ele)
   static const char *l1[] = {
     "H","C","N","O","P","S","K"
   };
-  static int l1c=6;
+  static int l1c=7;
   static const char *l2[] = {
     "NA","MG","AL","SI","CL",
     "CA","CR","MN","FE","CO","NI","CU","ZN","AS","SE","BR","MO"
@@ -206,7 +206,7 @@ static int check_element(char *ele)
   static const char *l3[] = {
     "B","F","V"
   };
-  static int l3c=4;
+  static int l3c=3;
   static const char *l4[] = {
     "HE","LI","BE","AR","SC","TI","GA","GE","KR"
   };
@@ -402,12 +402,12 @@ int xplorPDBRead(FILE *f,dbmNode *node)
 	record[i]=line[i];
     }
     record[6]='\0';
-    if(!strcmp(record,"MODEL")) {
+    if(clStrcmp(record,"MODEL")) {
       if(model_count==-1)
 	model_count=0;
       model_count++;
-    } else if(!strcmp(record,"ATOM") ||
-	      !strcmp(record,"HETATM")) {
+    } else if(clStrcmp(record,"ATOM") ||
+	      clStrcmp(record,"HETATM")) {
       pdb.atom_entry[atom_count].mnum=model_count;
       strcpy(pdb.atom_entry[atom_count].mname,"");
       xplorPDBLine2AtomEntry(line,&pdb.atom_entry[atom_count]);
@@ -422,7 +422,7 @@ int xplorPDBRead(FILE *f,dbmNode *node)
 	  return -1;
 	}
       }
-    } else if(!strcmp(record,"ENDMDL")) {
+    } else if(clStrcmp(record,"ENDMDL")) {
     }
   }
   pdb.atom_count=atom_count;
@@ -1013,12 +1013,12 @@ int pqrRead(FILE *f,dbmNode *node)
 	record[i]=line[i];
     }
     record[6]='\0';
-    if(!strcmp(record,"MODEL")) {
+    if(clStrcmp(record,"MODEL")) {
       if(model_count==-1)
 	model_count=0;
       model_count++;
-    } else if(!strcmp(record,"ATOM") ||
-	      !strcmp(record,"HETATM")) {
+    } else if(clStrcmp(record,"ATOM") ||
+	      clStrcmp(record,"HETATM")) {
       pdb.atom_entry[atom_count].mnum=model_count;
       strcpy(pdb.atom_entry[atom_count].mname,"");
       pqrLine2AtomEntry(line,&pdb.atom_entry[atom_count]);
@@ -1033,7 +1033,7 @@ int pqrRead(FILE *f,dbmNode *node)
 	  return -1;
 	}
       }
-    } else if(!strcmp(record,"ENDMDL")) {
+    } else if(clStrcmp(record,"ENDMDL")) {
     }
   }
   pdb.atom_count=atom_count;
@@ -1825,7 +1825,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
 	 in the structure file
       */
       for(cci=0;cci<chain_count;cci++) {
-	if(!strcmp(chain[cci].name,re.cname))
+	if(clStrcmp(chain[cci].name,re.cname))
 	  break;
       }
 
@@ -1989,7 +1989,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
 
     strcpy(cap->chem.element,ae->element);
     for(i=0;i<node->atom_table_len;i++)
-      if(!strcmp(node->atom_table[i].e,ae->element))
+      if(clStrcmp(node->atom_table[i].e,ae->element))
 	break;
     cap->chem.charge=0.0;
     cap->chem.vdwr=node->atom_table[i].vdwr;

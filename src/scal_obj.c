@@ -256,8 +256,16 @@ int scalObjComSet(scalObj *obj, int wc, char **wl)
   Set set;
   int ret;
 
+
   if(setNew(&set,wc,wl)<0)
     return -1;
+
+  // compile selection
+  if(set.select_flag) {
+    if(scalCompileSelection(obj->node,&set.select)<0) {
+      return -1;
+    }
+  }
   
   ret=scalObjSet(obj, &set,1);
 
@@ -294,16 +302,16 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
   char message[256];
   int ret=0;
 
-  // set object properties before renewing
-  if(scalObjSet(obj,set,0)<0)
-    return -1;
-
   // compile selection
   if(!sel->compiled) {
     if(scalCompileSelection(obj->node,sel)<0) {
       return -1;
     }
   }
+
+  // set object properties before renewing
+  if(scalObjSet(obj,set,0)<0)
+    return -1;
 
   if(obj->type==SCAL_CONTOUR) {
     sprintf(message,"Contouring at %g ...\n",obj->level);
