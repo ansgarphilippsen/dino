@@ -76,6 +76,8 @@ static struct SHELL_ALIAS {
 
 extern int shell_mode;
 
+static char *shell_subexp;
+
 int shellInit(void)
 {
   shellInterpInit();
@@ -93,6 +95,8 @@ int shellInit(void)
 			      shell_alias.max,
 			      sizeof(struct SHELL_ALIAS_ENTRY));
 
+  shell_subexp=Cmalloc(10240);
+
   return 0;
 }
 
@@ -108,7 +112,7 @@ int shellIsScript(void)
 int shellParseCommand(const char **wl, int wc)
 {
   int i;
-  char message[256],subexp[1024];
+  char message[256],*subexp=shell_subexp;
   const char *al;
 
   if(wc<1)
@@ -144,7 +148,13 @@ int shellParseCommand(const char **wl, int wc)
       shellOut(message);
       return SHELL_ERROR;
     }
-    shellSetVar(wl[1],wl[2]);
+    clStrcpy(subexp,"");
+    for(i=2;i<wc;i++) {
+      clStrcat(subexp,wl[i]);
+      if(i+1<wc)
+	clStrcat(subexp," ");
+    }
+    shellSetVar(wl[1],subexp);
 
   } else if(clStrcmp(wl[0],"unset")) {
     // remove variable
@@ -274,6 +284,7 @@ static int call_script(const char *filename, const char **wl, int wc)
   FILE *f;
   char *b;
   int s,t;
+  struct stat st;
 
   if(scrlvl>=MAXSCRIPTLEVEL) {
     shellOut("error: maximum script nesting level reached\n");
@@ -291,17 +302,14 @@ static int call_script(const char *filename, const char **wl, int wc)
 
   scrlvl++;
 
-  s=1024;
-  b=NULL;
-  t=0;
-  while(!feof(f)) {
-    b=Crecalloc(b,1,s);
-    s+=1024;
-    t+=fread(b,sizeof(char),1024,f);
-  }
+  fstat(fileno(f),&st);
+
+  s=st.st_size;
+  b=Cmalloc(s);
+  fread(b,sizeof(char),s,f);
 
   scrbuf[scrlvl].buf=b;
-  scrbuf[scrlvl].max=t;
+  scrbuf[scrlvl].max=s;
 
   fclose(f);
   return 0;
@@ -316,9 +324,10 @@ static char script_line[2048];
 
 static int work_script(void)
 {
-  int i=0,p=0;
+  int i,p;
   char c;
 
+  i=0; p=0;
   do {
     c=scrbuf[scrlvl].buf[scrbuf[scrlvl].count++];
  

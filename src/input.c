@@ -46,9 +46,44 @@ static void mouse_func(int ev, int state, int x, int y)
 
 static void keyb_func(int state, int key)
 {
-  unsigned char k=(unsigned char)key;
-  if(state==CMI_BUTTON_RELEASE)
-    comWriteCharBuf(k);
+  unsigned char k;
+  if(state==CMI_BUTTON_RELEASE) {
+    switch(key) {
+    case CMI_KEY_RETURN: 
+      comWriteCharBuf(0x0D); 
+      break;
+    case CMI_KEY_BKSPC: 
+      comWriteCharBuf(0x08); 
+      break;
+    case CMI_KEY_UP: 
+      comWriteCharBuf(0x1B);
+      comWriteCharBuf('[');
+      comWriteCharBuf('A');
+      break;
+    case CMI_KEY_DOWN: 
+      comWriteCharBuf(0x1B);
+      comWriteCharBuf('[');
+      comWriteCharBuf('B');
+      break;
+    case CMI_KEY_LEFT: 
+      comWriteCharBuf(0x1B);
+      comWriteCharBuf('[');
+      comWriteCharBuf('D');
+      break;
+    case CMI_KEY_RIGHT: 
+      comWriteCharBuf(0x1B);
+      comWriteCharBuf('[');
+      comWriteCharBuf('C');
+      break;
+    default:
+      {
+	k=(unsigned char)(key & 0xff);
+	comWriteCharBuf(k);
+      }
+    }
+
+    
+  }
 }
 
 void inputProcess(cmiToken *t)

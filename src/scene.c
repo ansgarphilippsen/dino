@@ -631,6 +631,36 @@ int sceneCommand(int wc, const char **wl)
 	  }
 	}
 	comRedraw();
+#ifdef USE_DLIST
+      } else if(!strcmp(prop,"usedlist")) {
+	/**********************
+	       set usedlist
+	**********************/
+	if(!strcmp(op,"!")) {
+	  gfx.use_dlist_flag=0;
+	} else if(strlen(val)==0 && strlen(op)==0) {
+	  gfx.use_dlist_flag=1;
+	} else if(strlen(val)==0 && strlen(op)>0) {
+	  sprintf(message,"scene: missing value\n");
+	  comMessage(message);
+	  return -1;
+	} else {
+	  if(strcmp(op,"=")) {
+	    sprintf(message,"scene: unknown operator: %s\n",op);
+	    comMessage(message);
+	    return -1;
+	  } else {
+	    if(!strcmp(val,"0") || 
+	       !strcmp(val,"false") ||
+	       !strcmp(val,"no")) {
+	      gfx.use_dlist_flag=0;
+	    } else {
+	      gfx.use_dlist_flag=1;
+	    }
+	  }
+	}
+	comRedraw();
+#endif
       } else if(!strcmp(prop,"depthc")) {
 	/**********************
 	       set depthc
@@ -1134,50 +1164,6 @@ int sceneCommand(int wc, const char **wl)
     glDisable(GL_LIGHTING);
   } else if(!strcmp(wl[0],"light")) {
     glEnable(GL_LIGHTING);
-#ifdef EXPO
-  } else if(!strcmp(wl[0],"limit")) {
-    if(wc!=5) {
-      sprintf(message,"\nscene: wrong #args for limit");
-      comMessage(message);
-      return -1;
-    }
-    gfx.limx1=atof(wl[1]);
-    gfx.limy1=atof(wl[2]);
-    gfx.limz1=atof(wl[3]);
-    gfx.limz2=atof(wl[4]);
-    gfx.limx2=-gfx.limx1;
-    gfx.limy2=-gfx.limy1;
-  } else if(!strcmp(wl[0],"morph")) {
-    if(wc!=3) {
-      sprintf(message,"\nscene: wrong #args for morph");
-      comMessage(message);
-      return -1;
-    }
-    sceneMorph(wc-1,wl+1);
-  } else if(!strcmp(wl[0],"clear")) {
-    scene.label_c=0;
-    comRedraw();
-  } else if(!strcmp(wl[0],"label")) {
-    if(wc!=4) {
-      comMessage("\nscene: wrong #args for label");
-      return -1;
-    }
-    matExtract1Df(wl[1],3,scene.label[scene.label_c].p);
-    if(comGetColor(wl[2],&cr,&cg,&cb)!=0) {
-      comMessage("\nscene: label: unknown color");
-      cr=1.0;
-      cg=1.0;
-      cb=1.0;
-    }
-    scene.label[scene.label_c].c[0]=cr;
-    scene.label[scene.label_c].c[1]=cg;
-    scene.label[scene.label_c].c[2]=cb;
-
-    strcpy(scene.label[scene.label_c].s,wl[3]);
-    if(scene.label_c<scene.label_m);
-    scene.label_c++;
-    comRedraw();
-#endif
   } else {
     sprintf(message,"\nscene: unknown command %s",wl[0]);
     comMessage(message);

@@ -4,7 +4,6 @@
 #include "cmi.h"
 
 void inputInit(void);
-
 void inputProcess(cmiToken *t);
 
 #endif

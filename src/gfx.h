@@ -81,9 +81,7 @@ struct GFX
   GLint fbuf_size,fbuf_entries;
   GLfloat *fbuf;
 
-#ifdef EXPO
-  float limx1,limx2,limy1,limy2,limz1,limz2;
-#endif
+  int use_dlist_flag;
 
 };
 

@@ -258,8 +258,8 @@ static void guiGlxInit(Widget ww, XtPointer clientData, XtPointer call)
 #endif
 
   //  gfxGLInit();
-  cmiResize(gui.win_width, gui.win_height);
   cmiInitGL();
+  cmiResize(gui.win_width, gui.win_height);
 }
 
 
@@ -1171,8 +1171,11 @@ int guiMainLoop()
     if(gui.spacetecDevice)
       spacetecEventHandler(gui.dpy, &event);
 #endif
-    guiCheckCustomEvent(&event);
     */
+
+    // events for the user and object menu
+    guiCheckCustomEvent(&event);
+
 
     XtDispatchEvent(&event);
   }
@@ -1291,10 +1294,20 @@ void guiSwapBuffers()
 
 void guiCMICallback(const cmiToken *t)
 {
+  const char **cp;
+  cp=(const char **)t->value; // for DS and OBJ commands
   if(t->target==CMI_TARGET_GUI) {
     switch(t->command) {
     case CMI_REFRESH: gui.redraw++; break;
     case CMI_MESSAGE: guiMessage((char *)t->value); break;
+    case CMI_DS_NEW: omAddDB(cp[0]); break;
+    case CMI_DS_DEL: omDelDB(cp[0]); break;
+    case CMI_DS_REN: /*TODO*/ break;
+    case CMI_OBJ_NEW: omAddObj(cp[0],cp[1]); break;
+    case CMI_OBJ_DEL: omDelObj(cp[0],cp[1]); break;
+    case CMI_OBJ_REN: /*TODO*/ break;
+    case CMI_OBJ_SHOW: omShowObj(cp[0],cp[1]); break;
+    case CMI_OBJ_HIDE: omHideObj(cp[0],cp[1]); break;
     }
   }
 }

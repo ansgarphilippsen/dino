@@ -35,11 +35,14 @@ enum {
   // TARGET_GUI
   CMI_MESSAGE,  // send message (char *)
   CMI_REFRESH,  // request refresh (NULL)
-  CMI_NEW,
-  CMI_DEL,
-  CMI_REN,
-  CMI_SHOW,
-  CMI_HIDE
+  CMI_DS_NEW,   // new ds  (char *name, *char type)
+  CMI_DS_DEL,   // del ds  (char *name)
+  CMI_DS_REN,   // ren ds  (char *old, char *new)
+  CMI_OBJ_NEW,  // new obj (char *ds, char *name, char *type)
+  CMI_OBJ_DEL,  // del obj (char *ds, char *name)
+  CMI_OBJ_REN,  // ren obj (char *ds, char *old, char *new)
+  CMI_OBJ_SHOW, // show obj (char *ds, char *obj)
+  CMI_OBJ_HIDE  // hide obj (char *ds, char *obj)
 };
 
 // input types
@@ -54,6 +57,7 @@ enum {
 #define CMI_BUTTON_PRESS    1
 #define CMI_BUTTON_RELEASE  2
 #define CMI_MOTION          3
+
 
 // input modifiers
 #define CMI_SHIFT_MASK   (1<<0)

@@ -63,6 +63,8 @@ typedef struct STRUCT_OBJ {
   struct STRUCT_ATOM_PROP nbond_prop; // generic property for nbond
 
   unsigned int sphere_list;
+  unsigned int va_list;
+  unsigned int va_list_flag;
 
   struct BUILD_INSTANCE *build;
 }structObj;

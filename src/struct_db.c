@@ -2302,7 +2302,7 @@ int structSetDefault(structObj *obj)
   obj->render.detail1=5;
   obj->render.detail2=3;
   obj->render.nice=1;
-  obj->render.line_width=1.0;
+  obj->render.line_width=2.0;
   obj->render.bond_width=0.2;
   obj->render.tube_ratio=1.0;
   obj->render.tube_width=0.3;
@@ -2341,6 +2341,9 @@ int structSetDefault(structObj *obj)
   comEndDisplayList();
 
   obj->build=NULL;
+
+  obj->va_list=comGenLists(1);
+  obj->va_list_flag=0;
 
   return 0;
 }

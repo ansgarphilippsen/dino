@@ -1264,6 +1264,15 @@ int comRawCommand(const char *c)
 int comNewObj(const char *db, const char *name)
 {
 #ifdef USE_CMI
+  cmiToken t;
+  const char *cp[3];
+  t.target=CMI_TARGET_GUI;
+  t.command=CMI_OBJ_NEW;
+  t.value=cp;
+  cp[0]=db;
+  cp[1]=name;
+  cp[2]=NULL;
+  cmiSubmit(&t);
   return 0;
 #else
   if(gui.om_flag)
@@ -1276,6 +1285,15 @@ int comNewObj(const char *db, const char *name)
 int comDelObj(const char *db, const char *name)
 {
 #ifdef USE_CMI
+  cmiToken t;
+  const char *cp[3];
+  t.target=CMI_TARGET_GUI;
+  t.command=CMI_OBJ_DEL;
+  t.value=cp;
+  cp[0]=db;
+  cp[1]=name;
+  cp[2]=NULL;
+  cmiSubmit(&t);
   return 0;
 #else
   if(gui.om_flag)
@@ -1288,6 +1306,15 @@ int comDelObj(const char *db, const char *name)
 int comHideObj(const char *db, const char *name)
 {
 #ifdef USE_CMI
+  cmiToken t;
+  const char *cp[3];
+  t.target=CMI_TARGET_GUI;
+  t.command=CMI_OBJ_HIDE;
+  t.value=cp;
+  cp[0]=db;
+  cp[1]=name;
+  cp[2]=NULL;
+  cmiSubmit(&t);
   return 0;
 #else
   if(gui.om_flag)
@@ -1300,6 +1327,15 @@ int comHideObj(const char *db, const char *name)
 int comShowObj(const char *db, const char *name)
 {
 #ifdef USE_CMI
+  cmiToken t;
+  const char *cp[3];
+  t.target=CMI_TARGET_GUI;
+  t.command=CMI_OBJ_SHOW;
+  t.value=cp;
+  cp[0]=db;
+  cp[1]=name;
+  cp[2]=NULL;
+  cmiSubmit(&t);
   return 0;
 #else
   if(gui.om_flag)
@@ -1313,6 +1349,15 @@ int comShowObj(const char *db, const char *name)
 int comNewDB(const char *name)
 {
 #ifdef USE_CMI
+  cmiToken t;
+  const char *cp[3];
+  t.target=CMI_TARGET_GUI;
+  t.command=CMI_DS_NEW;
+  t.value=cp;
+  cp[0]=name;
+  cp[1]=NULL;
+  cp[2]=NULL;
+  cmiSubmit(&t);
   return 0;
 #else
   if(gui.om_flag)
@@ -1325,6 +1370,15 @@ int comNewDB(const char *name)
 int comDelDB(const char *name)
 {
 #ifdef USE_CMI
+  cmiToken t;
+  const char *cp[3];
+  t.target=CMI_TARGET_GUI;
+  t.command=CMI_DS_DEL;
+  t.value=cp;
+  cp[0]=name;
+  cp[1]=NULL;
+  cp[2]=NULL;
+  cmiSubmit(&t);
   return 0;
 #else
   if(gui.om_flag)

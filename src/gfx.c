@@ -214,7 +214,8 @@ int gfxInit()
   gfx.fog_near=gfx.transform.slabn;
   gfx.fog_far=gfx.transform.slabf;
   gfx.fog_density=0.25;
-  
+
+  gfx.use_dlist_flag=0;
 
   gfx.offline=0;
 

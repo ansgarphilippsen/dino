@@ -112,7 +112,8 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
       comEndDisplayList();
     }
 
-    if(obj->render.mode==RENDER_CUSTOM) {
+    if(obj->render.mode==RENDER_CUSTOM ||
+       obj->render.mode==RENDER_CPK) {
       structObjGenVA(obj);
     }
 
@@ -200,7 +201,8 @@ static void structObjRefresh(structObj *obj)
      obj->render.mode==RENDER_HSC ||
      obj->render.mode==RENDER_SLINE) {
     structSmooth(obj);
-  } else if(obj->render.mode==RENDER_CUSTOM) {
+  } else if(obj->render.mode==RENDER_CUSTOM ||
+	    obj->render.mode==RENDER_CPK) {
     structObjGenVA(obj);
   }
 }
@@ -1592,97 +1594,124 @@ int structObjGenVA(structObj *obj)
   int detail;
   float sti,sto;
 
-  /*
-    generate a cylinder for each bond
-    and a sphere for each atom
-  */
+#ifdef USE_DLIST
+  obj->va_list_flag=0;
+#endif
 
-  if(obj->va.p!=NULL) {
-    Cfree(obj->va.p);
-  }
+  if(obj->render.mode==RENDER_CPK) {
+    // generate a sphere for each atom
+    if(obj->va.p!=NULL) {
+      Cfree(obj->va.p);
+    }
 
-  detail=1+(int)(obj->render.detail1/2);
+    detail=1+(int)(obj->render.detail1/2);
+    size=((detail*2-2)*detail*4*2+2*detail*2)*2*obj->atom_count;
+    
+    obj->va.count=0;
+    /* guess initial size */
+    obj->va.max=size;
+    obj->va.p=Crecalloc(NULL,obj->va.max,sizeof(cgfxVAField));
 
-  size=((detail*2-2)*detail*4*2+2*detail*2)*3*obj->atom_count;
-  size+=detail*4*2*3*2;
-
-  obj->va.count=0;
-  /* guess initial size */
-  obj->va.max=size*2;
-
-  obj->va.p=Crecalloc(NULL,obj->va.max,sizeof(cgfxVAField));
-
-  bw=obj->render.bond_width;
-  sr=obj->render.sphere_radius;
-
-  if(obj->render.stipple_flag) {
-    sti=obj->render.stipplei;
-    sto=obj->render.stippleo;
-  } else {
-    sti=1.0;
-    sto=0.0;
-  }
-
-  // only create explicit spheres if they are larger than the cylinders
-  if(sr>bw && sr>0.0)
     for(i=0;i<obj->atom_count;i++) {
       col[0]=obj->atom[i].prop.r;
       col[1]=obj->atom[i].prop.g;
       col[2]=obj->atom[i].prop.b;
       col[3]=obj->render.transparency;
+      sr=obj->atom[i].prop.radius;
       cgfxSphereVA(sr,(float *)obj->atom[i].ap->p,col,&obj->va,detail);
-  }
+    }
+  } else if(obj->render.mode==RENDER_CUSTOM) {
+    /*
+      generate a cylinder for each bond
+      and a sphere for each atom
+    */
+    
+    if(obj->va.p!=NULL) {
+      Cfree(obj->va.p);
+    }
 
-  if(bw>0.0) {
-    for(i=0;i<obj->bond_count;i++) {
-      mid[0]=obj->bond[i].atom1->p->x+obj->bond[i].atom2->p->x;
-      mid[1]=obj->bond[i].atom1->p->y+obj->bond[i].atom2->p->y;
-      mid[2]=obj->bond[i].atom1->p->z+obj->bond[i].atom2->p->z;
-      mid[0]*=0.5;
-      mid[1]*=0.5;
-      mid[2]*=0.5;
-      col[0]=obj->bond[i].prop1->r;
-      col[1]=obj->bond[i].prop1->g;
-      col[2]=obj->bond[i].prop1->b;
-      col[3]=obj->render.transparency;
-      if(sr<=bw)
-	cgfxGenCylinder(&obj->va,
-			(float *)obj->bond[i].atom1->p,mid,
-			bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
-      else
-	cgfxGenCylinder(&obj->va,
-			(float *)obj->bond[i].atom1->p,mid,
-			bw,sti,sto,detail,CGFX_BLUNT,col);
+    detail=1+(int)(obj->render.detail1/2);
+
+    size=((detail*2-2)*detail*4*2+2*detail*2)*3*obj->atom_count;
+    size+=detail*4*2*3*2;
+
+    obj->va.count=0;
+    /* guess initial size */
+    obj->va.max=size*2;
+
+    obj->va.p=Crecalloc(NULL,obj->va.max,sizeof(cgfxVAField));
+
+    bw=obj->render.bond_width;
+    sr=obj->render.sphere_radius;
+
+    if(obj->render.stipple_flag) {
+      sti=obj->render.stipplei;
+      sto=obj->render.stippleo;
+    } else {
+      sti=1.0;
+      sto=0.0;
+    }
+
+    // only create explicit spheres if they are larger than the cylinders
+    if(sr>bw && sr>0.0)
+      for(i=0;i<obj->atom_count;i++) {
+	col[0]=obj->atom[i].prop.r;
+	col[1]=obj->atom[i].prop.g;
+	col[2]=obj->atom[i].prop.b;
+	col[3]=obj->render.transparency;
+	cgfxSphereVA(sr,(float *)obj->atom[i].ap->p,col,&obj->va,detail);
+      }
+
+    if(bw>0.0) {
+      for(i=0;i<obj->bond_count;i++) {
+	mid[0]=obj->bond[i].atom1->p->x+obj->bond[i].atom2->p->x;
+	mid[1]=obj->bond[i].atom1->p->y+obj->bond[i].atom2->p->y;
+	mid[2]=obj->bond[i].atom1->p->z+obj->bond[i].atom2->p->z;
+	mid[0]*=0.5;
+	mid[1]*=0.5;
+	mid[2]*=0.5;
+	col[0]=obj->bond[i].prop1->r;
+	col[1]=obj->bond[i].prop1->g;
+	col[2]=obj->bond[i].prop1->b;
+	col[3]=obj->render.transparency;
+	if(sr<=bw)
+	  cgfxGenCylinder(&obj->va,
+			  (float *)obj->bond[i].atom1->p,mid,
+			  bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
+	else
+	  cgfxGenCylinder(&obj->va,
+			  (float *)obj->bond[i].atom1->p,mid,
+			  bw,sti,sto,detail,CGFX_BLUNT,col);
       
-      col[0]=obj->bond[i].prop2->r;
-      col[1]=obj->bond[i].prop2->g;
-      col[2]=obj->bond[i].prop2->b;
-      col[3]=obj->render.transparency;
-      if(sr<=bw)
-	cgfxGenCylinder(&obj->va,
-			mid,(float *)obj->bond[i].atom2->p,
-			bw,sti,sto,detail,CGFX_ROUND_END,col);
-      else
-	cgfxGenCylinder(&obj->va,
-			mid,(float *)obj->bond[i].atom2->p,
-			bw,sti,sto,detail,CGFX_BLUNT,col);
+	col[0]=obj->bond[i].prop2->r;
+	col[1]=obj->bond[i].prop2->g;
+	col[2]=obj->bond[i].prop2->b;
+	col[3]=obj->render.transparency;
+	if(sr<=bw)
+	  cgfxGenCylinder(&obj->va,
+			  mid,(float *)obj->bond[i].atom2->p,
+			  bw,sti,sto,detail,CGFX_ROUND_END,col);
+	else
+	  cgfxGenCylinder(&obj->va,
+			  mid,(float *)obj->bond[i].atom2->p,
+			  bw,sti,sto,detail,CGFX_BLUNT,col);
+      }
     }
-  }
 
-  if(sr>0.0) {
-    for(i=0;i<obj->s_bond_count;i++) {
-      col[0]=obj->s_bond[i].prop->r;
-      col[1]=obj->s_bond[i].prop->g;
-      col[2]=obj->s_bond[i].prop->b;
-      col[3]=obj->render.transparency;
-      cgfxSphereVA(sr,(float *)obj->s_bond[i].atom->p,col,&obj->va,detail);
+    if(sr>0.0) {
+      for(i=0;i<obj->s_bond_count;i++) {
+	col[0]=obj->s_bond[i].prop->r;
+	col[1]=obj->s_bond[i].prop->g;
+	col[2]=obj->s_bond[i].prop->b;
+	col[3]=obj->render.transparency;
+	cgfxSphereVA(sr,(float *)obj->s_bond[i].atom->p,col,&obj->va,detail);
+      }
     }
+
+    obj->va.max=obj->va.count;
+
+    obj->va.p=Crecalloc(obj->va.p,obj->va.max,sizeof(cgfxVAField));
   }
-
-  obj->va.max=obj->va.count;
-
-  obj->va.p=Crecalloc(obj->va.p,obj->va.max,sizeof(cgfxVAField));
-
   return 0;
 }
 

@@ -15,8 +15,6 @@
 
 extern struct GFX gfx;
 
-#define CUSTOM_NEW
-
 int structDraw(dbmStructNode *node, int f)
 {
   int j;
@@ -257,8 +255,10 @@ int structDrawObj(structObj *obj)
     glEnd();
 
     break;
-  case RENDER_CPK:
 #ifdef CPK_NEW
+    
+  case RENDER_CPK:
+
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_CULL_FACE);
@@ -284,27 +284,20 @@ int structDrawObj(structObj *obj)
 
     break;
 #else
-    glEnable(GL_LIGHTING);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_CULL_FACE);
-
-
-    for(i=0;i<obj->atom_count;i++) {
-      glPushMatrix();
-      glColor3f(obj->atom[i].prop.r,obj->atom[i].prop.g,obj->atom[i].prop.b);
-      glTranslatef(obj->atom[i].ap->p->x,
-		   obj->atom[i].ap->p->y,
-		   obj->atom[i].ap->p->z);
-      cgfxSphere(obj->atom[i].prop.radius,detail);
-      glPopMatrix();
-    }
-
-    glDisable(GL_CULL_FACE);
-
-    break;
+  case RENDER_CPK:
 #endif
   case RENDER_CUSTOM:
-#ifdef CUSTOM_NEW
+#ifdef USE_DLIST
+    if(gfx.use_dlist_flag) {
+      if(obj->va_list_flag) {
+	glCallList(obj->va_list);
+      } else {
+	glNewList(obj->va_list, GL_COMPILE_AND_EXECUTE);
+	guiMessage("Compiling Display List...");
+      }
+    }
+    if(!gfx.use_dlist_flag || (gfx.use_dlist_flag && !obj->va_list_flag)) {
+#endif
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHTING);
     glEnable(GL_CULL_FACE);
@@ -338,70 +331,13 @@ int structDrawObj(structObj *obj)
     glDisableClientState(GL_COLOR_ARRAY);
 
     glDisable(GL_CULL_FACE);
-
-#else
-    glEnable(GL_LIGHTING);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_CULL_FACE);
-
-    if(sphere_radius!=bond_width)
-      cyl_type=CGFX_BLUNT;
-    else
-      cyl_type=CGFX_SINGLE_ROUND;
-    
-
-    if(bond_width>0.0)
-    for(i=0;i<obj->bond_count;i++) {
-      glPushMatrix();
-      bl2=obj->bond[i].length*0.5;
-      glTranslatef(obj->bond[i].atom1->p->x,
-		   obj->bond[i].atom1->p->y,
-		   obj->bond[i].atom1->p->z);
-      glMultMatrixf(obj->bond[i].rotmat);
-
-      glTranslatef(0.0,0.0,bl2);
-      if(cf)
-	glColor3f(obj->bond[i].prop1->r,
-		  obj->bond[i].prop1->g,
-		  obj->bond[i].prop1->b);
-      cgfxCylinder(cyl_type,-bl2,bond_width,detail);
-      if(cf)
-	glColor3f(obj->bond[i].prop2->r,
-		  obj->bond[i].prop2->g,
-		  obj->bond[i].prop2->b);
-      cgfxCylinder(cyl_type,bl2,bond_width,detail);
-
-      glPopMatrix();
+#ifdef USE_DLIST
     }
-
-    if(sphere_radius>0.0 && sphere_radius != bond_width)
-      for(i=0;i<obj->atom_count;i++) {
-	glPushMatrix();
-	if(cf)
-	  glColor3f(obj->atom[i].prop.r,obj->atom[i].prop.g,obj->atom[i].prop.b);
-	glTranslatef(obj->atom[i].ap->p->x,
-		     obj->atom[i].ap->p->y,
-		     obj->atom[i].ap->p->z);
-
-	cgfxSphere(sphere_radius,detail);
-	glPopMatrix();
-      }
-
-    for(i=0;i<obj->s_bond_count;i++) {
-      glPushMatrix();
-      if(cf)
-	glColor3f(obj->s_bond[i].prop->r,
-		  obj->s_bond[i].prop->g,
-		  obj->s_bond[i].prop->b);
-      glTranslatef(obj->s_bond[i].atom->p->x,
-		   obj->s_bond[i].atom->p->y,
-		   obj->s_bond[i].atom->p->z);
-      cgfxSphere(sphere_radius,detail);
-      glPopMatrix();
+    if(gfx.use_dlist_flag && !obj->va_list_flag) {
+      obj->va_list_flag=1;
+      guiMessage("");
+      glEndList();
     }
-
-
-    glDisable(GL_CULL_FACE);
 #endif
   }
 
