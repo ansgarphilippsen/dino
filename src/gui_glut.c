@@ -226,6 +226,80 @@ static void guiStatusExpose()
   glutSetWindow(gui.glut_main);
 }
 
+static int guiInitRGB()
+{
+#ifdef LINUX
+  char *rgbfile1;
+  FILE *rgbfile2;
+  char rgb_line[256],*rgb_sep,*rgb_nam;
+  unsigned short usp[6];
+  datum key,content;
+  GDBM_FILE gdbm_f;
+#endif
+
+  debmsg("guiInit: loading rgb database");
+#ifdef LINUX
+  strcpy(gui.gdbm_tmpfile,"");
+  rgbfile1=tmpnam(NULL);
+  rgbfile2=fopen("/usr/lib/X11/rgb.txt","r");
+  if(rgbfile2==NULL) {
+    fprintf(stderr,"cannot find rgb.txt\n");
+    return -1;
+  } else {
+    strcpy(gui.gdbm_tmpfile,rgbfile1);
+    gdbm_f=gdbm_open(rgbfile1,0,GDBM_NEWDB,0600,0);
+    if(gdbm_f==NULL) {
+      fprintf(stderr,"cannot open rgb tmp file %s\n",rgbfile1);
+      return -1;
+    }
+    fgets(rgb_line,256,rgbfile2); /* first line is comment */
+    do {
+      fgets(rgb_line,256,rgbfile2);
+      if (rgb_line[0]!='!' && rgb_line[0]!='\n') {
+	rgb_sep=strchr(rgb_line,'\t');
+	if(rgb_sep!=NULL) {
+	  rgb_sep[0]='\0';
+	  rgb_nam=strrchr(rgb_sep+1,'\t')+1;
+	  if(rgb_nam!=NULL) {
+	    rgb_nam[strlen(rgb_nam)-1]='\0';
+	    rgb_line[3]='\0';
+	    rgb_line[7]='\0';
+	    rgb_line[11]='\0';
+	    usp[0]=(unsigned short)atoi(rgb_line+0)*256;
+	    usp[1]=(unsigned short)atoi(rgb_line+4)*256;
+	    usp[2]=(unsigned short)atoi(rgb_line+8)*256;
+	    key.dptr=rgb_nam;
+	    key.dsize=strlen(rgb_nam);
+	    content.dptr=(char *)usp;
+	    content.dsize=sizeof(usp);
+	    gdbm_store(gdbm_f,key,content,GDBM_REPLACE);
+	  }
+	}
+      }
+    } while(!feof(rgbfile2));
+    gdbm_close(gdbm_f);
+  }
+  gui.cdbm=gdbm_open(rgbfile1,0,GDBM_READER,0,0);
+  
+#endif
+#ifdef SGI
+  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
+#endif
+#ifdef DEC
+  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
+#endif
+#ifdef SUN
+  gui.cdbm=dbm_open("/usr/openwin/lib/rgb",0,0);
+#endif
+
+  if(gui.cdbm==NULL) {
+    fprintf(stderr,"rgb color database not found\n");
+    return -1;
+  }
+  return 0;
+}
+
+
 int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 {
   int sw,sh,i;
@@ -703,114 +777,3 @@ int guiMInit(void (*func)(int, char **), int *argc, char ***argv)
   return 1;
 }
 
-void guiRegisterDnD(Widget site)
-{
-  Atom    importList [1];
-  Arg     args [4];
-  int      nargs;
-  Atom    COMPOUND_TEXT;
-  
-  COMPOUND_TEXT = XmInternAtom(XtDisplay(site), 
-			       "COMPOUND_TEXT", False);
-  importList[0] = COMPOUND_TEXT;
-  nargs = 0;
-  
-  XtSetArg(args [nargs], XmNimportTargets, importList); nargs++;
-  XtSetArg(args [nargs], XmNnumImportTargets, 1); nargs++;
-  XtSetArg(args [nargs], XmNdropSiteOperations, XmDROP_COPY); nargs++;
-  XtSetArg(args [nargs], XmNdropProc, HandleDrop); nargs++;
-  XmDropSiteRegister(site, args, nargs);
-}
-
-void HandleDrop(Widget w, XtPointer client_data, XtPointer call_data)
-{
-}
-
-int guiPadInit()
-{
-  gui.pad1v=8;
-  gui.pad2u=2;
-  gui.pad2v=3;
-  /*  
-  gui.pad1 = XCreateSimpleWindow(gui.dpy,DefaultRootWindow(gui.dpy),
-				 0,0,100,50*gui.pad1v,1,
-				 BlackPixel(gui.dpy,DefaultScreen(gui.dpy)),
-				 WhitePixel(gui.dpy,DefaultScreen(gui.dpy)));
-
-  XMapWindow(gui.dpy,gui.pad1);
-  */
-  return 0;
-}
-
-int guiInitRGB()
-{
-#ifdef LINUX
-  char *rgbfile1;
-  FILE *rgbfile2;
-  char rgb_line[256],*rgb_sep,*rgb_nam;
-  unsigned short usp[6];
-  datum key,content;
-  GDBM_FILE gdbm_f;
-#endif
-
-  debmsg("guiInit: loading rgb database");
-#ifdef LINUX
-  strcpy(gui.gdbm_tmpfile,"");
-  rgbfile1=tmpnam(NULL);
-  rgbfile2=fopen("/usr/lib/X11/rgb.txt","r");
-  if(rgbfile2==NULL) {
-    fprintf(stderr,"cannot find rgb.txt\n");
-    return -1;
-  } else {
-    strcpy(gui.gdbm_tmpfile,rgbfile1);
-    gdbm_f=gdbm_open(rgbfile1,0,GDBM_NEWDB,0600,0);
-    if(gdbm_f==NULL) {
-      fprintf(stderr,"cannot open rgb tmp file %s\n",rgbfile1);
-      return -1;
-    }
-    fgets(rgb_line,256,rgbfile2); /* first line is comment */
-    do {
-      fgets(rgb_line,256,rgbfile2);
-      if (rgb_line[0]!='!' && rgb_line[0]!='\n') {
-	rgb_sep=strchr(rgb_line,'\t');
-	if(rgb_sep!=NULL) {
-	  rgb_sep[0]='\0';
-	  rgb_nam=strrchr(rgb_sep+1,'\t')+1;
-	  if(rgb_nam!=NULL) {
-	    rgb_nam[strlen(rgb_nam)-1]='\0';
-	    rgb_line[3]='\0';
-	    rgb_line[7]='\0';
-	    rgb_line[11]='\0';
-	    usp[0]=(unsigned short)atoi(rgb_line+0)*256;
-	    usp[1]=(unsigned short)atoi(rgb_line+4)*256;
-	    usp[2]=(unsigned short)atoi(rgb_line+8)*256;
-	    key.dptr=rgb_nam;
-	    key.dsize=strlen(rgb_nam);
-	    content.dptr=(char *)usp;
-	    content.dsize=sizeof(usp);
-	    gdbm_store(gdbm_f,key,content,GDBM_REPLACE);
-	  }
-	}
-      }
-    } while(!feof(rgbfile2));
-    gdbm_close(gdbm_f);
-  }
-  gui.cdbm=gdbm_open(rgbfile1,0,GDBM_READER,0,0);
-  
-#endif
-#ifdef SGI
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef DEC
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef SUN
-  gui.cdbm=dbm_open("/usr/openwin/lib/rgb",0,0);
-#endif
-
-  if(gui.cdbm==NULL) {
-    fprintf(stderr,"rgb color database not found\n");
-    return -1;
-  }
-  return 0;
-}

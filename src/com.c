@@ -335,15 +335,14 @@ int comWorkPrompt(int word_count, char ** word_list)
     if(sceneCommand(word_count-1, word_list+1)!=0) {
       errflag=1;
     }
+    /************* deprecated ?
   } else if(!strcmp(word_list[0],"menu") ||
 	    !strncmp(word_list[0],s_menu,strlen(s_menu))) {
-    /*
-      menu command
-    */
     bp=strchr(word_list[0],'.');
     if(menuCommand(word_count-1, word_list+1)!=0) {
       errflag=1;
     }
+    ***************/
   } else if(!strcmp(word_list[0],"input") ||
 	    !strncmp(word_list[0],s_input,strlen(s_input))) {
     /*
