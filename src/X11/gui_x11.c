@@ -1846,7 +1846,7 @@ int guiGrab(int s)
     XtGrabPointer(gui.glxwin, 
 		  True, 0, GrabModeAsync,GrabModeAsync,None,None,CurrentTime);
   } else {
-    XDefineCursor(gui.dpy,None);
+    XtUngrabPointer(gui.glxwin,CurrentTime);
   }
   return 0;
 }
