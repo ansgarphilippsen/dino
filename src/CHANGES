@@ -1,3 +1,5 @@
+automatic assignement of secondary structure present in PDB file
+
 calling material without parameter will dump the current settings
 
 render detail1 is always circular/spherical subdivision, detail2 number of 

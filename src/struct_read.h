@@ -6,6 +6,12 @@
 #include "dbm.h"
 #include "struct_db.h"
 
+#define STRUCT_FILE_FORMAT_PDB 1
+#define STRUCT_FILE_FORMAT_XPL 2
+#define STRUCT_FILE_FORMAT_PQR 3
+#define STRUCT_FILE_FORMAT_CRD 4
+
+
 struct STRUCT_FILE_ATOM_ENTRY
 {
   int anum;        /* unique atom number in file */
@@ -26,11 +32,20 @@ struct STRUCT_FILE_CONNECT_ENTRY
   int a1,a2;
 };
 
+struct STRUCT_FILE_SECS_ENTRY
+{
+  int type;
+  char chain[4];
+  int start, end;
+};
+
 struct STRUCT_FILE {
   struct STRUCT_FILE_ATOM_ENTRY *atom_entry;
-  int atom_count;
+  int atom_count, atom_max;
   struct STRUCT_FILE_CONNECT_ENTRY *connect_entry;
-  int connect_count;
+  int connect_count, connect_max;
+  struct STRUCT_FILE_SECS_ENTRY *secs_entry;
+  int secs_count, secs_max;
 };
 
 struct PDB_CRYST_ENTRY {

@@ -183,9 +183,10 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
       return structObjFix(obj,wc-1,wl+1);
     }
 #endif
+    /***********
   } else if(clStrcmp(wl[0],"tunnelvision")) {
     tunnelvision(obj);
-
+    ***********/
   } else {
     sprintf(message,"%s: unknown command %s\n",obj->name,wl[0]);
     comMessage(message);
@@ -914,7 +915,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
   bc=0;
 
   /* TV */
-  obj->tvc=0;
+  //obj->tvc=0;
   
   while(bc<obj->bond_count) {
     
@@ -1116,6 +1117,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
 
     Cfree(va.p);
     /* TV */
+    /*******************
     if(obj->tvc+detail*pc>=obj->tvm) {
       obj->tvm+=1024;
       obj->tv=Crecalloc(obj->tv,obj->tvm,sizeof(struct STRUCT_TV));
@@ -1132,6 +1134,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
       obj->tv[obj->tvc].nz=spoint_list[i].n[2];
       obj->tvc++;
     }
+    ********************/
     /* TV */
 
     Cfree(spoint_list);

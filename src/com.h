@@ -92,7 +92,6 @@ int comGetCurrentCenter(double *);
 int comWriteModelview(FILE *f);
 
 int comSetDefMat(struct RENDER_MATERIAL *mat);
-void comCenterDS(transMat *t);
 
 int comTestTex3D(int, int, int);
 

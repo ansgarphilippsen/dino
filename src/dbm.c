@@ -30,8 +30,10 @@ struct DBM dbm;
 
 extern int debug_mode,gfx_mode;
 
+static void center_on_ds(dbmNode *n);
+
 static struct EXT_DEF {
-  char ext[16],type[16];
+  char *ext,*type;
 }ext_def[] = {
   {"pdb","pdb"},
   {"ent","pdb"},
@@ -64,6 +66,7 @@ static struct EXT_DEF {
   {"bdtrj","bdtrj"},
   {"",""}
 };
+
 
 int dbmInit(void)
 {
@@ -683,16 +686,24 @@ int dbmLoad(int wc, const char **wl)
 
   if(first_flag) {
     first_flag=0;
-    comCenterDS(&node->common.transform);
-    sprintf(message,"scene centered at {%.3f,%.3f,%.3f}\n",
-	    -node->common.transform.tra[0],
-	    -node->common.transform.tra[1],
-	    -node->common.transform.tra[2]);
-    comMessage(message);
+    center_on_ds(node);
   }
 
   return 0;
 }
+
+static void center_on_ds(dbmNode *n) 
+{
+  char message[256];
+  sceneSetCenter(n->common.transform.cen);
+  sprintf(message,"centered scene on {%.3f,%.3f,%.3f}\n",
+	  n->common.transform.cen[0], 
+	  n->common.transform.cen[1], 
+	  n->common.transform.cen[2]);
+  comMessage(message);
+  
+}
+
 
 dbmNode *dbmNewNode(int type, const char *oname)
 {

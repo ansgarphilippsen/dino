@@ -107,8 +107,8 @@ struct HELP_ENTRY top_help[] = {
 
 static char init_command[1024];
 static int init_command_flag=0;
-static int tunnelvision_flag=0;
-static int tunnelvision2(structObj *obj2,int f);
+//static int tunnelvision_flag=0;
+//static int tunnelvision2(structObj *obj2,int f);
 
 int comInit()
 {
@@ -704,6 +704,7 @@ void comTimeProc()
      playing a trajectory file
   */
 
+  /*******************
   if(tunnelvision_flag) {
     if(tunnelvision_flag==2) {
       tunnelvision2(NULL,3);
@@ -715,6 +716,7 @@ void comTimeProc()
       }
     }
   }
+  ******************/
 
   if(com.play_count>0) {
     for(i=0;i<com.play_count;i++)
@@ -2085,22 +2087,12 @@ void comCMICallback(const cmiToken *t)
     }
   }
 
-  if(tunnelvision_flag) tunnelvision_flag=2;
+  //if(tunnelvision_flag) tunnelvision_flag=2;
 
 }
 #endif
 
-void comCenterDS(transMat *t)
-{
-    gfx.transform.cen[0]=-t->tra[0];
-    gfx.transform.cen[1]=-t->tra[1];
-    gfx.transform.cen[2]=-t->tra[2];
-
-
-}
-
-
-/***********************************************************/
+/***********************************************************
 
 static int tunnelvision2(structObj *obj2,int f)
 {
@@ -2173,3 +2165,4 @@ void tunnelvision(structObj *obj)
   tunnelvision_flag=1;
   tunnelvision2(obj,1);
 }
+************************************************/

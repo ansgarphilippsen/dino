@@ -68,10 +68,12 @@ typedef struct STRUCT_OBJ {
 
   struct BUILD_INSTANCE *build;
 
+  /*************
   struct STRUCT_TV {
     float px,py,pz,dx,dy,dz,nx,ny,nz;
   }*tv;
   int tvc,tvm;
+  *************/
 }structObj;
 
 

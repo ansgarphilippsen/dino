@@ -2296,9 +2296,11 @@ int structSetDefault(structObj *obj)
   obj->s_bond=NULL;
   obj->s_bond_count=0;
   obj->node=NULL;
+  /*********
   obj->tv=NULL;
   obj->tvm=0;
   obj->tvc=0;
+  *********/
 
   obj->render.show=1;
   obj->render.mode=RENDER_SIMPLE;

@@ -33,6 +33,7 @@ char *scenePeek(void);
 void sceneClear(void);
 int scenePersp2Ortho(void);
 int sceneOrtho2Persp(void);
+void sceneSetCenter(double c[3]);
 
 int sceneSubCommand(char *sub, int wc, const char **wl);
 int sceneSubLightCom(int l, int wc, const char **wl);

@@ -1711,56 +1711,11 @@ int sceneSubClipGet(int c, int wc, const char **wl)
   return 0;
 }
 
-#ifdef EXPO
-int sceneMorph(int wc, const char **wl)
+void sceneSetCenter(double c[3])
 {
-  double m[16],r1[16],r2[16],t1[4],t2[4],rd[16],td[4];
-  int i,j,step;
-
-  step=atoi(wl[0]);
-  matExtract2D(wl[1],4,4,m);
-
-  for(i=0;i<16;i++)
-    r2[i]=m[i];
-  r2[3]=0.0; r2[7]=0.0;  r2[11]=0.0;  
-  r2[12]=0.0;  r2[13]=0.0;  r2[14]=0.0;  r2[15]=1.0;
-
-  t2[0]=m[12]; t2[1]=m[13]; t2[2]=m[14]; t2[3]=1.0;
-
-  for(i=0;i<16;i++) {
-    r1[i]=gfx.transform.rot[i];
-    rd[i]=r2[i]-r1[i];
-    rd[i]/=(double)step;
-  }
-  for(i=0;i<3;i++) {
-    t1[i]=gfx.transform.tra[i];
-    td[i]=t2[i]-t1[i];
-    td[i]/=(double)step;
-  }  
-
-  fprintf(stderr,"%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n\n",
-	  rd[0],rd[1],rd[2],rd[3],
-	  rd[4],rd[5],rd[6],rd[7],
-	  rd[8],rd[9],rd[10],rd[11],
-	  rd[12],rd[13],rd[14],rd[15]);
-  fprintf(stderr,"%f %f %f \n",t1[0],t1[1],t1[2]);
-  fprintf(stderr,"%f %f %f \n",t2[0],t2[1],t2[2]);
-  fprintf(stderr,"%f %f %f \n",td[0],td[1],td[2]);
-
-
-  for(j=0;j<=step;j++) {
-    for(i=0;i<16;i++)
-      gfx.transform.rot[i]=r1[i]+rd[i]*(double)j;
-    for(i=0;i<3;i++) {
-      gfx.transform.tra[i]=t1[i]+td[i]*(double)j;
-      gfx.transform.slabn-=td[i];
-      gfx.transform.slabf-=td[i];
-      gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
-    }
-    gfxRedraw();
-  }
-
-  return 0;
+  gfx.transform.cen[0]=-c[0];
+  gfx.transform.cen[1]=-c[1];
+  gfx.transform.cen[2]=-c[2];
 }
 
-#endif
+

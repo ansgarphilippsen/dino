@@ -3,14 +3,16 @@
 #include <string.h>
 
 #include <GL/gl.h>
-//#include <GL/glx.h>
 
+#include "dino.h"
 #include "cgfx.h"
 #include "Cmalloc.h"
 #include "mat.h"
 #include "bspline.h"
 
 #define CGFX_D2
+
+extern int debug_mode;
 
 /*
   these are the newer, vertex-array based, routines
@@ -949,6 +951,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
     bw_save=render2->tube_width;
     
     //    for(i=0;i<pc-1;i++) {
+    debmsg("GenHSC: spline extrusion");
     for(i=0;i<pc-1;i++) {
       memcpy(render1,render2,sizeof(Render));
       memcpy(render2,render,sizeof(Render));
@@ -1083,9 +1086,11 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       
     }
 
+    debmsg("GenHSC: adding endpoints");
     cgfxSphereVA(bw_save,sp[0].v,sp[0].colp[0],va,render->detail1);
     cgfxSphereVA(render2->tube_width,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
 
+    debmsg("GenHSC: adding additional elements");
     if(render->mode==RENDER_HSC) {
       for(i=0;i<pc;i++) {
 	if(sp[i].id==CGFX_NA) {
@@ -1194,6 +1199,13 @@ int cgfxConnectProfile(cgfxVA *va, cgfxProfile *p1, cgfxProfile *p2, int f)
 
   o=p1->pc-2;  // EMPIRICAL ??? why does this work ???
 
+  // memory check
+  if((va->count+(p1->pc-1)*6)>=va->max) {
+    va->max+=1024;
+    va->p=Crecalloc(va->p,va->max,sizeof(cgfxVAField));
+  }
+
+  //fprintf(stderr,"[%d %d",va->count,va->max);
 
   for(i=0;i<p1->pc-1;i++) {
     k=i+1;
@@ -1214,6 +1226,8 @@ int cgfxConnectProfile(cgfxVA *va, cgfxProfile *p1, cgfxProfile *p2, int f)
     cgfxCopyPVa(&p2->p[l2],&va->p[va->count]);
     va->count++;
   }
+
+  //fprintf(stderr,"]\n");
 
   return 0;
 }
