@@ -25,6 +25,8 @@ OPTIONS += -DNDEBUG
 
 GUI = X11
 
+READLINE = 1
+
 # only for linux versions
 #STATIC = 1
 

@@ -1470,10 +1470,11 @@ static int deviceMotionNotify=0,deviceButtonPress=0,
 
 static void extension_event(Widget w, XtPointer client_data, XEvent *event)
 {
-  int i;
+  int i,current_val;
   static int val_save[] = {0,0,0,0,0,0};
   static int val_count = 0;
-  static int val_max = 4;
+  static int val_max = 2;
+  static int val_thres=3;
   XDeviceMotionEvent *device_motion;
   static int dial_state[] = {0,0,0,0,0,0,0,0};
 
@@ -1517,12 +1518,14 @@ static void extension_event(Widget w, XtPointer client_data, XEvent *event)
 	      val[0]=CMI_INPUT_SPACEBALL;
 	      for(i=0;i<6;i++) {
 		val[3]=i;
-		val[4]=(int)((float)val_save[i]/(float)val_max);
+		val[4]=val_max*(int)((float)val_save[i]/(float)val_max);
 		cmiSubmit(&t);
 	      } 
+	      val_count=0;
 	    } else {
 	      for(i=0;i<6;i++) {
-		val_save[i]=device_motion->axis_data[i];
+		current_val=device_motion->axis_data[i]; 
+		val_save[i]=current_val*3;
 	      }
 	      val_count++;
 	    }

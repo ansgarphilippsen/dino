@@ -107,12 +107,14 @@ int transCommand(transMat *trans, int command, int axis, double value)
     if(trans==&gfx.transform) {
       trans->tra[0]+=d1[0];
       trans->tra[1]+=d1[1];
+      oz1 = trans->tra[2];
+      value = d1[2];
       if(gfx.mode==GFX_PERSP) {
 	trans->tra[2]+=d1[2];
       } else {
 	gfx.scale*=(1.0+d1[2]/100.0);
       }
-      value = d1[2];
+
       // check new tra values
       if(com.trans_limit_flag) {
 	if(trans->tra[0]<com.trans_limit[0]) { // left x
@@ -129,13 +131,11 @@ int transCommand(transMat *trans, int command, int axis, double value)
 	}
 
 	if(trans->tra[2]<com.trans_limit[4]) { // front z
-	  //value = (trans->tra[2]-d1[2]) - com.trans_limit[4]; 
-	  value = 0;
+	  value = com.trans_limit[4]-oz1;
 	  trans->tra[2]=com.trans_limit[4];
 	}
 	if(trans->tra[2]>com.trans_limit[5]) { // back z
-	  //value = com.trans_limit[5] - (trans->tra[2]-d1[2]); 
-	  value = 0;
+	  value = com.trans_limit[5]-oz1;
 	  trans->tra[2]=com.trans_limit[5];
 	}
 

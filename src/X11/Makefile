@@ -1,5 +1,7 @@
 # called from toplevel Makefile
 
+sinclude makedef.$(HOSTTYPE)
+
 ifdef READLINE
 TERMHANDLER = gui_x11_readline.c
 else
@@ -9,8 +11,6 @@ endif
 
 SRC = main_x11.c gui_x11.c om_x11.c AppPlus.c extension.c $(TERMHANDLER) \
       GLwDrawA.c GLwMDrawA.c
-
-sinclude makedef.$(HOSTTYPE)
 
 MEMBERS := $(SRC:.c=.o)
 

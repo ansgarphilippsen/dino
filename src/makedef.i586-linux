@@ -12,7 +12,7 @@ LIBDIR = -L../extras/lib -L/usr/X11R6/lib
 LIBSTATIC = /usr/lib/libtiff.a /usr/lib/libjpeg.a
 LIBSTATIC += /usr/lib/libpng.a /usr/lib/libz.a
 
-LIBSHARED = -lXi -lXt -lXmu -lXext -lX11 -lm -lpthread -ldl
+LIBSHARED = -lXft -lXi -lXt -lXmu -lXext -lX11 -lm -lpthread -ldl
 
 ifdef STATIC
 
