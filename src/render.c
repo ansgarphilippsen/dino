@@ -224,7 +224,6 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
     } else if(!strcmp(prop,"light2")) {
-    } else if(!strcmp(prop,"splines")) {
       /********************
 	      light2
       ********************/

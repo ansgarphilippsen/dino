@@ -985,10 +985,13 @@ int sceneCommand(int wc, const char **wl)
       return -1;
     }
     if(!strcmp(wl[1],"center")) {
+      /*
       v1[0]=-gfx.transform.cen[0];
       v1[1]=-gfx.transform.cen[1];
       v1[2]=-gfx.transform.cen[2];
       matAssemble1D(v1,3,message);
+      */
+      clStrcpy(message,transGetCen2(&gfx.transform));
     } else if(!strcmp(wl[1],"near")){
       sprintf(message,"%g",gfx.transform.slabn);
     } else if(!strcmp(wl[1],"far")){
@@ -997,19 +1000,26 @@ int sceneCommand(int wc, const char **wl)
       sprintf(message,"%g",gfx.transform.slabf-gfx.transform.slabn);
     } else if(!strcmp(wl[1],"transmat") ||
 	      !strcmp(wl[1],"trans")){
+      /*
       v1[0]=gfx.transform.tra[0];
       v1[1]=gfx.transform.tra[1];
       v1[2]=gfx.transform.tra[2];
       matAssemble1D(v1,3,message);
+      */
+      clStrcpy(message,transGetTra(&gfx.transform));
     } else if(!strcmp(wl[1],"rotmat") ||
 	      !strcmp(wl[1],"rot")) {
+      /*
       for(i=0;i<16;i++)
 	v1[i]=gfx.transform.rot[i];
       sprintf(message,"{{%.3f,%.3f,%.3f},{%.3f,%.3f,%.3f},{%.3f,%.3f,%.3f}}",
 	      v1[0],v1[1],v1[2],
 	      v1[4],v1[5],v1[6],
 	      v1[8],v1[9],v1[10]);
+      */
+      clStrcpy(message,transGetRot(&gfx.transform));
     } else if(!strcmp(wl[1],"mmat")){
+      /*
       v2[0]=gfx.transform.tra[0];
       v2[1]=gfx.transform.tra[1];
       v2[2]=gfx.transform.tra[2];
@@ -1022,7 +1032,8 @@ int sceneCommand(int wc, const char **wl)
 	      v1[4],v1[5],v1[6],0.0,
 	      v1[8],v1[9],v1[10],0.0,
 	      v2[0],v2[1],v2[2],1.0);
-
+      */
+      clStrcpy(message,transGetMM(&gfx.transform));
     } else if(!strcmp(wl[1],"rtc")) {
       sprintf(message,transGetAll(&gfx.transform));
     } else if(!strcmp(wl[1],"eyedist")){

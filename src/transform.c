@@ -285,7 +285,7 @@ char trans_buffer[256];
 
 const char *transGetRot(transMat *t)
 {
-  sprintf(trans_buffer,"{{%.5f,%.5f,%.5f},{%.5f,%.5f,%.5f},{%.5f,%.5f,%.5f}}",
+  sprintf(trans_buffer,"{{%g,%g,%g},{%g,%g,%g},{%g,%g,%g}}",
 	  t->rot[0], t->rot[1], t->rot[2],
 	  t->rot[4], t->rot[5], t->rot[6],
 	  t->rot[8], t->rot[9], t->rot[10]);
@@ -293,23 +293,39 @@ const char *transGetRot(transMat *t)
 }
 const char *transGetTra(transMat *t)
 {
-  sprintf(trans_buffer,"{%.5f,%.5f,%.5f}",t->tra[0],t->tra[1],t->tra[2]);
+  sprintf(trans_buffer,"{%g,%g,%g}",t->tra[0],t->tra[1],t->tra[2]);
   return trans_buffer;
 }
 
 const char *transGetCen(transMat *t)
 {
-  sprintf(trans_buffer,"{%.5f,%.5f,%.5f}",t->cen[0],t->cen[1],t->cen[2]);
+  sprintf(trans_buffer,"{%g,%g,%g}",t->cen[0],t->cen[1],t->cen[2]);
+  return trans_buffer;
+}
+
+const char *transGetCen2(transMat *t)
+{
+  sprintf(trans_buffer,"{%g,%g,%g}",-t->cen[0],-t->cen[1],-t->cen[2]);
   return trans_buffer;
 }
 
 const char *transGetAll(transMat *t)
 {
-  sprintf(trans_buffer,"{{%5.5g,%5.5g,%5.5g,%5.5g},{%5.5g,%5.5g,%5.5g,%5.5g},{%5.5g,%5.5g,%5.5g,%5.5g},{%5.5g,%5.5g,%5.5g,%5.5g}}",
+  sprintf(trans_buffer,"{{%g,%g,%g,%g},{%g,%g,%g,%g},{%g,%g,%g,%g},{%g,%g,%g,%g}}",
 	  t->rot[0], t->rot[1], t->rot[2],t->tra[0],
 	  t->rot[4], t->rot[5], t->rot[6],t->tra[1],
 	  t->rot[8], t->rot[9], t->rot[10],t->tra[2],
 	  t->cen[0], t->cen[1], t->cen[2], 1.0);
+  return trans_buffer;
+}
+
+const char *transGetMM(transMat *t)
+{
+  sprintf(trans_buffer,"{{%g,%g,%g,%g},{%g,%g,%g,%g},{%g,%g,%g,%g},{%g,%g,%g,%g}}",
+	  t->rot[0], t->rot[1], t->rot[2],0.0,
+	  t->rot[4], t->rot[5], t->rot[6],0.0,
+	  t->rot[8], t->rot[9], t->rot[10],0.0,
+	  t->tra[0], t->tra[1], t->tra[2], 1.0);
   return trans_buffer;
 }
 

@@ -253,6 +253,7 @@ const char *clSubstr(const char *s, int indx1, int indx2)
 
   for(i=0,p=p1;p<p2;i++,p++)
     ret[i]=s[p];
+  ret[i]='\0';
 
   return ret;
 }

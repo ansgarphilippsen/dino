@@ -69,7 +69,9 @@ int transSetAll(transMat *trans, char *s);
 const char *transGetRot(transMat *trans);
 const char *transGetTra(transMat *trans);
 const char *transGetCen(transMat *trans);
+const char *transGetCen2(transMat *trans);
 const char *transGetAll(transMat *trans);
+const char *transGetMM(transMat *trans);
 
 int transMultM(transMat *trans, double *m);
 int transMultMf(transMat *trans, float *m);

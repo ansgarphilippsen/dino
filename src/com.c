@@ -749,11 +749,15 @@ void comDBRedraw()
       gridDraw(&dbm.node[i].gridNode,0);
       break;
     }
-    
   }
 
-//  glDepthMask(GL_FALSE);
-  
+  // draw the geom obj last
+  for(i=0;i<dbm.nodec_max;i++) {
+    if(dbm.node[i].common.type==DBM_NODE_GEOM) {
+      geomDraw(&dbm.node[i].geomNode,0);
+    }
+  }
+
   for(i=0;i<dbm.nodec_max;i++) {
     switch(dbm.node[i].common.type) {
     case DBM_NODE_STRUCT:
@@ -771,15 +775,7 @@ void comDBRedraw()
     }
   }
 
-//  glDepthMask(GL_TRUE);
-
-  // draw the geom obj last
-  for(i=0;i<dbm.nodec_max;i++) {
-    if(dbm.node[i].common.type==DBM_NODE_GEOM) {
-      geomDraw(&dbm.node[i].geomNode,0);
-    }
-  }
-
+  
   for(i=0;i<dbm.nodec_max;i++) {
     if(dbm.node[i].common.type==DBM_NODE_GEOM) {
       geomDraw(&dbm.node[i].geomNode,1);
