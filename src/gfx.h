@@ -8,6 +8,7 @@
 #include "xtal.h"
 #include "transform.h"
 #include "render.h"
+#include "cmi.h"
 
 enum                     {GFX_CENTER,
 			  GFX_LEFT,
@@ -39,9 +40,14 @@ struct GFX
   GLdouble fovy,aspect;
   GLdouble left,right,bottom,top;
   GLfloat r,g,b;
+  
+  // this is a copy from struct GUI to allow
+  // frontend - backend separation
+  int win_width,win_height;
+
   GLfloat fog_color[4];
-  int fog;
-  float fog_near,fog_far,fog_dist;
+  int fog,fog_mode;
+  float fog_near,fog_far,fog_dist,fog_density;
 
   int axisflag;
   int cpflag;
@@ -113,6 +119,9 @@ int gfxAccFrustum(GLdouble left, GLdouble right,
 int gfxAccPerspective(GLdouble fovy, GLdouble aspect,
 		      GLdouble zNear, GLdouble zFar,
 		      GLdouble pixdx, GLdouble pixdy);
+
+void gfxCMICallback(const cmiToken *t);
+
 
 #endif
 

@@ -28,7 +28,7 @@
 #include "cgfx.h"
 #include "scene.h"
 #include "menu.h"
-#include "input.h"
+//#include "input.h"
 #include "glw.h"
 #include "symm.h"
 #include "cl.h"
@@ -38,6 +38,7 @@
 #include "transform.h"
 #include "joy.h"
 #include "pick.h"
+#include "cmi.h"
 
 #ifdef EXPO
 #include "autoplay.h"
@@ -221,6 +222,10 @@ int comInit()
 
   comGenCubeLookup();
 
+  // register cmi callbacks
+  cmiRegisterCallback(CMI_TARGET_COM,comCMICallback);
+  cmiRegisterTimer(comTimeProc);
+
   return 0;
 }
 
@@ -329,24 +334,6 @@ int comWorkPrompt(int word_count, char ** word_list)
     if(sceneCommand(word_count-1, word_list+1)!=0) {
       errflag=1;
     }
-    /************* deprecated ?
-  } else if(!strcmp(word_list[0],"menu") ||
-	    !strncmp(word_list[0],s_menu,strlen(s_menu))) {
-    bp=strchr(word_list[0],'.');
-    if(menuCommand(word_count-1, word_list+1)!=0) {
-      errflag=1;
-    }
-    ***************/
-
-    /* not used
-  } else if(!strcmp(word_list[0],"input") ||
-	    !strncmp(word_list[0],s_input,strlen(s_input))) {
-
-    bp=strchr(word_list[0],'.');
-    if(inputCommand(word_count-1, word_list+1,bp)!=0) {
-      errflag=1;
-    }
-    */
   } else if(!strcmp(word_list[0],"new")) {
     /* create new dataset */
 
@@ -580,6 +567,12 @@ int comWorkObject(char *target, int word_count, char **word_list)
 void comWorkGfxCommand(int word_count, char ** word_list)
 {
 }
+
+/*
+  this should actually be named comRefresh()
+  requests a redrawing of the gfx screen after
+  some change has occured
+*/
 
 void comRedraw()
 {
@@ -1860,4 +1853,14 @@ int comGenCubeLookup()
 
   }
   return 0;
+}
+
+void comCMICallback(const cmiToken *t)
+{
+  if(t->target==CMI_TARGET_COM) {
+    switch(t->command) {
+    case CMI_RAW: break;
+    default: break;
+    }
+  }
 }

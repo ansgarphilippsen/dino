@@ -43,7 +43,7 @@ user menu
 #include "gfx.h"
 #include "extension.h"
 #include "om.h"
-#include "input.h"
+//#include "input.h"
 #include "transform.h"
 #include "cl.h"
 #include "glw.h"
@@ -1193,11 +1193,13 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   }
   ***/
 
+  /*
   debmsg("guiInit: calling inputInit");
   if(inputInit()==-1) {
     fprintf(stderr,"\nfatal memory error in inputInit");
     dinoExit(-1);
   }
+  */
 
   /*
     check for a dialbox

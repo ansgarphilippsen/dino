@@ -4,11 +4,44 @@
   all global structs can be modified
   by a resource file upon startup
   
-  keywords:
+  > keywords:
 
-  ! COMMAND : execute raw command
   exec COMMAND : execute raw command
+  exec {} : execute block of commands
   bind DEVICE AXIS STATE ACTION SCALE: event table settings 
+  gfxwin GEOMETRY : geometry of _inner_ gfx window
+  menu clear : clear user menu
+  menu add LABEL COMMAND : add command (using some wildcards!)
+  logfile NAME : name of logfile to use
+  nologfile : don't write a logfile
+  prompt: DINO prompt
+  on KEY COMMAND: KEY is F1-F12 or C-* or M-*
+
+  > default values for datasets and objects
+
+  atomcolor ELE COLOR
+
+  struct_ds
+  struct_obj
+  struct_obj_connect
+  struct_obj_trace
+
+  surf_ds
+  surf_obj
+
+  scal_ds
+  scal_obj
+  scal_obj_contour
+  scal_obj_grid
+  scal_obj_slab
+
+  topo_ds
+  topo_obj
+  topo_obj_contour
+  topo_obj_surface
+
+  geom_ds
+  geom_obj
 
 
 *************************************/
@@ -20,15 +53,12 @@
 #include "startup.h"
 #include "dino.h"
 #include "com.h"
-#include "dbm.h"
 #include "gfx.h"
 #include "gui.h"
 #include "shell.h"
 #include "scene.h"
 #include "cl.h"
 
-extern struct GLOBAL_COM com;
-extern struct DBM dbm;
 extern struct GFX gfx;
 extern struct GUI gui;
 extern struct SHELL shell;
@@ -73,9 +103,11 @@ static int eval_line(int argc, char **argv)
     }
   } else {
     // unknown keyword
-    sprintf(message,"\nstartup: unknown keyword %s",argv[0]);
-    comMessage(message);
-    return -1;
+    /* ignore for now
+      sprintf(message,"\nstartup: unknown keyword %s",argv[0]);
+      comMessage(message);
+      return -1;
+    */
   }
   
   return 0;
@@ -87,10 +119,14 @@ static int parse_line(char *s)
   int argc=0;
   char *argv[256],*p;
 
-  if(exec_flag) {
+  // remove trailing whitespaces
+  while(isspace(s[0]) && s[0]!='\0') s++;
+
+  // string as whole token !!!
+
+  if(exec_flag && s[0]!='}') {
     comRawCommand(s);
   } else {
-  
     // split s into tokens
     argv[argc++]=strtok(s,delim);
     while((p=strtok(NULL,delim))!=NULL)
@@ -98,6 +134,7 @@ static int parse_line(char *s)
     
     return eval_line(argc,argv);
   }
+  
   
   return 0;
 }

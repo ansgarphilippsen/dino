@@ -33,7 +33,7 @@ MALLOCLIB=
 #STATIC = 1
 
 SRC= dino.c \
-     dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
+     cmi.c dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
      startup.c cl.c set.c bspline.c transform.c prop.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
@@ -69,7 +69,7 @@ SRC += gui_sdl.c om_sdl.c
 LOPT += -lSDL
 endif
 ifneq (,$(findstring X11_GUI,$(OPTIONS)))
-SRC += extension.c gui_x11.c om_x11.c AppPlus.c input.c
+SRC += extension.c gui_x11.c om_x11.c AppPlus.c
 endif
 
 # special EXPO functionality
@@ -128,7 +128,7 @@ clean:
 	rm -f *.o dino *~ core #* .depend
 
 depend:
-	gcc -MM $(IOPT) $(SRC) > .depend
+	gcc -MM $(INCLUDE) $(SRC) > .depend
 
 all: clean depend dino
 

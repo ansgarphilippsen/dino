@@ -45,7 +45,7 @@ struct HELP_ENTRY scene_help[]={
   {"roty","roty ANGLE","Rotates ANGLE degrees around y-axis"},
   {"rotz","rotz ANGLE","Rotates ANGLE degrees around z-axis"},
   {"set","set PROPERTY=VALUE",
-   "Sets scene property:\n\tnear: Near clipping plane\n\tfar: Far clipping plane\n\tslabw: Width of clipping plane\n\tfogd: Fog distance multiplier from far clipping plane\n\teyedist: Eyedistance (stereo parameter)\n\tfov: Field of view in degree\n\tfixz: Flag that determines wether clipping planes move along with translation\n\tdither: Turn dithering on or off\n\tdepthc: Turn dpthcueing on or off\n\tbg: Background color\n\tfogc: Fog color\n\tview: can be center, left o right\n\ttrans: absolute translation vector as {x,y,z}\n\trot: absolute rotation matrix as {{a,b,c},{d,e,g},{g,h,i}}\n\tmmat: Modelview matrix\n\trtc: Compact matrix of rotation, translation and center"},
+   "Sets scene property:\n\tnear: Near clipping plane\n\tfar: Far clipping plane\n\tslabw: Width of clipping plane\n\tfogo: Fog distance multiplier from far clipping plane\n\teyedist: Eyedistance (stereo parameter)\n\tfov: Field of view in degree\n\tfixz: Flag that determines wether clipping planes move along with translation\n\tdither: Turn dithering on or off\n\tdepthc: Turn dpthcueing on or off\n\tbg: Background color\n\tfogc: Fog color\n\tview: can be center, left o right\n\ttrans: absolute translation vector as {x,y,z}\n\trot: absolute rotation matrix as {{a,b,c},{d,e,g},{g,h,i}}\n\tmmat: Modelview matrix\n\trtc: Compact matrix of rotation, translation and center"},
   {"show","show","Turns on graphics display"},
   {"spin","spin","Toggle spinning after mouse movement"},
   {"split","split","Toggles between split-screen stereo and normal stereo"},
@@ -395,9 +395,9 @@ int sceneCommand(int wc, char **wl)
 	gfx.transform.slabf=d2+oldd*0.5;
 	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
 	comRedraw();
-      } else if(!strcmp(prop,"fogd")) {
+      } else if(!strcmp(prop,"fogo")) {
 	/**********************
-	       set fogd
+	       set fog offset
 	**********************/
 	if(strlen(op)==0) {
 	  sprintf(message,"\nscene: missing operator");
@@ -423,11 +423,11 @@ int sceneCommand(int wc, char **wl)
 	  return -1;
 	}
 	if(gfx.fog_dist<-1.0) {
-	  comMessage("\nfogd clamped to -1.0");
+	  comMessage("\nfogo clamped to -1.0");
 	  gfx.fog_dist=-1.0;
 	}
 	if(gfx.fog_dist>1.0) {
-	  comMessage("\nfogd clamped to 1.0");
+	  comMessage("\nfogo clamped to 1.0");
 	  gfx.fog_dist=1.0;
 	}
 	gfxSetFog();
@@ -663,6 +663,51 @@ int sceneCommand(int wc, char **wl)
 	gfx.fog_color[2]=c[2];
 	glFogfv(GL_FOG_COLOR,gfx.fog_color);
 	comRedraw();
+      } else if(clStrcmp(prop,"fogm")) {
+	if(clStrlen(op)==0) {
+	  sprintf(message,"\nscene: missing operator");
+	  comMessage(message);
+	  return -1;
+	}
+	if(clStrlen(val)==0) {
+	  sprintf(message,"\nscene: missing value");
+	  comMessage(message);
+	  return -1;
+	}
+	if(!clStrcmp(op,"=")) {
+	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  comMessage(message);
+	  return -1;
+	}
+	if(clStrcmp(val,"linear")) {
+	  gfx.fog_mode=GL_LINEAR;
+	} else if(clStrcmp(val,"exp")) {
+	  gfx.fog_mode=GL_EXP;
+	} else if(clStrcmp(val,"exp2")) {
+	  gfx.fog_mode=GL_EXP2;
+	} else {
+	  comMessage("\nscene: expected linear, exp or exp2 as fog mode");
+	}
+	glFogi(GL_FOG_MODE, gfx.fog_mode);
+      } else if(clStrcmp(prop,"fogd")) {
+	if(clStrlen(op)==0) {
+	  sprintf(message,"\nscene: missing operator");
+	  comMessage(message);
+	  return -1;
+	}
+	if(clStrlen(val)==0) {
+	  sprintf(message,"\nscene: missing value");
+	  comMessage(message);
+	  return -1;
+	}
+	if(!clStrcmp(op,"=")) {
+	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  comMessage(message);
+	  return -1;
+	}
+	gfx.fog_density=atof(val);
+	glFogf(GL_FOG_DENSITY,gfx.fog_density);
+	
       } else if(!strcmp(prop,"view")) {
 	/**********************
 	       set view
@@ -871,7 +916,7 @@ int sceneCommand(int wc, char **wl)
       sprintf(message,"%g",gui.eye_dist);
     } else if(!strcmp(wl[1],"fov")){
       sprintf(message,"%g",gfx.fovy);
-    } else if(!strcmp(wl[1],"fogd")){
+    } else if(!strcmp(wl[1],"fogo")){
       sprintf(message,"%g",gfx.fog_dist);
     } else if(!strcmp(wl[1],"fixz")){
       if(gfx.fixz)

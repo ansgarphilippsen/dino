@@ -31,6 +31,7 @@ Uses GLUT
 #include "input.h"
 #include "transform.h"
 #include "cl.h"
+#include "cmi.h"
 
 struct GUI gui;
 extern struct GFX gfx;
@@ -40,6 +41,12 @@ extern int debug_mode,gfx_mode,stereo_mode;
 #ifdef CORE_DEBUG
 extern FILE *core_debug;
 #endif
+
+static void gui_redraw()
+{
+  gui.redraw++;
+  //  comRedraw();
+}
 
 static void gui_reshape(int width, int height)
 {
@@ -51,16 +58,24 @@ static void gui_reshape(int width, int height)
   glutSetWindow(gui.glut_main);
   
   gfxSetViewport();
-  comRedraw();
+  gui_redraw();
 }
+
 
 static void gui_timer(int value)
 {
+  cmiToken t;
+
   if(gui.redraw) {
     gui.redraw=0;
-    gfxRedraw();
+    t.target=CMI_TARGET_GFX;
+    t.command=CMI_REDRAW;
+    t.value=NULL;
+    cmiSubmit(&t);
+    //    gfxRedraw();
   }
-  comTimeProc();
+  //  comTimeProc();
+  cmiTimer();
   glutTimerFunc(5,gui_timer,0);
 }
 
@@ -311,6 +326,8 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 {
   int sw,sh,i;
 
+  cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback);
+
   clStrcpy(gui.message_string,"Ready");
 
   guiInitRGB();
@@ -333,7 +350,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 
   gui.glut_main=glutCreateWindow("dino gfx");
 
-  glutDisplayFunc(comRedraw);
+  glutDisplayFunc(gui_redraw);
   glutReshapeFunc(gui_reshape);
   glutMouseFunc(gui_mouse_func);
   glutMotionFunc(gui_motion_func);
@@ -390,6 +407,12 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 
   return 0;
 }
+
+void guiCMICallback(const cmiToken *t)
+{
+  
+}
+
 
 int guiMainLoop()
 {

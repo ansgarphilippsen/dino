@@ -10,6 +10,7 @@
 #include "cgfx.h"
 #include "transform.h"
 #include "render.h"
+#include "cmi.h"
 
 /****************************************
 
@@ -95,6 +96,9 @@ int comSetDefMat(struct RENDER_MATERIAL *mat);
 int comTestTex3D(int, int, int);
 
 int comGenCubeLookup();
+
+void comCMICallback(const cmiToken *t);
+
 
 #endif
 

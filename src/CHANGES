@@ -1,3 +1,10 @@
+added startup file
+
+added scene properties fogm (linear, exp exp2) and fogd (density) (not really
+usable)
+
+renamed scene property fogd to fogo (offset)
+
 added cylindrical helix rendering (helixm=1) ALPHA stage
 
 mix/max should work now in -range flag

@@ -193,9 +193,12 @@ int gfxInit()
   gfx.fog_color[3]=gfx_fog_color[3];
 
   gfx.fog=0;
+  gfx.fog_mode=GL_LINEAR;
   gfx.fog_dist=0.0;
   gfx.fog_near=gfx.transform.slabn;
   gfx.fog_far=gfx.transform.slabf;
+  gfx.fog_density=0.25;
+  
 
   gfx.offline=0;
 
@@ -227,6 +230,10 @@ int gfxInit()
   gfx.limz1=0;
   gfx.limz2=0;
 #endif
+
+  // register CMI callback
+  cmiRegisterCallback(CMI_TARGET_GFX,gfxCMICallback);
+
 
   return 0;
 }
@@ -321,7 +328,8 @@ int gfxGLInit(void)
     depth effect thru fog
   */
   glFogfv(GL_FOG_COLOR,gfx.fog_color);
-  glFogi(GL_FOG_MODE,GL_LINEAR);
+  glFogi(GL_FOG_MODE,gfx.fog_mode);
+  glFogf(GL_FOG_DENSITY,gfx.fog_density);
   if(gfx.fog)
     glEnable(GL_FOG);
 
@@ -821,4 +829,18 @@ int gfxAccPerspective(GLdouble fovy, GLdouble aspect,
   gfxAccFrustum(left, right, bottom, top, zNear, zFar, pixdx, pixdy);
 
   return 0;
+}
+
+void gfxCMICallback(const cmiToken *t)
+{
+  if(t->target==CMI_TARGET_GFX) {
+    switch(t->command) {
+    case CMI_REFRESH: comRedraw();  break;
+    case CMI_REDRAW: gfxRedraw(); break;
+    case CMI_VIEWPORT:
+
+      break;
+    default: break;
+    }
+  }
 }

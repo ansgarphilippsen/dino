@@ -1,5 +1,7 @@
 #include <sys/time.h>
 
+#include "cmi.h"
+
 #ifdef USE_FREEGLUT
 #include "GL/freeglut.h"
 #else
@@ -114,5 +116,7 @@ int guiMessage(char *m);
 int guiMessage2(char *m);
 
 void guiSwapBuffers(void);
+
+void guiCMICallback(const cmiToken *t);
 
 #endif
