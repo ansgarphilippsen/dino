@@ -438,6 +438,10 @@ static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
       val[2] += CMI_BUTTON2_MASK;
     if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
       val[2] += CMI_BUTTON3_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON4_MASK)
+      val[2] += CMI_BUTTON4_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON5_MASK)
+      val[2] += CMI_BUTTON5_MASK;
     if(cd->event->xmotion.state & GUI_SHIFT_MASK)
       val[2] += CMI_SHIFT_MASK;
     if(cd->event->xmotion.state & GUI_CNTRL_MASK)
@@ -474,6 +478,10 @@ static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
       val[2] += CMI_BUTTON2_MASK;
     if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
       val[2] += CMI_BUTTON3_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON4_MASK)
+      val[2] += CMI_BUTTON4_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON5_MASK)
+      val[2] += CMI_BUTTON5_MASK;
     if(cd->event->xmotion.state & GUI_SHIFT_MASK)
       val[2] += CMI_SHIFT_MASK;
     if(cd->event->xmotion.state & GUI_CNTRL_MASK)
@@ -519,6 +527,10 @@ static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
       val[2] += CMI_BUTTON2_MASK;
     if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
       val[2] += CMI_BUTTON3_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON4_MASK)
+      val[2] += CMI_BUTTON4_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON5_MASK)
+      val[2] += CMI_BUTTON5_MASK;
     if(cd->event->xmotion.state & GUI_SHIFT_MASK)
       val[2] += CMI_SHIFT_MASK;
     if(cd->event->xmotion.state & GUI_CNTRL_MASK)

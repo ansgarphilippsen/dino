@@ -11,12 +11,11 @@
   that receives cmi messages and passes
   them to comTransform()
 
-  NOT USED YET !
-
 ***************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "cmi.h"
 #include "com.h"
@@ -28,15 +27,42 @@ void inputInit(void)
 static void mouse_func(int ev, int state, int x, int y)
 {
   static int last_x,last_y;
+  static struct timeval tp0,tp1;
+  static long dt;
+  int dx=last_x-x;
+  int dy=last_y-y;
+  int but,mod;
+
+  but=state & CMI_BUT_MASK;
+  mod=state & CMI_MOD_MASK;
 
   switch(ev) {
-  case CMI_BUTTON_PRESS: 
+  case CMI_BUTTON_PRESS:
+    gettimeofday(&tp0,NULL);
     break;
   case CMI_BUTTON_RELEASE: 
+    gettimeofday(&tp1,NULL);
+    dt=(long)(tp1.tv_sec-tp0.tv_sec)*1000000+(tp1.tv_usec-tp0.tv_usec);
+    if(but==CMI_BUTTON1_MASK) {
+      if(dt<200000 || (dx==0 && dy==0 && dt<300000)) {
+	if(mod==CMI_SHIFT_MASK) {
+	  comPick(x,y,1);
+	} else {
+	  comPick(x,y,0);
+	}
+      }
+    } else if(but==CMI_BUTTON4_MASK) {
+      comTransform(TRANS_MOUSE, mod,2,-1.0);
+    } else if(but==CMI_BUTTON5_MASK) {
+      comTransform(TRANS_MOUSE, mod,2,1.0);
+    }
+
+    
+
     break;
   case CMI_MOTION: 
-    comTransform(TRANS_MOUSE, state, 0, last_x-x);
-    comTransform(TRANS_MOUSE, state, 1, last_y-y);
+    comTransform(TRANS_MOUSE, state, 0, dx);
+    comTransform(TRANS_MOUSE, state, 1, dy);
     break;
   }
 

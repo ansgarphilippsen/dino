@@ -1,3 +1,10 @@
+calling material without parameter will dump the current settings
+
+render detail1 is always circular/spherical subdivision, detail2 number of 
+spline segments
+
+mousewheel for zoom
+
 added (experimental) usedlist prop to scene, causes all RENDER_CUSTOM 
 modes to first generate a display list for faster rendering
 

@@ -19,6 +19,7 @@ int transCommand(transMat *trans, int command, int axis, double value)
   double *mat,mat2[16];
   double d1[4],d2[4];
 
+
   if(trans==&gfx.transform) {
     mat=trans->rot;
   } else {

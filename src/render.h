@@ -70,6 +70,7 @@ typedef struct RENDER {
 
 int renderSet(struct RENDER *render, int owc, char **owl);
 int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl);
+const char *renderGetMaterial(struct RENDER_MATERIAL *mat);
 
 #endif
 

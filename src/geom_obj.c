@@ -67,15 +67,14 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
     }
   } else if(!strcmp(wl[0],"material")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing expression", obj->name);
-      comMessage(message);
-      return -1;
+      comMessage(renderGetMaterial(&obj->render.mat));
+    } else {
+
+      if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
+	return -1;
+      
+      comRedraw();
     }
-
-    if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
-      return -1;
-
-    comRedraw();
   } else {
     sprintf(message,"\nunknown command %s",wl[0]);
   }

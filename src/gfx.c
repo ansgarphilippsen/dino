@@ -184,10 +184,10 @@ int gfxInit()
 
   transReset(&gfx.transform);
   gfx.transform.tra[2]=-100.0;
-  gfx.transform.slabn=5.0;
-  gfx.transform.slabf=500.0;
-  gfx.transform.slabn2=5.0;
-  gfx.transform.slabf2=500.0;
+  gfx.transform.slabn=10.0;
+  gfx.transform.slabf=400.0;
+  gfx.transform.slabn2=10.0;
+  gfx.transform.slabf2=400.0;
 
   gfx.scale=1.0;
   gfx.fovy=25.0;
@@ -210,7 +210,7 @@ int gfxInit()
 
   gfx.fog=0;
   gfx.fog_mode=GL_LINEAR;
-  gfx.fog_dist=0.0;
+  gfx.fog_dist=25.0;
   gfx.fog_near=gfx.transform.slabn;
   gfx.fog_far=gfx.transform.slabf;
   gfx.fog_density=0.25;

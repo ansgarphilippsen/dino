@@ -336,7 +336,8 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
       render->detail1=render->detail;
-      render->detail2=render->detail;
+      // DEPRECATED
+      //render->detail2=render->detail;
     } else if(!strcmp(prop,"detail1")) {
       /********************
 	     detail1
@@ -395,8 +396,8 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(render->detail2<1 || render->detail2>90) {
-	sprintf(message,"\nvalue out of range (1-90)");
+      if(render->detail2<1 || render->detail2>100) {
+	sprintf(message,"\nvalue out of range (1-100)");
 	comMessage(message);
 	render->detail2=oldi;
 	return -1;
@@ -459,10 +460,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	*/
       if(render->sphere_radius<render->bond_width)
 	render->sphere_radius=render->bond_width;
-      if(render->mode==RENDER_TUBE || render->mode==RENDER_HSC) {
-	comMessage("warning: use of bw for tube or hsc is deprecated, use tubew instead\n");
-	render->tube_width=render->bond_width;
-      }
+
      } else if(!strcmp(prop,"tuber")) {
       /********************
 	     tuber
@@ -1256,4 +1254,22 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
     }
   }
   return 0;
+}
+
+static char mat_buf[1024];
+
+const char *renderGetMaterial(struct RENDER_MATERIAL *mat)
+{
+  sprintf(mat_buf,"Current material setting:\namb: {%.3f,%.3f,%.3f}\nspec: {%3f,%3f,%3f}\nshin: %d\nemm: {%.3f,%.3f,%.3f}\n",
+	  mat->amb[0],
+	  mat->amb[1],
+	  mat->amb[2],
+	  mat->spec[0],
+	  mat->spec[1],
+	  mat->spec[2],
+	  mat->shin,
+	  mat->emm[0],
+	  mat->emm[1],
+	  mat->emm[2]);
+  return mat_buf;
 }

@@ -53,15 +53,25 @@ int gridObjCommand(struct DBM_GRID_NODE *node, gridObj *obj, int wc, char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"material")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing expression", obj->name);
+      sprintf(message,"Current material setting:\namb: {%.3f,%.3f,%.3f}\nspec: {%3f,%3f,%3f}\nshin: %3f\nemm: {%.3f,%.3f,%.3f}\n",
+	      obj->render.mat.amb[0],
+	      obj->render.mat.amb[1],
+	      obj->render.mat.amb[2],
+	      obj->render.mat.spec[0],
+	      obj->render.mat.spec[1],
+	      obj->render.mat.spec[2],
+	      obj->render.mat.shin,
+	      obj->render.mat.emm[0],
+	      obj->render.mat.emm[1],
+	      obj->render.mat.emm[2]);
       comMessage(message);
-      return -1;
+    } else {
+
+      if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
+	return -1;
+      
+      comRedraw();
     }
-
-    if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
-      return -1;
-
-    comRedraw();
   } else if(!strcmp(wl[0],"set")) {
     return gridObjComSet(obj, wc-1, wl+1);
   } else if(!strcmp(wl[0],"renew")) {

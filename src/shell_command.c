@@ -41,6 +41,7 @@ static void alias_list(const char *reg);
 static const char * alias_get(const char *reg);
 static void alias_def(const char *name, const char **wl, int wc);
 static void alias_undef(const char *name);
+static void init_vars(void);
 
 #define MAXSCRIPTLEVEL 256
 
@@ -96,6 +97,8 @@ int shellInit(void)
 			      sizeof(struct SHELL_ALIAS_ENTRY));
 
   shell_subexp=Cmalloc(10240);
+
+  init_vars();
 
   return 0;
 }
@@ -766,3 +769,30 @@ static const char *alias_get(const char *name)
   return NULL;
 }
 
+// variable initialization
+static char *varlist[]={
+  "protein", "(rname=ALA,CYS,ASP,GLU,PHE,GLY,HIS,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR)",
+  "dna","(rname=A,C,G,T,ADE,CYT,GUA,THY)",
+  "dna","(rname=A,C,G,T,ADE,CYT,GUA,THY)",
+  "rna","(rname=A,C,G,U,ADE,CYT,GUA,URA)",
+  "aliphatic","(rname=ALA,GLY,ILE,LEU,MET,PRO,VAL)",
+  "aromatic","(rname=PHE,TYR,TRP)",
+  "hydrophobic","(rname=ALA,VAL,PHE,PRO,MET,ILE,LEU,TRP)",
+  "basic","(rname=LYS,ARG)",
+  "basic2","((rname=LYS and aname=NZ) or (rname=ARG and aname=NH1,NH2))",
+  "acidic","(rname=ASP,GLU)",
+  "acidic2","((rname=GLU and aname=OE1,OE2) or (rname=ASP and aname=OD1,OD2))",
+  "polar","(rname=SER,THR,TYR,HIS,CYS,ASN,GLN)",
+  "polar2","((rname=SER and aname=OG) or (rname=THR and aname=OG1) or (rname=TYR and aname=OH) or (rname=HIS and aname=ND1,NE2) or (rname=CYS and aname=SG) or (rname=ASN and aname=OD1,ND1) or (rname=GLN and aname=OE1,NE1) or (rname=TRP and aname=NE1))",
+  "CP","{0,0,0}",
+  NULL,NULL
+
+};
+
+static void init_vars(void)
+{
+  int i;
+  for(i=0;varlist[i]!=NULL;i+=2)
+    shellSetVar(varlist[i],varlist[i+1]);
+
+}

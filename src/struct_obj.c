@@ -27,7 +27,6 @@
 
 //static char struct_obj_return[256];
 
-
 int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **wl)
 {
   int i,od;
@@ -121,15 +120,13 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     comRedraw();
   } else if(!strcmp(wl[0],"material")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing expression", obj->name);
-      comMessage(message);
-      return -1;
+      comMessage(renderGetMaterial(&obj->render.mat));
+    } else {
+      if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
+	return -1;
+      
+      comRedraw();
     }
-
-    if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
-      return -1;
-
-    comRedraw();
   } else if(!strcmp(wl[0],"set")) {
     return structObjComSet(obj, wc-1, wl+1);
   } else if(!strcmp(wl[0],"renew")) {
@@ -186,6 +183,9 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
       return structObjFix(obj,wc-1,wl+1);
     }
 #endif
+  } else if(clStrcmp(wl[0],"tunnelvision")) {
+    tunnelvision(obj);
+
   } else {
     sprintf(message,"\n%s: unknown command %s",obj->name,wl[0]);
     comMessage(message);
@@ -898,8 +898,8 @@ int structSmooth(struct STRUCT_OBJ *obj)
   // maximal size
   point_list=Ccalloc(obj->bond_count+10,sizeof(cgfxSplinePoint));
   
-  // detail level from render struct
-  detail=obj->render.detail1;
+  // detail level for number of segments
+  detail=obj->render.detail2;
   if(detail<1)
     detail=1;
   
@@ -912,6 +912,9 @@ int structSmooth(struct STRUCT_OBJ *obj)
   
   // go through each segment
   bc=0;
+
+  /* TV */
+  obj->tvc=0;
   
   while(bc<obj->bond_count) {
     
@@ -1112,6 +1115,24 @@ int structSmooth(struct STRUCT_OBJ *obj)
     cgfxAppend(&obj->va,&va);
 
     Cfree(va.p);
+    /* TV */
+    if(obj->tvc+detail*pc>=obj->tvm) {
+      obj->tvm+=1024;
+      obj->tv=Crecalloc(obj->tv,obj->tvm,sizeof(struct STRUCT_TV));
+    }
+    for(i=0;i<detail*pc;i++) {
+      obj->tv[obj->tvc].px=spoint_list[i].v[0];
+      obj->tv[obj->tvc].py=spoint_list[i].v[1];
+      obj->tv[obj->tvc].pz=spoint_list[i].v[2];
+      obj->tv[obj->tvc].dx=spoint_list[i].d[0];
+      obj->tv[obj->tvc].dy=spoint_list[i].d[1];
+      obj->tv[obj->tvc].dz=spoint_list[i].d[2];
+      obj->tv[obj->tvc].nx=spoint_list[i].n[0];
+      obj->tv[obj->tvc].ny=spoint_list[i].n[1];
+      obj->tv[obj->tvc].nz=spoint_list[i].n[2];
+      obj->tvc++;
+    }
+    /* TV */
 
     Cfree(spoint_list);
 
@@ -1604,7 +1625,7 @@ int structObjGenVA(structObj *obj)
       Cfree(obj->va.p);
     }
 
-    detail=1+(int)(obj->render.detail1/2);
+    detail=obj->render.detail1;
     size=((detail*2-2)*detail*4*2+2*detail*2)*2*obj->atom_count;
     
     obj->va.count=0;
@@ -1630,7 +1651,7 @@ int structObjGenVA(structObj *obj)
       Cfree(obj->va.p);
     }
 
-    detail=1+(int)(obj->render.detail1/2);
+    detail=obj->render.detail1;
 
     size=((detail*2-2)*detail*4*2+2*detail*2)*3*obj->atom_count;
     size+=detail*4*2*3*2;
@@ -1877,3 +1898,4 @@ int structObjDelete(structObj *obj)
     Cfree(obj->va.p);
   return 0;
 }
+

@@ -86,12 +86,13 @@ int structDrawObj(structObj *obj)
   int i,j;
   float p0[3],p1[3],p2[3];
   float bl2;
-  int detail,cf;
+  int detail;
   float bond_width,sphere_radius;
   char label[256];
   float sd=0.2;
   int cyl_type;
 
+  glPushAttrib(GL_ENABLE_BIT | GL_LIGHTING_BIT);
 
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, obj->render.mat.amb);
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, obj->render.mat.spec);
@@ -117,14 +118,6 @@ int structDrawObj(structObj *obj)
   if(obj->render.stipple_flag) {
     glEnable(GL_LINE_STIPPLE);
     glLineStipple(10,0xAAAA);
-  }
-
-
-  if(obj->r==-1.0) {
-    cf=1;
-  } else {
-    cf=0;
-    glColor3d(obj->r, obj->g, obj->b);
   }
 
   switch(obj->render.mode) {
@@ -167,8 +160,6 @@ int structDrawObj(structObj *obj)
     //    if(obj->render.transparency<1.0)
     glEnable(GL_CULL_FACE);
 
-    if(cf)
-      glColor4f(1.0,1.0,1.0,0.1);
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
 //    glEnable(GL_VERTEX_ARRAY);
@@ -220,31 +211,30 @@ int structDrawObj(structObj *obj)
       p1[0]=(p2[0]-p0[0])*0.50+p0[0];
       p1[1]=(p2[1]-p0[1])*0.50+p0[1];
       p1[2]=(p2[2]-p0[2])*0.50+p0[2];
-      if(cf)
-	glColor4f(obj->bond[i].prop1->r,
-		  obj->bond[i].prop1->g,
-		  obj->bond[i].prop1->b,
-		  obj->render.transparency);
+
+      glColor4f(obj->bond[i].prop1->r,
+		obj->bond[i].prop1->g,
+		obj->bond[i].prop1->b,
+		obj->render.transparency);
       glVertex3fv(p0);
       glVertex3fv(p1);
-      if(cf)
-	glColor4f(obj->bond[i].prop2->r,
-		  obj->bond[i].prop2->g,
-		  obj->bond[i].prop2->b,
-		  obj->render.transparency);
+
+      glColor4f(obj->bond[i].prop2->r,
+		obj->bond[i].prop2->g,
+		obj->bond[i].prop2->b,
+		obj->render.transparency);
       glVertex3fv(p1);
       glVertex3fv(p2);
     }
-
+    
     for(i=0;i<obj->s_bond_count;i++) {
       p0[0]=obj->s_bond[i].atom->p->x;
       p0[1]=obj->s_bond[i].atom->p->y;
       p0[2]=obj->s_bond[i].atom->p->z;
-      if(cf)
-	glColor4f(obj->s_bond[i].prop->r,
-		  obj->s_bond[i].prop->g,
-		  obj->s_bond[i].prop->b,
-		  obj->render.transparency);
+      glColor4f(obj->s_bond[i].prop->r,
+		obj->s_bond[i].prop->g,
+		obj->s_bond[i].prop->b,
+		obj->render.transparency);
       glVertex3f(p0[0]-sd,p0[1],p0[2]);
       glVertex3f(p0[0]+sd,p0[1],p0[2]);
       glVertex3f(p0[0],p0[1]-sd,p0[2]);
@@ -302,9 +292,9 @@ int structDrawObj(structObj *obj)
     glEnable(GL_LIGHTING);
     glEnable(GL_CULL_FACE);
 
-    glEnable(GL_VERTEX_ARRAY);
-    glEnable(GL_NORMAL_ARRAY);
-    glEnable(GL_COLOR_ARRAY);
+    //glEnable(GL_VERTEX_ARRAY);
+    //glEnable(GL_NORMAL_ARRAY);
+    //glEnable(GL_COLOR_ARRAY);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
@@ -323,9 +313,9 @@ int structDrawObj(structObj *obj)
     glDrawArrays(GL_TRIANGLES,0,obj->va.count);
 #endif
 
-    glDisable(GL_VERTEX_ARRAY);
-    glDisable(GL_NORMAL_ARRAY);
-    glDisable(GL_COLOR_ARRAY);
+    //glDisable(GL_VERTEX_ARRAY);
+    //glDisable(GL_NORMAL_ARRAY);
+    //glDisable(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
@@ -368,11 +358,11 @@ int structDrawObj(structObj *obj)
       glfDrawString(label);
     }
   }
-  glEnable(GL_LIGHTING);
+
+  glPopAttrib();
 
   
   return 0;
-
 }
 
 int structDrawBDObj(dbmStructNode *node, structObj *obj)
@@ -383,6 +373,8 @@ int structDrawBDObj(dbmStructNode *node, structObj *obj)
   float sd=0.2;
   int detail;
   float bond_width,sphere_radius;
+
+  glPushAttrib(GL_ENABLE_BIT | GL_LIGHTING_BIT);
 
   f=node->frame;
 
@@ -481,7 +473,7 @@ int structDrawBDObj(dbmStructNode *node, structObj *obj)
     break;
   }
 
-  glEnable(GL_LIGHTING);
+  glPopAttrib();
 
   return 0;
 }

@@ -933,7 +933,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       for(k=0;k<=sp[i].pc;k++) {
 	va->max+=pro1.pc*6;
       }
-    
+    va->max+=pro1.pc*20;
     
     va->count=0;
     va->p=Crecalloc(NULL,va->max, sizeof(cgfxVAField));
@@ -946,7 +946,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       render2->strand_thickness*=sp[0].rad;
       render2->tube_width*=sp[0].rad;
     }
-    cgfxSphereVA(render2->tube_width,sp[0].v,sp[0].colp[0],va,render->detail1);
+    bw_save=render2->tube_width;
     
     //    for(i=0;i<pc-1;i++) {
     for(i=0;i<pc-1;i++) {
@@ -1083,18 +1083,16 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       
     }
 
-    // TODO
-    //cgfxSphereVA(sp[0].rad,sp[0].v,sp[0].colp[0],va,render->detail1);
-    //cgfxSphereVA(sp[pc-1].rad,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
+    cgfxSphereVA(bw_save,sp[0].v,sp[0].colp[0],va,render->detail1);
     cgfxSphereVA(render2->tube_width,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
 
     if(render->mode==RENDER_HSC) {
       for(i=0;i<pc;i++) {
 	if(sp[i].id==CGFX_NA) {
 	  if(render->na_method==0) {
-	    cgfxGenNA(va, sp+i, render);
+	    cgfxGenNA(va, &sp[i], render);
 	  } else {
-	    cgfxGenNA2(va,sp+i, render);
+	    cgfxGenNA2(va,&sp[i], render);
 	  }
 	}
       }    
@@ -1402,7 +1400,7 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
   double angle,frac,r1,r2,rad1,rad2;
   int detail;
 
-  detail=render->detail2;
+  detail=render->detail1;
 
   switch(type) {
   case CGFX_HELIX:

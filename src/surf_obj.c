@@ -15,7 +15,7 @@
 
 int surfObjCommand(struct DBM_SURF_NODE *node, surfObj *obj, int wc, char **wl)
 {
-  char message[256];
+  char message[512];
   char *empty_com[]={"get","center"};
   int i;
   float ot;
@@ -64,15 +64,12 @@ int surfObjCommand(struct DBM_SURF_NODE *node, surfObj *obj, int wc, char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"material")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing expression", obj->name);
-      comMessage(message);
-      return -1;
+      comMessage(renderGetMaterial(&obj->render.mat));
+    } else {
+      if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
+	return -1;
+      comRedraw();
     }
-
-    if(renderMaterialSet(&obj->render.mat,wc-1,wl+1)!=0)
-      return -1;
-
-    comRedraw();
   } else if(!strcmp(wl[0],"set")) {
     return surfObjComSet(obj, wc-1, wl+1);
   } else if(!strcmp(wl[0],"renew")) {

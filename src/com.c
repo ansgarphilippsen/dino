@@ -107,6 +107,8 @@ struct HELP_ENTRY top_help[] = {
 
 static char init_command[1024];
 static int init_command_flag=0;
+static int tunnelvision_flag=0;
+static int tunnelvision2(structObj *obj2,int f);
 
 int comInit()
 {
@@ -123,6 +125,8 @@ int comInit()
     {1, CMI_BUTTON1_MASK | CMI_SHIFT_MASK, TRANS_TRAY, 1.0},
     {0, CMI_BUTTON2_MASK , TRANS_TRAZ, -0.2},
     {1, CMI_BUTTON2_MASK , TRANS_TRAZ, -0.5},
+    {2, 0 , TRANS_TRAZ, 10.0},
+    {2, CMI_SHIFT_MASK , TRANS_TRAZ, 50.0},
     {0, CMI_BUTTON1_MASK | CMI_BUTTON2_MASK, TRANS_ROTZ, 1.0},
     {1, CMI_BUTTON1_MASK | CMI_BUTTON2_MASK, TRANS_ROTZ, -1.0},
     {0, CMI_BUTTON2_MASK | CMI_SHIFT_MASK, TRANS_SLABN, 0.2},
@@ -694,6 +698,19 @@ void comTimeProc()
      check for other periodic stuff, e.g. the SGI spin or
      playing a trajectory file
   */
+
+  if(tunnelvision_flag) {
+    if(tunnelvision_flag==2) {
+      tunnelvision2(NULL,3);
+      tunnelvision_flag=0;
+    } else {
+      if(tunnelvision2(NULL,2)==-1) {
+	tunnelvision2(NULL,3);
+	tunnelvision_flag=0;
+      }
+    }
+  }
+
   if(com.play_count>0) {
     for(i=0;i<com.play_count;i++)
       switch(com.play_node[i]->common.type) {
@@ -719,7 +736,7 @@ void comTimeProc()
     //comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,0,gfx.sdx);
     //comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,1,gfx.sdy);
 #endif
-    comRedraw();
+    //    comRedraw();
   }
 
   if(com.benchmark) {
@@ -737,9 +754,6 @@ void comTimeProc()
     }
     comRedraw();
   }
-#ifdef EXPO
-  apIdle();
-#endif     
 }
 
 void comDBRedraw()
@@ -823,13 +837,7 @@ void comMessage(const char *s)
   shellOut(s);
 #endif
 }
-#ifdef USE_CMI
-int comPick(int screenx, int screeny, int flag)
-{
-  return 0;
-}
 
-#else
 int comPick(int screenx, int screeny, int flag)
 {
   int i,j,f,l;
@@ -846,8 +854,8 @@ int comPick(int screenx, int screeny, int flag)
   struct STRUCT_ATOM **atomlist,*atom;
   char cs[256],pick[256];
 #endif
-  double eye_dist=gui.eye_dist;
-  double eye_offset=gui.eye_offset;
+  double eye_dist=gfx.eye_dist;
+  double eye_offset=gfx.eye_offset;
   double v[3];
 
   char message[2560],message2[256];
@@ -859,7 +867,7 @@ int comPick(int screenx, int screeny, int flag)
   picklist.ele=Crecalloc(NULL,picklist.max,sizeof(dbmPickElement));
 #endif
 
-  if(!gui.stereo_mode) {
+  if(!gfx.stereo_mode) {
     eye_offset=0.0;
     eye_dist=0.0;
   }
@@ -897,7 +905,7 @@ int comPick(int screenx, int screeny, int flag)
   glGetIntegerv(GL_VIEWPORT,viewport);
   
   sx=(GLdouble)screenx;
-  sy=(GLdouble)((double)gui.win_height-(double)screeny);
+  sy=(GLdouble)((double)gfx.win_height-(double)screeny);
 
   if(gluUnProject(sx,sy,0.0,
 		  mmatrix,pmatrix,viewport,
@@ -1134,7 +1142,6 @@ int comPick(int screenx, int screeny, int flag)
 #endif
   return 0;
 }
-#endif
 
 int comCustom(double value)
 {
@@ -1836,15 +1843,19 @@ int comGetMinMaxSlab()
   gluUnProject(fx,fy,fz,im,pm,vp,&vx,&vy,&vz);
   far=-vz;
 
+  near-=3.0;
+  if(near<0.0)
+    near=1.0;
+
   if(f) {
     gfx.transform.slabn=near;
     gfx.transform.slabf=far;
     gfxSetSlab(near,far);
     gfxSetFog();
   } else {
-    gfx.transform.slabn=1;
-    gfx.transform.slabf=1000;
-    gfxSetSlab(1,1000);
+    gfx.transform.slabn=10;
+    gfx.transform.slabf=400;
+    gfxSetSlab(10,400);
     gfxSetFog();    
   }  
   return 0;
@@ -1913,9 +1924,9 @@ int comTransform(int device, int mask, int axis, int ivalue)
   double value=(double)ivalue;
 
 #ifdef USE_CMI
-  mask &= CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_BUTTON3_MASK | CMI_BUTTON4_MASK | CMI_SHIFT_MASK | CMI_CNTRL_MASK | CMI_LOCK_MASK;
+  mask &= CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_BUTTON3_MASK | CMI_BUTTON4_MASK | CMI_BUTTON5_MASK | CMI_SHIFT_MASK | CMI_CNTRL_MASK | CMI_LOCK_MASK;
 #else
-  mask &= GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_BUTTON3_MASK | GUI_BUTTON4_MASK | GUI_SHIFT_MASK | GUI_CNTRL_MASK | GUI_LOCK_MASK;
+  mask &= GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_BUTTON3_MASK | GUI_BUTTON4_MASK | GUI_BUTTON5_MASK | GUI_SHIFT_MASK | GUI_CNTRL_MASK | GUI_LOCK_MASK;
 #endif
 
 
@@ -2068,5 +2079,80 @@ void comCMICallback(const cmiToken *t)
     default: break;
     }
   }
+
+  if(tunnelvision_flag) tunnelvision_flag=2;
+
 }
 #endif
+
+static int tunnelvision2(structObj *obj2,int f)
+{
+  static int step=0;
+  static structObj *obj;
+
+  if(f==1) {
+    step=0;
+    obj=obj2;
+
+
+  } else if(f==2) {
+    if(obj==NULL)
+      return -1;
+
+    glwClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(obj->tv[step].px,
+	      obj->tv[step].py,
+	      obj->tv[step].pz,
+	      obj->tv[step].px+obj->tv[step].nx,
+	      obj->tv[step].py+obj->tv[step].ny,
+	      obj->tv[step].pz+obj->tv[step].nz,
+	      obj->tv[step].dx,
+	      obj->tv[step].dy,
+	      obj->tv[step].dz);
+    
+    glLightfv(GL_LIGHT0,GL_POSITION,gfx.light[0].pos);
+    
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_LIGHTING);
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+
+    glEnable(GL_VERTEX_ARRAY);
+    glEnable(GL_NORMAL_ARRAY);
+    glEnable(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glVertexPointer(3,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].v[0]);
+    glNormalPointer(GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].n[0]);
+    glColorPointer(4,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].c[0]);
+    glDrawArrays(GL_TRIANGLES,0,obj->va.count);
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    glDisable(GL_VERTEX_ARRAY);
+    glDisable(GL_NORMAL_ARRAY);
+    glDisable(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    guiSwapBuffers();
+    step++;
+    fprintf(stderr,"step %d\n",step);
+    if(step>=obj->tvc) {
+      step=0;
+      return -1;
+    }
+  } else {
+  }
+  return 0;
+}
+
+void tunnelvision(structObj *obj)
+{ 
+  if(!(obj->render.mode==RENDER_HSC || obj->render.mode==RENDER_TUBE))
+    return;
+  
+  tunnelvision_flag=1;
+  tunnelvision2(obj,1);
+}

@@ -74,6 +74,9 @@ enum {
 #define CMI_BUTTON4_MASK (1<<11)
 #define CMI_BUTTON5_MASK (1<<12)
 
+#define CMI_MOD_MASK (1<<0 | 1<<1 | 1<<2 | 1<<3 | 1<<4 | 1<<5 | 1<<6 | 1<<7)
+#define CMI_BUT_MASK (1<<8 | 1<<9 | 1<<10 | 1<<11 | 1<<12)
+
 // special keys starting above 0x100
 #define CMI_KEY_SPECIAL 0x100
 #define CMI_KEY_RETURN  0x101
