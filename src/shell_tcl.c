@@ -1076,6 +1076,7 @@ static int shellParse(int wc, const char **wl,int pos)
   FILE *f;
   struct stat st;
   const char *scriptfile;
+  char tcl_file[1024],*tcl_file_buf;
   char message[256];
   struct SHELL_INSTANCE *child;
   struct SHELL_EXPR_STACK *os;
@@ -1089,8 +1090,17 @@ static int shellParse(int wc, const char **wl,int pos)
   if(wc<1)
     return SHELL_ERROR;
 
+  if(shell.state==SHELL_SCRIPT) {
+    // echo commands
+    shellEcho(wc,wl);
+  }
+
   if(wl[0][0]=='@') {
-    /* script */
+    /*
+    clStrncpy(tcl_file,&wl[0][1],1023);
+    Tcl_EvalFile(shell.tcl_interp,tcl_file);
+    */
+
     if(shell.instance_count>1024) {
       shellOut("\nMaximum nesting level (1024) reached");
       return SHELL_ERROR;
@@ -1106,54 +1116,70 @@ static int shellParse(int wc, const char **wl,int pos)
       sprintf(message,"\nzero length file: %s",scriptfile);
       shellOut(message);
       return SHELL_ERROR;
-    } else {
+    }
+
+    /* new code starts here*/
+    tcl_file_buf=Cmalloc(st.st_size+1);
+    fread(tcl_file_buf,st.st_size,1,f);
+    tcl_file_buf[st.st_size]='\0';
+    i=0;
+    while(i<st.st_size-1) {
+      if(tcl_file_buf[i]=='/' && tcl_file_buf[i+1]=='/') {
+	j=i;
+	while(j<st.st_size-1) {
+	  if(tcl_file_buf[j]=='\n' ||
+	     tcl_file_buf[j]=='\r')
+	    break;
+	  tcl_file_buf[j]=' ';
+	  j++;
+	}
+      }
+      i++;
+    }
+    fclose(f);
+    shell.state=SHELL_SCRIPT;
+    Tcl_EvalEx(shell.tcl_interp,tcl_file_buf,st.st_size,TCL_EVAL_GLOBAL);
+    shell.state=SHELL_INTERACTIVE;
+    Cfree(tcl_file_buf);
+
+    /* old code below */    
+    /*
       child=Ccalloc(1,sizeof(struct SHELL_INSTANCE));
       child->state=SHELL_SCRIPT;
       child->buf_size=st.st_size+256;
       child->buf=Cmalloc(child->buf_size);
       if(child->buf==NULL) {
-	sprintf(message,"\nmemory allocation error");
-	shellOut(message);
-	return SHELL_ERROR;
+      sprintf(message,"\nmemory allocation error");
+      shellOut(message);
+      return SHELL_ERROR;
       }
-    }
-    fread(child->buf,child->buf_size,1,f);
-    fclose(f);
-    child->buf[st.st_size]='\0';
-    strcat(child->buf,"\nEOF");
-    child->buf_pos=0;
-
-    child->var=shell.current->var;
-    child->var_max=shell.current->var_max;
-
-    child->argc=wc-1;
-    /*
-      argv[0] will point to the complete argument string,
-      while each argv[1], etc to the beginning of each
-      argument. Later on, free will be called with
-      argv[0] as argument
-    */
-    
-    arglen=0;
-    for(i=1;i<wc;i++)
+      fread(child->buf,child->buf_size,1,f);
+      fclose(f);
+      child->buf[st.st_size]='\0';
+      strcat(child->buf,"\nEOF");
+      child->buf_pos=0;
+      child->var=shell.current->var;
+      child->var_max=shell.current->var_max;
+      child->argc=wc-1;
+      arglen=0;
+      for(i=1;i<wc;i++)
       arglen+=(strlen(wl[i])+1);
-
-    child->argv[0]=Ccalloc(arglen+64,sizeof(char));
-    arglen=0;
-    for(i=1;i<wc;i++) {
+      child->argv[0]=Ccalloc(arglen+64,sizeof(char));
+      arglen=0;
+      for(i=1;i<wc;i++) {
       child->argv[i]=child->argv[0]+arglen;
       strcpy(child->argv[0]+arglen,wl[i]);
       arglen+=strlen(wl[i]);
       child->argv[0][arglen++]='\0';
-    }
-    
-    child->parent=shell.current;
-    shell.current->child=child;
-    shell.current=child;
-    
-    shell.state=SHELL_SCRIPT;
-    shell.instance_count++;
-    
+      }
+      
+      child->parent=shell.current;
+      shell.current->child=child;
+      shell.current=child;
+      
+      shell.state=SHELL_SCRIPT;
+      shell.instance_count++;
+    */
   } else if(wl[0][0]=='!') {
     // system subcommand
     shellOut("\n");
@@ -2009,11 +2035,14 @@ int shellWork()
 
 int shellWorkPrompt(const char *raw_prompt2, int pos, char **result)
 {
-  const char *s=raw_prompt2;
+  const char *s;
+
+  s=raw_prompt2;
   Tcl_DStringSetLength(&shell.tcl_ds,0);
   Tcl_EvalEx(shell.tcl_interp,
-	     Tcl_ExternalToUtfDString(NULL,s,strlen(s),&shell.tcl_ds),
+	     Tcl_ExternalToUtfDString(NULL,s,clStrlen(s),&shell.tcl_ds),
 	     -1,TCL_EVAL_GLOBAL);
+
   return SHELL_OK;
 }
 

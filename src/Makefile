@@ -16,7 +16,7 @@
 OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL
 
 # use tcl as interpreter
-#OPTIONS += -DTCL_SHELL
+OPTIONS += -DTCL_SHELL
 
 # several GUIs, one must be chosen !
 # SDL_GLUT
