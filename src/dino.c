@@ -23,18 +23,8 @@
 #include "scene.h"
 #include "startup.h"
 
-#ifdef NEW_SHELL
 #include "shell_command.h"
 #include "gui_terminal.h"
-#else
-#include "shell.h"
-#endif
-
-#ifndef USE_CMI
-//#include "gui_ext.h"
-#include "gui.h"
-extern struct GUI gui;
-#endif
 
 const char usage[]={"Usage: dino [-debug] [-stereo] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
 
@@ -200,12 +190,7 @@ int dinoMain(int argc,char **argv)
   debmsg("calling sceneInit");
   if(sceneInit()<0) return -1;
 
-#ifdef NEW_SHELL
   if(shellInit(logfile)<0) return -1;
-#else
-  debmsg("calling shellInit");
-  shellInit((shell_callback)comWorkPrompt,logfile);
-#endif
 
 
   /*
@@ -217,20 +202,10 @@ int dinoMain(int argc,char **argv)
 
   if(strlen(script)>0) {
     sprintf(expr,"@%s",script);
-#ifdef USE_CMI
     comRawCommand(expr);
-#else
-    comSetInitCommand(expr);
-#endif
   }
 
-#ifdef USE_CMI
   comMessage("\n");
-#endif
-
-#ifndef NEW_SHELL
-  shellPrompt();
-#endif
 
   return 0;
 }
@@ -241,24 +216,11 @@ void dinoExit(int n)
   comOutit();
 
 #ifndef OSX
-#ifdef NEW_SHELL
   guitOutit();
-#else
-  shellOutit();
-#endif
 #endif
   
 #ifdef SGI
   cmiStereo(0);
-#endif
-
-#ifdef LINUX
-#ifndef USE_CMI
-#ifndef INTERNAL_COLOR
-  if(strlen(gui.gdbm_tmpfile)>0)
-    remove(gui.gdbm_tmpfile);
-#endif
-#endif
 #endif
 
   exit(n);

@@ -981,7 +981,6 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-#ifdef RENDER_SOLID
     } else if(!strcmp(prop,"solid")) {
       if(gfx_flags & DINO_FLAG_NOSTENCIL) {
 	comMessage("Solid rendering not possible on this display: missing stencil buffer\n");
@@ -1031,7 +1030,6 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       render->solidc[0]=col[0];
       render->solidc[1]=col[1];
       render->solidc[2]=col[2];
-#endif
     } else if(!strcmp(prop,"stipple")) {
       /********************
 	      stipple

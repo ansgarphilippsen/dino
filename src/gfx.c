@@ -30,17 +30,10 @@
 #include "scene.h"
 
 
-#ifdef USE_CMI
 #include "cmi.h"
 #include "gui_ext.h"
-#else
-#include "gui.h"
-#endif
 
 extern struct SCENE scene;
-#ifndef USE_CMI
-extern struct GUI gui;
-#endif
 struct GFX gfx;
 
 extern int debug_mode,gfx_mode;
@@ -244,22 +237,17 @@ int gfxInit()
 
   gfx.dlist_flag=1;
 
-#ifdef USE_CMI
   gfxCMIInit();
-#endif
 
   return 0;
 }
 
-#ifdef USE_CMI
 int gfxCMIInit(void)
 {
   // register CMI callback
   cmiRegisterCallback(CMI_TARGET_GFX,gfxCMICallback);
   return 0;
 }
-#endif
-
 
 /******************************************
 
@@ -449,42 +437,6 @@ int gfxGLInit(void)
 int gfxRedraw() 
 {
   int ws;
-#ifndef USE_CMI
-  if (gui.stereo_mode==GUI_STEREO_SPLIT) {
-    glwDrawBuffer(GLW_STEREO_RIGHT);
-    gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
-    glViewport(0,0,gui.win_width/2, gui.win_height);
-    gfxSetProjection(GFX_RIGHT);
-    gfxSceneRedraw(1);
-    comDBRedraw();
-    glViewport(gui.win_width/2+1,0,gui.win_width/2, gui.win_height);
-    gfxSetProjection(GFX_LEFT);
-    gfxSceneRedraw(0);
-    comDBRedraw();
-#ifdef SGI_STEREO
-  } else if(gui.stereo_mode==GUI_STEREO_NORMAL) {
-    if(gui.stereo_available==SGI_STEREO_LOW)
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height*0.5;
-    else
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height;
-    glwDrawBuffer(GLW_STEREO_RIGHT);
-    gfxSetProjection(GFX_RIGHT);
-    gfxSceneRedraw(1);
-    comDBRedraw();
-    glwDrawBuffer(GLW_STEREO_LEFT);
-    gfxSetProjection(GFX_LEFT);
-    gfxSceneRedraw(1);
-    comDBRedraw();
-#endif
-  } else {
-    glwDrawBuffer(GLW_STEREO_CENTER);
-    gfxSetProjection(gfx.current_view);
-    gfxSceneRedraw(1);
-    comDBRedraw();
-  }
-
-#else
-
   if(gfx.stereo_mode==GFX_STEREO_SPLIT) {
 #ifdef SGI_STEREO
     glwDrawBuffer(GLW_STEREO_CENTER);
@@ -531,7 +483,6 @@ int gfxRedraw()
     gfxSceneRedraw(1);
     comDBRedraw();
   }
-#endif
   
   guiSwapBuffers();
   
@@ -633,13 +584,8 @@ int gfxSceneRedraw(int clear)
 
 int gfxSetViewport(void)
 {
-#ifdef USE_CMI
   glViewport(0,0,gfx.win_width, gfx.win_height);
   gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;
-#else
-  glViewport(0,0,gui.win_width, gui.win_height);
-  gfx.aspect=(double)gui.win_width/(double)gui.win_height;
-#endif
   gfxSetProjection(gfx.current_view);
   return 0;
 }
@@ -647,7 +593,6 @@ int gfxSetViewport(void)
 int gfxSetProjection(int view)
 {
   GLdouble iod,fd;
-#ifdef USE_CMI
   if(view==GFX_LEFT) {
     iod=-gfx.eye_dist;
     fd=gfx.eye_offset;
@@ -658,18 +603,6 @@ int gfxSetProjection(int view)
     iod=0.0;
     fd=0.0;
   }
-#else
-  if(view==GFX_LEFT) {
-    iod=-gui.eye_dist;
-    fd=gui.eye_offset;
-  } else if(view==GFX_RIGHT) {
-    iod=gui.eye_dist;
-    fd=gui.eye_offset;
-  } else {
-    iod=0.0;
-    fd=0.0;
-  }
-#endif
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -929,7 +862,6 @@ int gfxAccPerspective(GLdouble fovy, GLdouble aspect,
   return 0;
 }
 
-#ifdef USE_CMI
 void gfxCMICallback(const cmiToken *t)
 {
   if(t->target==CMI_TARGET_GFX) {
@@ -946,7 +878,6 @@ void gfxCMICallback(const cmiToken *t)
     }
   }
 }
-#endif
 
 static void draw_axis()
 {

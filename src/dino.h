@@ -3,11 +3,7 @@
 
 typedef char* string;
 
-#ifdef NEW_SHELL
 #define debmsg(m) if(debug_mode) fprintf(stderr,"[DEBUG] %s\n",m)
-#else
-#define debmsg(m) if(debug_mode) fprintf(stderr,"\n[DEBUG] %s",m)
-#endif
 
 #define VERSION "0.8.6"
 

@@ -29,12 +29,8 @@ enum  {CGFX_SLINE,
 
 typedef struct CGFX_POINT {
   float v[4],n[4],d[4];
-#ifdef HSC_NEWCOL
   float col[3][4];
-  int fc; // this parameter is not working!
-#else
-  float c[4];
-#endif
+  int fc;
 }cgfxPoint;
 
 typedef struct CGFX_D_POINT {
@@ -46,11 +42,7 @@ typedef struct CGFX_SPLINEC {
   int pc;
   int id,ext, res_id;
   float v[4],n[4],d[4],*v1,*v2,*v3,*v4,*v5,*v6;
-#ifdef HSC_NEWCOL
   float *colp[3];
-#else
-  float c[4],c2[4],c3[4];
-#endif
   float rad;
 }cgfxSplinePoint;
 

@@ -2,42 +2,22 @@
 
 # possible flags
 # CPK_NEW
-# RENDER_SOLID
-# HSC_NEWCOL
 # PICK_NEW
-# IMAGICK
-# JAVA_GUI
 # BUILD
-# FORMAT_RGB
 # FORMAT_VRML
 # FORMAT_TIFF
 # SGI_STEREO
 # USE_TCL
 # USE_DLIST
 # WITH_NCBONDS
-# USE_CMI
+# CONTOUR_COLOR
+# INTERNAL_COLOR
 
-OPTIONS= -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DCPK_NEW
-OPTIONS += -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI #-DUSE_TCL #-DUSE_DLIST
+OPTIONS= -DFORMAT_TIFF -DCPK_NEW
+OPTIONS += -DINTERNAL_COLOR
 OPTIONS += -DCONTOUR_COLOR
 
-# use tcl as interpreter
-#OPTIONS += -DTCL_SHELL
-
-# several GUIs, one must be chosen !
-# SDL_GUI
-# GLUT_GUI (and USE_FREEGLUT)
-# X11_GUI
-# WX_GUI
-
-# OBSOLETE, USE VARIABLE GUI NOW
-#OPTIONS += -DGLUT_GUI #-DUSE_FREEGLUT
-#OPTIONS += -DX11_GUI
-#OPTIONS += -DWX_GUI
-
 GUI = X11
-
-MALLOCLIB=
 
 # only for linux versions
 #STATIC = 1
@@ -54,41 +34,12 @@ SRC= dino.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c io_spider.c \
      write.c render.c mat.c rex.c Cmalloc.c cgfx.c pov.c \
      cubearray.c writePS.c \
-     sglib.c symm.c
+     sglib.c symm.c \
+     gui_terminal.c shell_raw.c shell_command.c \
+     cmi.c input.c
 
 
 # add more stuff depending on OPTIONS
-
-# which shell to use
-ifneq (,$(findstring NEW_SHELL,$(OPTIONS)))
-SRC += gui_terminal.c shell_raw.c shell_command.c
-else
-ifneq (,$(findstring TCL_SHELL,$(OPTIONS)))
-SRC += shell_tcl.c
-LOPT += -ltcl
-else
-SRC += shell.c
-endif
-endif
-
-ifneq (,$(findstring USE_CMI,$(OPTIONS)))
-SRC += cmi.c input.c
-endif
-
-# brix format
-ifneq (,$(findstring USE_BRIX_FORMAT,$(OPTIONS)))
-SRC += brix.c
-endif
-
-# test code for imagick image library support
-ifneq (,$(findstring IMAGICK,$(OPTIONS)))
-SRC += imagick.c
-endif
-
-# deprecated code for RGB output
-ifneq (,$(findstring FORMAT_RGB,$(OPTIONS)))
-SRC += ximage_util.c
-endif
 
 # test code for VRML output
 ifneq (,$(findstring FORMAT_VRML,$(OPTIONS)))
@@ -100,11 +51,6 @@ ifneq (,$(findstring BUILD,$(OPTIONS)))
 SRC += build.c
 endif
 
-# test code for JAVA GUI
-ifneq (,$(findstring JAVA_GUI,$(OPTIONS)))
-SRC += jci.c
-endif
-
 # include architecture specific settings, including additional SRC files
 # use HOSTTYPE variable
 sinclude makedef.$(HOSTTYPE)
@@ -112,9 +58,6 @@ sinclude makedef.$(HOSTTYPE)
 ifneq (,$(findstring USE_TCL,$(OPTIONS)))
 LOPT += $(LIBTCL)
 endif
-
-
-#sinclude makedef.java
 
 TMP := $(SRC:.c=.o) 
 OBJ := $(TMP:.cpp=.o)

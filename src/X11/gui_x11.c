@@ -48,9 +48,7 @@ user menu
 #include "spacetec.h"
 #endif
 
-#ifdef NEW_SHELL
 #include "gui_terminal.h"
-#endif
 
 static void gl_info();
 static int init_main();
@@ -533,9 +531,7 @@ void guiTimeProc(XtPointer client_data)
   //comTimeProc();
   cmiTimer();
 
-#ifdef NEW_SHELL
   guitTimeProc();
-#endif
 
   XtAppAddTimeOut(gui.app,10,(XtTimerCallbackProc)guiTimeProc,NULL);
 }
@@ -954,14 +950,14 @@ static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, i
 
   if(dbl_flag)
     buf[bufc++]=GLX_DOUBLEBUFFER;
-#ifdef RENDER_SOLID
+
   if(use_stencil) {
     buf[bufc++]=GLX_STENCIL_SIZE;
     buf[bufc++]=1;
   } else {
     debmsg("stencil buffer deactivated\n");
   }
-#endif
+
   buf[bufc++]=GLX_DEPTH_SIZE;
   depthi=bufc++;
   buf[bufc++]=GLX_RED_SIZE;

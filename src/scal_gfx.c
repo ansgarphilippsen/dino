@@ -57,9 +57,7 @@ int scalDraw(dbmScalNode *node, int f)
 int scalDrawObj(scalObj *obj)
 {
   int i,detail=obj->render.detail1;
-#ifdef RENDER_SOLID
   float rw,rh,rz;
-#endif
 
   // save the state
   glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_LIGHTING_BIT);
@@ -299,8 +297,6 @@ int scalDrawObj(scalObj *obj)
 	glPopMatrix();
       }
 
-
-#ifdef RENDER_SOLID
       if(obj->render.solid && obj->render.transparency==1.0) {
 	glClearStencil(0x0);
 	glClear(GL_STENCIL_BUFFER_BIT);
@@ -308,8 +304,6 @@ int scalDrawObj(scalObj *obj)
 	glStencilFunc(GL_ALWAYS,0x0,0x1);
 	glStencilOp(GL_INVERT,GL_INVERT,GL_INVERT);
       }
-#endif
-      
 
       glBegin(GL_TRIANGLES);
       for(i=0;i<obj->face_count;i++) {
@@ -331,8 +325,6 @@ int scalDrawObj(scalObj *obj)
       }
       glEnd();
 
-
-#ifdef RENDER_SOLID
       if(obj->render.solid && obj->render.transparency==1.0) {
 	glStencilFunc(GL_NOTEQUAL,0x0,0x1);
 	glPushMatrix();
@@ -360,8 +352,6 @@ int scalDrawObj(scalObj *obj)
 	glPopMatrix();
 	glDisable(GL_STENCIL_TEST);
       }
-#endif
-
 
 
       // draw all face normals

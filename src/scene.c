@@ -18,12 +18,7 @@
 #include "help.h"
 #include "colors.h"
 
-#ifdef USE_CMI
 #include "gui_ext.h"
-#else
-#include "gui.h"
-extern struct GUI gui;
-#endif
 
 struct SCENE scene;
 extern struct GFX gfx;
@@ -508,7 +503,7 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage(message);
 	  return -1;
 	}
-#ifdef USE_CMI
+
 	oldd=gfx.eye_dist;
 	newd=atof(val);
 	if(clStrcmp(op,"=")) {
@@ -524,23 +519,7 @@ int sceneCommand(int wc, const char **wl)
 	}
 	if(gfx.eye_dist<0.0)
 	  gfx.eye_dist=0.0;
-#else
-	oldd=gui.eye_dist;
-	newd=atof(val);
-	if(clStrcmp(op,"=")) {
-	  gui.eye_dist=newd;
-	} else if(clStrcmp(op,"+=")) {
-	  gui.eye_dist+=newd;
-	} else if(clStrcmp(op,"-=")) {
-	  gui.eye_dist-=newd;
-	} else {
-	  sprintf(message,"scene: unknown operator: %s\n",op);
-	  comMessage(message);
-	  return -1;
-	}
-	if(gui.eye_dist<0.0)
-	  gui.eye_dist=0.0;
-#endif
+
 	gfxSetProjection(gfx.current_view);
 	comRedraw();
       } else if(clStrcmp(prop,"fov")) {
@@ -1077,11 +1056,7 @@ int sceneCommand(int wc, const char **wl)
     } else if(clStrcmp(wl[1],"rtc")) {
       sprintf(message,transGetAll(&gfx.transform));
     } else if(clStrcmp(wl[1],"eyedist")){
-#ifdef USE_CMI
       sprintf(message,"%g",gfx.eye_dist);
-#else
-      sprintf(message,"%g",gui.eye_dist);
-#endif
     } else if(clStrcmp(wl[1],"fov")){
       sprintf(message,"%g",gfx.fovy);
     } else if(clStrcmp(wl[1],"fogo")){
@@ -1170,7 +1145,6 @@ int sceneCommand(int wc, const char **wl)
     comRedraw();
     scene_virgin_flag=0;
   } else if(clStrcmp(wl[0],"split")) {
-#ifdef USE_CMI
     if(gfx.stereo_mode==GFX_STEREO_OFF) {
       gfx.stereo_mode=GFX_STEREO_SPLIT;
       cmiRefresh();
@@ -1184,23 +1158,7 @@ int sceneCommand(int wc, const char **wl)
       gfx.stereo_mode=GFX_STEREO_OFF;
       comRedraw();
     }
-#else
-    if(gui.stereo_mode==GUI_STEREO_NORMAL) {
-      glwStereoSwitch(GUI_STEREO_OFF);
-      gfxSetViewport();
-      gui.stereo_mode=GUI_STEREO_SPLIT;
-    } else if(gui.stereo_mode==GUI_STEREO_OFF) {
-      gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
-      gui.stereo_mode=GUI_STEREO_SPLIT;
-      comRedraw();
-    } else if(gui.stereo_mode==GUI_STEREO_SPLIT) {
-      gui.stereo_mode=GUI_STEREO_OFF;
-      gfxSetViewport();
-      comRedraw();
-    }
-#endif
   } else if(clStrcmp(wl[0],"stereo")) {
-#ifdef USE_CMI
     if(guiQueryStereo()) {
       if(wc==1) {
 	// toggle mode only;
@@ -1222,31 +1180,6 @@ int sceneCommand(int wc, const char **wl)
     } else {
       comMessage("hardware stereo not available\n");
     }
-#else
-    if(gui.stereo_available) {
-      if(wc==1) {
-	if(gui.stereo_mode) {
-	  glwStereoSwitch(0);
-	} else {
-	  glwStereoSwitch(1);
-	}
-      } else {
-	if(clStrcmp(wl[1],"off")) {
-	  glwStereoSwitch(0);
-	} else if(clStrcmp(wl[1],"on")) {
-	  glwStereoSwitch(1);
-	} else {
-	  sprintf(message,"unknown command '%s'\n",wl[1]);
-	  comMessage(message);
-	  return -1;
-	}
-      }
-    } else {
-      sprintf(message,"Stereo mode not available\n");
-      comMessage(message);
-      return -1;
-    }
-#endif
   } else if(clStrcmp(wl[0],"grab")) {
     if(wc!=2) {
       sprintf(message,"Syntax: grab devicename\n");

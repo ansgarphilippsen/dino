@@ -51,8 +51,8 @@ int spiderRead(FILE *f, dbmScalNode *sn)
 
   fseek(f,size,SEEK_CUR);
 
-  size2=(int)header.fNslice*(int)header.fNrow*(int)header.fNcol;
-  size=size2;
+  size=(int)header.fNslice*(int)header.fNrow*(int)header.fNcol;
+  size2=(int)header.fNrow*(int)header.fNcol;
 
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
@@ -80,20 +80,6 @@ int spiderRead(FILE *f, dbmScalNode *sn)
     return -1;
   }
 
-
-  // read into raw data
-  if(mode==1) {
-    ret=fread(raw_data,sizeof(float),size2,f);
-    raw_data_float=(float *)raw_data;
-  } else {
-    ret=fread(raw_data,sizeof(unsigned char),size2,f);
-    raw_data_byte=(unsigned char *)raw_data;
-  }  
-
-  if(sn->swap_flag) {
-    swap_4bs(raw_data,size2);
-  }
-
   sn->field->u_size=(int)header.fNcol;
   sn->field->v_size=(int)header.fNrow;
   sn->field->w_size=(int)header.fNslice;
@@ -113,10 +99,23 @@ int spiderRead(FILE *f, dbmScalNode *sn)
   memset(sn->field->data,0,size);
 
   for(w=0;w<(int)header.fNslice;w++) {
+
+    // read into raw data slice per slice
+    if(mode==1) {
+      ret=fread(raw_data,sizeof(float),size2,f);
+      raw_data_float=(float *)raw_data;
+    } else {
+      ret=fread(raw_data,sizeof(int),size2,f);
+      raw_data_byte=(int *)raw_data;
+    }  
+    
+    if(sn->swap_flag) {
+      swap_4bs(raw_data,size2);
+    }
+
     for(v=0;v<(int)header.fNrow;v++) {
       for(u=0;u<(int)header.fNcol;u++) {
-	pointer=(int)header.fNcol*(int)header.fNrow*w;
-	pointer+=(int)header.fNcol*v+u;
+	pointer=(int)header.fNcol*v+u;
 	if(mode==1)
 	  scalWriteField(sn->field,u,v,w,(float)raw_data_float[pointer]);
 	else

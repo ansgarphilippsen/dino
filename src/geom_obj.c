@@ -850,17 +850,10 @@ int geomSmooth(geomObj *obj)
     point_list[i].v[0]=obj->point[i].v[0];
     point_list[i].v[1]=obj->point[i].v[1];
     point_list[i].v[2]=obj->point[i].v[2];
-#ifdef HSC_NEWCOL
     point_list[i].colp[0]=obj->point[i].c;
     point_list[i].colp[1]=obj->point[i].c;
     point_list[i].colp[2]=obj->point[i].c;
     obj->point[i].c[3]=obj->render.transparency;
-#else
-    point_list[i].c[0]=obj->point[i].c[0];
-    point_list[i].c[1]=obj->point[i].c[1];
-    point_list[i].c[2]=obj->point[i].c[2];
-    point_list[i].c[3]=obj->render.transparency;
-#endif
     point_list[i].rad=obj->render.bond_width;
     point_list[i].id=CGFX_COIL;
   }

@@ -5,11 +5,9 @@
 
 #include "surf_db.h"
 
-#ifdef RENDER_SOLID
 #include <math.h>
 #include "gfx.h"
 extern struct GFX gfx;
-#endif
 
 int surfDraw(dbmSurfNode *node, int f)
 {
@@ -63,9 +61,7 @@ int surfDrawObj(surfObj *obj)
   float t=obj->render.transparency;
   float dummy;
   int tfc;
-#ifdef RENDER_SOLID
   float rw,rh,rz;
-#endif
 
   /*
     determined by color
@@ -115,13 +111,9 @@ int surfDrawObj(surfObj *obj)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   } else {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-#ifdef RENDER_SOLID
+
     if(obj->render.cull && !(obj->render.solid && t==1.0))
         glEnable(GL_CULL_FACE);
-#else
-    if(obj->render.cull)
-        glEnable(GL_CULL_FACE);
-#endif
   }
 
   if(t<1.0) {
@@ -151,7 +143,6 @@ int surfDrawObj(surfObj *obj)
 
   glDepthMask(GL_TRUE);
 
-#ifdef RENDER_SOLID
   if(obj->render.solid && t==1.0) {
     glClearStencil(0x0);
     glClear(GL_STENCIL_BUFFER_BIT);
@@ -159,7 +150,6 @@ int surfDrawObj(surfObj *obj)
     glStencilFunc(GL_ALWAYS,0x0,0x1);
     glStencilOp(GL_INVERT,GL_INVERT,GL_INVERT);
   }
-#endif
 
   glDrawElements(GL_TRIANGLES,obj->facec*3,GL_UNSIGNED_INT,obj->face);
 
@@ -170,7 +160,6 @@ int surfDrawObj(surfObj *obj)
 
   glDisable(GL_CULL_FACE);
 
-#ifdef RENDER_SOLID
   if(obj->render.solid && t==1.0) {
     glStencilFunc(GL_NOTEQUAL,0x0,0x1);
     glPushMatrix();
@@ -216,7 +205,7 @@ int surfDrawObj(surfObj *obj)
     glPopMatrix();
     glDisable(GL_STENCIL_TEST);
   }
-#endif
+
   glPopMatrix();
 
   glPopAttrib();

@@ -45,13 +45,12 @@ struct GFX
   GLdouble left,right,bottom,top;
   GLfloat r,g,b;
   
-#ifdef USE_CMI
   // this is a copy from struct GUI to allow
   // frontend - backend separation
   int win_width,win_height;
   int stereo_active,stereo_mode;
   float eye_dist, eye_offset;
-#endif
+
   int current_view;
 
   GLfloat fog_color[4];
@@ -93,9 +92,7 @@ struct GFX
 };
 
 int gfxInit(void);
-#ifdef USE_CMI
 int gfxCMIInit(void);
-#endif
 int gfxGLInit(void);
 
 int gfxRedraw(void);

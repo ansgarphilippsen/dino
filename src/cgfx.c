@@ -1130,33 +1130,18 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 	va->p[va->count].v[0]=cp1->v[0];
 	va->p[va->count].v[1]=cp1->v[1];
 	va->p[va->count].v[2]=cp1->v[2];
-#ifdef HSC_NEWCOL
 	va->p[va->count].c[0]=cp1->col[0][0];
 	va->p[va->count].c[1]=cp1->col[0][1];
 	va->p[va->count].c[2]=cp1->col[0][2];
 	va->p[va->count].c[3]=cp1->col[0][3];
-#else
-	va->p[va->count].c[0]=cp1->c[0];
-	va->p[va->count].c[1]=cp1->c[1];
-	va->p[va->count].c[2]=cp1->c[2];
-	va->p[va->count].c[3]=cp1->c[3];
-#endif
 	va->count++;
 	va->p[va->count].v[0]=cp2->v[0];
 	va->p[va->count].v[1]=cp2->v[1];
 	va->p[va->count].v[2]=cp2->v[2];
-#ifdef HSC_NEWCOL
 	va->p[va->count].c[0]=cp2->col[0][0];
 	va->p[va->count].c[1]=cp2->col[0][1];
 	va->p[va->count].c[2]=cp2->col[0][2];
 	va->p[va->count].c[3]=cp2->col[0][3];
-#else
-	va->p[va->count].c[0]=cp2->c[0];
-	va->p[va->count].c[1]=cp2->c[1];
-	va->p[va->count].c[2]=cp2->c[2];
-	va->p[va->count].c[3]=cp2->c[3];
-#endif
-	// va->p[va->count].c[3]=1.0; // force sane alpha value
 	va->count++;
       }
     }
@@ -1247,18 +1232,11 @@ int cgfxCopyPVa(cgfxPoint *p, cgfxVAField *f)
   f->n[0]=p->n[0];
   f->n[1]=p->n[1];
   f->n[2]=p->n[2];
-#ifdef HSC_NEWCOL
   p->fc=0;
   f->c[0]=p->col[p->fc][0];
   f->c[1]=p->col[p->fc][1];
   f->c[2]=p->col[p->fc][2];
   f->c[3]=p->col[p->fc][3];
-#else
-  f->c[0]=p->c[0];
-  f->c[1]=p->c[1];
-  f->c[2]=p->c[2];
-  f->c[3]=p->c[3];
-#endif
   return 0;
 }
 
@@ -1273,9 +1251,8 @@ int cgfxHSCTransform(cgfxProfile *profile, cgfxPoint *point, cgfxProfile *p2)
 	       0.0,1.0,0.0,0.0,
 	       0.0,0.0,1.0,0.0,
 	       0.0,0.0,0.0,1.0};
-#ifdef HSC_NEWCOL
   int col;
-#endif
+
   p2->pc=profile->pc;
 
   // generate the rotation matrix
@@ -1344,8 +1321,6 @@ int cgfxHSCTransform(cgfxProfile *profile, cgfxPoint *point, cgfxProfile *p2)
     p2->p[i].d[1]=(float)v2[1];
     p2->p[i].d[2]=(float)v2[2];
 
-    //    matfNormalize(p2->p[i].n,p2->p[i].n);
-#ifdef HSC_NEWCOL
     for(col=0;col<3;col++) {
       p2->p[i].col[col][0]=point->col[col][0];
       p2->p[i].col[col][1]=point->col[col][1];
@@ -1353,12 +1328,6 @@ int cgfxHSCTransform(cgfxProfile *profile, cgfxPoint *point, cgfxProfile *p2)
       p2->p[i].col[col][3]=point->col[col][3];
     }
     p2->p[i].fc=profile->p[i].fc;
-#else
-    p2->p[i].c[0]=point->c[0];
-    p2->p[i].c[1]=point->c[1];
-    p2->p[i].c[2]=point->c[2];
-    p2->p[i].c[3]=point->c[3];
-#endif
   }
 
   return 0;
@@ -1368,9 +1337,7 @@ int cgfxMorphProfile(cgfxProfile *p1, cgfxProfile *p2, cgfxProfile *p3)
 {
   int i;
   float d[3];
-#ifdef HSC_NEWCOL
   int col;
-#endif
 
   for(i=0;i<p1->pc;i++) {
     d[0]=p2->p[i].v[0]-p1->p[i].v[0];
@@ -1385,7 +1352,6 @@ int cgfxMorphProfile(cgfxProfile *p1, cgfxProfile *p2, cgfxProfile *p3)
     p3->p[i].n[1]=(p1->f*p1->p[i].n[1]+p2->f*p2->p[i].n[1]);
     p3->p[i].n[2]=(p1->f*p1->p[i].n[2]+p2->f*p2->p[i].n[2]);
     matfNormalize(p3->p[i].n, p3->p[i].n);
-#ifdef HSC_NEWCOL
     p1->p[i].fc=0;
     p2->p[i].fc=0;
     p3->p[i].fc=0;
@@ -1398,12 +1364,6 @@ int cgfxMorphProfile(cgfxProfile *p1, cgfxProfile *p2, cgfxProfile *p3)
     p3->p[i].col[0][3]=(p1->f*p1->p[i].col[p1->p[i].fc][3]+
 			p2->f*p2->p[i].col[p2->p[i].fc][3]);
 
-#else
-    p3->p[i].c[0]=(p1->f*p1->p[i].c[0]+p2->f*p2->p[i].c[0]);
-    p3->p[i].c[1]=(p1->f*p1->p[i].c[1]+p2->f*p2->p[i].c[1]);
-    p3->p[i].c[2]=(p1->f*p1->p[i].c[2]+p2->f*p2->p[i].c[2]);
-    p3->p[i].c[3]=(p1->f*p1->p[i].c[3]+p2->f*p2->p[i].c[3]);
-#endif
   }
   p3->pc=p1->pc;
   return 0;
@@ -1426,9 +1386,9 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     frac=M_PI*2.0/(double)(detail*4);
     z=0.0;
     for(i=0;i<detail*4;i++) {
-#ifdef HSC_NEWCOL
+
       pro->p[i].fc=0;
-#endif
+
       angle=frac*(double)i;
       r1=rad1;
       r2=rad2;
@@ -1482,9 +1442,7 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     frac=M_PI*2.0/(double)(detail*4);
     z=0.0;
     for(i=0;i<detail*4;i++) {
-#ifdef HSC_NEWCOL
       pro->p[i].fc=0;
-#endif
       angle=frac*(double)i;
       r1=rad1;
       r2=rad2;
@@ -1535,9 +1493,7 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     pro->pc=detail*4+1;
     frac=M_PI*2.0/(double)(detail*4);
     for(i=0;i<detail*4;i++) {
-#ifdef HSC_NEWCOL
       pro->p[i].fc=0;
-#endif
       angle=frac*(double)i;
       z=0.0;
       x=(float)(rad1*cos(angle+frac*0.5));
@@ -1721,7 +1677,6 @@ int cgfxGenNASugar(cgfxVA *va, cgfxSplinePoint *p, Render *render)
   }
 
   for(i=0;i<16;i++) {
-#ifdef HSC_NEWCOL
     va->p[va->count+0].c[0]=p->colp[1][0];
     va->p[va->count+0].c[1]=p->colp[1][1];
     va->p[va->count+0].c[2]=p->colp[1][2];
@@ -1734,20 +1689,6 @@ int cgfxGenNASugar(cgfxVA *va, cgfxSplinePoint *p, Render *render)
     va->p[va->count+2].c[1]=p->colp[1][1];
     va->p[va->count+2].c[2]=p->colp[1][2];
     va->p[va->count+2].c[3]=p->colp[1][3];
-#else
-    va->p[va->count+0].c[0]=p->c2[0];
-    va->p[va->count+0].c[1]=p->c2[1];
-    va->p[va->count+0].c[2]=p->c2[2];
-    va->p[va->count+0].c[3]=p->c2[3];
-    va->p[va->count+1].c[0]=p->c2[0];
-    va->p[va->count+1].c[1]=p->c2[1];
-    va->p[va->count+1].c[2]=p->c2[2];
-    va->p[va->count+1].c[3]=p->c2[3];
-    va->p[va->count+2].c[0]=p->c2[0];
-    va->p[va->count+2].c[1]=p->c2[1];
-    va->p[va->count+2].c[2]=p->c2[2];
-    va->p[va->count+2].c[3]=p->c2[3];
-#endif
     va->p[va->count+0].v[0]=c[conn[i][0]][0];
     va->p[va->count+0].v[1]=c[conn[i][0]][1];
     va->p[va->count+0].v[2]=c[conn[i][0]][2];
@@ -1809,14 +1750,8 @@ int cgfxGenNAConn(cgfxVA *va, cgfxSplinePoint *p, Render *render)
   v2[0]=(v1[0]+v3[0])*0.5;
   v2[1]=(v1[1]+v3[1])*0.5;
   v2[2]=(v1[2]+v3[2])*0.5;
-#ifdef HSC_NEWCOL
   cgfxGenCylinder(va,v1,v2,0.5*w, 1.0, 0.0, render->detail2, CGFX_CAP, p->colp[1]);
   cgfxGenCylinder(va,v2,v3,0.5*w, 1.0, 0.0, render->detail2, CGFX_CAP, p->colp[2]);
-#else
-  cgfxGenCylinder(va,v1,v2,0.5*w, 1.0, 0.0, render->detail2, CGFX_CAP, p->c2);
-  cgfxGenCylinder(va,v2,v3,0.5*w, 1.0, 0.0, render->detail2, CGFX_CAP, p->c3);
-#endif
-
   return 0;
 }
 
@@ -1961,7 +1896,6 @@ int cgfxGenNABase(cgfxVA *va, cgfxSplinePoint *p, Render *render)
   }
 
   for(i=0;i<n2;i++) {
-#ifdef HSC_NEWCOL
     va->p[va->count+0].c[0]=p->colp[2][0];
     va->p[va->count+0].c[1]=p->colp[2][1];
     va->p[va->count+0].c[2]=p->colp[2][2];
@@ -1974,20 +1908,6 @@ int cgfxGenNABase(cgfxVA *va, cgfxSplinePoint *p, Render *render)
     va->p[va->count+2].c[1]=p->colp[2][1];
     va->p[va->count+2].c[2]=p->colp[2][2];
     va->p[va->count+2].c[3]=p->colp[2][3];
-#else
-    va->p[va->count+0].c[0]=p->c3[0];
-    va->p[va->count+0].c[1]=p->c3[1];
-    va->p[va->count+0].c[2]=p->c3[2];
-    va->p[va->count+0].c[3]=p->c3[3];
-    va->p[va->count+1].c[0]=p->c3[0];
-    va->p[va->count+1].c[1]=p->c3[1];
-    va->p[va->count+1].c[2]=p->c3[2];
-    va->p[va->count+1].c[3]=p->c3[3];
-    va->p[va->count+2].c[0]=p->c3[0];
-    va->p[va->count+2].c[1]=p->c3[1];
-    va->p[va->count+2].c[2]=p->c3[2];
-    va->p[va->count+2].c[3]=p->c3[3];
-#endif
     va->p[va->count+0].v[0]=c[cgfx_na6r_c[i][0]][0];
     va->p[va->count+0].v[1]=c[cgfx_na6r_c[i][0]][1];
     va->p[va->count+0].v[2]=c[cgfx_na6r_c[i][0]][2];
@@ -2074,7 +1994,6 @@ int cgfxGenNABase(cgfxVA *va, cgfxSplinePoint *p, Render *render)
     }
     
     for(i=0;i<n2;i++) {
-#ifdef HSC_NEWCOL
       va->p[va->count+0].c[0]=p->colp[2][0];
       va->p[va->count+0].c[1]=p->colp[2][1];
       va->p[va->count+0].c[2]=p->colp[2][2];
@@ -2087,20 +2006,6 @@ int cgfxGenNABase(cgfxVA *va, cgfxSplinePoint *p, Render *render)
       va->p[va->count+2].c[1]=p->colp[2][1];
       va->p[va->count+2].c[2]=p->colp[2][2];
       va->p[va->count+2].c[3]=p->colp[2][3];
-#else
-      va->p[va->count+0].c[0]=p->c3[0];
-      va->p[va->count+0].c[1]=p->c3[1];
-      va->p[va->count+0].c[2]=p->c3[2];
-      va->p[va->count+0].c[3]=p->c3[3];
-      va->p[va->count+1].c[0]=p->c3[0];
-      va->p[va->count+1].c[1]=p->c3[1];
-      va->p[va->count+1].c[2]=p->c3[2];
-      va->p[va->count+1].c[3]=p->c3[3];
-      va->p[va->count+2].c[0]=p->c3[0];
-      va->p[va->count+2].c[1]=p->c3[1];
-      va->p[va->count+2].c[2]=p->c3[2];
-      va->p[va->count+2].c[3]=p->c3[3];
-#endif
       va->p[va->count+0].v[0]=c[cgfx_na5r_c[i][0]][0];
       va->p[va->count+0].v[1]=c[cgfx_na5r_c[i][0]][1];
       va->p[va->count+0].v[2]=c[cgfx_na5r_c[i][0]][2];
@@ -2164,267 +2069,10 @@ int cgfxGenNA2(cgfxVA *va, cgfxSplinePoint *p, Render *render)
   v2[1]=v1[1]+p->v6[1];
   v2[2]=v1[2]+p->v6[2];
 
-#ifdef HSC_NEWCOL
   cgfxGenCylinder(va,v1,v2,w,1.0,0.0,render->detail2, CGFX_CAP, p->colp[1]);
-#else
-  cgfxGenCylinder(va,v1,v2,w,1.0,0.0,render->detail2, CGFX_CAP, p->c2);
-#endif
   return 0;
 }
 
-#ifndef HSC_NEWCOL
-int cgfxGenSpline(struct CGFX_SPLINEC *s,struct CGFX_SPLINEC *d, int step, int flag)
-{
-  int new_pc,c,i,p;
-  double n,delta,u;
-  double b,x,y,z,nx,ny,nz,n1[3],n2[3];
-  double cr,cg,cb,ca;
-
-  new_pc=step*(s->pc-1);
-
-  if(s->pc<3)
-    return -1;
-
-  d->pc=new_pc+1;
-  if(new_pc<=0)
-    return -1;
-
-  d->p=Ccalloc(d->pc+10,sizeof(struct CGFX_POINT));
-
-  delta=1.0/((double)step*(double)s->pc);
-  n=(double)s->pc;
-
-  for(c=0;c<d->pc;c++) {
-    u=(double)c*delta;
-    x=0.0; y=0.0; z=0.0;
-    nx=0.0; ny=0.0; nz=0.0;
-    cr=0.0; cg=0.0; cb=0.0; ca=0.0;
-    
-    /* phantom start point: 2*P(0)-P(1) */
-    b=cgfxB(n*u-(-1.0));
-    x+=(s->p[0].v[0]*2.0-s->p[1].v[0])*b;
-    y+=(s->p[0].v[1]*2.0-s->p[1].v[1])*b;
-    z+=(s->p[0].v[2]*2.0-s->p[1].v[2])*b;
-    nx+=(s->p[0].n[0]*2.0-s->p[1].n[0])*b;
-    ny+=(s->p[0].n[1]*2.0-s->p[1].n[1])*b;
-    nz+=(s->p[0].n[2]*2.0-s->p[1].n[2])*b;
-    cr+=(s->p[0].c[0]*2.0-s->p[1].c[0])*b;
-    cg+=(s->p[0].c[1]*2.0-s->p[1].c[1])*b;
-    cb+=(s->p[0].c[2]*2.0-s->p[1].c[2])*b;
-    ca+=(s->p[0].c[3]*2.0-s->p[1].c[3])*b;
-
-    for(i=0;i<s->pc;i++) {
-      b=cgfxB(n*u-(double)i);
-      x+=s->p[i].v[0]*b;
-      y+=s->p[i].v[1]*b;
-      z+=s->p[i].v[2]*b;
-      nx+=s->p[i].n[0]*b;
-      ny+=s->p[i].n[1]*b;
-      nz+=s->p[i].n[2]*b;
-      b=cgfxB(n*u-(double)i);
-      cr+=s->p[i].c[0]*b;
-      cg+=s->p[i].c[1]*b;
-      cb+=s->p[i].c[2]*b;
-      ca+=s->p[i].c[3]*b;
-    }
-
-    /* phantom end point: 2*P(N)-P(N-1) */
-    b=cgfxB(n*u-(n));
-    x+=(s->p[s->pc-1].v[0]*2.0-s->p[s->pc-2].v[0])*b;
-    y+=(s->p[s->pc-1].v[1]*2.0-s->p[s->pc-2].v[1])*b;
-    z+=(s->p[s->pc-1].v[2]*2.0-s->p[s->pc-2].v[2])*b;
-    nx+=(s->p[s->pc-1].n[0]*2.0-s->p[s->pc-2].n[0])*b;
-    ny+=(s->p[s->pc-1].n[1]*2.0-s->p[s->pc-2].n[1])*b;
-    nz+=(s->p[s->pc-1].n[2]*2.0-s->p[s->pc-2].n[2])*b;
-    cr+=(s->p[s->pc-1].c[0]*2.0-s->p[s->pc-2].c[0])*b;
-    cg+=(s->p[s->pc-1].c[1]*2.0-s->p[s->pc-2].c[1])*b;
-    cg+=(s->p[s->pc-1].c[2]*2.0-s->p[s->pc-2].c[2])*b;
-    ca+=(s->p[s->pc-1].c[3]*2.0-s->p[s->pc-2].c[3])*b;
-    
-    if(c<step) {
-      cr=s->p[0].c[0];
-      cg=s->p[0].c[1];
-      cb=s->p[0].c[2];
-      ca=s->p[0].c[3];
-    } else if (c>(new_pc-step)) {
-      cr=s->p[s->pc-2].c[0];
-      cg=s->p[s->pc-2].c[1];
-      cb=s->p[s->pc-2].c[2];
-      ca=s->p[s->pc-2].c[3];
-    }
-    
-    n1[0]=nx;
-    n1[1]=ny;
-    n1[2]=nz;
-    matNormalize(n1,n2);
-    d->p[c].v[0]=x;
-    d->p[c].v[1]=y;
-    d->p[c].v[2]=z;
-    d->p[c].n[0]=n2[0];
-    d->p[c].n[1]=n2[1];
-    d->p[c].n[2]=n2[2];
-    if(flag & CGFX_INTPOL_COL) {
-      d->p[c].c[0]=cr;
-      d->p[c].c[1]=cg;
-      d->p[c].c[2]=cb;
-    } else {
-      p=(int)(n*u-0.5);
-      d->p[c].c[0]=s->p[p].c[0];
-      d->p[c].c[1]=s->p[p].c[1];
-      d->p[c].c[2]=s->p[p].c[2];
-    }
-    /*
-      this is the alpha value
-      it is probably reasonable
-      to tweak it to 1.0
-      instead of:
-      d->p[c].c[3]=ca;
-    */
-    /* maybe NOT
-       d->p[c].c[3]=1.0;
-    */
-    d->p[c].c[3]=ca;
-  }
-  return 0;
-}
-
-int cgfxGenSpline2(struct CGFX_SPLINEC *s,struct CGFX_SPLINEC *d, int step, int flag)
-{
-  int new_pc,c,i,p;
-  double n,delta,u;
-  double b,x,y,z,nx,ny,nz,n1[3],n2[3];
-  double cr,cg,cb,ca;
-
-  new_pc=step*(s->pc-1);
-
-  if(s->pc<3)
-    return -1;
-
-  d->pc=new_pc+1;
-  if(new_pc<=0)
-    return -1;
-
-  d->p=Ccalloc(d->pc+10,sizeof(struct CGFX_POINT));
-
-  delta=1.0/((double)step*(double)s->pc);
-  n=(double)s->pc;
-
-  for(c=0;c<d->pc;c++) {
-    u=(double)c*delta;
-    x=0.0; y=0.0; z=0.0;
-    nx=0.0; ny=0.0; nz=0.0;
-    cr=0.0; cg=0.0; cb=0.0; ca=0.0;
-    
-    /* phantom start point: 2*P(0)-P(1) */
-    b=cgfxB(n*u-(-1.0));
-    x+=(s->p[0].v[0]*2.0-s->p[1].v[0])*b;
-    y+=(s->p[0].v[1]*2.0-s->p[1].v[1])*b;
-    z+=(s->p[0].v[2]*2.0-s->p[1].v[2])*b;
-    nx+=(s->p[0].n[0]*2.0-s->p[1].n[0])*b;
-    ny+=(s->p[0].n[1]*2.0-s->p[1].n[1])*b;
-    nz+=(s->p[0].n[2]*2.0-s->p[1].n[2])*b;
-    cr+=(s->p[0].c[0]*2.0-s->p[1].c[0])*b;
-    cg+=(s->p[0].c[1]*2.0-s->p[1].c[1])*b;
-    cb+=(s->p[0].c[2]*2.0-s->p[1].c[2])*b;
-    ca+=(s->p[0].c[3]*2.0-s->p[1].c[3])*b;
-
-    for(i=0;i<s->pc;i++) {
-      b=cgfxB(n*u-(double)i);
-      x+=s->p[i].v[0]*b;
-      y+=s->p[i].v[1]*b;
-      z+=s->p[i].v[2]*b;
-      nx+=s->p[i].n[0]*b;
-      ny+=s->p[i].n[1]*b;
-      nz+=s->p[i].n[2]*b;
-      b=cgfxB(n*u-(double)i);
-      cr+=s->p[i].c[0]*b;
-      cg+=s->p[i].c[1]*b;
-      cb+=s->p[i].c[2]*b;
-      ca+=s->p[i].c[3]*b;
-    }
-
-    /* phantom end point: 2*P(N)-P(N-1) */
-    b=cgfxB(n*u-(n));
-    x+=(s->p[s->pc-1].v[0]*2.0-s->p[s->pc-2].v[0])*b;
-    y+=(s->p[s->pc-1].v[1]*2.0-s->p[s->pc-2].v[1])*b;
-    z+=(s->p[s->pc-1].v[2]*2.0-s->p[s->pc-2].v[2])*b;
-    nx+=(s->p[s->pc-1].n[0]*2.0-s->p[s->pc-2].n[0])*b;
-    ny+=(s->p[s->pc-1].n[1]*2.0-s->p[s->pc-2].n[1])*b;
-    nz+=(s->p[s->pc-1].n[2]*2.0-s->p[s->pc-2].n[2])*b;
-    cr+=(s->p[s->pc-1].c[0]*2.0-s->p[s->pc-2].c[0])*b;
-    cg+=(s->p[s->pc-1].c[1]*2.0-s->p[s->pc-2].c[1])*b;
-    cg+=(s->p[s->pc-1].c[2]*2.0-s->p[s->pc-2].c[2])*b;
-    ca+=(s->p[s->pc-1].c[3]*2.0-s->p[s->pc-2].c[3])*b;
-    
-    if(c<step) {
-      cr=s->p[0].c[0];
-      cg=s->p[0].c[1];
-      cb=s->p[0].c[2];
-      ca=s->p[0].c[3];
-    } else if (c>(new_pc-step)) {
-      cr=s->p[s->pc-2].c[0];
-      cg=s->p[s->pc-2].c[1];
-      cb=s->p[s->pc-2].c[2];
-      ca=s->p[s->pc-2].c[3];
-    }
-    
-    n1[0]=nx;
-    n1[1]=ny;
-    n1[2]=nz;
-    matNormalize(n1,n2);
-    d->p[c].v[0]=x;
-    d->p[c].v[1]=y;
-    d->p[c].v[2]=z;
-    d->p[c].n[0]=n2[0];
-    d->p[c].n[1]=n2[1];
-    d->p[c].n[2]=n2[2];
-    if(flag & CGFX_INTPOL_COL) {
-      d->p[c].c[0]=cr;
-      d->p[c].c[1]=cg;
-      d->p[c].c[2]=cb;
-    } else {
-      p=(int)(n*u-0.5);
-      d->p[c].c[0]=s->p[p].c[0];
-      d->p[c].c[1]=s->p[p].c[1];
-      d->p[c].c[2]=s->p[p].c[2];
-    }
-    /*
-      this is the alpha value
-      it is probably reasonable
-      to tweak it to 1.0
-      instead of:
-      d->p[c].c[3]=ca;
-    */
-    /* maybe NOT
-       d->p[c].c[3]=1.0;
-    */
-    d->p[c].c[3]=ca;
-  }
-  return 0;
-}
-
-const double M_1_6=1.0/6.0;
-
-double cgfxB(double u)
-{
-  double v=0.0;
-
-  if(u<-2.0 || u>2.0)
-    v=0.0;
-  else if(u>=-2.0 && u<=-1.0)
-    v=(2.0+u)*(2.0+u)*(2.0+u)*M_1_6;
-  else if(u>-1.0 && u<=0.0)
-    v=(4.0-6.0*u*u-3.0*u*u*u)*M_1_6;
-  else if(u>0.0 && u<=1.0) 
-    v=(4.0-6.0*u*u+3.0*u*u*u)*M_1_6;
-  else if(u>1.0 && u<=2.0)
-    v=(2.0-u)*(2.0-u)*(2.0-u)*M_1_6;
-  else
-    v=0.0;
-
-  return v;
-}
-#endif
 
 /*
   these are the older, non-vertex-array routines

@@ -13,6 +13,8 @@
 #include "cl.h"
 #include "Cmalloc.h"
 
+// TODO: all char should be unsigned char
+
 extern int debug_mode;
 
 static struct winsize wsize;
@@ -353,12 +355,7 @@ static void finish(int n)
 
 static void inter(int n)
 {
-#ifdef USE_CMI
-  //cmiInterrupt();
   finish(0);
-#else
-  finish();
-#endif
 }
 
 static void sig_winch(int n)

@@ -31,40 +31,24 @@
 #include "set.h"
 #include "pov.h"
 #include "transform.h"
-#include "joy.h"
 #include "pick.h"
 
-#ifdef NEW_SHELL
 #include "gui_terminal.h"
 #include "shell_raw.h"
 #include "shell_command.h"
-#else
-#include "shell.h"
-#endif
 
-#ifdef USE_CMI
 #include "input.h"
 #include "cmi.h"
 #include "gui_ext.h"
-#else
-#include "gui.h"
-#include "om.h"
-#endif
 
 #ifdef INTERNAL_COLOR
 #include "colors.h"
 #endif
 
-#ifdef EXPO
-#include "autoplay.h"
-#endif
 struct GLOBAL_COM com;
 
 extern struct DBM dbm;
 extern struct GFX gfx;
-#ifndef USE_CMI
-extern struct GUI gui;
-#endif
 
 extern struct SCENE scene;
 
@@ -108,41 +92,22 @@ struct HELP_ENTRY top_help[] = {
 
 static char init_command[1024];
 static int init_command_flag=0;
-//static int tunnelvision_flag=0;
-//static int tunnelvision2(structObj *obj2,int f);
 
 static void init_transform(struct COM_PARAMS *params);
 
 int comInit(struct COM_PARAMS *params)
 {
   int i,j,tc;
-#ifdef LINUX
-  char joyname[128];
-#endif
 
-
-#ifdef USE_CMI
   // register cmi callbacks
   cmiRegisterCallback(CMI_TARGET_COM,comCMICallback);
   cmiRegisterTimer(comTimeProc);
-#endif
 
   com.play_count=0;
 
   init_transform(params);
 
   com.benchmark=0;
-
-#ifdef LINUX
-  if(jInit(joyname)==0) {
-    com.joyflag=1;
-    fprintf(stdout,"%s detected\n",joyname);
-  } else {
-    com.joyflag=0;
-  }
-#else
-  com.joyflag=0;     
-#endif  
 
   comGenCubeLookup();
 
@@ -152,7 +117,6 @@ int comInit(struct COM_PARAMS *params)
 
 static void init_transform(struct COM_PARAMS *params)
 {
-#ifdef USE_CMI
   struct TRANSFORM_LIST_COMMAND mouse[]={
     {0, CMI_BUTTON1_MASK, TRANS_ROTY, -0.5},
     {1, CMI_BUTTON1_MASK, TRANS_ROTX, -0.5},
@@ -170,25 +134,6 @@ static void init_transform(struct COM_PARAMS *params)
     {0, CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_SHIFT_MASK, TRANS_SLABF, -0.2},
     {-1, 0, 0, 0}
   };
-#else
-  struct TRANSFORM_LIST_COMMAND mouse[]={
-    {0, GUI_BUTTON1_MASK, TRANS_ROTY, -0.5},
-    {1, GUI_BUTTON1_MASK, TRANS_ROTX, -0.5},
-#ifndef EXPO
-    {0, GUI_BUTTON1_MASK | GUI_SHIFT_MASK, TRANS_TRAX, -1.0},
-    {1, GUI_BUTTON1_MASK | GUI_SHIFT_MASK, TRANS_TRAY, 1.0},
-    {0, GUI_BUTTON2_MASK , TRANS_TRAZ, -0.2},
-    {1, GUI_BUTTON2_MASK , TRANS_TRAZ, -0.5},
-    {0, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK, TRANS_ROTZ, 1.0},
-    {1, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK, TRANS_ROTZ, -1.0},
-    {0, GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABN, 0.2},
-    {0, GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABF, 0.2},
-    {0, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABN, 0.2},
-    {0, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABF, -0.2},
-#endif
-    {-1, 0, 0, 0}
-  };
-#endif
 
   struct TRANSFORM_LIST_COMMAND dials[]={
     {0, 0, TRANS_ROTX, 0.05},
@@ -254,11 +199,8 @@ static void init_transform(struct COM_PARAMS *params)
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_MOUSE;
-#ifdef USE_CMI
   com.tlist[tc].mask=CMI_CNTRL_MASK;
-#else
-  com.tlist[tc].mask=GUI_CNTRL_MASK;
-#endif
+
   strcpy(com.tlist[tc].name,"mouse2");
   for(i=0;mouse[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&mouse[i],
@@ -300,11 +242,7 @@ static void init_transform(struct COM_PARAMS *params)
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_DIALS;
-#ifdef USE_CMI
   com.tlist[tc].mask=CMI_CNTRL_MASK;
-#else
-  com.tlist[tc].mask=GUI_CNTRL_MASK;
-#endif
   strcpy(com.tlist[tc].name,"dials2");
   for(i=0;dials[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&dials[i],
@@ -345,11 +283,7 @@ static void init_transform(struct COM_PARAMS *params)
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_SPACEBALL;
-#ifdef USE_CMI
   com.tlist[tc].mask=CMI_CNTRL_MASK;
-#else
-  com.tlist[tc].mask=GUI_CNTRL_MASK;
-#endif
   strcpy(com.tlist[tc].name,"spaceball2");
   for(i=0;spaceball[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&spaceball[i],
@@ -387,9 +321,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
   char *s_menu="menu.";
   struct SYMM_INFO s;
   int errflag=0;
-#ifdef USE_CMI
   cmiToken t;
-#endif
   int d1,d2;
   double res[16];
 
@@ -711,16 +643,12 @@ void comWorkGfxCommand(int word_count, const char ** word_list)
 
 void comRedraw()
 {
-#ifdef USE_CMI
   cmiToken t;
 
   t.target=CMI_TARGET_GUI;
   t.command=CMI_REFRESH;
   t.value=NULL;
   cmiSubmit(&t);
-#else
-  gui.redraw++;
-#endif
 }
 
 
@@ -734,40 +662,16 @@ void comTimeProc()
   char mess[256];
   float fps;
   static double rock_motion=0.0;
-#ifdef USE_CMI
   cmiToken t;
-#endif
   
   if(init_command_flag) {
     init_command_flag=0;
     comRawCommand(init_command);
   }
 
-#ifdef NEW_SHELL
   shellTimeProc();
-#else
-  /* this function is called periodically through the gui */
-  shellWork();
-#endif
-  /* 
-     check for other periodic stuff, e.g. the SGI spin or
-     playing a trajectory file
-  */
 
-  /*******************
-  if(tunnelvision_flag) {
-    if(tunnelvision_flag==2) {
-      tunnelvision2(NULL,3);
-      tunnelvision_flag=0;
-    } else {
-      if(tunnelvision2(NULL,2)==-1) {
-	tunnelvision2(NULL,3);
-	tunnelvision_flag=0;
-      }
-    }
-  }
-  ******************/
-
+  // trj animation
   if(com.play_count>0) {
     for(i=0;i<com.play_count;i++)
       switch(com.play_node[i]->common.type) {
@@ -778,21 +682,8 @@ void comTimeProc()
       }
   }
 
-#ifdef LINUX
-  if(com.joyflag) {
-    jCheck();
-  }
-#endif
-
   if(gfx.anim==1) { // spin along last movement
-#ifdef USE_CMI
-    //comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,0,gfx.sdx);
-    //comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,1,gfx.sdy);
-#else
-    //comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,0,gfx.sdx);
-    //comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,1,gfx.sdy);
-#endif
-    //    comRedraw();
+    // TODO spin
   } else if(gfx.anim==2) { // rock around y-axis
     rock_motion+=0.3;
     transCommand(&gfx.transform,TRANS_ROTY,0,sin(0.5*rock_motion));
@@ -875,13 +766,10 @@ void comDBRedraw()
   }
 }
 
-#ifdef NEW_SHELL
 static char com_message2[1024];
-#endif
 
 void comMessage(const char *s)
 {
-#ifdef NEW_SHELL
   if(s[0]=='\n') {
     clStrcpy(com_message2,s+1);
     clStrcat(com_message2,"\n");
@@ -889,9 +777,6 @@ void comMessage(const char *s)
   } else {
     shellOut(s);
   }
-#else
-  shellOut(s);
-#endif
 }
 
 int comPick(int screenx, int screeny, int flag)
@@ -1323,17 +1208,11 @@ float comGetProperty(dbmNode *src,const char *prop,float *pos)
 
 int comRawCommand(const char *c)
 {
-#ifdef NEW_SHELL
   return shellParseRaw(c,0);
-#else
-  shellWriteLog(c);
-  return shellWorkPrompt(c,-1,NULL);
-#endif
 }
 
 int comNewObj(const char *db, const char *name)
 {
-#ifdef USE_CMI
   cmiToken t;
   const char *cp[3];
   t.target=CMI_TARGET_GUI;
@@ -1344,17 +1223,10 @@ int comNewObj(const char *db, const char *name)
   cp[2]=NULL;
   cmiSubmit(&t);
   return 0;
-#else
-  if(gui.om_flag)
-    return(omAddObj(db,name));
-  else
-    return 0;
-#endif
 }
 
 int comDelObj(const char *db, const char *name)
 {
-#ifdef USE_CMI
   cmiToken t;
   const char *cp[3];
   t.target=CMI_TARGET_GUI;
@@ -1365,17 +1237,10 @@ int comDelObj(const char *db, const char *name)
   cp[2]=NULL;
   cmiSubmit(&t);
   return 0;
-#else
-  if(gui.om_flag)
-    return(omDelObj(db,name));
-  else
-    return 0;
-#endif
 }
 
 int comHideObj(const char *db, const char *name)
 {
-#ifdef USE_CMI
   cmiToken t;
   const char *cp[3];
   t.target=CMI_TARGET_GUI;
@@ -1386,17 +1251,10 @@ int comHideObj(const char *db, const char *name)
   cp[2]=NULL;
   cmiSubmit(&t);
   return 0;
-#else
-  if(gui.om_flag)
-    return(omHideObj(db,name));
-  else
-  return 0;
-#endif
 }
 
 int comShowObj(const char *db, const char *name)
 {
-#ifdef USE_CMI
   cmiToken t;
   const char *cp[3];
   t.target=CMI_TARGET_GUI;
@@ -1407,18 +1265,11 @@ int comShowObj(const char *db, const char *name)
   cp[2]=NULL;
   cmiSubmit(&t);
   return 0;
-#else
-  if(gui.om_flag)
-    return(omShowObj(db,name));
-  else
-    return 0;
-#endif
 }
 
 
 int comNewDB(const char *name)
 {
-#ifdef USE_CMI
   cmiToken t;
   const char *cp[3];
   t.target=CMI_TARGET_GUI;
@@ -1429,17 +1280,10 @@ int comNewDB(const char *name)
   cp[2]=NULL;
   cmiSubmit(&t);
   return 0;
-#else
-  if(gui.om_flag)
-    return(omAddDB(name));
-  else
-    return 0;
-#endif
 }
 
 int comDelDB(const char *name)
 {
-#ifdef USE_CMI
   cmiToken t;
   const char *cp[3];
   t.target=CMI_TARGET_GUI;
@@ -1450,12 +1294,6 @@ int comDelDB(const char *name)
   cp[2]=NULL;
   cmiSubmit(&t);
   return 0;
-#else
-  if(gui.om_flag)
-    return(omDelDB(name));
-  else
-    return 0;
-#endif
 }
 
 int comIsDB(const char *name)
@@ -1959,11 +1797,7 @@ int comGetMinMaxSlab()
 int comWriteCharBuf(char c)
 {
 #ifndef OSX
-#ifdef NEW_SHELL
   guitAddChar(c);
-#else
-  shellAddChar(c);
-#endif
 #endif
   return 0;
 }
@@ -2019,11 +1853,7 @@ int comTransform(int device, int mask, int axis, int ivalue)
   int i,j,mask2,axis_flag;
   double value=(double)ivalue;
 
-#ifdef USE_CMI
   mask &= CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_BUTTON3_MASK | CMI_BUTTON4_MASK | CMI_BUTTON5_MASK | CMI_SHIFT_MASK | CMI_CNTRL_MASK | CMI_LOCK_MASK;
-#else
-  mask &= GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_BUTTON3_MASK | GUI_BUTTON4_MASK | GUI_BUTTON5_MASK | GUI_SHIFT_MASK | GUI_CNTRL_MASK | GUI_LOCK_MASK;
-#endif
 
   for(i=0;i<com.tlist_count;i++) {
     if(com.tlist[i].device==device && 
@@ -2190,7 +2020,6 @@ const float *comGetCP()
 }
 
 
-#ifdef USE_CMI
 void comCMICallback(const cmiToken *t)
 {
   int *ip;
@@ -2208,83 +2037,5 @@ void comCMICallback(const cmiToken *t)
     }
   }
 
-  //if(tunnelvision_flag) tunnelvision_flag=2;
-
 }
-#endif
-
-/***********************************************************
-
-static int tunnelvision2(structObj *obj2,int f)
-{
-  static int step=0;
-  static structObj *obj;
-
-  if(f==1) {
-    step=0;
-    obj=obj2;
-
-
-  } else if(f==2) {
-    if(obj==NULL)
-      return -1;
-
-    glwClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(obj->tv[step].px,
-	      obj->tv[step].py,
-	      obj->tv[step].pz,
-	      obj->tv[step].px+obj->tv[step].nx,
-	      obj->tv[step].py+obj->tv[step].ny,
-	      obj->tv[step].pz+obj->tv[step].nz,
-	      obj->tv[step].dx,
-	      obj->tv[step].dy,
-	      obj->tv[step].dz);
-    
-    glLightfv(GL_LIGHT0,GL_POSITION,gfx.light[0].pos);
-    
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-
-    glEnable(GL_VERTEX_ARRAY);
-    glEnable(GL_NORMAL_ARRAY);
-    glEnable(GL_COLOR_ARRAY);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer(3,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].v[0]);
-    glNormalPointer(GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].n[0]);
-    glColorPointer(4,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].c[0]);
-    glDrawArrays(GL_TRIANGLES,0,obj->va.count);
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-    glDisable(GL_VERTEX_ARRAY);
-    glDisable(GL_NORMAL_ARRAY);
-    glDisable(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-
-    guiSwapBuffers();
-    step++;
-    fprintf(stderr,"step %d\n",step);
-    if(step>=obj->tvc) {
-      step=0;
-      return -1;
-    }
-  } else {
-  }
-  return 0;
-}
-
-void tunnelvision(structObj *obj)
-{ 
-  if(!(obj->render.mode==RENDER_HSC || obj->render.mode==RENDER_TUBE))
-    return;
-  
-  tunnelvision_flag=1;
-  tunnelvision2(obj,1);
-}
-************************************************/
 

@@ -709,19 +709,12 @@ static int atom_to_point(structAtom *a, struct STRUCT_ATOM_PROP *pr, cgfxSplineP
     p->v[0]=a->p->x;
     p->v[1]=a->p->y;
     p->v[2]=a->p->z;
-#ifdef HSC_NEWCOL
     p->colp[0]=pr->c[0];
     p->colp[1]=pr->c[1];
     p->colp[2]=pr->c[2];
     p->colp[0][3]=r->transparency;
     p->colp[1][3]=r->transparency;
     p->colp[2][3]=r->transparency;
-#else
-    p->c[0]=pr->r;
-    p->c[1]=pr->g;
-    p->c[2]=pr->b;
-    p->c[3]=r->transparency;
-#endif
     p->rad=pr->radius;
     switch(a->residue->type) {
     case STRUCT_RTYPE_COIL: p->id=CGFX_COIL; break;
@@ -759,28 +752,12 @@ static int atom_to_point(structAtom *a, struct STRUCT_ATOM_PROP *pr, cgfxSplineP
     else
       p->v6=a->residue->v7;
     p->res_id=a->residue->res_id;
-#ifdef HSC_NEWCOL
     p->colp[0]=pr->c[0];
     p->colp[1]=pr->c[1];
     p->colp[2]=pr->c[2];
     p->colp[0][3]=r->transparency;
     p->colp[1][3]=r->transparency;
     p->colp[2][3]=r->transparency;
-#else
-    p->c[0]=pr->c[0][0];
-    p->c[1]=pr->c[0][1];
-    p->c[2]=pr->c[0][2];
-    p->c[3]=t;
-    /* add color2 and color3 */
-    p->c2[0]=pr->c[1][0];
-    p->c2[1]=pr->c[1][1];
-    p->c2[2]=pr->c[1][2];
-    p->c2[3]=r->transparency;
-    p->c3[0]=pr->c[2][0];
-    p->c3[1]=pr->c[2][1];
-    p->c3[2]=pr->c[2][2];
-    p->c3[3]=r->transparency;
-#endif
     ret=1;
   } else {
     // ignore

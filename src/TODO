@@ -1,4 +1,2 @@
-render nice and fast must be honored for all datasets!
-(ie geom)
-
-fix rgb color {x,y,z}
+deprecate t flag for render, introduce alpha for property
+.a.b set color=red,alpha=0.5

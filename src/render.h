@@ -59,10 +59,8 @@ typedef struct RENDER {
 
   float polyf,polyu;
 
-#ifdef RENDER_SOLID
   int solid;
   float solidc[3];
-#endif
 
   struct RENDER_MATERIAL mat;
 }Render;

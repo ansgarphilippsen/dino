@@ -10,9 +10,7 @@ int bsplineGenerate(cgfxSplinePoint *sp, cgfxPoint **pp, int n, int detail, int 
   float *px,*py,*pz,*x,*y,*y2;
   float u,v;
   float v1[3],v2[3];
-#ifdef HSC_NEWCOL
   int col;
-#endif
   cgfxPoint *p;
 
   p=Ccalloc(detail*n+detail,sizeof(cgfxPoint));
@@ -60,7 +58,6 @@ int bsplineGenerate(cgfxSplinePoint *sp, cgfxPoint **pp, int n, int detail, int 
   }
 
   // and colors
-#ifdef HSC_NEWCOL
   for(col=0;col<3;col++) {
     if(cgfx_flag & CGFX_INTPOL_COL) {
       for(k=0;k<3;k++) {
@@ -103,48 +100,6 @@ int bsplineGenerate(cgfxSplinePoint *sp, cgfxPoint **pp, int n, int detail, int 
     
   }
 
-#else
-  if(cgfx_flag & CGFX_INTPOL_COL) {
-    for(k=0;k<3;k++) {
-      for(i=0;i<n;i++) {
-	x[i]=(float)i;
-	y[i]=sp[i].c[k];
-      }
-      bsplineGen(x-1,y-1,n,1e30,1e30,y2-1);
-      for(i=0;i<n;i++) {
-	for(d=0;d<detail;d++) {
-	  u=((float)(i*detail+d))/((float)detail);
-	  bsplineGet(x-1,y-1,y2-1,n,u,&v);
-	  if(v<0.0)
-	    v=0.0;
-	  if(v>1.0)
-	    v=1.0;
-	  p[i*detail+d].c[k]=v;
-	}
-      }
-    }
-  } else {
-    for(k=0;k<3;k++) {
-      for(i=0;i<n;i++) {
-	for(d=0;d<detail/2;d++) {
-	  v=sp[i].c[k];
-	  p[i*detail+d].c[k]=v;
-	}
-	for(d=detail/2;d<detail;d++) {
-	  v=sp[i+1].c[k];
-	  p[i*detail+d].c[k]=v;
-	}
-      }    
-    }
-  }
-
-  // set transparency
-  for(i=0;i<n;i++)
-    for(d=0;d<detail;d++)
-      p[i*detail+d].c[3]=sp[i].c[3];
-
-#endif
-  
   Cfree(px);
 
   // calculate dir vectors

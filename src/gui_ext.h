@@ -8,9 +8,7 @@
 #ifndef _GUI_EXT_H
 #define _GUI_EXT_H
 
-#ifdef USE_CMI
 #include "cmi.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,11 +17,7 @@ extern "C" {
 #include "write.h"
 
 
-#ifdef USE_CMI
 int guiInit(int , char **);
-#else
-int guiInit(void (*)(int, char **), int*, char ***);
-#endif
 
 int guiMainLoop(void);
 
@@ -37,9 +31,7 @@ void guiSwapBuffers(void);
 
 int guiQueryStereo(void);
 
-#ifdef USE_CMI
 void guiCMICallback(const cmiToken *t);
-#endif
 
 #ifdef SGI_STEREO
 int guiSetStereo(int m);
