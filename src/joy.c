@@ -54,9 +54,11 @@ int jCheck()
       switch(e->number) {
       case 0: /* x-translation */
 	/* hack for werid joystick behaviour */
+	/* removed again
 	if(abs(e->value)>threshold)
 	  comTransform(TRANS_SPACEBALL, 0, 4, e->value/factor);
 	break;
+	*/
       case 1: /* y-translation */
 	break;
       case 2: /* z-translation */
