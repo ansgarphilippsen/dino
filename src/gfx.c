@@ -239,14 +239,7 @@ int gfxInit()
   gfx.dither=1;
   gfx.smooth=1;
 
-#ifdef EXPO
-  gfx.limx1=0;
-  gfx.limx2=0;
-  gfx.limy1=0;
-  gfx.limy2=0;
-  gfx.limz1=0;
-  gfx.limz2=0;
-#endif
+  gfx.dlist_flag=1;
 
 #ifdef USE_CMI
   gfxCMIInit();
@@ -415,7 +408,7 @@ int gfxGLInit(void)
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
 
-  gfxResizeEvent();
+  //gfxResizeEvent();
 
 #ifdef VR
   glTexParameteri(GL_TEXTURE_3D_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP);

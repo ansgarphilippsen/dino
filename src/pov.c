@@ -1,3 +1,4 @@
+#include <math.h>
 #include <string.h>
 
 #include "pov.h"
@@ -12,6 +13,10 @@ GLdouble write_pov_mm[16],write_pov_pm[16],write_pov_rm[16];
 GLint write_pov_vp[4];
 
 int write_pov_flag, write_pov_mode, write_pov_ver;
+
+
+#define epsilon 0.0
+#define dlim(v1,v2) (fabs(v1[0]-v2[0])<=epsilon && fabs(v1[1]-v2[1])<=epsilon && fabs(v1[2]-v2[2])<=epsilon)
 
 /*
   Utility funtions for basic POV elements
@@ -169,10 +174,17 @@ static int writePOVTriangle(FILE *f, transMat *transform,int mode, float ov1[3],
       if(v1[2]==v2[2] && v2[2]==v3[2])
 	return 0;
 
+  if(dlim(v1,v2) || dlim(v1,v3) || dlim (v2,v3)) {
+    // degenerate triangle
+    return 0;
+  }
+
+    /*
   if((v1[0]==v2[0] && v1[1]==v2[1] && v1[2]==v2[2]) ||
      (v3[0]==v2[0] && v3[1]==v2[1] && v3[2]==v2[2]) ||
      (v1[0]==v3[0] && v1[1]==v3[1] && v1[2]==v3[2]))
     return 0;
+    */
 
   writePOVCheckLim(v1,lim);
   writePOVCheckLim(v2,lim);
@@ -900,6 +912,11 @@ static int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
 
 
   fprintf(f,"#if (%s)\n",obj_name);
+
+  if(write_pov_ver==WRITE_POV_V35 && write_pov_mode==WRITE_POV_DEFAULT) {
+    // prepare the smoothing textures to use
+    writePOVGenTriSmoothTex(f,obj_name,tex_name,tp_name,fi_name);
+  }
 
   switch (obj->type) {
   case GRID_SURFACE:

@@ -42,6 +42,8 @@ int writeFile(char *name, struct WRITE_PARAM *p)
     debmsg("initializing GL");
     gfxGLInit();
 
+    gfx.dlist_flag=0;
+
     // draw into offscreen context
     debmsg("drawing into offscreen context");
     ow=gfx.win_width;
@@ -54,7 +56,7 @@ int writeFile(char *name, struct WRITE_PARAM *p)
       debmsg("doing accumulation series");
       do_jitter(img.param.accum);
     } else {
-      gfxSetProjection(gfx.current_view);
+      //gfxSetProjection(gfx.current_view);
       gfxSceneRedraw(1);
       comDBRedraw();
     }
@@ -71,6 +73,8 @@ int writeFile(char *name, struct WRITE_PARAM *p)
     gfx.win_width=ow;
     gfx.win_height=oh;
     gfxSetViewport();
+
+    gfx.dlist_flag=1;
   }
 
 

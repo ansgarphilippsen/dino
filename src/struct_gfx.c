@@ -276,21 +276,35 @@ int structDrawObj(structObj *obj)
     glEnable(GL_CULL_FACE);
     glEnable(GL_NORMALIZE);
 
-    for(i=0;i<obj->atom_count;i++) {
-      glPushMatrix();
-      glColor3f(obj->atom[i].prop.r,obj->atom[i].prop.g,obj->atom[i].prop.b);
-      glTranslatef(obj->atom[i].ap->p->x,
-		   obj->atom[i].ap->p->y,
-		   obj->atom[i].ap->p->z);
-      glScalef(obj->atom[i].prop.radius,
-	       obj->atom[i].prop.radius,
-	       obj->atom[i].prop.radius);
+    if(gfx.dlist_flag) {
+      for(i=0;i<obj->atom_count;i++) {
+	glPushMatrix();
+	glColor3f(obj->atom[i].prop.r,obj->atom[i].prop.g,obj->atom[i].prop.b);
+	glTranslatef(obj->atom[i].ap->p->x,
+		     obj->atom[i].ap->p->y,
+		     obj->atom[i].ap->p->z);
+	glScalef(obj->atom[i].prop.radius,
+		 obj->atom[i].prop.radius,
+		 obj->atom[i].prop.radius);
+	
+	glCallList(obj->sphere_list);
+	
+	glPopMatrix();
+      }
+    } else {
+      for(i=0;i<obj->atom_count;i++) {
+	glPushMatrix();
+	glColor3f(obj->atom[i].prop.r,obj->atom[i].prop.g,obj->atom[i].prop.b);
+	glTranslatef(obj->atom[i].ap->p->x,
+		     obj->atom[i].ap->p->y,
+		     obj->atom[i].ap->p->z);
 
-      glCallList(obj->sphere_list);
-
-      glPopMatrix();
+	cgfxSphere(obj->atom[i].prop.radius,obj->render.detail1);
+	
+	glPopMatrix();
+      }
     }
-
+    
     glDisable(GL_CULL_FACE);
     glDisable(GL_NORMALIZE);
 
@@ -443,49 +457,91 @@ int structDrawBDObj(dbmStructNode *node, structObj *obj)
       glEnable(GL_NORMALIZE);
       break;
     }
+
+    switch(obj->render.mode) {
+    case RENDER_SIMPLE:
     for(a=0;a<obj->atom_count;a++) {
       if(obj->atom[a].ap->anum==index) {
 
-	switch(obj->render.mode) {
-	case RENDER_SIMPLE:
 	  glColor3f(obj->atom[a].prop.r,
 		    obj->atom[a].prop.g,
 		    obj->atom[a].prop.b);
 	  glVertex3f(x-sd,y,z); glVertex3d(x+sd,y,z);
 	  glVertex3f(x,y-sd,z); glVertex3d(x,y+sd,z);
 	  glVertex3f(x,y,z-sd); glVertex3d(x,y,z+sd);
-	  break;
-	case RENDER_CPK:
-	  glPushMatrix();
-	  glColor3f(obj->atom[a].prop.r,
-		    obj->atom[a].prop.g,
-		    obj->atom[a].prop.b);
-	  glTranslatef(x,y,z);
-	  glScalef(obj->atom[a].prop.radius,
-		   obj->atom[a].prop.radius,
-		   obj->atom[a].prop.radius);
+      }
+    }
+    break;
+    case RENDER_CPK:
+      if(gfx.dlist_flag) {
+	for(a=0;a<obj->atom_count;a++) {
+	  if(obj->atom[a].ap->anum==index) {
+	    glPushMatrix();
+	    glColor3f(obj->atom[a].prop.r,
+		      obj->atom[a].prop.g,
+		      obj->atom[a].prop.b);
+	    glTranslatef(x,y,z);
+	    
+	    glScalef(obj->atom[a].prop.radius,
+		     obj->atom[a].prop.radius,
+		     obj->atom[a].prop.radius);
+	    
+	    glCallList(obj->sphere_list);
+	    
+	    glPopMatrix();
+	  }
+	}    
+      } else {
+	for(a=0;a<obj->atom_count;a++) {
+	  if(obj->atom[a].ap->anum==index) {
+	    glPushMatrix();
+	    glColor3f(obj->atom[a].prop.r,
+		      obj->atom[a].prop.g,
+		      obj->atom[a].prop.b);
+	    glTranslatef(x,y,z);
 
-	  glCallList(obj->sphere_list);
+	    cgfxSphere(obj->atom[a].prop.radius,obj->render.detail1);
+	    
+	    glPopMatrix();
+	  }
+	}    
+      }  
+      break;
+    case RENDER_CUSTOM:
+      if(gfx.dlist_flag) {
+	for(a=0;a<obj->atom_count;a++) {
+	  if(obj->atom[a].ap->anum==index) {
+	    glPushMatrix();
+	    glColor3f(obj->atom[a].prop.r,
+		      obj->atom[a].prop.g,
+		      obj->atom[a].prop.b);
+	    glTranslatef(x,y,z);
+	    glScalef(sphere_radius,
+		     sphere_radius,
+		     sphere_radius);
+	    
+	    glCallList(obj->sphere_list);
+	    
+	    glPopMatrix();
+	  }
+	}
+      } else {
+	for(a=0;a<obj->atom_count;a++) {
+	  if(obj->atom[a].ap->anum==index) {
+	    glPushMatrix();
+	    glColor3f(obj->atom[a].prop.r,
+		      obj->atom[a].prop.g,
+		      obj->atom[a].prop.b);
+	    glTranslatef(x,y,z);
 
-	  glPopMatrix();
-	  
-	  break;
-	case RENDER_CUSTOM:
-	  glPushMatrix();
-	  glColor3f(obj->atom[a].prop.r,
-		    obj->atom[a].prop.g,
-		    obj->atom[a].prop.b);
-	  glTranslatef(x,y,z);
-	  glScalef(sphere_radius,
-		   sphere_radius,
-		   sphere_radius);
+	    cgfxSphere(sphere_radius,obj->render.detail1);
 
-	  glCallList(obj->sphere_list);
-
-	  glPopMatrix();
-	  break;
+	    glPopMatrix();
+	  }
 	}
       }
+
+      break;
     }
   }
 

@@ -1,3 +1,5 @@
+new .pqr format is actually pdb (so use -type pdb when loading new .pqr files)
+
 added .dinorc file (exec block only)
 
 added -v35 for POVRAY v3.5 output

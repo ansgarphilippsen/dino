@@ -9,9 +9,7 @@ explicit colors broken
 
 within selection cannot distinguish between several values and vector (TCL)
 
-cpk not written to file (display list problem)
-
-
+writing png other than the current winsize (ie using -s flag) might not work (beccause it depends on offline rendering context to be implemented properly)
 
 known problems for DINO v0.8.5
 ------------------------------
@@ -30,8 +28,6 @@ known problems for DINO v0.8.5
 
 - picking in split scene does not work
 
-- MEAD coordinate file does not recognize atom types, ie all atoms white
-
 - surface solid rendering can be VERY slow on linux machines using only a 
   software stencil buffer
 
@@ -39,15 +35,10 @@ known problems for DINO v0.8.5
 
 - PostScript output crashes when using labels
 
-- .struct.obj render hsc,detail=1 will coredump (use detail > 1)
-
 - occasional crashes on the SGIs when moving the scene with the mouse. This
   seems to be a bug in the X-windows event handling. FIX: turn off all object
   before moving, rotate the scene (left-click and move mouse some), then turn
   objects back on
-
-- writing pics larger than the current screen size might not scale
-  correctly under linux
 
 - POVray output only partial for geom objects
 

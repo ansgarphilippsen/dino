@@ -509,6 +509,8 @@ int gridObjRenew(gridObj *obj, Set *set, Select *sel, int vflag)
   }
   gridObjSet(obj,set,1);
 
+  clStrcat(message,"\n");
+
   comMessage(message);
 
   if(vflag) {
@@ -554,7 +556,7 @@ int gridGenerate(gridObj *obj, Select *sel)
   fy=field->scale_y;
   fz=field->scale_z;
 
-  comMessage("Generating \n");
+  comMessage("Generating ");
 
   // if step size is larger then 1 generate subgrid
   if(step>1) {

@@ -65,6 +65,8 @@ struct GFX
   int spin,sx,sy,sdx,sdy;
   int dither;
 
+  int dlist_flag;
+
   int offline;
   int smooth;
 
