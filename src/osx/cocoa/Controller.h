@@ -31,10 +31,11 @@
 - (void)awakeFromNib;
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification;
 - (void)timerControl;
+- (void)dealloc;
 // CLI Interaction
 - (void)command:(NSString *)theCommand from:(id)sender;
 - (void)showCommandResult:(NSString *)tmp;
-- (void)notifyUser:(NSString *)message;
+- (void)notifyUser:(NSString *)message returnPrompt:(BOOL)flag;
 // Update Display
 - (void)swapBuffers;
 - (void)updateStatusBox:(NSString *)text;

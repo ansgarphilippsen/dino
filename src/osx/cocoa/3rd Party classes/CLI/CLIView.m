@@ -125,7 +125,7 @@ the commands entered by the user and the results of those commands etc.
   return nil;
 }
 
-- (void)notifyUser:(NSString *)message {[[self shellView] notifyUser:message];}
+- (void)notifyUser:(NSString *)message returnPrompt:(BOOL)flag { [[self shellView] notifyUser:message returnPrompt:flag];}
 
 - (void)putCommand:(NSString *)command { [[self shellView] putCommand:command];}
 

@@ -54,6 +54,12 @@
     return self;
 }
 
+- (void)dealloc{
+    [childrenList release];
+    [super dealloc];
+}
+
+
 - (void)setName:(NSString *)s{
     [s retain];
     [name release];

@@ -26,6 +26,7 @@
 }
 
 - (id)initWithName:(NSString *)s;
+- (void)dealloc;
 - (void)setName:(NSString *)s;
 - (NSString *)name;
 - (BOOL *)displayFlag;

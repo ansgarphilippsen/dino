@@ -75,7 +75,7 @@ static BOOL useMaxSize;
     last_command_start = 0;
     shouldRetainCommandHandler = YES;
 
-    [self setFont:[NSFont userFixedPitchFontOfSize:12]];
+    [self setFont:[NSFont userFixedPitchFontOfSize:10]];
     [self setSelectedRange:NSMakeRange([[self string] length],0)];
 //    [super insertText:prompt];
     start = [[self string] length];
@@ -91,17 +91,26 @@ static BOOL useMaxSize;
    [super insertText:aString];
 }
 
-- (void)notifyUser:(NSString *)notification
+- (void)notifyUser:(NSString *)notification returnPrompt:(BOOL)flag
 {
     NSString *command = [[self string] substringFromIndex:start];
     NSRange selectedRange = [self selectedRange];
-    int delta = [prompt length] + [notification length] + 2;
   
     [self setSelectedRange:NSMakeRange(start,[[self string] length])];
-    [self insertText:[NSString stringWithFormat:@"\n%@\n%@%@",notification,prompt,command]];
-    [self setFont:[NSFont boldSystemFontOfSize:10] range:NSMakeRange(start,[notification length]+1)];
-    start += delta;
-    [self setSelectedRange:NSMakeRange(selectedRange.location+delta,selectedRange.length)];
+    if(flag){
+	int delta = [prompt length] + [notification length] + 2;
+	[self insertText:[NSString stringWithFormat:@"\n%@\n%@%@",notification,prompt,command]];
+	[self setFont:[NSFont boldSystemFontOfSize:10] range:NSMakeRange(start,[notification length]+1)];
+	start += delta;
+	[self setSelectedRange:NSMakeRange(selectedRange.location+delta,selectedRange.length)];
+    }else{
+	int delta = [notification length] + 2;
+	[self insertText:[NSString stringWithFormat:@"\n%@\n",notification]];
+	[self setFont:[NSFont boldSystemFontOfSize:10] range:NSMakeRange(start,[notification length]+1)];
+	start += delta;
+	[self setSelectedRange:NSMakeRange(selectedRange.location+delta,selectedRange.length)];
+	
+    }
 }
 
 - (void)keyDown:(NSEvent *)theEvent  // Called by the AppKit when the user press a key.
@@ -244,12 +253,12 @@ static BOOL useMaxSize;
     // *CONTROL + F10* : switch the parser modes
     if (parserMode == NO_DECOMPOSE)
     {
-      [self notifyUser:@"When pasting command, newline is now interpreted as subcommands separator"];
+      [self notifyUser:@"When pasting command, newline is now interpreted as subcommands separator" returnPrompt:YES];
       parserMode = DECOMPOSE;
     }
     else
     {
-      [self notifyUser:@"When pasting command, newline is now NOT interpreted as subcommands separator"];
+      [self notifyUser:@"When pasting command, newline is now NOT interpreted as subcommands separator" returnPrompt:YES];
       parserMode = NO_DECOMPOSE;
     }
   }

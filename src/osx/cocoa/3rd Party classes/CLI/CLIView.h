@@ -13,7 +13,8 @@
 
 - (id)commandHandler;                              // Returns the current command handler. 
 - (float)fontSize;                                 // Returns the font size. 
-- (void)notifyUser:(NSString *)message;            // Point to the attention of the user the message passed as argument.
+- (void)notifyUser:(NSString *)message returnPrompt:(BOOL)flag; // Point to the attention of the user
+                                                                // the message passed as argument.
 - (void)putCommand:(NSString *)command;            // A programmatic way to put a command in the CLI view.
 
 - (void)putText:(NSString *)text;                  // Put the text passed as argument in the CLIView. 

@@ -55,7 +55,7 @@ int guiInit(int argc, char **argv)
 
   //print info about graphics subsystem
     debmsg("guiInit: info");
-    graphCard = [NSString stringWithFormat:@"Graphics Subsystem ID: %s %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER)];
+    graphCard = [NSString stringWithFormat:@"Graphics Subsystem ID: %s %s\n", glGetString(GL_VENDOR),glGetString(GL_RENDERER)];
 
     sprintf(major,"%c",glGetString(GL_VERSION)[0]);
     major[1]='\0';
@@ -63,13 +63,13 @@ int guiInit(int argc, char **argv)
     minor[1]='\0';
 
     if(atoi(major)<1 || (atoi(major)==1 && atoi(minor)<1)) {
-	openGLVersion = [NSString stringWithFormat:@"OpenGL version %d.%d or above required, found %s.%s instead",1,1,major,minor];
+	openGLVersion = [NSString stringWithFormat:@"OpenGL version %d.%d or above required, found %s.%s instead",1,1, major,minor];
 	return -1;
     } else {
 	openGLVersion = [NSString stringWithFormat:@"OpenGL Version %s.%s",major,minor];
     }
 
-    [[Controller dinoController] notifyUser:[graphCard stringByAppendingString:openGLVersion]];
+    [[Controller dinoController] notifyUser:[graphCard stringByAppendingString:openGLVersion] returnPrompt:NO];
     
   //initialization completed
     return 0;

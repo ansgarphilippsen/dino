@@ -17,33 +17,33 @@ static id dinoController;
 - (void)awakeFromNib
 {
     dinoController=self;
+
     [dinoCLI setCommandHandler:dinoController];
-
     NSDrawer *CLIDrawer = [[[dinoGL window] drawers] objectAtIndex:0];
-
     [CLIDrawer setContentSize:NSMakeSize(0,160)];	
     [CLIDrawer openOnEdge:NSMinYEdge];
 
     dataSetList = [[NSMutableDictionary alloc] initWithCapacity:2];
-//    [dinoOM setVerticalMotionCanBeginDrag:YES];
     [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:[toggleButton cell]];
+//    [dinoOM setVerticalMotionCanBeginDrag:YES];
+    [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
-    [self notifyUser:[NSString stringWithFormat:@"Welcome to dino v%s (http://www.dino3d.org)\n",VERSION]];
+    [[dinoGL window] makeKeyWindow];
+    
+    [self notifyUser:[NSString stringWithFormat:@"Welcome to dino v%s (http://www.dino3d.org)",VERSION] returnPrompt:NO];
     [self updateVersionBox:[NSString stringWithFormat:@"dino v%s",VERSION]];
-
-    [self notifyUser:[@"Current directory: " stringByAppendingString:[[NSFileManager defaultManager] currentDirectoryPath]]];
 	
     guiInit(0,0);
     cmiInitGL();
     cmiResize([dinoGL frame].size.width,[dinoGL frame].size.height);
      
     controlTimer=[[NSTimer timerWithTimeInterval: 0.01 target: self selector: @selector(timerControl) userInfo: nil repeats: YES ] retain];
-
     [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
-    
+
+    [self notifyUser:[@"Current directory: " stringByAppendingString:[[NSFileManager defaultManager] currentDirectoryPath]] returnPrompt:YES];
     [self updateStatusBox:@"Ready"];
 
 }
@@ -51,6 +51,10 @@ static id dinoController;
 - (void)timerControl
 {
     guiTimeProc(NULL);
+}
+
+- (void)dealloc{
+    [dataSetList release];
 }
 
 //------------------------------------------------------
@@ -66,9 +70,9 @@ static id dinoController;
     [dinoCLI putText:tmp];
 }
 
-- (void)notifyUser:(NSString *)message
+- (void)notifyUser:(NSString *)message returnPrompt:(BOOL)flag
 {
-    [dinoCLI notifyUser:message];
+    [dinoCLI notifyUser:message returnPrompt:flag];
 }
 
 //------------------------------------------------------
@@ -195,10 +199,9 @@ static id dinoController;
 
 - (void)omAddDB:(NSString *)name
 {
-    DinoDataSet *aDataSet =[[DinoDataSet alloc] initWithName:name];
+    DinoDataSet *aDataSet =[[[DinoDataSet alloc] initWithName:name] autorelease];
     [dataSetList setObject:aDataSet forKey:name];
     [dinoOM reloadData];
-    [aDataSet autorelease];
 }
 
 - (void)omDelDB:(NSString *)name
@@ -209,11 +212,10 @@ static id dinoController;
 
 - (void)omAddObj:(NSString *)name inDB:(NSString *)db 
 {
-    DinoObject *anObject = [[DinoObject alloc] initWithName:name inDataSet:db];
+    DinoObject *anObject = [[[DinoObject alloc] initWithName:name inDataSet:db] autorelease];
     [[dataSetList objectForKey:db] addChildren:anObject withKey:name];
     [dinoOM reloadData];
     [dinoOM expandItem:[dataSetList objectForKey:db]];
-    [anObject autorelease];
 }
 
 - (void)omDelObj:(NSString *)name inDB:(NSString *)db
@@ -305,15 +307,52 @@ static id dinoController;
 }
 
 - (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray*)rows toPasteboard:(NSPasteboard*)pboard{
-    
+    if ([rows count]==1){
+	NSString *draggedObject = [[dinoOM itemAtRow:[rows objectAtIndex:0]] name];
+	[pboard declareTypes:[NSArray arrayWithObjects:@"DinoObjectType"] owner:nil];
+	[pboard setString:draggedObject forType:@"DinoObjectType"];
+	return YES;
+    }
+    else{
+	return NO;
+    }
 }
 
 - (NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation{
-    
+    NSArray *typeArray=[[info draggingPasteboard] types];
+    if ([typeArray count]==1 && row!=-1){
+	if ([[typeArray objectAtIndex:0] isEqualToString:@"DinoObjectType"] && operation==NSTableViewDropAbove){
+	    return NSDragOperationMove;
+	}
+    }else{
+	return NSDragOperationNone;
+    }
 }
 
 - (BOOL)tableView:(NSTableView*)tableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation{
-    
+
+/*
+    NSString *draggedObjectName = [[info draggingPasteboard] stringForType:@"DinoObjectType"];
+    int oldRow = [dinoOM rowForItem:[draggedObjectName];
+    if ([tableView selectedRow] > -1){
+	selectedObject = [[dinoOM objectAtIndex:[tableView selectedRow] name];
+    }
+
+    if (newPosition != -1){
+	id object = [gifFileArray objectAtIndex:rowToMove];
+
+	if (newPosition < [gifFileArray count] - 1) {
+	    [gifFileArray removeObjectAtIndex:rowToMove];
+	    [gifFileArray insertObject:object atIndex:newPosition];
+	}else{
+	    [gifFileArray removeObjectAtIndex:rowToMove];
+	    [gifFileArray addObject:object];
+	}
+    }
+
+    [dinoOM reloadData];
+*/
+    return YES;    
 }
 
 // Delegate methods
@@ -374,7 +413,7 @@ static id dinoController;
 	n=1;
     }
     else{
-	fprintf(stderr,"Initialization of the offscreen context failed.\n");
+	[self showCommandResult:@"Initialization of the offscreen context failed."];
 	n =0;
     }
 	    

@@ -16,7 +16,7 @@
         nil };
     NSOpenGLPixelFormat *pixFmt;
 
-    pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+    pixFmt = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];
     self = [super initWithFrame:frameRect pixelFormat:pixFmt];
 
     [[self openGLContext] makeCurrentContext];
