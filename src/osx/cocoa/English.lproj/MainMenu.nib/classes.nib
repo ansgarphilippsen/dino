@@ -14,20 +14,39 @@
                 calcTorsion = id; 
                 centerCP = id; 
                 centerCS = id; 
+                hideAxis = id; 
+                hideCPMarker = id; 
+                resetAll = id; 
+                rotFromSliderX = id; 
+                rotFromSliderY = id; 
                 runScript = id; 
-                setWorkingDirectory = id; 
+                setCurrentDirectory = id; 
+                showAxis = id; 
+                showCPMarker = id; 
+                toggleDepthCueing = id; 
+                toggleDinoObject = id; 
+                viewCenter = id; 
+                viewLeft = id; 
+                viewRight = id; 
             }; 
             CLASS = Controller; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 dinoCLI = CLIView; 
                 dinoGL = DinoGLView; 
+                dinoOM = NSOutlineView; 
                 statusBox = NSTextField; 
+                toggleButton = NSButton; 
                 versionBox = NSTextField; 
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = DinoGLView; LANGUAGE = ObjC; SUPERCLASS = NSOpenGLView; }, 
+        {
+            CLASS = DinoGLView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {sliderX = NSSlider; sliderY = NSSlider; }; 
+            SUPERCLASS = NSOpenGLView; 
+        }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 
