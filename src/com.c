@@ -1562,6 +1562,11 @@ int comWrite(int wc,const char **wl)
     comMessage("WARNING: deprecated format! Please use POVray instead\n");
     fclose(f);
   } else if(!strcmp(type,"pov")) {
+    if(pov_ver==WRITE_POV_V35 && pov_mode==WRITE_POV_PATCH) {
+      comMessage("Error: -patch and -v35 cannot be used together!\n");
+      return -1;
+    }
+
     if((f=fopen(file,"w"))==NULL) {
       sprintf(message,"Error opening %s\n",file);
       comMessage(message);

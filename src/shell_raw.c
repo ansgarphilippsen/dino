@@ -205,6 +205,7 @@ int shellParseRaw(const char *s, int hf)
   Tcl_Parse tparse;
   int i,ret;
 #endif
+  int scr_f;
   
   comReturn("");
 
@@ -245,8 +246,10 @@ int shellParseRaw(const char *s, int hf)
   }
 
 #else
+  scr_f=shellIsScript();
   if(parse(s)==SHELL_OK) {
-    shellLog(s);
+    if(!scr_f)
+      shellLog(s);
   }
 #endif
 
@@ -259,6 +262,8 @@ void shellLog(const char *s)
 {
   if(logfile && clStrlen(s)>0) {
     fprintf(logfile,"%s",s);
+    if(s[clStrlen(s)-1]!='\n')
+      fprintf(logfile,"\n");
     fflush(logfile);
   }
 }

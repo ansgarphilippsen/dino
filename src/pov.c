@@ -640,6 +640,10 @@ static int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
 
   fprintf(f,"#if (%s)\n",obj_name);
 
+  if(write_pov_ver==WRITE_POV_V35 && write_pov_mode==WRITE_POV_DEFAULT) {
+    // prepare the smoothing textures to use
+    writePOVGenTriSmoothTex(f,obj_name,tex_name,tp_name,fi_name);
+  }
 
   // copied from write_pov_va BAD BAD STYLE
   // prepare the output
