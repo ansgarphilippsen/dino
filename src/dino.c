@@ -24,7 +24,8 @@
 #include "startup.h"
 
 #ifndef USE_CMI
-#include "gui_ext.h"
+//#include "gui_ext.h"
+#include "gui.h"
 extern struct GUI gui;
 #endif
 

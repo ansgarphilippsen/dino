@@ -15,7 +15,7 @@
 # TCL_SHELL
 # USE_CMI   use _only_ with GUI_GLUT !!
 
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DUSE_CMI
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF #-DUSE_CMI
 
 # use tcl as interpreter
 #OPTIONS += -DTCL_SHELL
@@ -33,7 +33,7 @@ MALLOCLIB=
 # only for linux versions
 #STATIC = 1
 
-SRC= dino.c \
+SRC= dino.c main.c \
      dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
      startup.c cl.c set.c bspline.c transform.c prop.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
