@@ -1,5 +1,15 @@
 #include "io_gromacs.h"
 
+#ifndef IO_GROMACS
+
+int xtcTrjRead(char *filename, dbmStructNode *node, int swap_flag)
+{
+  fprintf(stderr,"gromacs trj support not included!\n");
+  return -1;
+}
+
+#else
+
 #include <math.h>
 #include <rpc/rpc.h>
 #include <rpc/xdr.h>
@@ -994,3 +1004,6 @@ int xtcTrjRead(char *filename, dbmStructNode *node, int swap_flag)
 
   return 0;
 }
+
+
+#endif
