@@ -1,8 +1,9 @@
 # called from toplevel Makefile
 
-MEMBERS =  gui_wx.o
+SRC =  gui_wx.cpp
+MEMBERS := $(SRC:.cpp=.o)
 
-COPT2 = -I/usr/lib/wx/include/gtk-2.2
+CADD = -I/usr/lib/wx/include/gtk-2.2 -I../
 LOPT += -lwx_gtk_gl-2.2 -lwx_gtk-2.2
 
 
@@ -13,6 +14,15 @@ gui.a: $(MEMBERS)
 	ar cr gui.a $?
 
 .cpp.o:
-	$(CCP) $(COPT) $(COPT2) -I../ -c $<
+	$(CCP) $(COPT) $(CADD) -c $<
+
+clean:
+	rm -f *.o *~ gui.a .depend
+
+depend:
+	$(CC) -MM $(INCLUDE) $(OPTIONS) $(CADD) $(SRC) > .depend
+
+sinclude .depend
+
 
 

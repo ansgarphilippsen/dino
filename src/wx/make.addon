@@ -1,0 +1,1 @@
+GUILIBS = -lwx_gtk_gl-2.2 -lwx_gtk-2.2
