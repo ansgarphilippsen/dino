@@ -28,6 +28,8 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   // check if swap is required
   fread(&header,sizeof(struct CCP4_MAP_HEADER),1,f);
 
+  // TODO FIX BYTE SWAP PROBLEM
+
   if(header.mode!=2 && header.mode!=0) {
     // try swapping
     sn->swap_flag=1;
@@ -67,6 +69,14 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   if(header.nz==0.0)
     header.nz=header.ns;
 
+  sprintf(message,
+	  "header:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld\n",
+	  header.nc, header.nr, header.ns,
+	  header.ncstart, header.nrstart, header.nsstart,
+	  header.nx, header.ny, header.nz, 
+	  header.x, header.y, header.z,
+	  header.mapc, header.mapr, header.maps);
+  debmsg(message);
 
   /*
     nx,ny and nz are only needed for the 
@@ -180,19 +190,11 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   }
   Cfree(raw_data);
 
-
-  sprintf(message,
-	  "header:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld\n",
-	  header.nc, header.nr, header.ns,
-	  header.ncstart, header.nrstart, header.nsstart,
-	  header.nx, header.ny, header.nz, 
-	  header.x, header.y, header.z,
-	  header.mapc, header.mapr, header.maps);
-  debmsg(message);
   sprintf(message,
 	  "u_size, v_size, w_size: %d,%d,%d\n\n",
 	  sn->field->u_size,sn->field->v_size, sn->field->w_size);
   debmsg(message);
+
 
   fx=1.0/(double)(header.nx);
   fy=1.0/(double)(header.ny);

@@ -34,6 +34,7 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
   char message[256];
   char *empty_com[]={"get","center"};
   int i;
+  float tmp_tr;
 
   if(wc<=0) {
     wc=2;
@@ -55,7 +56,7 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
       return -1;
     }
 
-
+    tmp_tr=obj->render.transparency;
     if(renderSet(&obj->render,wc-1,wl+1)!=0) {
       sprintf(message,"%s: syntax error in render statement\n",obj->name);
       return -1;
@@ -70,6 +71,19 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 	comMessage("invalid render mode\n");
 	return -1;
       }
+
+#ifdef CONTOUR_COLOR
+      if(obj->render.transparency!=tmp_tr) {
+	for(i=0;i<obj->point_count;i++)
+	  obj->point[i].c[3]=obj->render.transparency;
+	for(i=0;i<obj->face_count;i++) {
+	  obj->face[i].c1[3]=obj->render.transparency;
+	  obj->face[i].c2[3]=obj->render.transparency;
+	  obj->face[i].c3[3]=obj->render.transparency;
+	}
+      }
+#endif
+
     } else if(obj->type==SCAL_GRID) {
       if(obj->render.mode!=RENDER_ON && 
 	 obj->render.mode!=RENDER_OFF) {
@@ -77,8 +91,10 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 	comMessage("invalid render mode\n");
 	return -1;
       }
+
       for(i=0;i<obj->point_count;i++)
 	obj->point[i].c[3]=obj->render.transparency;
+
 
     } else if(obj->type==SCAL_SLAB) {
       for(i=0;i<obj->slab.size;i++)
@@ -303,7 +319,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 {
   int pc,op,os,vi[3],f,res,ec;
   struct POV_VALUE *val;
-  float r,g,b,r2,g2,b2,v1[4],rad1,rad2;
+  float r,g,b,r2,g2,b2,r3,g3,b3,v1[4],rad1,rad2;
   float rval,p[3],frac1,frac2,rval1,rval2;
   double vd1[3],vd2[3];
   float fact;
@@ -325,6 +341,25 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
        clStrcmp(s->pov[pc].prop,"colour") ||
        clStrcmp(s->pov[pc].prop,"col")) {
       s->pov[pc].id=SCAL_PROP_COLOR;
+
+      // pre eval color
+      val=povGetVal(&s->pov[pc],0);
+
+      if(comGetColor(val->val1,&r3,&g3,&b3)<0) {
+	sprintf(message,"error: set: unknown color %s\n",val->val2);
+	comMessage(message);
+	return -1;
+      }
+      obj->r=r3;
+      obj->g=g3;
+      obj->b=b3;
+      if(s->range_flag) {
+	if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+	  sprintf(message,"error: set: unknown color %s\n",val->val2);
+	  comMessage(message);
+	  return -1;
+	}
+      }
     } else if(clStrcmp(s->pov[pc].prop,"center") ||
 	      clStrcmp(s->pov[pc].prop,"cen")) {
       if(s->pov[pc].op!=POV_OP_EQ) {
@@ -412,41 +447,106 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     op=s->pov[pc].op;
     val=povGetVal(&s->pov[pc],0);
 
+#ifndef CONTOUR_COLOR
     if(obj->type==SCAL_CONTOUR) {
       if(val->range_flag) {
 	comMessage("error: set: range not supported for contour object\n");
 	return -1;
       }
     }
+#endif
     switch(s->pov[pc].id) {
     case SCAL_PROP_COLOR:
       if(flag==1) {
 	if(obj->type==SCAL_CONTOUR) {
+#ifdef CONTOUR_COLOR
+	  for(ec=0;ec<obj->point_count;ec++) {
+	    r=r3; g=g3; b=b3;
+	    f=0;
+	    if(s->select_flag) {
+	      res=scalIsSelected(obj->node,
+				 obj->point[ec].uvw[0],
+				 obj->point[ec].uvw[1],
+				 obj->point[ec].uvw[2],
+				 &s->select);
+	      if(res==-1)
+		return -1;
+	      else
+		f=res;
+	    } else {
+	      f=1;
+	    }
+	    if(f) {
+	      if(s->range_flag) {
+		if(s->range.src==NULL) {
+		  // this dataset
+		  if(scalGetRangeXYZVal(obj->node,
+					s->range.prop,
+					obj->point[ec].v,
+					&rval)<0)
+		    return -1;
+		} else {
+		  if(dbmGetRangeVal(&s->range,obj->point[ec].v,&rval)<0)
+		    return -1;
+		}
+		frac1=rval2-rval1;
+		frac2=rval-rval1;
+		if(frac1==0.0) {
+		  if(frac2==0.0)
+		    frac2=0.5;
+		  else
+		    frac2=-2.0;
+		} else {
+		  frac2/=frac1;
+		}
+		if(s->range.clamp) {
+		  if(frac2<0.0) {
+		    frac2=0.0;
+		  } else if(frac2>1.0) {
+		    frac2=1.0;
+		  }
+		}
+		if(frac2>=0.0 && frac2<=1.0) {
+		  obj->point[ec].c[0]=(r2-r)*frac2+r;
+		  obj->point[ec].c[1]=(g2-g)*frac2+g;
+		  obj->point[ec].c[2]=(b2-b)*frac2+b;
+		}
+	      } else {  // range flag
+		obj->point[ec].c[0]=r;
+		obj->point[ec].c[1]=g;
+		obj->point[ec].c[2]=b;
+	      }
+	      obj->point[ec].c[3]=obj->render.transparency;
+	    }
+	  }
+	  // now the faces must be set
+	  for(ec=0;ec<obj->face_count;ec++) {
+	    obj->face[ec].c1[0]=obj->point[obj->face[ec].pi0].c[0];
+	    obj->face[ec].c1[1]=obj->point[obj->face[ec].pi0].c[1];
+	    obj->face[ec].c1[2]=obj->point[obj->face[ec].pi0].c[2];
+	    obj->face[ec].c1[3]=obj->render.transparency;
+
+	    obj->face[ec].c2[0]=obj->point[obj->face[ec].pi1].c[0];
+	    obj->face[ec].c2[1]=obj->point[obj->face[ec].pi1].c[1];
+	    obj->face[ec].c2[2]=obj->point[obj->face[ec].pi1].c[2];
+	    obj->face[ec].c2[3]=obj->render.transparency;
+
+	    obj->face[ec].c3[0]=obj->point[obj->face[ec].pi2].c[0];
+	    obj->face[ec].c3[1]=obj->point[obj->face[ec].pi2].c[1];
+	    obj->face[ec].c3[2]=obj->point[obj->face[ec].pi2].c[2];
+	    obj->face[ec].c3[3]=obj->render.transparency;
+	  }
+#else
 	  if(s->range_flag) {
 	    comMessage("error: range not supported for contour object\n");
-	    return -1;
-	  }
-	  if(comGetColor(val->val1,&r,&g,&b)<0) {
-	    comMessage("error: set: unknown color \n");
-	    comMessage(val->val1);
 	    return -1;
 	  }
 	  obj->r=r;
 	  obj->g=g;
 	  obj->b=b;
+#endif
 	} else if(obj->type==SCAL_GRID) {
-	  if(comGetColor(val->val1,&r,&g,&b)<0) {
-	    comMessage("error: set: unknown color \n");
-	    comMessage(val->val1);
-	    return -1;
-	  }
-	  if(s->range_flag) {
-	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val2);
-	      return -1;
-	    }
-	  }
+	  r=r3; g=g3; b=b3;
 	  for(ec=0;ec<obj->point_count;ec++) {
 	    f=0;
 	    if(s->select_flag) {
@@ -505,18 +605,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	    }
 	  }
 	} else if(obj->type==SCAL_GRAD) {
-	  if(comGetColor(val->val1,&r,&g,&b)<0) {
-	    comMessage("error: set: unknown color \n");
-	    comMessage(val->val1);
-	    return -1;
-	  }
-	  if(s->range_flag) {
-	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val2);
-	      return -1;
-	    }
-	  }
+	  r=r3; g=g3; b=b3;
 	  for(ec=0;ec<obj->vect_count;ec++) {
 	    f=0;
 	    if(s->select_flag) {
@@ -579,24 +668,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	    go through texture data and
 	    assign colors accordingly
 	  */
-	  if(s->range_flag) {
-	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val1);
-	      return -1;
-	    }
-	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val2);
-	      return -1;
-	    }	    
-	  } else {
-	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val1);
-	      return -1;
-	    }
-	  }
+	  r=r3; g=g3; b=b3;
 	  for(ec=0;ec<obj->slab.size;ec++) {
 	    if(s->range_flag) {
 	      rval=obj->slab.data[ec];

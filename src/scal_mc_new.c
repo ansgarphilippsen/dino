@@ -589,6 +589,15 @@ int scalMCN2Obj()
     }
   }
 
+#ifdef CONTOUR_COLOR
+  // reset point color to white
+  for(i=0;i<obj->point_count;i++) {
+    obj->point[i].c[0]=obj->r;
+    obj->point[i].c[1]=obj->g;
+    obj->point[i].c[2]=obj->b;
+    obj->point[i].c[3]=obj->render.transparency;
+  }
+#endif
 
   obj->line_count=scalMCNOrg.line_count;
   obj->line=Ccalloc(obj->line_count,sizeof(struct SCAL_LINE));
@@ -625,6 +634,22 @@ int scalMCN2Obj()
     obj->face[i].n3[0]=tmpface[i].n3[0];
     obj->face[i].n3[1]=tmpface[i].n3[1];
     obj->face[i].n3[2]=tmpface[i].n3[2];
+
+#ifdef CONTOUR_COLOR
+    // color values reset to white
+    obj->face[i].c1[0]=obj->r; 
+    obj->face[i].c1[1]=obj->g;
+    obj->face[i].c1[2]=obj->b; 
+    obj->face[i].c1[3]=obj->render.transparency;
+    obj->face[i].c2[0]=obj->r; 
+    obj->face[i].c2[1]=obj->g;
+    obj->face[i].c2[2]=obj->b; 
+    obj->face[i].c2[3]=obj->render.transparency;
+    obj->face[i].c3[0]=obj->r; 
+    obj->face[i].c3[1]=obj->g;
+    obj->face[i].c3[2]=obj->b; 
+    obj->face[i].c3[3]=obj->render.transparency;
+#endif
     
     obj->face[i].pi0=tmpface[i].pi0;
     obj->face[i].pi1=tmpface[i].pi1;

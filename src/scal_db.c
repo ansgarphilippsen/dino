@@ -1347,7 +1347,7 @@ int scalSetDefault(scalObj *obj)
   obj->face_count=0;
 
   obj->r=0.7;
-  obj->g=0.8;
+  obj->g=0.5;
   obj->b=1.0;
   obj->a=1.0;
 
@@ -1521,65 +1521,78 @@ int scalGetRangeXYZVal(dbmScalNode *node, const char *prop, float *pos, float *r
   int u,v,w;
   float vA,vB,vC,vD,vE,vF,vG,vH;
 
-  xyz[0]=pos[0];
-  xyz[1]=pos[1];
-  xyz[2]=pos[2];
+  float cp[3];
+  cp[0] = node->transform.cen[0];
+  cp[1] = node->transform.cen[1];
+  cp[2] = node->transform.cen[2];
 
-  scalXYZtoUVW(node->field, xyz, uvw);
-
-  u=(int)floor(uvw[0]);
-  v=(int)floor(uvw[1]);
-  w=(int)floor(uvw[2]);
-
-  p=uvw[0]-floor(uvw[0]);
-  q=uvw[1]-floor(uvw[1]);
-  r=uvw[2]-floor(uvw[2]);
-  p1=1.0-p;
-  q1=1.0-q;
-  r1=1.0-r;
-
-//  pq=p*q; pr=p*r; qr=q*r; pqr=p*q*r;
-
-  vA=scalReadField(node->field,u+0,v+0,w+0);
-  vB=scalReadField(node->field,u+1,v+0,w+0);
-  vC=scalReadField(node->field,u+0,v+1,w+0);
-  vD=scalReadField(node->field,u+1,v+1,w+0);
-  vE=scalReadField(node->field,u+0,v+0,w+1);
-  vF=scalReadField(node->field,u+1,v+0,w+1);
-  vG=scalReadField(node->field,u+0,v+1,w+1);
-  vH=scalReadField(node->field,u+1,v+1,w+1);
-
-  (*res)=vA*p1*q1*r1+
-    vB*p*q1*r1+
-    vC*p1*q*r1+
-    vD*p*q*r1+
-    vE*p1*q1*r+
-    vF*p*q1*r+
-    vG*p1*q*r+
-    vH*p*q*r;
-
-  /*
-  (*res)=vA*(-pqr+pq+pr+qr-p-q-r+1.0)+
-    vB*(pqr-pq-pr+p) +
-    vC*(pqr-pq-qr+q) +
-    vD*(-pqr+pq) +
-    vE*(pqr-pr-qr+r) +
-    vF*(-pqr+pr) +
-    vG*(-pqr+qr) +
-    vH*(pqr);
-  */
-  /*
-  if(fabs((*res))>fabs(vA) &&
-     fabs((*res))>fabs(vB) &&
-     fabs((*res))>fabs(vC) &&
-     fabs((*res))>fabs(vD) &&
-     fabs((*res))>fabs(vE) &&
-     fabs((*res))>fabs(vF) &&
-     fabs((*res))>fabs(vG) &&
-     fabs((*res))>fabs(vH)) {
-  }
-  */
+  if(clStrcmp(prop,"dist")) {
+    (*res) = sqrtf(
+		    (pos[0]-cp[0])*(pos[0]-cp[0])+
+		    (pos[1]-cp[1])*(pos[1]-cp[1])+
+		    (pos[2]-cp[2])*(pos[2]-cp[2])
+		    );
+  } else {
+    // default
+    xyz[0]=pos[0];
+    xyz[1]=pos[1];
+    xyz[2]=pos[2];
     
+    scalXYZtoUVW(node->field, xyz, uvw);
+    
+    u=(int)floor(uvw[0]);
+    v=(int)floor(uvw[1]);
+    w=(int)floor(uvw[2]);
+    
+    p=uvw[0]-floor(uvw[0]);
+    q=uvw[1]-floor(uvw[1]);
+    r=uvw[2]-floor(uvw[2]);
+    p1=1.0-p;
+    q1=1.0-q;
+    r1=1.0-r;
+    
+    //  pq=p*q; pr=p*r; qr=q*r; pqr=p*q*r;
+    
+    vA=scalReadField(node->field,u+0,v+0,w+0);
+    vB=scalReadField(node->field,u+1,v+0,w+0);
+    vC=scalReadField(node->field,u+0,v+1,w+0);
+    vD=scalReadField(node->field,u+1,v+1,w+0);
+    vE=scalReadField(node->field,u+0,v+0,w+1);
+    vF=scalReadField(node->field,u+1,v+0,w+1);
+    vG=scalReadField(node->field,u+0,v+1,w+1);
+    vH=scalReadField(node->field,u+1,v+1,w+1);
+    
+    (*res)=vA*p1*q1*r1+
+      vB*p*q1*r1+
+      vC*p1*q*r1+
+      vD*p*q*r1+
+      vE*p1*q1*r+
+      vF*p*q1*r+
+      vG*p1*q*r+
+      vH*p*q*r;
+    
+    /*
+      (*res)=vA*(-pqr+pq+pr+qr-p-q-r+1.0)+
+      vB*(pqr-pq-pr+p) +
+      vC*(pqr-pq-qr+q) +
+      vD*(-pqr+pq) +
+      vE*(pqr-pr-qr+r) +
+      vF*(-pqr+pr) +
+      vG*(-pqr+qr) +
+      vH*(pqr);
+    */
+    /*
+      if(fabs((*res))>fabs(vA) &&
+      fabs((*res))>fabs(vB) &&
+      fabs((*res))>fabs(vC) &&
+      fabs((*res))>fabs(vD) &&
+      fabs((*res))>fabs(vE) &&
+      fabs((*res))>fabs(vF) &&
+      fabs((*res))>fabs(vG) &&
+      fabs((*res))>fabs(vH)) {
+      }
+    */
+  }
   return 0;
 }
 

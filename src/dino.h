@@ -9,7 +9,7 @@ typedef char* string;
 #define debmsg(m) if(debug_mode) fprintf(stderr,"\n[DEBUG] %s",m)
 #endif
 
-#define VERSION "0.8.5-4"
+#define VERSION "0.8.5-snapshot"
 
 #define DINO_FLAG_NOGFX     1<<0
 #define DINO_FLAG_NOSTENCIL 1<<1

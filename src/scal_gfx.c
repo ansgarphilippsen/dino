@@ -102,6 +102,9 @@ int scalDrawObj(scalObj *obj)
       glBegin(GL_POINTS);
       
       for(i=0;i<obj->point_count;i++) {
+#ifdef CONTOUR_COLOR
+	// TODO
+#endif
 	glVertex3fv(obj->point[i].v);
       }
       glEnd();
@@ -113,7 +116,9 @@ int scalDrawObj(scalObj *obj)
       glEnable(GL_BLEND);
       glLineWidth(obj->render.line_width);
 
+#ifndef CONTOUR_COLOR
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
+#endif
       if(obj->render.transparency<1.0) {
 	glDisable(GL_BLEND);
 	glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -131,7 +136,13 @@ int scalDrawObj(scalObj *obj)
       
       glBegin(GL_LINES);
       for(i=0;i<obj->line_count;i++) {
+#ifdef CONTOUR_COLOR
+	glColor4fv(obj->point[obj->line[i].pi0].c);
+#endif
 	glVertex3fv(obj->point[obj->line[i].pi0].v);
+#ifdef CONTOUR_COLOR
+	glColor4fv(obj->point[obj->line[i].pi1].c);
+#endif
 	glVertex3fv(obj->point[obj->line[i].pi1].v);
       }
       glEnd();
@@ -144,8 +155,9 @@ int scalDrawObj(scalObj *obj)
 
       glLineWidth(obj->render.line_width);
 
-
+#ifndef CONTOUR_COLOR
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
+#endif
 
       /*
       glEnable(GL_VERTEX_ARRAY);
@@ -160,14 +172,26 @@ int scalDrawObj(scalObj *obj)
       glBegin(GL_LINES);
       if(gfx.transform.rot[10]>0.0) {
 	for(i=0;i<obj->line_count;i++) {
+#ifdef CONTOUR_COLOR
+	  glColor4fv(obj->point[obj->line[i].pi0].c);
+#endif
 	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+#ifdef CONTOUR_COLOR
+	  glColor4fv(obj->point[obj->line[i].pi1].c);
+#endif
 	  glVertex3fv(obj->point[obj->line[i].pi1].v);
 	  //glArrayElement(obj->line[i].pi0);
 	  //glArrayElement(obj->line[i].pi1);
 	}
       } else {
 	for(i=obj->line_count-1;i>=0;i--) {
+#ifdef CONTOUR_COLOR
+	  glColor4fv(obj->point[obj->line[i].pi0].c);
+#endif
 	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+#ifdef CONTOUR_COLOR
+	  glColor4fv(obj->point[obj->line[i].pi1].c);
+#endif
 	  glVertex3fv(obj->point[obj->line[i].pi1].v);
 	  //glArrayElement(obj->line[i].pi0);
 	  //glArrayElement(obj->line[i].pi1);
@@ -190,7 +214,13 @@ int scalDrawObj(scalObj *obj)
 #endif
       glBegin(GL_LINES);
       for(i=0;i<obj->line_count;i++) {
+#ifdef CONTOUR_COLOR
+	glColor4fv(obj->point[obj->line[i].pi0].c);
+#endif
 	glVertex3fv(obj->point[obj->line[i].pi0].v);
+#ifdef CONTOUR_COLOR
+	glColor4fv(obj->point[obj->line[i].pi1].c);
+#endif
 	glVertex3fv(obj->point[obj->line[i].pi1].v);
 	//glArrayElement(obj->line[i].pi0);
 	//glArrayElement(obj->line[i].pi1);
@@ -212,7 +242,9 @@ int scalDrawObj(scalObj *obj)
 
       // RENDER WITH FULL SURFACE MODE
 
+#ifndef CONTOUR_COLOR
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
+#endif
       glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
       glEnable(GL_LIGHTING);
@@ -255,10 +287,19 @@ int scalDrawObj(scalObj *obj)
       glBegin(GL_TRIANGLES);
       for(i=0;i<obj->face_count;i++) {
 	glNormal3fv(obj->face[i].n1);
+#ifdef CONTOUR_COLOR
+	glColor4fv(obj->face[i].c1);
+#endif
 	glVertex3fv(obj->face[i].v1);
 	glNormal3fv(obj->face[i].n2);
+#ifdef CONTOUR_COLOR
+	glColor4fv(obj->face[i].c2);
+#endif
 	glVertex3fv(obj->face[i].v2);
 	glNormal3fv(obj->face[i].n3);
+#ifdef CONTOUR_COLOR
+	glColor4fv(obj->face[i].c3);
+#endif
 	glVertex3fv(obj->face[i].v3);
       }
       glEnd();

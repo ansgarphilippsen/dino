@@ -56,6 +56,9 @@ struct SCAL_LINE {
 struct SCAL_FACE {
   float v1[3],v2[3],v3[3];
   float n1[3],n2[3],n3[3];
+#ifdef CONTOUR_COLOR
+  float c1[4],c2[4],c3[4];
+#endif
   //  float n[3];
   //  float c[4];
   //  struct SCAL_POINT *p0,*p1,*p2;
