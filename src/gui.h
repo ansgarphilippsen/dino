@@ -12,7 +12,7 @@
 #ifdef USE_MESA
 #include <MesaGL/GLwMDrawA.h>
 #else
-#include <GL/GLwMDrawA.h>
+#include <GL/GLwDrawA.h>
 #endif
 #endif
 

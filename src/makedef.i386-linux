@@ -10,7 +10,8 @@ LIBSHARED = -lXi -lXt -lXmu -lXext -lX11 -lm -lgdbm -lpthread
 INCLUDE = -I/usr/X11R6/LessTif/Motif1.2/include -I/usr/X11R6/include
 LIBGL = -lGLU -lGL
 LIBGLW = /usr/X11R6/lib/libGLw.a
-LIBMOTIF = /usr/X11R6/LessTif/Motif1.2/lib/libXm.a
+#LIBMOTIF = /usr/X11R6/LessTif/Motif1.2/lib/libXm.a
+LIBMOTIF = /usr/X11R6/lib/libXm.a
 
 # static version
 #INCLUDE = -I ../lesstif/include -I../mesa/include -I/usr/include/CC 
