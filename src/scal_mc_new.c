@@ -633,7 +633,7 @@ int scalMCN2Obj()
 
   Cfree(tmpface);
 
-  sprintf(message," %d points  %d lines  %d faces",
+  sprintf(message," %d points  %d lines  %d faces\n",
 	  obj->point_count,obj->line_count, obj->face_count);
   comMessage(message);
 

@@ -91,7 +91,9 @@ int guitInit()
   suspend=0;
 
   line_reset();
+
   guitWrite(prompt);
+
 
   return 0;
 }

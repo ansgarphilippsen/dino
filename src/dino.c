@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "gui_ext.h"
 #include "dbm.h"
 #include "com.h"
 #include "gfx.h"
@@ -37,7 +38,7 @@ extern struct GUI gui;
 
 const char usage[]={"Usage: dino [-debug] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
 
-char welcome[]={"Welcome to dino v%s    (http://www.dino3d.org)\n\n\n"};
+char welcome[]={"Welcome to dino v%s    (http://www.dino3d.org)\n\n"};
 
 int debug_mode,gfx_mode,stereo_mode,video_mode, shell_mode;
 
@@ -141,16 +142,20 @@ int dinoMain(int argc,char **argv)
   }
 
   debmsg("calling comInit");
-  comInit();
+  if(comInit()<0) return -1;
   debmsg("calling gfxInit");
-  gfxInit();
+  if(gfxInit()<0) return -1;
   debmsg("calling dbmInit");
-  dbmInit();
+#ifdef USE_CMI
+  debmsg("calling guiInit");
+  if(guiInit(&argc, &argv)<0)  return -1;
+#endif
+  if(dbmInit()<0) return -1;
   debmsg("calling sceneInit");
-  sceneInit();
+  if(sceneInit()<0) return -1;
 
 #ifdef NEW_SHELL
-  shellInit();
+  if(shellInit()<0) return -1;
 #else
   debmsg("calling shellInit");
   shellInit((shell_callback)comWorkPrompt,logfile);
@@ -167,9 +172,16 @@ int dinoMain(int argc,char **argv)
 
   if(strlen(script)>0) {
     sprintf(expr,"@%s",script);
+#ifdef USE_CMI
+    comRawCommand(expr);
+#else
     comSetInitCommand(expr);
-    //comRawCommand(expr);
+#endif
   }
+
+#ifdef USE_CMI
+    comMessage("\n");
+#endif
 
 #ifndef NEW_SHELL
   shellPrompt();

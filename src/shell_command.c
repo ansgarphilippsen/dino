@@ -51,6 +51,7 @@ static struct SCRIPTBUF {
 }scrbuf[MAXSCRIPTLEVEL];
 
 static int scrlvl=-1;
+static int echo_script_flag=1;
 
 #define STACK_BUFFER_INC 102400
 #define STACK_ENTRY_INC  1024
@@ -158,6 +159,12 @@ int shellParseCommand(const char **wl, int wc)
 	clStrcat(subexp," ");
     }
     shellSetVar(wl[1],subexp);
+
+    if(atoi(shellGetVar("echo"))) {
+      echo_script_flag=1;
+    } else {
+      echo_script_flag=0;
+    }
 
   } else if(clStrcmp(wl[0],"unset")) {
     // remove variable
@@ -356,10 +363,12 @@ static int work_script(void)
 
   script_line[i]='\0';
 
-  // echo script line
-  if(shell_mode==1)
-    shellOut("[INPUT] ");
-  shellOut(script_line);
+  if(echo_script_flag) {
+    // echo script line
+    if(shell_mode==1)
+      shellOut("[INPUT] ");
+    shellOut(script_line);
+  }
 
   shellParseRaw(script_line);
 
@@ -785,6 +794,7 @@ static char *varlist[]={
   "polar","(rname=SER,THR,TYR,HIS,CYS,ASN,GLN)",
   "polar2","((rname=SER and aname=OG) or (rname=THR and aname=OG1) or (rname=TYR and aname=OH) or (rname=HIS and aname=ND1,NE2) or (rname=CYS and aname=SG) or (rname=ASN and aname=OD1,ND1) or (rname=GLN and aname=OE1,NE1) or (rname=TRP and aname=NE1))",
   "CP","{0,0,0}",
+  "echo","1",
   NULL,NULL
 
 };

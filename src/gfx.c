@@ -414,6 +414,12 @@ int gfxGLInit(void)
 
   glEnable(GL_TEXTURE_3D_EXT);
 #endif
+  glEnable(GL_VERTEX_ARRAY);
+  glEnable(GL_NORMAL_ARRAY);
+  glEnable(GL_COLOR_ARRAY);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
 
   return 0;
 }
@@ -534,28 +540,7 @@ int gfxSceneRedraw(int clear)
     if(gfx.light[i].on && gfx.light[i].local)
       glLightfv(GL_LIGHT0+i,GL_POSITION,gfx.light[i].pos);
 
-#ifdef EXPO
-  glDisable(GL_LIGHTING);
-  for(i=0;i<scene.label_c;i++) {
-    glRasterPos3fv(scene.label[i].p);
-    glColor3fv(scene.label[i].c);
-    glfDrawString(scene.label[i].s);
-    
-  }
 
-  glColor3f(0.8,0.8,0.0);
-  glEnable(GL_POINT_SMOOTH);
-  glPointSize(3.0);
-  glBegin(GL_POINTS);
-  glVertex3f(-gfx.transform.cen[0],
-	     -gfx.transform.cen[1],
-	     -gfx.transform.cen[2]);
-  glEnd();
-	     
-  glEnable(GL_LIGHTING);
-
-
-#endif
   if(scene.cpflag) {
     glDisable(GL_LIGHTING);
     glColor3f(1.0,1.0,0.5);

@@ -639,7 +639,7 @@ int charmmLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
    icntlr[4]: number of steps for creation run
 */
 
-int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
+int charmmTrjRead(FILE *f, dbmStructNode *node, int sf2)
 {
   int i,j;
   char message[256];
@@ -647,6 +647,7 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
   char dummy[4];
   float *temp;
   int pointer;
+  int sf;
 
   sprintf(message,"loading CHARMM trajectory ...\n");
   comMessage(message);
@@ -654,7 +655,21 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
   fread(dummy,sizeof(dummy),1,f);
   fread(header.hdrr,sizeof(char),4,f);
   fread(header.icntrl,sizeof(int),20,f);
-  if(sf) swap_4bs((unsigned char *)header.icntrl,20);
+
+  if(header.icntrl[1]<0 || header.icntrl[1]>1e6) {
+    // nonsense atom count, try swapping
+    swap_4bs((unsigned char *)header.icntrl,20);
+    if(header.icntrl[1]<0 || header.icntrl[1]>1e6) {
+      comMessage("error: nonsense atom count in header\n");
+      return -1;
+    } else {
+      comMessage(" (byte-swapping) ");
+      sf=1;
+    }
+  } else {
+    sf=0;
+  }
+
   fread(dummy,sizeof(dummy),1,f);
   fread(&header.ntitle,sizeof(int),1,f);
   if(sf) swap_4b((unsigned char *)&header.ntitle);
