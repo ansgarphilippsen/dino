@@ -589,6 +589,7 @@ int charmmRead(FILE *f,dbmNode *node)
     if(strlen(line)>50)
       charmmLine2AtomEntry(line,&charmm.atom_entry[ac++]);
   }
+  charmm.atom_count=ac; // actual number of atoms read
 
 
   charmm.connect_count=0;
@@ -630,15 +631,21 @@ int charmmLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
     ae->rname[i]=line[i+11];
   ae->rname[3]='\0';
 
-  ae->cname[0]=line[51];
-  if(!isprint(ae->cname[0]) || isspace(ae->cname[0])) {
+  for(i=0;i<4;i++) {
+    ae->cname[i]=line[51+i];
+    if(!isprint(ae->cname[i]) || isspace(ae->cname[i])) {
+      break;
+    }
+  }
+  if(i==0) {
     ae->cnum=-1;
     ae->cname[0]='0';
     ae->cname[1]='\0';
   } else {
     ae->cnum=0;
-    ae->cname[1]='\0';
+    ae->cname[i]='\0';
   }
+
 
   memset(field,'\0',10);
   for(i=0;i<4;i++)
