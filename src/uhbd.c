@@ -48,13 +48,18 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn)
   
   size=header.im*header.jm*header.km;
 
+  if(size>1e10) {
+    comMessage("\nerror: uhbdRead: file not in UHBD format or byte-swapped ?");
+    return -1;
+  }
+
   sn->field->size=size;
 
   sprintf(dmesg,"uhbdRead: allocating %d kb for data",size/1024);
   debmsg(dmesg);
   sn->field->data=Ccalloc(size, sizeof(float));
   if(sn->field->data==NULL) {
-    comMessage("\nuhbdRead: memory allocation error");
+    comMessage("\nerror: uhbdRead: memory allocation error");
     return -1;
   }
 
@@ -63,7 +68,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn)
   debmsg(dmesg);
   uv=Ccalloc(uv_size, sizeof(float));
   if(uv==NULL) {
-    comMessage("\nuhbdRead: memory allocation error");
+    comMessage("\nerror: uhbdRead: memory allocation error");
     return -1;
   }
 

@@ -39,7 +39,7 @@ int tiffRead(int fd, char *fn, dbmGridNode *node)
     return -1;
   }
   TIFFGetField(t,TIFFTAG_IMAGEWIDTH,&w);
-  TIFFGetField(t,TIFFTAG_IMAGEWIDTH,&h);
+  TIFFGetField(t,TIFFTAG_IMAGELENGTH,&h);
   TIFFGetField(t,TIFFTAG_BITSPERSAMPLE,&b);
 
   if(b==8) {
@@ -83,8 +83,9 @@ int tiffRead(int fd, char *fn, dbmGridNode *node)
 
   node->field.width=(int)w; 
   node->field.height=(int)h;
-  node->field.scale_x=10.0/(float)w;
-  node->field.scale_y=10.0/(float)h;
+  node->field.scale_x=1.0/(float)w;
+  //  node->field.scale_y=1.0/(float)h;
+  node->field.scale_y=node->field.scale_x;
   node->field.scale_z=1.0/scale;
   node->field.offset_x=(float)w/2.0;
   node->field.offset_y=(float)h/2.0;

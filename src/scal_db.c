@@ -425,6 +425,7 @@ int scalSet(dbmScalNode *node, Set *s)
 	return -1;
       }
       node->field->scale=atof(val->val1);
+      scalSetMinMax(node);
       break;
     case SCAL_PROP_ROT:
       if(val->range_flag) {

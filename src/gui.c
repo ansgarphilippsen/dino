@@ -50,6 +50,8 @@ user menu
 #include "input.h"
 #include "transform.h"
 
+#include "AppPlus.h"
+
 #ifdef EXPO
 #include "autoplay.h"
 #endif
@@ -177,7 +179,8 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   gui.top=XtOpenApplication(&gui.app,"dino",NULL,0,
 			    argc,(*argv),
 			    fallback_resources,
-			    topLevelShellWidgetClass,
+			    //			    topLevelShellWidgetClass,
+			    appPlusShellWidgetClass,
 #ifdef EXPO
 			    arg,3
 #else

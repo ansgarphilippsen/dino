@@ -3,15 +3,9 @@ byte swapping
 
 relink against static motif on linux
 
-property (null) error when omitting prop in range
-
 .pqr format gives only white colors
 
-[.fld] gives wrong center
-
 check accum buffer for offscreen rendering
-
-non-square topo file
 
 rewrite POV output to accept cgfx VA
 

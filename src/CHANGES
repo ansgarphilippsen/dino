@@ -1,4 +1,12 @@
-motif lib (lesstif 1.2) linked statically
+using AppPlusShell widget instead of normal one
+
+topo may be asymmetric, scalexy is really scalex, ratio is maintained
+
+-range bug fixed for scalar field dataset
+
+MEAD .fld center bug fixed
+
+motif lib (lesstif 1.2) linked statically under linux
 
 corrected .struct write for hydrogen names >3 chars
 

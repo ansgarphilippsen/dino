@@ -27,7 +27,9 @@ SRC= dino.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
      write.c render.c mat.c rex.c extension.c Cmalloc.c cgfx.c raster.c pov.c \
      ximage_util.c vrml.c cubearray.c om.c menu.c input.c writePS.c imagick.c\
-     sglib.c symm.c GLwStereo.c
+     sglib.c symm.c GLwStereo.c \
+     AppPlus.c
+
 
 
 # include architecture specific settings, including additional SRC files

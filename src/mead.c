@@ -8,10 +8,13 @@
 #include "mead.h"
 #include "com.h"
 #include "Cmalloc.h"
+#include "dino.h"
+
+extern int debug_mode;
 
 int meadRead(FILE *f, dbmScalNode *sn)
 {
-  char message[256];
+  char message[1024];
   char line[1024];
   char prop[256],value[256];
   int lc,i;
@@ -114,12 +117,14 @@ int meadRead(FILE *f, dbmScalNode *sn)
   fy=(dim[3]-dim[2])/((float)dim2-1.0);
   fz=(dim[5]-dim[4])/((float)dim3-1.0);
 
-  fprintf(stderr,"\nHeader Info\n%d %d %d\n%d %d %d  %d %d %d\n%f %f %f\n%f %f %f",
+  sprintf(message,"\nHeader Info\n%d %d %d\n%d %d %d  %d %d %d\n%f %f %f\n%f %f %f",
 	  sn->field->u_size, sn->field->v_size, sn->field->w_size,
 	  sn->field->u1, sn->field->v1, sn->field->w1,
 	  sn->field->u2, sn->field->v2, sn->field->w2,
 	  sn->field->offset_x, sn->field->offset_y, sn->field->offset_z,
 	  fx,fy,fz);
+
+  debmsg(message);
 
   scalCELLtoVECT(sn->field,
 		  1.0,1.0,1.0,

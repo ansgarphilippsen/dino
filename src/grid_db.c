@@ -460,8 +460,16 @@ int gridSet(dbmGridNode *node, Set *s)
 	comMessage("\nerror: set: unexpected range in property scalez");
 	return -1;
       }
+      /*
+	why in the world -2 ??
+      */
       node->field.scale_x=atof(val->val1)/(float)(node->field.width-2);
-      node->field.scale_y=atof(val->val1)/(float)(node->field.width-2);
+      /* 
+	 the scale_y is set to scale_x
+	 this is a feature, not a bug
+      */
+      // node->field.scale_y=atof(val->val1)/(float)(node->field.height-2);
+      node->field.scale_y=node->field.scale_x;
       break;
     case GRID_PROP_ROT:
       if(val->range_flag) {

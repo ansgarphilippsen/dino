@@ -60,11 +60,10 @@ int scalRead(dbmScalNode *node, int type, FILE *f, int swap_flag)
 	    node->field->w_size);
     comMessage(message);
 
-    scalSetMinMax(node);
-
     node->field->edge=0.0;
     node->field->scale=1.0;
 
+    scalSetMinMax(node);
   }
 
 
