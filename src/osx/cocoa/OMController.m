@@ -7,6 +7,15 @@
 
 static id dinoOMController;
 
+@implementation OMView
+
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
+}
+
+@end
+
 @implementation OMController
 
 //------------------------------------------------------
@@ -27,9 +36,6 @@ static id dinoOMController;
     [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:[toggleButton cell]];
 //    [dinoOM setVerticalMotionCanBeginDrag:YES];
 //    [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
-
-    [[dinoOM window] setFrameAutosaveName:@"OMWindowPref"];
-    [[dinoOM window] setFrameUsingName:@"OMWindowPref"];
     
 }
 
@@ -209,3 +215,6 @@ static id dinoOMController;
 */
 
 @end
+
+
+

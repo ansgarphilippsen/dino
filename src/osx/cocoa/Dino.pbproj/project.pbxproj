@@ -339,7 +339,7 @@
 				F5156BD70313F9E201A966FA,
 				F5FF217103240B7301FB7A39,
 				F5CA802D0326860901FB7A39,
-				F5B1506E03A5392201FB7A39,
+				56FF2E7A05050B5E009854CB,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -521,6 +521,12 @@
 		};
 		56597ECE0438BD1E00FB7A39 = {
 			fileRef = 56597ECC0438BD1E00FB7A39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		56FF2E7A05050B5E009854CB = {
+			fileRef = F52A76D602C0F691019813D9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2709,12 +2715,6 @@
 		};
 		F590620602BE8C02019813D9 = {
 			fileRef = F512CF4D0249799D01FB7A39;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5B1506E03A5392201FB7A39 = {
-			fileRef = F52A76D602C0F691019813D9;
 			isa = PBXBuildFile;
 			settings = {
 			};

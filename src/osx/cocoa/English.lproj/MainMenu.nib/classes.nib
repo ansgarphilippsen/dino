@@ -56,7 +56,8 @@
                 toggleButton = NSButton; 
             }; 
             SUPERCLASS = NSObject; 
-        }
+        }, 
+        {CLASS = OMView; LANGUAGE = ObjC; SUPERCLASS = NSOutlineView; }
     ); 
     IBVersion = 1; 
 }

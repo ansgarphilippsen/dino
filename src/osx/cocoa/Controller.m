@@ -26,10 +26,6 @@ static id dinoController;
 
     [dinoCLI setCommandHandler:dinoController];
 
-    [[dinoGL window] setFrameAutosaveName:@"GFXWindowPref"];
-    [[dinoGL window] setFrameUsingName:@"GFXWindowPref"];
-    [[dinoCLI window] setFrameAutosaveName:@"CLIWindowPref"];
-    [[dinoCLI window] setFrameUsingName:@"CLIWindowPref"];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

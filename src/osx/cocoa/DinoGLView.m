@@ -25,6 +25,11 @@
     return self;
 }
 
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
+}
+
 - (void)drawRect:(NSRect)rect
 {
     [sliderX setMaxValue:(double)rect.size.width];

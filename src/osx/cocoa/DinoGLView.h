@@ -15,9 +15,10 @@
 
 // Overrides
 - (id)initWithFrame:(NSRect)frameRect;
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
 - (void)drawRect:(NSRect)rect;
 
-// These are standard methods in NSView.
+// Mouse control
 - (void)mouseDown:(NSEvent *)theEvent;
 - (void)mouseUp:(NSEvent *)theEvent;
 - (void)mouseDragged:(NSEvent *)theEvent;

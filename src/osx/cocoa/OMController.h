@@ -2,9 +2,18 @@
 
 #import <Cocoa/Cocoa.h>
 
+@interface OMView : NSOutlineView
+{
+}
+
+// Overrides
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
+
+@end
+
 @interface OMController : NSObject
 {
-    IBOutlet NSOutlineView *dinoOM;
+    IBOutlet NSScrollView  *dinoOM;
     IBOutlet NSButton      *toggleButton;
 
     NSMutableArray         *dataSetList;
@@ -38,3 +47,5 @@
 */
 
 @end
+
+
