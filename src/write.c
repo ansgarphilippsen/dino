@@ -134,6 +134,8 @@ static void do_jitter(int accum)
 {
   int i,flag=0;
   float f, *jitter;
+  char message[256];
+
   switch(accum) {
   case 2: jitter=(float *)jitter2; break;
   case 3: jitter=(float *)jitter3; break;
@@ -148,6 +150,9 @@ static void do_jitter(int accum)
   }
   f=1.0/(float)accum;
   for(i=0;i<accum;i++) {
+    sprintf(message,"accumulation pass %d (%.5f %.5f)",
+	    i+1,jitter[i*2+0], jitter[i*2+1]);
+    debmsg(message);
     gfxSetAccProjection(gfx.current_view, jitter[i*2+0], jitter[i*2+1]);
     //gfxSetFog();
     gfxSceneRedraw(1);
