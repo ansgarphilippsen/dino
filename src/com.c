@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <math.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -647,6 +648,7 @@ void comTimeProc()
   long diff;
   char mess[256];
   float fps;
+  static double rock_motion=0.0;
 #ifdef USE_CMI
   cmiToken t;
 #endif
@@ -697,8 +699,7 @@ void comTimeProc()
   }
 #endif
 
-  // TODO SPIN
-  if(gfx.spin) {
+  if(gfx.anim==1) { // spin along last movement
 #ifdef USE_CMI
     //comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,0,gfx.sdx);
     //comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,1,gfx.sdy);
@@ -707,6 +708,10 @@ void comTimeProc()
     //comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,1,gfx.sdy);
 #endif
     //    comRedraw();
+  } else if(gfx.anim==2) { // rock around y-axis
+    rock_motion+=0.3;
+    transCommand(&gfx.transform,TRANS_ROTY,0,sin(0.5*rock_motion));
+    comRedraw();
   }
 
   if(com.benchmark) {
@@ -2089,6 +2094,7 @@ void comBench(void)
 
 void comOutit()
 {     
+  gfx.anim=0;
   com.benchmark=0;
   comWriteModelview();
 }
