@@ -2,15 +2,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "DinoObject.h"
 #import "DinoGLView.h"
 #import "CLIView.h"
-#import "gui_osx.h"
-#import "gui_ext.h"
-
-#include "dino.h"
-#include "cmi.h"
-#include "shell_raw.h"
 
 @interface Controller : NSObject
 {

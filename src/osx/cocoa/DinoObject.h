@@ -1,3 +1,5 @@
+/* DinoObject */
+
 #import <Foundation/Foundation.h>
 
 @interface DinoObject : NSObject {

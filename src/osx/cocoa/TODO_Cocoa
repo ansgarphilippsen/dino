@@ -3,8 +3,8 @@ TODO list specific to the Cocoa distribution:
 _____________________________________________
 
 
-- X,Y rotation slider
+- X,Y rotation slider;
 
-- Implement the "Copy" function in the menu to directly copy/paste the gfx into photoshop or the like
+- Implement the "Copy" function in the menu to directly copy/paste the gfx into photoshop or the like;
 
-- Improve write function.
+- Drag&Drop in OM.

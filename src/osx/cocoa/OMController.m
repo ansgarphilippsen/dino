@@ -1,5 +1,10 @@
 #import "OMController.h"
 
+#import "Controller.h"
+#import "DinoObject.h"
+#include "gui_osx.h"
+#include "gui_ext.h"
+
 static id dinoOMController;
 
 @implementation OMController
@@ -20,13 +25,8 @@ static id dinoOMController;
 
     dataSetList = [[NSMutableArray alloc] initWithCapacity:2];
     [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:[toggleButton cell]];
-    [dinoOM setVerticalMotionCanBeginDrag:YES];
-    [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
-}
-
-- (void)applicationWillFinishLaunching:(NSNotification *)aNotification
-{
-
+//    [dinoOM setVerticalMotionCanBeginDrag:YES];
+//    [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
 }
 
 - (void)dealloc{
@@ -174,6 +174,7 @@ static id dinoOMController;
     return NO;
 }
 
+/*
 //Drag and Drop methods
 - (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)rows toPasteboard:(NSPasteboard *)pboard
 {
@@ -201,5 +202,6 @@ static id dinoOMController;
 {
     return YES;
 }
+*/
 
 @end

@@ -1,8 +1,8 @@
 #import "DinoGLView.h"
 
 #import  "Controller.h"
-#include "cmi.h"
 #include "gui_osx.h"
+#include "cmi.h"
 
 @implementation DinoGLView
 

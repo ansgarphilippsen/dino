@@ -1,5 +1,11 @@
 #import "Controller.h"
 
+#include "dino.h"
+#include "cmi.h"
+#include "shell_raw.h"
+#include "gui_osx.h"
+#include "gui_ext.h"
+
 static id dinoController;
 
 @implementation Controller
@@ -221,7 +227,7 @@ static id dinoController;
 
 - (int)offScreenContextWidth:(int)width Height:(int)height Accum:(int)af
 {
-    int n, rowBytes, pixDepth=32;
+    int rowBytes, pixDepth=32;
     unsigned memSize;
     NSOpenGLPixelFormat *pixFmt;
     NSOpenGLPixelFormatAttribute attrs[] = {
@@ -236,14 +242,14 @@ static id dinoController;
 	memPointer=malloc(memSize);
 	[offScreenContext setOffScreen:memPointer width:(long)width height:(long)height rowbytes:(long)rowBytes];
 	[offScreenContext makeCurrentContext];
-	n=1;
+	return 1;
     }
     else{
 	[self showCommandResult:@"Initialization of the offscreen context failed."];
-	n =0;
+	return 0;
     }
 	    
-    return n;
+    return 0;
 }
 
 - (void)releaseOffScreenContext
