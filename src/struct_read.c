@@ -1750,9 +1750,11 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
   fmax=10;
   acount=-1;
   while(!feof(f)) {
-    fread(&ac,sizeof(int),1,f);
+    if(fread(&ac,sizeof(int),1,f)<=0)
+	break;
+
     if(sf) {
-      swap_4b((unsigned char *)&acount);
+      swap_4b((unsigned char *)&ac);
     }
 
     if(acount==-1) {

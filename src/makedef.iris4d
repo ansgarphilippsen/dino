@@ -8,12 +8,13 @@ WOPT = -woff 1552,1174,1692,1209,3201
 IOPT = -I/usr/freeware/include -I/usr/include/CC -I../extras/include
 SLIB = ../extras/lib/libtiff.a ../extras/lib/libpng.a ../extras/lib/libz.a ../extras/lib/libspwinput_mips3.a
 
-COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D $(ARCH) -Xcpluscomm -D IRIX -D SPACETEC
 
 LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm # -limage
 LOPT = -n32 -mips3 $(LIBS) -L/usr/freeware/lib32
 
 SRC += sgi_video.c sgi_stereo.c spacetec.c
 
-OPTIONS += -D SGI_STEREO
+OPTIONS += -D SGI_STEREO -D IRIX -D SPACETEC
+
+COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D $(ARCH) -Xcpluscomm
 

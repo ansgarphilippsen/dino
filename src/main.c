@@ -26,22 +26,28 @@ int main(int argc, char **argv)
 
 #ifdef USE_CMI
   cmiInit();
-#endif
-  
-
-#ifndef USE_CMI
-  if(guiInit(comWorkGfxCommand,&argc,&argv)<0) {
-    return -1;
-  }
-#endif
 
   dinoMain(argc, argv);
-  
-#ifdef USE_CMI
   if(guiInit(&argc, &argv)<0) {
     return -1;
   }
+#else
+
+#ifdef X11_GUI
+  dinoMain(argc, argv);
+  if(guiInit(comWorkGfxCommand,&argc,&argv)<0) {
+    return -1;
+  }
+#else
+  if(guiInit(comWorkGfxCommand,&argc,&argv)<0) {
+    return -1;
+  }
+  dinoMain(argc, argv);
 #endif
+
+#endif
+
+
   
   guiMainLoop();
 
