@@ -66,6 +66,8 @@ static struct EXT_DEF {
   {"dgrd","dgrid"},
   {"grasp","grasp"},
   {"bdtrj","bdtrj"},
+  {"brk","brix"},
+  {"omap","brix"},
   {"",""}
 };
 
@@ -511,7 +513,21 @@ int dbmLoad(int wc, const char **wl)
     }
 
     if(cmp) pclose(f); else fclose(f);
+  } else if(!strcmp(type,"brix")) {
+    /*
+      brix / o-map format
+    */
+    node=dbmNewNode(DBM_NODE_SCAL,name);
+    sprintf(message,"loading %s, type brix/o-map ...\n",name);
+    comMessage(message);
 
+    if(scalRead(&node->scalNode,SCAL_READ_BRIX,f,dbm_flag)!=0) {
+      if(cmp) pclose(f); else fclose(f);
+      dbmDeleteNode(name);
+      return -1;
+    }
+
+    if(cmp) pclose(f); else fclose(f);
   } else if(!strcmp(type,"msms")) {
     /* MSMS surface format */
 

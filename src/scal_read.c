@@ -48,6 +48,9 @@ int scalRead(dbmScalNode *node, int type, FILE *f, int flag)
   case SCAL_READ_DELPHIG:
     ret=delphi2Read(f,node);
     break;
+  case SCAL_READ_BRIX:
+    ret=brixRead(f,node);
+    break;
   default:
     ret=-1;
   }

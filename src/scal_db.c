@@ -1623,3 +1623,23 @@ int scalSub(dbmScalNode *n,char *s)
 
   return 0;
 }
+
+float scalRMSD(scalField *f)
+{
+  int i,size;
+  double count,sum,mean,sqd;
+  
+  size = f->u_size*f->v_size*f->w_size;
+  count = (double)size;
+  sum=0.0;
+  for(i=0;i<size;i++) {
+    sum+=(double)f->data[i];
+  }
+
+  mean = sum/count;
+  sqd = 0.0;
+  for(i=0;i<size;i++) {
+    sqd +=((double)f->data[i]-mean)*((double)f->data[i]-mean);
+  }
+  return (float) (sqd/(count-1.0));
+}

@@ -158,6 +158,8 @@ int scalDrawObj(scalObj *obj);
 
 int scalSub(dbmScalNode *,char *s);
 
+float scalRMSD(scalField *);
+
 #endif
 
 
