@@ -308,7 +308,7 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
     setDelete(&set);
   clDelete(&co);
 
-  return -1;
+  return 0;
 }
 
 int scalComSet(dbmScalNode *node,int wc, char **wl)
