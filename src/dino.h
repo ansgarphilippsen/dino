@@ -5,7 +5,7 @@
 
 #define debmsg(m) if(debug_mode) fprintf(stderr,"[DEBUG] %s\n",m)
 
-#define VERSION "0.9.0-rc3"
+#define VERSION "0.9.0-rc4"
 
 #define DINO_FLAG_NOGFX     1<<0
 #define DINO_FLAG_NOSTENCIL 1<<1
