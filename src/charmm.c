@@ -292,7 +292,7 @@ int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag)
   sf.secs_entry=NULL;
   sf.secs_count=0;
 
-  structFileEntry2DB(&sf,node);
+  structFileEntry2DB(&sf,node,0);
 
   /*
     set trj params
