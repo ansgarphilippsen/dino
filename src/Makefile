@@ -11,7 +11,7 @@
 # CGFX_DEBUG
 # EXPO
 
-OPTIONS= -D CPK_NEW
+OPTIONS= -D CPK_NEW # -D JAVA_GUI
 
 MALLOCLIB=
 
@@ -34,6 +34,8 @@ SRC= dino.c \
 # use HOSTTYPE variable
 sinclude makedef.$(HOSTTYPE)
 
+sinclude makedef.java
+
 OBJ := $(SRC:.c=.o)
 
 .SUFFIXES: .c
@@ -43,6 +45,9 @@ dino: $(OBJ)
 	$(CC) $(OBJ) $(LOPT) -o $@
 	cp $@ ../bin
 	strip ../bin/$@
+
+jci: jci.c
+	$(CC) jci.c $(COPT) $(LOPT) -o jci_test
 
 .c.o:
 	$(CC) $(COPT) -c $<

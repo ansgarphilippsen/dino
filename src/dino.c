@@ -7,7 +7,7 @@
 
                   Version 0.8
 
-         (c) 1998/1999/2000 Ansgar Philippsen
+          (c) 1998-2001 Ansgar Philippsen
 
 ************************************************/
 #include <stdio.h>
@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include "autoplay.h"
 #endif
+
 
 extern struct GUI gui;
 
@@ -130,6 +131,7 @@ int main(int argc,char **argv)
     i++;
   }
 
+
   debmsg("calling comInit");
   comInit();
 
@@ -220,6 +222,7 @@ int main(int argc,char **argv)
   sceneInit();
   debmsg("calling shellInit");
   shellInit(comWorkPrompt,logfile);
+
 
   if(startup_flag) {
     /* TODO
