@@ -47,7 +47,7 @@ SRC= dino.c \
      startup.c cl.c set.c bspline.c transform.c prop.c colors.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
-     scal_mc_new.c \
+     scal_mc_new.c scal_mc_tet.c \
      surf_db.c surf_obj.c surf_read.c surf_write.c surf_gfx.c \
      geom_db.c geom_obj.c geom_gfx.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
@@ -182,6 +182,9 @@ depend:
 
 snapshot: dino
 	gzip < ../bin/dino > ../bin/dino-0.8.5-$(DATE).$(MACH).gz
+
+gen_mc_table: gen_mc_table.c
+	$(CC) gen_mc_table.c -o gen_mc_table
 
 all: clean depend dino
 
