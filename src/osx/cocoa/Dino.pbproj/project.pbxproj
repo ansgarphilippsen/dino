@@ -17,8 +17,6 @@
 				F52A76D102C09DCE019813D9,
 				F59061F702BE8B6C019813D9,
 				F52A76C902C08DA2019813D9,
-				F583D97202B90631019813D9,
-				F583D97102B90631019813D9,
 				F52A76BE02BF961D019813D9,
 				F52A76BF02BF961D019813D9,
 			);
@@ -141,6 +139,8 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				F5156BD40313F99901A966FA,
+				F5156BD60313F9E201A966FA,
 				F52A76D602C0F691019813D9,
 				F52A76D802C0F691019813D9,
 			);
@@ -204,7 +204,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Dino</string>
 	<key>CFBundleIconFile</key>
-	<string></string>
+	<string>icon.icns</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -305,6 +305,7 @@
 				F777710702C37CF601981365,
 				F777710802C37CF601981365,
 				F777710902C37CF601981365,
+				F5B2A2130312F28101A1B05C,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -314,6 +315,8 @@
 			files = (
 				F52A76DA02C0F691019813D9,
 				F52A76DB02C0F691019813D9,
+				F5156BD50313F99901A966FA,
+				F5156BD70313F9E201A966FA,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -391,6 +394,7 @@
 				F77770FF02C37CCA01981365,
 				F777710A02C37CF601981365,
 				F777710B02C37CF601981365,
+				F5B2A2140312F28101A1B05C,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -445,6 +449,8 @@
 //F54
 		F512CF38024978B501FB7A39 = {
 			children = (
+				F5B2A2110312F28101A1B05C,
+				F5B2A2120312F28101A1B05C,
 				F512CF3B0249799D01FB7A39,
 				F512CF3C0249799D01FB7A39,
 				F512CF3D0249799D01FB7A39,
@@ -2130,6 +2136,28 @@
 			settings = {
 			};
 		};
+		F5156BD40313F99901A966FA = {
+			isa = PBXFileReference;
+			path = icon.icns;
+			refType = 2;
+		};
+		F5156BD50313F99901A966FA = {
+			fileRef = F5156BD40313F99901A966FA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5156BD60313F9E201A966FA = {
+			isa = PBXFileReference;
+			path = Credits.html;
+			refType = 2;
+		};
+		F5156BD70313F9E201A966FA = {
+			fileRef = F5156BD60313F9E201A966FA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F528331502491AB001FB7A39 = {
 			isa = PBXFileReference;
 			path = Controller.h;
@@ -2363,16 +2391,6 @@
 			settings = {
 			};
 		};
-		F583D97102B90631019813D9 = {
-			isa = PBXFileReference;
-			path = gui_osx.h_old;
-			refType = 4;
-		};
-		F583D97202B90631019813D9 = {
-			isa = PBXFileReference;
-			path = gui_osx.m_old;
-			refType = 4;
-		};
 		F59061F702BE8B6C019813D9 = {
 			isa = PBXFileReference;
 			name = gui_ext.h;
@@ -2381,6 +2399,30 @@
 		};
 		F590620602BE8C02019813D9 = {
 			fileRef = F512CF4D0249799D01FB7A39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B2A2110312F28101A1B05C = {
+			isa = PBXFileReference;
+			name = brix.c;
+			path = ../../brix.c;
+			refType = 2;
+		};
+		F5B2A2120312F28101A1B05C = {
+			isa = PBXFileReference;
+			name = brix.h;
+			path = ../../brix.h;
+			refType = 2;
+		};
+		F5B2A2130312F28101A1B05C = {
+			fileRef = F5B2A2120312F28101A1B05C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B2A2140312F28101A1B05C = {
+			fileRef = F5B2A2110312F28101A1B05C;
 			isa = PBXBuildFile;
 			settings = {
 			};
