@@ -19,6 +19,9 @@ extern "C" {
 // initialize the gui with the command line args
 int guiInit(int , char **);
 
+// say goodbye
+void guiExit(void);
+
 // main application loop
 int guiMainLoop(void);
 

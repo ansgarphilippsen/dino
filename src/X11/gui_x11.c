@@ -1830,3 +1830,9 @@ static XVisualInfo *get_offscreen_visual(int af)
   }
   return vi;
 }
+
+void guiExit()
+{
+  glXWaitGL();
+  XCloseDisplay(gui.dpy);
+}

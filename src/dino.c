@@ -231,15 +231,20 @@ int dinoMain(int argc,char **argv)
 void dinoExit(int n)
 {
   // must come first
+  debmsg("comOutit\n");
   comOutit();
 
+  debmsg("ensuring stereo off\n");
+  cmiStereo(0);
+  
+  debmsg("closing down gui\n");
+  guiExit();
+
 #ifndef OSX
+  debmsg("restoring terminal\n");
   guitOutit();
 #endif
   
-#ifdef SGI
-  cmiStereo(0);
-#endif
-
+  debmsg("exit");
   exit(n);
 }
