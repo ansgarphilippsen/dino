@@ -71,26 +71,6 @@ SRC += shell.c
 endif
 endif
 
-# OBSOLETE, USE VARIABLE GUI NOW
-
-# one of the four GUIs: WX, X11, GLUT or SDL
-ifneq (,$(findstring WX_GUI,$(OPTIONS)))
-#GUI = wx
-endif
-ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
-#SRC += gui_glut.c om_glut.c
-#GUI = glut
-endif
-ifneq (,$(findstring SDL_GUI,$(OPTIONS)))
-#SRC += main.c gui_sdl.c om_sdl.c
-#LOPT += -lSDL
-endif
-ifneq (,$(findstring X11_GUI,$(OPTIONS)))
-#SRC += extension.c gui_x11.c om_x11.c AppPlus.c
-#GUI    = X11
-endif
-
-
 ifneq (,$(findstring USE_CMI,$(OPTIONS)))
 SRC += cmi.c input.c
 endif

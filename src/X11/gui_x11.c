@@ -127,7 +127,7 @@ int guiInit(int argc, char **argv)
   Arg arg[10];
   char major[8],minor[8];
   int nostereo=0;
-  int use_stereo;
+  int use_stereo=0;
   int stereo_available=0;
   XVisualInfo *vi;
   int icf=0;
@@ -213,6 +213,11 @@ int guiInit(int argc, char **argv)
       stereo_available=SGI_STEREO_NONE;
     }
 #endif
+
+#ifdef LINUX_STEREO
+    use_stereo=1;
+    debmsg("trying stereo visual");
+#endif
     
     // try with stencil buffer
     vi=init_visual(1,use_stereo,1,0);
@@ -220,8 +225,23 @@ int guiInit(int argc, char **argv)
       gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
       vi=init_visual(1,use_stereo,0,0);
     }
-    
-    
+
+#ifdef LINUX_STEREO    
+    // try again without stereo support
+    if(!vi) {
+      debmsg("no stereo visual found, trying without");
+      use_stereo=0;
+      vi=init_visual(1,use_stereo,1,0);
+      if(!vi) {
+	gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
+	vi=init_visual(1,use_stereo,0,0);
+      }
+    } else {
+      fprintf(stderr,"Stereo visual found!\n");
+    }
+
+#endif
+
 #ifdef SGI_STEREO
     if(!vi && use_stereo) {
       vi=init_visual(1,0,1,0);
@@ -868,13 +888,16 @@ static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, i
   XVisualInfo *vis;
 
   buf[bufc++]=GLX_RGBA;
-#ifdef SGI_STEREO
+
+  // only if GLX theoretically supports stereo
+#ifdef GLX_STEREO
   if(use_stereo) {
     buf[bufc++]=GLX_STEREO;
   } else {
     debmsg("stereo deactivated");
   }
 #endif
+
   if(dbl_flag)
     buf[bufc++]=GLX_DOUBLEBUFFER;
 #ifdef RENDER_SOLID
