@@ -440,9 +440,9 @@ int transApplyIf(transMat *trans, float *v)
   return 0;
 }
 
-int transCopy(transMat *src, transMat *dest)
+int transCopy(transMat *dest, transMat *src)
 {
-  memcpy(src,dest,sizeof(transMat));
+  memcpy(dest,src,sizeof(transMat));
   return 0;
 }
 
@@ -488,6 +488,15 @@ void transListAddEntry(transList* list,transMat* t)
     }
     memcpy(&list->trans[list->count],t,sizeof(transMat));
     list->count++;
+  }
+}
+
+void transListCopy(transList* src, transList *dest)
+{
+  int i;
+  transListInit(dest,src->count);
+  for(i=0;i<src->count;i++) {
+    transListAddEntry(dest,&src->trans[i]);
   }
 }
 

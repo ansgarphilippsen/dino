@@ -37,6 +37,7 @@ int writeFile(char *name, struct WRITE_PARAM *p)
     debmsg("creating offscreen rendering context");
     cn=guiCreateOffscreenContext(img.param.width,img.param.height,
 				 img.param.accum);
+    gfxSetViewport();
 
     // initial gl
     debmsg("initializing GL");
@@ -285,4 +286,5 @@ static int write_tiff(struct WRITE_IMAGE *image,char *name)
   }
 
   TIFFClose(tif);
+  return 0;
 }

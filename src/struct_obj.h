@@ -74,7 +74,7 @@ typedef struct STRUCT_OBJ {
 
   transList transform_list;
 
-  int symview;
+  int symview,symcount;
 }structObj;
 
 

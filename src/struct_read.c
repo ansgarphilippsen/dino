@@ -31,7 +31,8 @@ static struct STRUCT_ATOM_TABLE struct_atom_table[]={
   {  8,   "O", 1.0, 0.0, 0.0, 1.40},
   { 15,   "P", 0.0, 1.0, 0.0, 1.7},
   { 16,   "S", 1.0, 1.0, 0.0, 1.8},
-  {  0,  "nn", 1.0, 1.0, 1.0, 1.5}
+  {  0,  "nn", 0.7, 0.7, 0.6, 1.5},
+  {  0,  "NN", 0.7, 0.7, 0.6, 1.5}
 };
 
 static int struct_atom_table_len=sizeof(struct_atom_table)/sizeof(struct STRUCT_ATOM_TABLE);
@@ -190,7 +191,70 @@ int pdbRead(FILE *f,dbmNode *node)
   unclear how this should be handled, right
   now it is prepended to the residue name
 */
+
+static int check_element(char *ele)
+{
+  static const char *l1[] = {
+    "H","C","N","O","P","S","K"
+  };
+  static int l1c=6;
+  static const char *l2[] = {
+    "NA","MG","AL","SI","CL",
+    "CA","CR","MN","FE","CO","NI","CU","ZN","AS","SE","BR","MO"
+  };
+  static int l2c=17;
+  static const char *l3[] = {
+    "B","F","V"
+  };
+  static int l3c=4;
+  static const char *l4[] = {
+    "HE","LI","BE","AR","SC","TI","GA","GE","KR"
+  };
+  static int l4c=9;
+
+  // hydrogen hack
+  if(ele[0]=='H') {
+    ele[1]='\0';
+    return 1;
+  }
   
+  int i;
+  // two characters
+  if(ele[1]!='\0') {
+    for(i=0;i<l2c;i++) {
+      if(ele[0]==l2[i][0] && ele[1]==l2[i][1]) return 1;
+    }
+    // check second character for match
+    for(i=0;i<l1c;i++) {
+      if(ele[1]==l1[i][0]) {
+	ele[0]=ele[1];
+	ele[1]='\0';
+	return 1;
+      }
+    }
+    // still no match, repeat with less likely tables
+    for(i=0;i<l4c;i++) {
+      if(ele[0]==l4[i][0] && ele[1]==l4[i][1]) return 1;
+    }
+    // check second character for match
+    for(i=0;i<l3c;i++) {
+      if(ele[1]==l3[i][0]) {
+	ele[0]=ele[1];
+	ele[1]='\0';
+	return 1;
+      }
+    }
+  } else {
+    for(i=0;i<l1c;i++) {
+      if(ele[0]==l1[i][0]) return 1;
+    }
+    for(i=0;i<l3c;i++) {
+      if(ele[0]==l3[i][0]) return 1;
+    }
+  }
+  
+  return 0;
+}
 
 int pdbLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
 {
@@ -219,6 +283,7 @@ int pdbLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
       ae->element[j++]=line[i+12];
   }
   ae->element[j]='\0';
+  check_element(ae->element);
 
   /*
   fprintf(stderr,"ATOM %d: aname: %s  ele: %s\n",ae->anum,ae->aname,ae->element);

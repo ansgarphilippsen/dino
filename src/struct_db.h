@@ -64,6 +64,7 @@ enum {STRUCT_PROP_COLOR,
       STRUCT_PROP_HELSYM, // helical params
       STRUCT_PROP_SG,     // space group  
       STRUCT_PROP_SYMVIEW,// symmetry view mode
+      STRUCT_PROP_SYMCOUNT,// symmetry ele count
       STRUCT_PROP_TFAST,  // fast trj update
       STRUCT_PROP_FRAME   // current frame to display
 };
@@ -302,6 +303,8 @@ typedef struct DBM_STRUCT_NODE {
   struct HELICAL *helical;
   int show_cell;
 
+  transList symop_list;
+
   struct STRUCT_ATOM_TABLE *atom_table;
   int atom_table_len;
   int smode;            /* selection mode */
@@ -409,4 +412,5 @@ int structRecenter(dbmStructNode *node);
 void structSetFlag(dbmStructNode *node,int mask);
 void structClearFlag(dbmStructNode *node,int mask);
 
+void structAddSymop(dbmStructNode *node, int wc, char**wl);
 #endif

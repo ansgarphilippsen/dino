@@ -411,6 +411,8 @@ int structObjSet(structObj *obj, Set *set, int flag)
       set->pov[pc].id=STRUCT_PROP_RAD;
     } else if(clStrcmp(set->pov[pc].prop,"symview")) {
       set->pov[pc].id=STRUCT_PROP_SYMVIEW;
+    } else if(clStrcmp(set->pov[pc].prop,"symcount")) {
+      set->pov[pc].id=STRUCT_PROP_SYMCOUNT;
     } else {
       comMessage("error: set: unknown property \n");
       comMessage(set->pov[pc].prop);
@@ -648,7 +650,6 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	  }
 	}
       }
-      
     }
   } else {
     // this is evaluated for pre-creation (flag==0)
@@ -657,6 +658,9 @@ int structObjSet(structObj *obj, Set *set, int flag)
       switch(set->pov[pc].id) {
       case STRUCT_PROP_SYMVIEW:
 	obj->symview=atoi(val->val1);
+	break;
+      case STRUCT_PROP_SYMCOUNT:
+	obj->symcount=atoi(val->val1);
 	break;
       }
     }
@@ -2032,8 +2036,8 @@ static void prep_symview(structObj* obj)
       }
     } else if(obj->symview==2) {
       if(obj->node->helical) { // helical info
-	transListInit(&obj->transform_list,11);
-	for(sc=-5;sc<=5;sc++) {
+	transListInit(&obj->transform_list,obj->symcount);
+	for(sc=0;sc<=obj->symcount;sc++) {
 	  angle = obj->node->helical->angle*(double)sc;
 	  dist = obj->node->helical->dist*(double)sc;
 	  matMakeRotMat(angle,0.0,0.0,1.0,tmat.rot);
@@ -2045,8 +2049,10 @@ static void prep_symview(structObj* obj)
 	comMessage("no helical symmetry info in dataset\n");
 	return;
       }
+    } else if(obj->symview==3) {
+      transListCopy(&obj->node->symop_list,&obj->transform_list);
     } else {
-      sprintf(msg,"invalid value %d for symview, must be 0, 1 or 2\n", obj->symview);
+      sprintf(msg,"invalid value %d for symview, must be 0 (off), 1 (xtal), 2 (helical), or 3 (custom)\n", obj->symview);
     }
   } else {
     transListDelete(&obj->transform_list);

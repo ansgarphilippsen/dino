@@ -82,6 +82,8 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
 
   transReset(&node->transform);
 
+  transListInit(&node->symop_list,50);
+
   return 0;
 }
 
@@ -177,32 +179,32 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     wl[0]=empty_com[0];
     wl[1]=empty_com[1];
   }
-  if(!strcmp(wl[0],"?") ||
-     !strcmp(wl[0],"help")) {
-  } else if(!strcmp(wl[0],"new")) {
+  if(clStrcmp(wl[0],"?") ||
+     clStrcmp(wl[0],"help")) {
+  } else if(clStrcmp(wl[0],"new")) {
     structComNew(node,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"get")) {
+  } else if(clStrcmp(wl[0],"get")) {
     return structComGet(node,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"del") ||
-	    !strcmp(wl[0],"delete")) {
+  } else if(clStrcmp(wl[0],"del") ||
+	    clStrcmp(wl[0],"delete")) {
     return structComDel(node, wc-1,wl+1);
-  } else if(!strcmp(wl[0],"set")) {
+  } else if(clStrcmp(wl[0],"set")) {
     return structComSet(node,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"copy") ||
-	    !strcmp(wl[0],"cp")) {
+  } else if(clStrcmp(wl[0],"copy") ||
+	    clStrcmp(wl[0],"cp")) {
     sprintf(message,"%s: copy not available\n",node->name);
     comMessage(message);
     return -1;
-  } else if(!strcmp(wl[0],"move") ||
-	    !strcmp(wl[0],"mv")) {
+  } else if(clStrcmp(wl[0],"move") ||
+	    clStrcmp(wl[0],"mv")) {
     sprintf(message,"%s: move not available\n",node->name);
     comMessage(message);
     return -1;
-  } else if(!strcmp(wl[0],"restrict")) {
+  } else if(clStrcmp(wl[0],"restrict")) {
     structComRestrict(node, wc-1,wl+1);
-  } else if(!strcmp(wl[0],"load")) {
+  } else if(clStrcmp(wl[0],"load")) {
     return structComLoad(node,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"step")) {
+  } else if(clStrcmp(wl[0],"step")) {
     if(!node->trj_flag) {
       sprintf(message,"%s: no trajectory loaded",node->name);
       comMessage(message);
@@ -223,7 +225,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
       node->frame=0;
     structSetFrame(node,node->frame);
     comRedraw();
-  } else if(!strcmp(wl[0],"play")) {
+  } else if(clStrcmp(wl[0],"play")) {
     if(!node->trj_flag) {
       sprintf(message,"%s: no trajectory loaded\n",node->name);
       comMessage(message);
@@ -231,7 +233,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     } else {
       structComPlay(node, wc-1,wl+1);
     }
-  } else if(!strcmp(wl[0],"stop")) {
+  } else if(clStrcmp(wl[0],"stop")) {
     if(!node->trj_flag) {
       comMessage("no trajectory present\n");
       return -1;
@@ -240,7 +242,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     node->trj_play=0;
     structSetFrame(node,0);
     comRedraw();
-  } else if(!strcmp(wl[0],"grab")) {
+  } else if(clStrcmp(wl[0],"grab")) {
     if(wc!=2) {
       sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
@@ -251,9 +253,9 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
       comGetCurrentCenter(node->transform.cen);
       structRecenter(node);
     }
-  } else if(!strcmp(wl[0],"write")) {
+  } else if(clStrcmp(wl[0],"write")) {
     structWrite(node,NULL,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"reset")) {
+  } else if(clStrcmp(wl[0],"reset")) {
     if(wc==1) {
       transReset(&node->transform);
       structRecenter(node);
@@ -272,7 +274,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
       }
     }
     comRedraw();
-  } else if(!strcmp(wl[0],"fix")) {
+  } else if(clStrcmp(wl[0],"fix")) {
     if(wc>1) {
       sprintf(message,"warning: fix: superfluous parameter ignored\n");
       comMessage(message);
@@ -281,49 +283,49 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     structSetMinMax(node);
     structRecenter(node);
     comRedraw();
-  } else if(!strcmp(wl[0],"rotx")) {
+  } else if(clStrcmp(wl[0],"rotx")) {
     if(wc<2) {
       comMessage("error: missing value after rotx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"roty")) {
+  } else if(clStrcmp(wl[0],"roty")) {
     if(wc<2) {
       comMessage("error: missing value after roty\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"rotz")) {
+  } else if(clStrcmp(wl[0],"rotz")) {
     if(wc<2) {
       comMessage("error: missing value after rotz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"transx")) {
+  } else if(clStrcmp(wl[0],"transx")) {
     if(wc<2) {
       comMessage("error: missing value after transx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"transy")) {
+  } else if(clStrcmp(wl[0],"transy")) {
     if(wc<2) {
       comMessage("error: missing value after transy\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"transz")) {
+  } else if(clStrcmp(wl[0],"transz")) {
     if(wc<2) {
       comMessage("error: missing value after transz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"center")) {
+  } else if(clStrcmp(wl[0],"center")) {
     if(wc<2) {
       sprintf(message,"missing value for center\n");
       comMessage(message);
@@ -338,14 +340,14 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     node->transform.cen[1]=v[1];
     node->transform.cen[2]=v[2];
     comRedraw();
-  } else if(!strcmp(wl[0],"connect")) {
+  } else if(clStrcmp(wl[0],"connect")) {
     if(wc!=3) {
       sprintf(message,"syntax: .struct connect ATOM1 ATOM2\n");
       comMessage(message);
       return -1;
     }
     return structComConnect(node,wl[1],wl[2]);
-  } else if(!strcmp(wl[0],"reconnect")) {
+  } else if(clStrcmp(wl[0],"reconnect")) {
     if(wc==1) {
       i=0xff;
     } else if(wc==2) {
@@ -373,7 +375,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     structReconnect(node);
     sprintf(message,"created %d bonds\n",node->bond_count);
     comMessage(message);
-  } else if(!strcmp(wl[0],"cell")) {
+  } else if(clStrcmp(wl[0],"cell")) {
     if(node->xtal==NULL) {
       comMessage("no crystallographic info available\n");
       return -1;
@@ -385,14 +387,33 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
 	      node->xtal->alpha, node->xtal->beta, node->xtal->gamma);
       comMessage(message);
     } else {
-      if(!strcmp(wl[1],"show")) {
+      if(clStrcmp(wl[1],"show")) {
 	node->show_cell=1;
 	comRedraw();
-      } else if(!strcmp(wl[1],"hide")) {
+      } else if(clStrcmp(wl[1],"hide")) {
 	node->show_cell=0;
 	comRedraw();
       } else {
 	sprintf(message,"error: unknown cell command '%s'\n",wl[1]);
+      }
+    }
+  } else if(clStrcmp(wl[0],"add")) {
+    if(wc<2) {
+      comMessage("missing type after 'add'\n");
+      return -1;
+    } else {
+      if(clStrcmp(wl[1],"symop")) {
+	if(wc<3) {
+	  comMessage("missing parameters after 'add symop'\n");
+	  return -1;
+	} else {
+	  structAddSymop(node,wc-2,wl+2);
+	}
+	 
+      } else {
+	sprintf(message,"unknown type '%s' to add\n",wl[1]);
+	comMessage(message);
+	return -1;
       }
     }
   } else {
@@ -894,15 +915,20 @@ int structSet(dbmStructNode *node, Set *s)
 	comMessage("error: set: unexpected range in property helicalsym\n");
 	return -1;
       }
-      if(matExtract1Df(val->val1,2,v1)==-1) {
-	comMessage("error in helicalsym value, expected {angle,dist}\n");
-	return -1;
+      if(matExtract1Df(val->val1,3,v1)==-1) {
+	if(matExtract1Df(val->val1,2,v1)==-1) {
+	  comMessage("error in helicalsym value, expected {angle,dist[,axialratio]}\n");
+	  return -1;
+	} else {
+	  v1[2]=1.0;
+	}
       }
       if(node->helical==NULL) {
 	node->helical=(struct HELICAL*)Cmalloc(sizeof(struct HELICAL));
       }
       node->helical->angle=v1[0];
       node->helical->dist=v1[1];
+      node->helical->axr=v1[2];
       // TODO OTHER ATOM PROPERTIES
     case STRUCT_PROP_BFAC:
       for(i=0;i<node->atom_count;i++) {
@@ -966,7 +992,7 @@ int structGet(dbmStructNode *node, char *prop)
   float v1[4];
   char message[256];
 
-  if(!strcmp(prop,"center")) {
+  if(clStrcmp(prop,"center")) {
     v1[0]=node->transform.cen[0];
     v1[1]=node->transform.cen[1];
     v1[2]=node->transform.cen[2];
@@ -982,9 +1008,9 @@ int structGet(dbmStructNode *node, char *prop)
 	    node->transform.cen[1],
 	    node->transform.cen[2]);
     comReturn(message);
-  } else if(!strcmp(prop,"rtc")) {
+  } else if(clStrcmp(prop,"rtc")) {
     comReturn(transGetAll(&node->transform));
-  } else if(!strcmp(prop,"cell")){
+  } else if(clStrcmp(prop,"cell")){
     if(node->xtal==NULL) {
       sprintf(message,"%s: no cell defined\n",node->name);
       comMessage(message);
@@ -1010,9 +1036,9 @@ int structGet(dbmStructNode *node, char *prop)
     }
   } else if(!strcmp(prop,"rot")) {
     comReturn(transGetRot(&node->transform));
-  } else if(!strcmp(prop,"trans")) {
+  } else if(clStrcmp(prop,"trans")) {
     comReturn(transGetTra(&node->transform));
-  } else if(!strcmp(prop,"smode")) {
+  } else if(clStrcmp(prop,"smode")) {
     if(node->smode==SEL_ATOM)
       comReturn("atom");
     else if(node->smode==SEL_RESIDUE) {
@@ -1533,7 +1559,7 @@ int structDelObj(struct DBM_STRUCT_NODE *node,char *name)
   structObj *obj;
   for(i=0;i<node->obj_max;i++)
     if(node->obj_flag[i]==1)
-      if(!strcmp(node->obj[i].name,name)) {
+      if(clStrcmp(node->obj[i].name,name)) {
 	node->obj_flag[i]=0;
 	obj=&node->obj[i];
 
@@ -1589,7 +1615,7 @@ int structSubCommand(dbmStructNode *node,char *rsub, int wc, const char **wl)
 	      fprintf(stdout,"found atom #%d\n",cap->n);
 	    */
 	    c++;
-	    if(!strcmp(wl[0],"get")) {
+	    if(clStrcmp(wl[0],"get")) {
 	      return structSubComGet(node,cap,wc-1,wl+1);
 	    } else {
 	      sprintf(message,"%s: unknown command %s\n",node->name,wl[0]);
@@ -1721,35 +1747,35 @@ int structSubComGet(dbmStructNode *node,struct STRUCT_ATOM *ap,int wc, const cha
     comMessage(message);
     return -1;
   }
-  if(!strcmp(wl[0],"xyz")) {
+  if(clStrcmp(wl[0],"xyz")) {
     v[0]=ap->p->x;
     v[1]=ap->p->y;
     v[2]=ap->p->z;
     transApplyf(&node->transform,v);
     sprintf(message,"{%.3f,%.3f,%.3f}",v[0],v[1],v[2]);
-  } else if(!strcmp(wl[0],"bfac")) {
+  } else if(clStrcmp(wl[0],"bfac")) {
     sprintf(message,"%.3f",ap->bfac);
-  } else if(!strcmp(wl[0],"weight")) {
+  } else if(clStrcmp(wl[0],"weight")) {
     sprintf(message,"%.3f",ap->weight);
-  } else if(!strcmp(wl[0],"rname")) {
+  } else if(clStrcmp(wl[0],"rname")) {
     sprintf(message,"%s",ap->residue->name);
-  } else if(!strcmp(wl[0],"rtype")) {
+  } else if(clStrcmp(wl[0],"rtype")) {
     switch(ap->residue->type) {
     case STRUCT_RTYPE_HELIX: sprintf(message,"%s","helix"); break;
     case STRUCT_RTYPE_STRAND: sprintf(message,"%s","strand"); break;
     default: sprintf(message,"%s","coil"); break;
     }
-  } else if(!strcmp(wl[0],"aname")) {
+  } else if(clStrcmp(wl[0],"aname")) {
     sprintf(message,"%s",ap->name);
-  } else if(!strcmp(wl[0],"ele")) {
+  } else if(clStrcmp(wl[0],"ele")) {
     sprintf(message,"%s",ap->chem.element);
-  } else if(!strcmp(wl[0],"anum")) {
+  } else if(clStrcmp(wl[0],"anum")) {
     sprintf(message,"%d",ap->anum);
-  } else if(!strcmp(wl[0],"chain")) {
+  } else if(clStrcmp(wl[0],"chain")) {
     sprintf(message,"%s",ap->chain->name);
-  } else if(!strcmp(wl[0],"model")) {
+  } else if(clStrcmp(wl[0],"model")) {
     sprintf(message,"%d",ap->model->num);
-  } else if(!strcmp(wl[0],"rnum")) {
+  } else if(clStrcmp(wl[0],"rnum")) {
     sprintf(message,"%d",ap->residue->num);
   } else {
     sprintf(message,"%s:SubGet: unknown parameter %s\n",node->name,wl[0]);
@@ -2375,15 +2401,15 @@ struct STRUCT_ATOM ** structPick(struct DBM_STRUCT_NODE *node, double *p1, doubl
 
 float structGetAtomProperty(struct STRUCT_ATOM *ap,const char *prop)
 {
-  if(!strcmp(prop,"anum"))
+  if(clStrcmp(prop,"anum"))
     return (float)ap->anum;
-  else if(!strcmp(prop,"bfac"))
+  else if(clStrcmp(prop,"bfac"))
     return ap->bfac;
-  else if(!strcmp(prop,"weight"))
+  else if(clStrcmp(prop,"weight"))
     return ap->weight;
-  else if(!strcmp(prop,"rnum"))
+  else if(clStrcmp(prop,"rnum"))
     return (float)ap->residue->num;
-  else if(!strcmp(prop,"model"))
+  else if(clStrcmp(prop,"model"))
     return (float)ap->model->num;
   else
     return 0.0;
@@ -2414,6 +2440,7 @@ int structSetDefault(structObj *obj)
   obj->transform_list.count=0;
   obj->transform_list.max=0;
   obj->symview=0;
+  obj->symcount=1;
   /*********
   obj->tv=NULL;
   obj->tvm=0;
@@ -2669,15 +2696,15 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
   }
   swap_flag=0;
   for(i=1;i<wc;i++) {
-    if(!strcmp(wl[i],"-type") ||
-       !strcmp(wl[i],"-t")) {
+    if(clStrcmp(wl[i],"-type") ||
+       clStrcmp(wl[i],"-t")) {
       if(i+1>=wc) {
 	sprintf(message,"missing parameter for -type\n");
 	comMessage(message);
 	return -1;
       }
       strcpy(type,wl[++i]);
-    } else if(!strcmp(wl[i],"-swap")) {
+    } else if(clStrcmp(wl[i],"-swap")) {
       swap_flag=1;
     } else {
       sprintf(message,"unknow option %s\n",wl[i]);
@@ -2686,7 +2713,7 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     }
   }
 
-  if(!strcmp(ext,"gz")) {
+  if(clStrcmp(ext,"gz")) {
     cmp=1;
     bp=strrchr(base,'.');
     if(bp!=NULL)
@@ -2708,16 +2735,16 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
   }
 
   if(strlen(type)==0) {
-    if(!strcmp(ext,"trj") ||
-       !strcmp(ext,"dcd")) {
+    if(clStrcmp(ext,"trj") ||
+       clStrcmp(ext,"dcd")) {
       id=STRUCT_TRJ_CHARMM; /* default */
-    } else if(!strcmp(ext,"crd")) {
+    } else if(clStrcmp(ext,"crd")) {
       id=STRUCT_TRJ_CNS; /* default */
-    } else if(!strcmp(ext,"dtrj")) {
+    } else if(clStrcmp(ext,"dtrj")) {
       id=STRUCT_TRJ_DINO;
-    } else if(!strcmp(ext,"binpos")) {
+    } else if(clStrcmp(ext,"binpos")) {
       id=STRUCT_TRJ_BINPOS;
-    } else if(!strcmp(ext,"xtc")) {
+    } else if(clStrcmp(ext,"xtc")) {
       id=STRUCT_TRJ_XTC;
     } else {
       sprintf(message,"unknown extension %s, please specify type\n",ext);
@@ -2725,17 +2752,17 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
       if(cmp) pclose(f); else fclose(f);
       return -1;
     }
-  } else if(!strcmp(type,"charmm")) {
+  } else if(clStrcmp(type,"charmm")) {
     id=STRUCT_TRJ_CHARMM;
-  } else if(!strcmp(type,"xplor")) {
+  } else if(clStrcmp(type,"xplor")) {
     id=STRUCT_TRJ_XPLOR;
-  } else if(!strcmp(type,"cns")) {
+  } else if(clStrcmp(type,"cns")) {
     id=STRUCT_TRJ_CNS;
-  } else if(!strcmp(type,"dino")) {
+  } else if(clStrcmp(type,"dino")) {
     id=STRUCT_TRJ_DINO;
-  } else if(!strcmp(type,"xtc")) {
+  } else if(clStrcmp(type,"xtc")) {
     id=STRUCT_TRJ_XTC;
-  } else if(!strcmp(type,"binpos")) {
+  } else if(clStrcmp(type,"binpos")) {
     id=STRUCT_TRJ_BINPOS;
   } else {
     sprintf(message,"unknown type %s\n",type);
@@ -2916,8 +2943,8 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
   i=1;
   strcpy(type,"");
   while(i<wc) {
-    if(!strcmp(wl[i],"-type") ||
-       !strcmp(wl[i],"-t")) {
+    if(clStrcmp(wl[i],"-type") ||
+       clStrcmp(wl[i],"-t")) {
       if(i+1>=wc) {
 	sprintf(message,"missing parameter for %s\n",wl[i]);
 	comMessage(message);
@@ -2933,13 +2960,13 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
   }
 
   if(strlen(type)==0) {
-    if(!strcmp(ext,"pdb")) {
+    if(clStrcmp(ext,"pdb")) {
       tid=STRUCT_WRITE_PDB;
-    } else if(!strcmp(ext,"xpl")) {
+    } else if(clStrcmp(ext,"xpl")) {
       tid=STRUCT_WRITE_XPL;
-    } else if(!strcmp(ext,"crd")) {
+    } else if(clStrcmp(ext,"crd")) {
       tid=STRUCT_WRITE_CRD;
-    } else if(!strcmp(ext,"xyzr")) {
+    } else if(clStrcmp(ext,"xyzr")) {
       tid=STRUCT_WRITE_XYZR;
     } else {
       sprintf(message,"unknown extension %s, please specify type\n",ext);
@@ -2947,14 +2974,14 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
       return -1;
     }
   } else {
-    if(!strcmp(type,"pdb")) {
+    if(clStrcmp(type,"pdb")) {
       tid=STRUCT_WRITE_PDB;
-    } else if(!strcmp(type,"xplorc") ||
-	      !strcmp(type,"cnsc")) {
+    } else if(clStrcmp(type,"xplorc") ||
+	      clStrcmp(type,"cnsc")) {
       tid=STRUCT_WRITE_XPL;
-    } else if(!strcmp(type,"charmm")){
+    } else if(clStrcmp(type,"charmm")){
       tid=STRUCT_WRITE_CRD;
-    } else if(!strcmp(type,"xyzr")){
+    } else if(clStrcmp(type,"xyzr")){
       tid=STRUCT_WRITE_XYZR;
     } else {
       sprintf(message,"unknown type %s\n",type);
@@ -2998,7 +3025,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
       
       strcpy(record,"HETATM");
       for(i=0;i<record_atom_count;i++)
-	if(!strcmp(record_atom[i],ap->residue->name)) {
+	if(clStrcmp(record_atom[i],ap->residue->name)) {
 	  strcpy(record,"ATOM  ");
 	  break;
 	}
@@ -3007,7 +3034,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
       if(strlen(ap->chem.element)==2) {
 	sprintf(aname,"%s",ap->name);
       } else {
-	if(!strcmp(ap->chem.element,"H")) {
+	if(clStrcmp(ap->chem.element,"H")) {
 	  if(isdigit(ap->name[0])) {
 	    sprintf(aname,"%s",ap->name);
 	  } else if(strlen(ap->name)>3) {
@@ -3155,24 +3182,24 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
   node->play.delay_count=0;
   
   for(i=0;i<wc;i++) {
-    if(!strcmp(wl[i],"-wait") ||
-       !strcmp(wl[i],"-w")) {
+    if(clStrcmp(wl[i],"-wait") ||
+       clStrcmp(wl[i],"-w")) {
       if(i+1>=wc) {
 	sprintf(message,"missing value for -wait\n");
 	comMessage(message);
 	return -1;
       }
       node->play.wait=atoi(wl[++i]);
-    } else if(!strcmp(wl[i],"-delay") ||
-	      !strcmp(wl[i],"-d")) {
+    } else if(clStrcmp(wl[i],"-delay") ||
+	      clStrcmp(wl[i],"-d")) {
       if(i+1>=wc) {
 	sprintf(message,"missing value for -delay\n");
 	comMessage(message);
 	return -1;
       }
       node->play.delay=atoi(wl[++i]);
-    } else if(!strcmp(wl[i],"-begin") ||
-	      !strcmp(wl[i],"-b")) {
+    } else if(clStrcmp(wl[i],"-begin") ||
+	      clStrcmp(wl[i],"-b")) {
       if(i+1>=wc) {
 	sprintf(message,"missing value for -begin\n");
 	comMessage(message);
@@ -3184,8 +3211,8 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(wl[i],"-end") ||
-	      !strcmp(wl[i],"-e")) {
+    } else if(clStrcmp(wl[i],"-end") ||
+	      clStrcmp(wl[i],"-e")) {
       if(i+1>=wc) {
 	sprintf(message,"missing value for -end\n");
 	comMessage(message);
@@ -3197,8 +3224,8 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(wl[i],"-step") ||
-	      !strcmp(wl[i],"-s")) {
+    } else if(clStrcmp(wl[i],"-step") ||
+	      clStrcmp(wl[i],"-s")) {
       if(i+1>=wc) {
 	sprintf(message,"missing value for -end\n");
 	comMessage(message);
@@ -3215,19 +3242,19 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(wl[i],"-mode") ||
-	      !strcmp(wl[i],"-m")) {
+    } else if(clStrcmp(wl[i],"-mode") ||
+	      clStrcmp(wl[i],"-m")) {
       if(i+1>=wc) {
 	sprintf(message,"missing value for -mode\n");
 	comMessage(message);
 	return -1;
       }
       i++;
-      if(!strcmp(wl[i],"loop")) {
+      if(clStrcmp(wl[i],"loop")) {
 	node->play.mode=STRUCT_PLAY_LOOP;
-      } else if(!strcmp(wl[i],"rock")) {
+      } else if(clStrcmp(wl[i],"rock")) {
 	node->play.mode=STRUCT_PLAY_ROCK;
-      } else if(!strcmp(wl[i],"single")) {
+      } else if(clStrcmp(wl[i],"single")) {
 	node->play.mode=STRUCT_PLAY_SINGLE;
       } else {
 	sprintf(message,"unknown mode %s\n",wl[i]);
@@ -3766,4 +3793,19 @@ int structReconnect2(struct DBM_STRUCT_NODE *node)
   structRecalcBonds(node);
 
   return 0;
+}
+
+/*
+  add symmetry operators
+*/
+void structAddSymop(dbmStructNode* node, int wc, char**wl)
+{
+  // first word contains rotation matrix
+  // second word contains translation matrix
+  transMat tmat;
+  transReset(&tmat);
+  if(transSetRot(&tmat,wl[0])<0) return;
+  if(transSetTra(&tmat,wl[1])<0) return;
+
+  transListAddEntry(&node->symop_list,&tmat);
 }

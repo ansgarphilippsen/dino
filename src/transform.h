@@ -103,5 +103,6 @@ void transListDelete(transList* list);
 int transListGetEntryCount(transList *list);
 transMat* transListGetEntry(transList* list, int n);
 void transListAddEntry(transList* list,transMat* t);
+void transListCopy(transList* src, transList *dest);
 
 #endif

@@ -1,2 +1,6 @@
 deprecate t flag for render, introduce alpha for property
 .a.b set color=red,alpha=0.5
+
+add "scene autofit"
+
+increase geom dataset parsing speed (or script in general)!

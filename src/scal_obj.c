@@ -1382,7 +1382,7 @@ int scalSlabIntersect(scalObj *obj)
     {0,4},{2,6},{3,7},{1,5},
     {4,5},{4,6},{6,7},{5,7}
   };
-  int i,j,pc,flag[12],indx[2];
+  int i,j,pc,flag[12],indx[2],hitc;
   double r[12],point[12][3];
   double a,b,c,d,x0,y0,z0,x1,y1,z1,x2,y2,z2,q1,q2;
   double dir[3],dist,axis1[3],axis2[3],mindist[2],maxdist[2],diff[3];
@@ -1464,6 +1464,12 @@ int scalSlabIntersect(scalObj *obj)
     c) find minimal and maximal extend of both axis from center
    */
 
+  if(obj->slab.linec<1) {
+    comMessage("internal error in slab generation: linecount is 0\n");
+    return -1;
+  }
+
+  hitc=0;
   maxdist[0]=0.0;
   for(i=0;i<obj->slab.linec;i++) {
     diff[0]=point[obj->slab.line[i][0]][0]-point[obj->slab.line[i][1]][0];

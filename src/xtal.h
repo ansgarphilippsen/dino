@@ -21,6 +21,7 @@ struct XTAL {
 struct HELICAL {
   double angle; // rotation angle per step
   double dist;  // offset along axis per step 
+  double axr; // axial ratio
 };
 
 #endif

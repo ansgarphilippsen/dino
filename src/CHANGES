@@ -1,8 +1,20 @@
+added "get center" command to geom dataset
+
+fixed POVray scalar field output to have correct colors
+
+added limited symmetry functionality to coord dataset
+
+added better determination of read in element
+
+fixed accum write not honoring view setting
+
+fixed dataset transformation not reflected in $CP
+
 added gromax .gro format
 
 render is called after struct.obj renew
 
-surf reset parameters work
+fixed surf reset parameters
 
 added scene param "splitmode"
 
