@@ -53,8 +53,9 @@
 
     eventType = CMI_BUTTON_PRESS;
     mask = CMI_BUTTON1_MASK;
-    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
-    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
+//    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
+//    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
+    if(flags & NSCommandKeyMask) mask += CMI_CNTRL_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
 
@@ -76,8 +77,9 @@
 
     eventType = CMI_BUTTON_RELEASE;
     mask = CMI_BUTTON1_MASK;
-    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
-    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
+//    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
+//    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
+    if(flags & NSCommandKeyMask) mask += CMI_CNTRL_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
@@ -99,8 +101,9 @@
 
     eventType = CMI_MOTION;
     mask = CMI_BUTTON1_MASK;
-    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
-    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
+//    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
+//    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
+    if(flags & NSCommandKeyMask) mask += CMI_CNTRL_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
@@ -143,6 +146,7 @@
     eventType = CMI_BUTTON_RELEASE;
     mask = CMI_BUTTON2_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
+    if(flags & NSCommandKeyMask) mask += CMI_CNTRL_MASK;
 
     pt = [self convertPoint:pt fromView:nil];
     px = pt.x;
@@ -163,7 +167,8 @@
     eventType = CMI_MOTION;
     mask = CMI_BUTTON2_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
-
+    if(flags & NSCommandKeyMask) mask += CMI_CNTRL_MASK;
+    
     pt = [self convertPoint:pt fromView:nil];
     px = pt.x;
     py = frame.size.height - pt.y;

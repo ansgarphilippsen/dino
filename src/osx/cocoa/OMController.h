@@ -12,10 +12,11 @@
 
 @end
 
+
 @interface OMController : NSObject
 {
     IBOutlet NSOutlineView *dinoOM;
-    IBOutlet NSButton      *toggleButton;
+    IBOutlet NSButtonCell  *toggleButton;
 
     NSMutableArray         *dataSetList;
 }

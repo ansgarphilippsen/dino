@@ -148,11 +148,11 @@ static id dinoController;
 }
 
 - (IBAction)centerCP:(id)sender{
-   [self command:@"scene center [$CP]" from:(id)sender]; 
+   [self command:@"scene center $CP" from:(id)sender]; 
 }
 
 - (IBAction)centerCS:(id)sender{
-    [self command:@"scene center [$CS]" from:(id)sender]; 
+    [self command:@"scene center $CS" from:(id)sender]; 
 }
 
 - (IBAction)calcDist:(id)sender{

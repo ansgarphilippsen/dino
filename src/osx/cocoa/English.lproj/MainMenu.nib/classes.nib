@@ -53,7 +53,7 @@
             OUTLETS = {
                 dinoController = Controller; 
                 dinoOM = NSOutlineView; 
-                toggleButton = NSButton; 
+                toggleButton = NSButtonCell; 
             }; 
             SUPERCLASS = NSObject; 
         }, 

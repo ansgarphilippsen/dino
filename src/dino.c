@@ -249,11 +249,11 @@ void dinoExit(int n)
 #ifndef OSX
   debmsg("restoring terminal\n");
   guitOutit();
-#endif
   
   debmsg("closing down gui\n");
   guiExit();
-
+#endif
+  
   debmsg("exit");
   exit(n);
 }

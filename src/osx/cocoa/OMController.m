@@ -21,8 +21,8 @@ static id dinoOMController;
     return [self menu];
 }
 
-
 @end
+
 
 @implementation OMController
 
@@ -41,7 +41,7 @@ static id dinoOMController;
     dinoOMController=self;
 
     dataSetList = [[NSMutableArray alloc] initWithCapacity:2];
-    [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:[toggleButton cell]];
+    [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:toggleButton];
 //    [dinoOM setVerticalMotionCanBeginDrag:YES];
 //    [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
     

@@ -1321,13 +1321,15 @@ int sceneCommand(int wc, const char **wl)
       }
     }
 #endif
+#ifndef OSX
   } else if(clStrcmp(wl[0],"excl")) {
     if(clStrcmp(wl[1],"1") ||
        clStrcmp(wl[1],"on")) {
-      guiGrab(1);
+       guiGrab(1);   
     } else {
-      guiGrab(0);
+       guiGrab(0);   
     }
+#endif
   } else {
     sprintf(message,"scene: unknown command %s\n",wl[0]);
     comMessage(message);
