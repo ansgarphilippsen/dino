@@ -309,7 +309,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
 
   comReturn(NULL);
 
-  if(strlen(word_list[0])==0) {
+  if(clStrlen(word_list[0])==0) {
   } else if(word_list[0][0]=='.') {
     /* if word begins with a dot it is an object */
     strcpy(obj,&word_list[0][1]);
@@ -1468,9 +1468,9 @@ int comWrite(int wc,const char **wl)
 	return -1;
       }
       strcpy(scal,wl[n+1]);
-      if(scal[strlen(scal)-1]=='%') {
+      if(scal[clStrlen(scal)-1]=='%') {
 	// percentage of current window
-	scal[strlen(scal)-1]='\0';
+	scal[clStrlen(scal)-1]='\0';
 	scale=atof(scal)/100;
 	if(scale<0) {
 	  comMessage("write: scale factor must be >0\n");
@@ -1536,16 +1536,16 @@ int comWrite(int wc,const char **wl)
     n++;
   }
 
-  if(strlen(type)==0) {
+  if(clStrlen(type)==0) {
     n=0;
-    while(strlen(write_def[n].ext)>0) {
+    while(clStrlen(write_def[n].ext)>0) {
       if(!strcmp(write_def[n].ext,ext)) {
 	strcpy(type,write_def[n].type);
 	break;
       }
       n++;
     }
-    if(strlen(write_def[n].ext)==0) {
+    if(clStrlen(write_def[n].ext)==0) {
       sprintf(message,"unknown extension %s, please specify type\n",ext);
       comMessage(message);
       return -1;
@@ -1554,15 +1554,12 @@ int comWrite(int wc,const char **wl)
   }
   
 
-  if(!strcmp(type,"raster")) {
-    comMessage("WARNING: deprecated format! Please use POVray instead\n");
-    fclose(f);
-  } else if(!strcmp(type,"pov")) {
+  if(!strcmp(type,"pov")) {
     if(pov_ver==WRITE_POV_V35 && pov_mode==WRITE_POV_PATCH) {
       comMessage("Error: -patch and -v35 cannot be used together!\n");
       return -1;
     }
-
+    
     if((f=fopen(file,"w"))==NULL) {
       sprintf(message,"Error opening %s\n",file);
       comMessage(message);
