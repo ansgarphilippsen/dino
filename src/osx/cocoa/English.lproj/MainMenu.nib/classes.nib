@@ -19,7 +19,12 @@
             }; 
             CLASS = Controller; 
             LANGUAGE = ObjC; 
-            OUTLETS = {dinoCLI = CLIView; dinoGL = DinoGLView; statusBox = NSTextField; }; 
+            OUTLETS = {
+                dinoCLI = CLIView; 
+                dinoGL = DinoGLView; 
+                statusBox = NSTextField; 
+                versionBox = NSTextField; 
+            }; 
             SUPERCLASS = NSObject; 
         }, 
         {CLASS = DinoGLView; LANGUAGE = ObjC; SUPERCLASS = NSOpenGLView; }, 

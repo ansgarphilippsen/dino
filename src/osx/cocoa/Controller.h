@@ -15,6 +15,7 @@
     IBOutlet DinoGLView *dinoGL;
     IBOutlet CLIView *dinoCLI;
     IBOutlet NSTextField *statusBox;
+    IBOutlet NSTextField *versionBox;
 
     NSTimer *controlTimer;
     NSOpenGLContext *offScreenContext;
@@ -33,6 +34,7 @@
 // Update Display
 - (void)swapBuffers;
 - (void)updateStatusBox:(NSString *)text;
+- (void)updateVersionBox:(NSString *)text;
 - (void)resetCurrentContext;
 // Main Menu Item
 - (IBAction)setWorkingDirectory:(id)sender;

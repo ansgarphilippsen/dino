@@ -24,6 +24,7 @@ static id dinoController;
     [dinoCLI setCommandHandler:dinoController];
 
     [self notifyUser:[NSString stringWithFormat:@"Welcome to dino v%s (http://www.dino3d.org)\n",VERSION]];
+    [self updateVersionBox:[NSString stringWithFormat:@"dino v%s",VERSION]];
     
     guiInit(0,0);
     cmiInitGL();
@@ -72,6 +73,11 @@ static id dinoController;
 - (void)updateStatusBox:(NSString *)text
 {
     [statusBox setObjectValue:text];
+}
+
+- (void)updateVersionBox:(NSString *)text
+{
+    [versionBox setObjectValue:text];
 }
 
 - (void)resetCurrentContext
