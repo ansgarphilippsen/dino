@@ -18,10 +18,13 @@
 
 int main(int argc, const char *argv[])
 {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    
     dinoParseArgs(argc,argv);
     cmiInit();
     gfxInit();
     if(dinoMain(argc, argv)<0) return -1;
 
+    [pool release];
     return NSApplicationMain(argc, argv);
 }
