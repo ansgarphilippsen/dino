@@ -1529,11 +1529,13 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     frac=M_PI*2.0/(double)(detail*4);
     z=0.0;
     for(i=0;i<detail*4;i++) {
+#ifdef HSC_NEWCOL
       if(i<detail || i>=detail*3) {
 	pro->p[i].fc=0;
       } else {
 	pro->p[i].fc=1;
       }
+#endif
       angle=frac*(double)i;
       r1=rad1;
       r2=rad2;
@@ -1587,11 +1589,13 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     frac=M_PI*2.0/(double)(detail*4);
     z=0.0;
     for(i=0;i<detail*4;i++) {
+#ifdef HSC_NEWCOL
       if(i<detail || i>=detail*3) {
 	pro->p[i].fc=0;
       } else {
 	pro->p[i].fc=1;
       }
+#endif
       angle=frac*(double)i;
       r1=rad1;
       r2=rad2;
@@ -1642,7 +1646,9 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     pro->pc=detail*4+1;
     frac=M_PI*2.0/(double)(detail*4);
     for(i=0;i<detail*4;i++) {
+#ifdef HSC_NEWCOL
       pro->p[i].fc=0;
+#endif
       angle=frac*(double)i;
       z=0.0;
       x=(float)(rad1*cos(angle+frac*0.5));

@@ -6,10 +6,21 @@ ARCH=DEC
 CC   = cc
 GOPT = -g2 -fullwarn
 WOPT = 
-IOPT = -I/usr/include/CC -I../extras/include
-SLIB = ../extras/lib/libtiff.a ../extras/lib/libpng.a ../extras/lib/libz.a
 
-COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D $(ARCH)
-LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm
+#IOPT = -I/usr/include/CC -I../extras/include
+IOPT = -I../extras/include/mesa -I/usr/include/CC -I../extras/include
+
+SLIB = ../extras/lib/libtiff.a ../extras/lib/libpng.a ../extras/lib/libz.a \
+       /soft/softmng/lib/gcc-lib/alpha-dec-osf4.0/2.7.2/libgcc.a
+
+COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D$(ARCH)
+
+#LIBGL = -lGLw -lGLU -lGL
+
+LIBGL = ../extras/lib/libGL.a \
+        ../extras/lib/libGLU.a \
+        ../extras/lib/libGLw.a
+
+LIBS = $(SLIB) -lc $(LIBGL) -lXi -lXm -lXt -lXmu -lXext -lX11 -lm
 LOPT = $(LIBS)
 
