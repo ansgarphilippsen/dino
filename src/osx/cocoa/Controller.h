@@ -6,6 +6,7 @@
 #import "DinoGLView.h"
 #import "CLIView.h"
 #import "gui_osx.h"
+#import "gui_ext.h"
 
 #include "dino.h"
 #include "cmi.h"
@@ -13,17 +14,17 @@
 
 @interface Controller : NSObject
 {
-    IBOutlet DinoGLView *dinoGL;
-    IBOutlet NSTextField *statusBox;
-    IBOutlet NSTextField *versionBox;
-    IBOutlet CLIView *dinoCLI;
+    IBOutlet DinoGLView    *dinoGL;
+    IBOutlet NSTextField   *statusBox;
+    IBOutlet NSTextField   *versionBox;
+    IBOutlet CLIView       *dinoCLI;
     IBOutlet NSOutlineView *dinoOM;
-    IBOutlet NSButton *toggleButton;
+    IBOutlet NSButton      *toggleButton;
     
-    NSTimer *controlTimer;
-    NSMutableDictionary *dataSetList;
-    NSOpenGLContext *offScreenContext;
-    void *memPointer;
+    NSTimer             *controlTimer;
+    NSMutableArray      *dataSetList;
+    NSOpenGLContext     *offScreenContext;
+    void                *memPointer;
 }
 
 // Initializatiion
@@ -61,6 +62,7 @@
 - (IBAction)hideAxis:(id)sender;
 - (IBAction)resetAll:(id)sender;
 // Object menu
+- (id)dataSetOfName:(NSString *)name;
 - (void)omAddDB:(NSString *)name;
 - (void)omDelDB:(NSString *)name;
 - (void)omAddObj:(NSString *)name inDB:(NSString *)db;
@@ -74,8 +76,8 @@
 - (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item;
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item;
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item;
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray*)rows toPasteboard:(NSPasteboard*)pboard;
-- (NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation;
+- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)rows toPasteboard:(NSPasteboard *)pboard;
+- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation;
 - (BOOL)tableView:(NSTableView*)tableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation;
 // Graphical Control
 - (IBAction)rotFromSliderX:(id)sender;

@@ -50,7 +50,7 @@
     [super init];
     [self setName:s];
     [self setDisplayFlag:YES];
-    childrenList = [[NSMutableDictionary alloc] initWithCapacity:5];
+    childrenList = [[NSMutableArray alloc] initWithCapacity:5];
     return self;
 }
 
@@ -78,19 +78,24 @@
     return displayFlag;
 }
 
-- (void)addChildren:(DinoObject *)anObject withKey:(NSString *)s{
-    [childrenList setObject:anObject forKey:s];  
+- (void)addChildren:(DinoObject *)anObject{
+    [childrenList addObject:anObject];  
 }
 
 - (void)removeChildren:(NSString *)s{
-    [childrenList removeObjectForKey:s];
+    [childrenList removeObjectIdenticalTo:[self childrenOfName:s]];
 }
 
-- (DinoObject *)childrenForKey:(NSString *)s{
-    return [childrenList objectForKey:s];
+- (DinoObject *)childrenOfName:(NSString *)s{
+    NSEnumerator *enumerator = [[self childrenList] objectEnumerator];
+    id aDinoObject;
+    while (aDinoObject = [enumerator nextObject]) {
+	if([[aDinoObject name] isEqual:s]){ return aDinoObject;}
+    }
+    return nil;
 }
 
-- (NSMutableDictionary *)childrenList{
+- (NSMutableArray *)childrenList{
     return childrenList;
 }
 

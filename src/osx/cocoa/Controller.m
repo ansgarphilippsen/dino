@@ -23,9 +23,9 @@ static id dinoController;
     [CLIDrawer setContentSize:NSMakeSize(0,160)];	
     [CLIDrawer openOnEdge:NSMinYEdge];
 
-    dataSetList = [[NSMutableDictionary alloc] initWithCapacity:2];
+    dataSetList = [[NSMutableArray alloc] initWithCapacity:2];
     [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:[toggleButton cell]];
-//    [dinoOM setVerticalMotionCanBeginDrag:YES];
+    [dinoOM setVerticalMotionCanBeginDrag:YES];
     [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
 }
 
@@ -197,42 +197,52 @@ static id dinoController;
 //------------------------------------------------------
 // Object menu
 
+- (id)dataSetOfName:(NSString *)name{
+    NSEnumerator *enumerator = [dataSetList objectEnumerator];
+    id aDataSet;
+    while (aDataSet = [enumerator nextObject]) {
+	if([[aDataSet name] isEqual:name]){ return aDataSet;}
+    }
+    return nil;
+}
+
 - (void)omAddDB:(NSString *)name
 {
     DinoDataSet *aDataSet =[[[DinoDataSet alloc] initWithName:name] autorelease];
-    [dataSetList setObject:aDataSet forKey:name];
+    [dataSetList addObject:aDataSet];
     [dinoOM reloadData];
 }
 
 - (void)omDelDB:(NSString *)name
 {
-    [dataSetList removeObjectForKey:name];
+    [dataSetList removeObjectIdenticalTo:[self dataSetOfName:name]];
     [dinoOM reloadData];
 }
 
 - (void)omAddObj:(NSString *)name inDB:(NSString *)db 
 {
     DinoObject *anObject = [[[DinoObject alloc] initWithName:name inDataSet:db] autorelease];
-    [[dataSetList objectForKey:db] addChildren:anObject withKey:name];
+    
+    [[self dataSetOfName:db] addChildren:anObject];
     [dinoOM reloadData];
-    [dinoOM expandItem:[dataSetList objectForKey:db]];
+    [dinoOM expandItem:[self dataSetOfName:db]];
 }
 
 - (void)omDelObj:(NSString *)name inDB:(NSString *)db
 {
-    [[dataSetList objectForKey:db] removeChildren:name];
+    [[self dataSetOfName:db] removeChildren:name];
     [dinoOM reloadData];
 }
 
 - (void)omHideObj:(NSString *)name ofDB:(NSString *)db
 {
-    [[[dataSetList objectForKey:db] childrenForKey:name] setDisplayFlag:NO];
+    [[[self dataSetOfName:db] childrenOfName:name] setDisplayFlag:NO];
     [dinoOM reloadData];
 }
 
 - (void)omShowObj:(NSString *)name ofDB:(NSString *)db
 {
-    [[[dataSetList objectForKey:db] childrenForKey:name] setDisplayFlag:YES];
+    [[[self dataSetOfName:db] childrenOfName:name] setDisplayFlag:YES];
     [dinoOM reloadData];
 }
 
@@ -244,27 +254,27 @@ static id dinoController;
     parent = [[dinoOM itemAtRow:row] parentDataSet];
 
     if(![parent isEqual:@"None"]){
-	if([[[dataSetList objectForKey:parent] childrenForKey:obj] displayFlag]){
+	if([[[self dataSetOfName:parent] childrenOfName:obj] displayFlag]){
 	    NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ hide",parent,obj];
 	    [self command:theCommand from:(id)sender];
-	}else if(![[[dataSetList objectForKey:parent] childrenForKey:obj] displayFlag]){
+	}else if(![[[self dataSetOfName:parent] childrenOfName:obj] displayFlag]){
 	    NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ show",parent,obj];
 	    [self command:theCommand from:(id)sender];
 	}
     }else if([parent isEqual:@"None"]){
 	NSString *dataSet = obj;
-	NSEnumerator *enumerator = [[[dataSetList objectForKey:dataSet] childrenList] keyEnumerator];
-	id key;
-	if([[dataSetList objectForKey:dataSet] displayFlag]){
-	    [[dataSetList objectForKey:dataSet] setDisplayFlag:NO];
-	    while ((key = [enumerator nextObject])) {
-		NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ hide",dataSet,key];
+	NSEnumerator *enumerator = [[[self dataSetOfName:dataSet] childrenList ] objectEnumerator];
+	id anObject;
+	if([[self dataSetOfName:dataSet] displayFlag]){
+	    [[self dataSetOfName:dataSet] setDisplayFlag:NO];
+	    while ((anObject = [enumerator nextObject])) {
+		NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ hide",dataSet,[anObject name]];
 		[self command:theCommand from:(id)sender];
 	    }
-	}else if(![[dataSetList objectForKey:dataSet] displayFlag]){
-	    [[dataSetList objectForKey:dataSet] setDisplayFlag:YES];
-	    while ((key = [enumerator nextObject])) {
-		NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ show",dataSet,key];
+	}else if(![[self dataSetOfName:dataSet] displayFlag]){
+	    [[self dataSetOfName:dataSet] setDisplayFlag:YES];
+	    while ((anObject = [enumerator nextObject])) {
+		NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ show",dataSet,[anObject name]];
 		[self command:theCommand from:(id)sender];
 	    }
 	}
@@ -274,7 +284,8 @@ static id dinoController;
 //------------------------------------------------------
 // OutlineView data source (for Object menu)
 
-- (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item{
+- (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
+{
     if(item == nil){
 	return [dataSetList count];
     }else{
@@ -282,86 +293,73 @@ static id dinoController;
     }
 }
 
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item{
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+{
     if(item == nil){
 	return YES;
     }else{
 	return ([[item childrenList] count] >= 1) ? YES : NO;
     }
+    return NO;
 }
 
-- (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item{
+- (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item
+{
     if(item == nil){
-	return [[dataSetList allValues] objectAtIndex:index];
+	return [dataSetList objectAtIndex:index];
     }else{
-	if ([item childrenList] != nil) return [[[item childrenList] allValues] objectAtIndex:index];
+	if ([item childrenList] != nil) return [[item childrenList] objectAtIndex:index];
     }
+    return nil;
 }
 
-- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item{
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+{
     if ([[tableColumn identifier] isEqual:@"dataSetColumn"]){
 	return [item name];
     }else if ([[tableColumn identifier] isEqual:@"displayFlagColumn"]) {
 	return [NSNumber numberWithBool:[item displayFlag]];
-    } 	
+    }
+    return nil;
 }
 
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray*)rows toPasteboard:(NSPasteboard*)pboard{
+//Delegate method
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item
+{
+    if ([[tableColumn identifier] isEqual:@"dataSetColumn"]){
+	return NO;
+    }else if ([[tableColumn identifier] isEqual:@"displayFlagColumn"]) {
+	return YES;
+    }
+    return NO;
+}
+
+//Drag and Drop methods
+- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)rows toPasteboard:(NSPasteboard *)pboard
+{
     if ([rows count]==1){
 	NSString *draggedObject = [[dinoOM itemAtRow:[rows objectAtIndex:0]] name];
 	[pboard declareTypes:[NSArray arrayWithObjects:@"DinoObjectType"] owner:nil];
 	[pboard setString:draggedObject forType:@"DinoObjectType"];
 	return YES;
     }
-    else{
-	return NO;
-    }
+    return NO;
 }
 
-- (NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation{
+- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
     NSArray *typeArray=[[info draggingPasteboard] types];
     if ([typeArray count]==1 && row!=-1){
 	if ([[typeArray objectAtIndex:0] isEqualToString:@"DinoObjectType"] && operation==NSTableViewDropAbove){
 	    return NSDragOperationMove;
 	}
-    }else{
-	return NSDragOperationNone;
     }
+    return NSDragOperationNone;
 }
 
-- (BOOL)tableView:(NSTableView*)tableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation{
-
-/*
-    NSString *draggedObjectName = [[info draggingPasteboard] stringForType:@"DinoObjectType"];
-    int oldRow = [dinoOM rowForItem:[draggedObjectName];
-    if ([tableView selectedRow] > -1){
-	selectedObject = [[dinoOM objectAtIndex:[tableView selectedRow] name];
-    }
-
-    if (newPosition != -1){
-	id object = [gifFileArray objectAtIndex:rowToMove];
-
-	if (newPosition < [gifFileArray count] - 1) {
-	    [gifFileArray removeObjectAtIndex:rowToMove];
-	    [gifFileArray insertObject:object atIndex:newPosition];
-	}else{
-	    [gifFileArray removeObjectAtIndex:rowToMove];
-	    [gifFileArray addObject:object];
-	}
-    }
-
-    [dinoOM reloadData];
-*/
-    return YES;    
-}
-
-// Delegate methods
-- (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-    if ([[tableColumn identifier] isEqual:@"dataSetColumn"]){
-	return NO;
-    }else if ([[tableColumn identifier] isEqual:@"displayFlagColumn"]) {
-	return YES;
-    } 	
+- (BOOL)tableView:(NSTableView*)tableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation
+{
+    return YES;
 }
 
 //------------------------------------------------------

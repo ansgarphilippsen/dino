@@ -21,7 +21,7 @@
 @interface DinoDataSet : NSObject {
 
     NSString            *name;
-    NSMutableDictionary *childrenList;
+    NSMutableArray      *childrenList;
     BOOL                *displayFlag;
 }
 
@@ -31,10 +31,10 @@
 - (NSString *)name;
 - (BOOL *)displayFlag;
 - (void)setDisplayFlag:(BOOL *)flag;
-- (void)addChildren:(DinoObject *)anObject withKey:(NSString *)name;
+- (void)addChildren:(DinoObject *)anObject;
 - (void)removeChildren:(NSString *)name;
-- (DinoObject *)childrenForKey:(NSString *)name;
-- (NSMutableDictionary *)childrenList;
+- (DinoObject *)childrenOfName:(NSString *)s;
+- (NSMutableArray *)childrenList;
 - (NSString *)parentDataSet;
 
 @end
