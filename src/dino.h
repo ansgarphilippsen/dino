@@ -1,3 +1,5 @@
+// $Header$
+
 #ifndef _DINO_H
 #define _DINO_H
 
