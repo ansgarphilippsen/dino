@@ -162,7 +162,8 @@ void guitWrite(const char *s)
 
 ****************************************/
 
-void gui_mouse_down(int s, int x, int y)
+
+void gui_mouse_input(int eventType, int mask, int x, int y)
 {
     cmiToken t;
     int val[5];
@@ -172,48 +173,8 @@ void gui_mouse_down(int s, int x, int y)
     t.value=val;
 
     val[0]=CMI_INPUT_MOUSE;
-    val[1]=CMI_BUTTON_PRESS;
-    val[2]=CMI_BUTTON1_MASK;
-
-    val[3]=x;
-    val[4]=y;
-
-    cmiSubmit(&t);
-//    fprintf(stderr,"down %d %d\n",val[3],val[4]);
-}
-
-void gui_mouse_up(int s, int x, int y)
-{
-    cmiToken t;
-    int val[5];
-
-    t.target=CMI_TARGET_COM;
-    t.command=CMI_INPUT;
-    t.value=val;
-
-    val[0]=CMI_INPUT_MOUSE;
-    val[1]=CMI_BUTTON_RELEASE;
-    val[2]=CMI_BUTTON1_MASK;
-
-    val[3]=x;
-    val[4]=y;
-
-    cmiSubmit(&t);
-//    fprintf(stderr,"up %d %d\n",val[3],val[4]);
-}
-
-void gui_mouse_drag(int s, int x, int y)
-{
-    cmiToken t;
-    int val[5];
-
-    t.target=CMI_TARGET_COM;
-    t.command=CMI_INPUT;
-    t.value=val;
-
-    val[0]=CMI_INPUT_MOUSE;
-    val[1]=CMI_MOTION;
-    val[2]=CMI_BUTTON1_MASK;
+    val[1]=eventType;
+    val[2]=mask;
 
     val[3]=x;
     val[4]=y;

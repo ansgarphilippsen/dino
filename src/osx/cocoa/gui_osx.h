@@ -14,8 +14,6 @@ struct GUI
 };
 
 void guiTimeProc();
-void gui_mouse_down(int s, int x, int y);
-void gui_mouse_up(int s, int x, int y);
-void gui_mouse_drag(int s, int x, int y);
+void gui_mouse_input(int eventType, int mask, int x, int y);
 
 #endif

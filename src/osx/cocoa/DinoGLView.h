@@ -23,6 +23,12 @@
 - (void)mouseDown:(NSEvent *)theEvent;
 - (void)mouseUp:(NSEvent *)theEvent;
 - (void)mouseDragged:(NSEvent *)theEvent;
+- (void)otherMouseDown:(NSEvent *)theEvent;
+- (void)otherMouseUp:(NSEvent *)theEvent;
+- (void)otherMouseDragged:(NSEvent *)theEvent;
+- (void)rightMouseDown:(NSEvent *)theEvent;
+- (void)rightMouseUp:(NSEvent *)theEvent;
+- (void)rightMouseDragged:(NSEvent *)theEvent;
 
 @end
 
