@@ -49,7 +49,7 @@ user menu
 #include "om.h"
 #include "input.h"
 #include "transform.h"
-
+#include "cl.h"
 #include "AppPlus.h"
 
 #ifdef EXPO
@@ -154,6 +154,11 @@ static void guiReshape(int width, int height)
 {
   gui.win_width=width;
   gui.win_height=height;
+  glutSetWindow(gui.glut_status);
+  glutReshapeWindow(width,20);
+  glutPositionWindow(0,height-20);
+  glutSetWindow(gui.glut_main);
+  
   gfxSetViewport();
   comRedraw();
 }
@@ -277,20 +282,58 @@ static void guiSpecialFunc(int key, int x, int y)
   }
 }
 
-static void guiOMExpose()
-{
 
+
+
+void um_cb(int value)
+{
+  fprintf(stderr,"\n%d",value);
+}
+
+static void draw_string(const char *s)
+{
+  int i;
+  for(i=0;i<clStrlen(s);i++) 
+    glutBitmapCharacter(GLUT_BITMAP_9_BY_15,s[i]);
+}
+
+static void guiStatusExpose()
+{
+  int i,w,h;
+
+  glutSetWindow(gui.glut_status);
+  w=glutGet(GLUT_WINDOW_WIDTH);
+  h=glutGet(GLUT_WINDOW_HEIGHT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D(0,w,h,0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glColor3f(1.0,1.0,1.0);
+  glRectd(0,0,w,h);
+  glColor3f(0.0,0.0,0.0);
+  glRasterPos2d(1,16);
+  draw_string(gui.message_string);
+  glutSwapBuffers();
+  glutSetWindow(gui.glut_main);
 }
 
 int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 {
+  int sw,sh;
+  clStrcpy(gui.message_string,"Ready");
+
   guiInitRGB();
 
   glutInit(argc,(*argv));
 
+  sw=glutGet(GLUT_SCREEN_WIDTH);
+  sh=glutGet(GLUT_SCREEN_HEIGHT);
+
   /* main gfx window */
-  glutInitWindowSize(500,500);
-  glutInitWindowPosition(300,100);
+  glutInitWindowSize(sh,sh);
+  glutInitWindowPosition(sw-sh,0);
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
   if(glutDeviceGet(GLUT_HAS_SPACEBALL)) {
@@ -308,15 +351,27 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
  
   glutTimerFunc(5,guiTimer,0);
 
+  gui.glut_um=glutCreateMenu(um_cb);
+  glutAddMenuEntry("autoslab",1);
+  glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+  /* status window */
+  gui.glut_status=glutCreateSubWindow(gui.glut_main,0,500-20,500,20);
+  glutDisplayFunc(guiStatusExpose);
+
   /* object menu window */
-  glutInitWindowSize(100,300);
-  glutInitWindowPosition(100,100);
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-  gui.glut_om=glutCreateWindow("dino om");
-  glutDisplayFunc(guiOMExpose);
+  omInit();
+  gui.om_flag=1;
 
   /* set back to main gfx */
   glutSetWindow(gui.glut_main);
+
+  /*
+    this does not work because the event processing is hogged by GLUT
+    gui.dpy=XOpenDisplay(":0");
+    omInit();
+    gui.om_flag=1;
+  */
 
   gui.callback=func;
   gui.redraw=0;
@@ -1219,7 +1274,7 @@ void guiMenuHelp(Widget w, caddr_t d1, caddr_t d2)
 
 /************************************
 
-  guiDialboxInit
+  guiXInputExtensionInit
   --------------
 
   look for a dialbox and set it up
@@ -1231,6 +1286,44 @@ void guiMenuHelp(Widget w, caddr_t d1, caddr_t d2)
 */
 int deviceMotionNotify=0,deviceButtonPress=0,
     deviceButtonPressGrab=0,deviceButtonRelease=0;
+
+int guiXInputExtensionInit()
+{
+  XEventClass  dMotionNotifyClass,dButtonPressClass,
+    dButtonPressGrabClass,dButtonReleaseClass;
+  XEventClass eventList[4];
+
+  // check for a dialbox
+  
+  if((gui.dialsDevice=extFindDevice(gui.dpy,"dialbox"))==NULL) {
+    if((gui.dialsDevice=extFindDevice(gui.dpy,"dial+buttons"))==NULL) {
+      return 0;
+    }
+  }
+
+  if(gui.dialsDevice) {
+    /* 
+       these macros find the correct event type value for the requested
+       event class and store them in the global vars
+    */
+    DeviceMotionNotify(gui.dialsDevice, deviceMotionNotify,dMotionNotifyClass);
+    DeviceButtonPress(gui.dialsDevice, deviceButtonPress,dButtonPressClass);
+    DeviceButtonPressGrab(gui.dialsDevice,deviceButtonPressGrab,dButtonPressGrabClass);
+    DeviceButtonRelease(gui.dialsDevice,deviceButtonRelease,dButtonReleaseClass);
+    
+    eventList[0]=dMotionNotifyClass;
+    eventList[1]=dButtonPressClass;
+    eventList[2]=dButtonPressGrabClass;
+    eventList[3]=dButtonReleaseClass;
+    
+    XSelectExtensionEvent(gui.dpy,gui.glxwindow,eventList,4);
+  }
+
+  // look for a spaceball
+  
+  return 1;
+}
+
 
 int guiDialboxInit()
 {
@@ -1629,6 +1722,7 @@ void guiRegisterCustomEvent(Window w, guiCustomFunc f, void *ptr)
 
 int guiCheckCustomEvent(XEvent *event)
 {
+#ifndef GLUT_GUI
   int i;
 
   /*
@@ -1652,7 +1746,7 @@ int guiCheckCustomEvent(XEvent *event)
       return 1;
     }
       
-
+#endif
   return 0;
 }
 

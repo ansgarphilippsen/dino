@@ -175,7 +175,7 @@ int scalDrawObj(scalObj *obj)
 
     } else if(obj->render.mode==RENDER_SURFACE) {
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
-      glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+      //      glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
       glEnable(GL_LIGHTING);
       glEnable(GL_COLOR_MATERIAL);

@@ -4,6 +4,7 @@
 #include "rex.h"
 #include "render.h"
 #include "set.h"
+#include "surf_obj.h"
 
 enum {SCAL_MODE_POINT,SCAL_MODE_LINE,SCAL_MODE_SURFACE};
 
@@ -58,7 +59,7 @@ struct SCAL_FACE {
   //  float n[3];
   //  float c[4];
   //  struct SCAL_POINT *p0,*p1,*p2;
-  //  int pi0,pi1,pi2;
+  int pi0,pi1,pi2;
 };
 
 #ifdef VR
@@ -85,6 +86,26 @@ struct SCAL_SLAB {
   double bound[4][3];
   unsigned int texname;
 };
+
+// 2 structs for contour to surface conversion
+
+#define SCAL2SURF_MAX_FV 8
+
+struct SCAL2SURF_VERT {
+  float p[3],n[3]; // position and normal
+  int fi[SCAL2SURF_MAX_FV],fc;    // face indeces and count
+  int flag;
+};
+
+struct SCAL2SURF_FACE {
+  int i1,i2,i3;     // vertex indices
+  float area, n[3]; // face area and normal
+  int flag;
+  int fc,fi[SCAL2SURF_MAX_FV];
+  float ref[3*SCAL2SURF_MAX_FV];
+};
+
+// surf object
 
 typedef struct SCAL_OBJ {
   int type;
@@ -139,6 +160,7 @@ int scalAddFace(struct SCAL_FACE **, int *c, int *m, int i1, int i2, int i3);
 int scalAddVect(struct SCAL_VECT **f, int *c, int *m, double *v, double *n);
 
 int scalGrid(scalObj *obj, Select *sel);
+int scalGrad(scalObj *obj, Select *sel);
 
 int scalSlab(scalObj *obj, Select *sel);
 int scalSlabIntersect(scalObj *obj);
@@ -155,5 +177,6 @@ int scalSetDefault(scalObj *obj);
 
 int scalObjIsWithin(scalObj *obj, float *p, float d2);
 
+int scalObj2Surf(scalObj *obj,surfObj *surf);
 
 #endif

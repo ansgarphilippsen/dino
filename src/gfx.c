@@ -39,16 +39,16 @@ struct GFX_LIGHT gfx_def_light[]={
   {1,0,
    {0.5, 0.7, 1.0, 0.0},
    {0.05, 0.05, 0.05, 1.0},
-   {0.65, 0.65, 0.65, 1.0},
+   {0.45, 0.45, 0.45, 1.0},
    {0.3, 0.3, 0.3, 1.0},
    1.0,0.0,0.0,
    180.0,{0,0,-1},0.0
   },
   {1,0,
    {-0.7, -0.4, 1.0, 0.0},
-   {0.2, 0.2, 0.2, 0.0},
-   {0.4, 0.4, 0.4, 1.0},
-   {0.0, 0.0, 0.0, 1.0},
+   {0.05, 0.05, 0.05, 0.0},
+   {0.45, 0.45, 0.45, 1.0},
+   {0.3, 0.3, 0.3, 1.0},
    1.0,0.0,0.0,
    180.0,{0,0,-1},0.0
   },
@@ -245,7 +245,7 @@ int gfxInit()
 int gfxGLInit(void)
 {
   int i;
-  GLfloat ambient[]={0.1,0.1,0.1,1};
+  GLfloat ambient[]={0.0,0.0,0.0,1};
   /* 
      lighting
   */
@@ -288,7 +288,7 @@ int gfxGLInit(void)
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gfx_mat_specular);
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, gfx_mat_shininess);
   */
-//  glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+  //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 
   /*
@@ -347,17 +347,10 @@ int gfxGLInit(void)
   glEnable(GL_POINT_SMOOTH);
 #endif
 
-#ifdef LINUX
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-  glHint(GL_FOG_HINT, GL_NICEST);
-  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-#else
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
   glHint(GL_FOG_HINT, GL_FASTEST);
-  glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-  glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
-#endif
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 
   if(gfx.dither)
     glEnable(GL_DITHER);

@@ -818,6 +818,7 @@ int comPick(int screenx, int screeny, int flag)
   var[1]=message;
   shellSetVar(2,var);
 
+
   if(scene.cpflag)
     comRedraw();
 
@@ -903,7 +904,9 @@ int comPick(int screenx, int screeny, int flag)
   
   if(pick!=NULL) {
     //    fprintf(stderr,"\n%s  %s",pick->name,pick->id);
-    guiMessage(pick->name);
+    sprintf(message,"%s @ %.3f %.3f %.3f",
+	    pick->name,pick->p[0],pick->p[1],pick->p[2]);
+    guiMessage(message);
     strcpy(message,"CS");
     var[0]=message;
     var[1]=pick->id;

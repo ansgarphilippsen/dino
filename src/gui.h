@@ -147,7 +147,9 @@ struct GUI
   void (*callback)(int, char **);
 #ifdef GLUT_GUI
   int glut_main;
+  int glut_status;
   int glut_om;
+  int glut_um;
   int mbs[3];
   int modifiers;
   long timecode;

@@ -12,7 +12,7 @@
 # FORMAT_VRML
 # GLUT_GUI
 
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL # -DCMALLOC_VERBOSE
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DGLUT_GUI
 
 MALLOCLIB=
 
@@ -20,7 +20,7 @@ MALLOCLIB=
 #STATIC = 1
 
 SRC= dino.c \
-     dbm.c shell.c com.c gfx.c gui.c help.c conn.c scene.c glf.c\
+     dbm.c shell.c com.c gfx.c help.c conn.c scene.c glf.c\
      cl.c set.c bspline.c transform.c prop.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
@@ -30,7 +30,7 @@ SRC= dino.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
      write.c render.c mat.c rex.c extension.c Cmalloc.c cgfx.c raster.c pov.c \
-     cubearray.c om.c menu.c input.c writePS.c \
+     cubearray.c menu.c input.c writePS.c \
      sglib.c symm.c GLwStereo.c \
      AppPlus.c
 
@@ -40,6 +40,12 @@ endif
 
 ifneq (,$(findstring JAVA_GUI,$(OPTIONS)))
 SRC += jci.c
+endif
+
+ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
+SRC += gui_glut.c om_glut.c
+else
+SRC += gui.c om.c
 endif
 
 ifneq (,$(findstring EXPO,$(OPTIONS)))

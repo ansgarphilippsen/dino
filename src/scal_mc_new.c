@@ -617,6 +617,10 @@ int scalMCN2Obj()
     obj->face[i].n3[0]=tmpface[i].n3[0];
     obj->face[i].n3[1]=tmpface[i].n3[1];
     obj->face[i].n3[2]=tmpface[i].n3[2];
+    
+    obj->face[i].pi0=tmpface[i].pi0;
+    obj->face[i].pi1=tmpface[i].pi1;
+    obj->face[i].pi2=tmpface[i].pi2;
   }
 
   Cfree(tmpface);
@@ -630,7 +634,7 @@ int scalMCN2Obj()
 
 void scalMCNFaceNormal(float *a, float *b, float *c, float *n)
 {
-  float d1[3],d2[3];
+  float d1[3],d2[3],ar;
 
   d1[0]=b[0]-a[0];
   d1[1]=b[1]-a[1];
@@ -639,8 +643,15 @@ void scalMCNFaceNormal(float *a, float *b, float *c, float *n)
   d2[1]=c[1]-a[1];
   d2[2]=c[2]-a[2];
 
+  ar=matCalcTriArea(a,b,c);
+  if(ar<=0)
+    ar=0.001;
   matfCalcCross(d1,d2,n);
-//matfNormalize(d3,n);
+
+  matfNormalize(n,n);
+  n[0]/=ar;
+  n[1]/=ar;
+  n[2]/=ar;
 
 }
 
