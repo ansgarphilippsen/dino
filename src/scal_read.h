@@ -10,6 +10,8 @@
 #include "mead.h"
 #include "delphi.h"
 #include "charmm.h"
+#include "io_spider.h"
+
 #ifdef USE_BRIX_FORMAT
 #include "brix.h"
 #endif
@@ -27,6 +29,7 @@ enum                {SCAL_READ_DINO,
 #ifdef USE_BRIX_FORMAT
 		     SCAL_READ_BRIX,
 #endif
+		     SCAL_READ_SPIDER,
 		     SCAL_READ_DELPHI,
 		     SCAL_READ_DELPHIG};
 

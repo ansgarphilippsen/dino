@@ -42,6 +42,9 @@ int scalRead(dbmScalNode *node, int type, FILE *f, int flag)
   case SCAL_READ_MEAD:
     ret=meadRead(f,node);
     break;
+  case SCAL_READ_SPIDER:
+    ret=spiderRead(f,node);
+    break;
   case SCAL_READ_DELPHI:
     ret=delphiRead(f,node);
     break;

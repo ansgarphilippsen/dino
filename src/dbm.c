@@ -66,6 +66,7 @@ static struct EXT_DEF {
   {"dgrd","dgrid"},
   {"grasp","grasp"},
   {"bdtrj","bdtrj"},
+  {"spi","spider"},
 #ifdef USE_BRIX_FORMAT
   {"brk","brix"},
 #endif
@@ -319,6 +320,22 @@ int dbmLoad(int wc, const char **wl)
     comMessage(message);
 
     ret=scalRead(&node->scalNode, SCAL_READ_DINO,f,dbm_flag);
+    if(cmp) pclose(f); else fclose(f);
+    if(ret!=0) {
+      dbmDeleteNode(name);
+      return -1;
+    } else {
+      scalSetMinMax(&node->scalNode);
+    }
+  } else if(!strcmp(type,"spider")) {
+    /*
+      SPIDER MAP
+    */
+    node=dbmNewNode(DBM_NODE_SCAL,name);
+    sprintf(message,"loading %s, type spider ...\n",name);
+    comMessage(message);
+
+    ret=scalRead(&node->scalNode, SCAL_READ_SPIDER,f,dbm_flag);
     if(cmp) pclose(f); else fclose(f);
     if(ret!=0) {
       dbmDeleteNode(name);
