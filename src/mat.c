@@ -1400,6 +1400,39 @@ double matCalcDistance(double *v1,double *v2)
   return matCalcLen(d);
 }
 
+float matfCalcDistance(float *v1, float *v2)
+{
+  double d[3];
+  d[0]=v1[0]-v2[0];
+  d[1]=v1[1]-v2[1];
+  d[2]=v1[2]-v2[2];
+  return (float)matCalcLen(d);
+}
+
+float matfCalcAngle(float *v1, float *v2,float *v3, float *v4)
+{
+  double d1[3],d2[3],l1,l2,r;
+
+  d1[0]=(double)(v1[0]-v2[0]);
+  d1[1]=(double)(v1[1]-v2[1]);
+  d1[2]=(double)(v1[2]-v2[2]);
+
+  d2[0]=(double)(v3[0]-v4[0]);
+  d2[1]=(double)(v3[1]-v4[1]);
+  d2[2]=(double)(v3[2]-v4[2]);
+
+  l1=matCalcLen(d1);
+  l2=matCalcLen(d2);
+
+  if(l1==0.0 || l2==0.0) {
+    return 0.0;
+  }
+
+  r=acos(matCalcDot(d1,d2)/(l1*l2));
+
+  return (float)(r*180.0/M_PI);
+}
+
 double matCalcAngle(double *v1, double *v2,double *v3, double *v4)
 {
   double d1[3],d2[3],l1,l2,r;

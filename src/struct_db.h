@@ -47,14 +47,15 @@ enum {STRUCT_PROP_COLOR,
       STRUCT_PROP_COLOR3,
       STRUCT_PROP_ROT,
       STRUCT_PROP_TRANS,
-      STRUCT_PROP_RCEN,
-      STRUCT_PROP_RTYPE,
-      STRUCT_PROP_RAD,
-      STRUCT_PROP_SMODE,
-      STRUCT_PROP_CELL,
-      STRUCT_PROP_SG,
-      STRUCT_PROP_UCO,
-      STRUCT_PROP_TFAST};
+      STRUCT_PROP_RCEN,   // center of rotation
+      STRUCT_PROP_RTYPE,  // residue type
+      STRUCT_PROP_NCI,    // non-covalent-interaction
+      STRUCT_PROP_RAD,    // radius
+      STRUCT_PROP_SMODE,  // selection mode
+      STRUCT_PROP_CELL,   // unit cell
+      STRUCT_PROP_SG,     // space group  
+      STRUCT_PROP_UCO,    // unit cell offset
+      STRUCT_PROP_TFAST}; // fast trj update
 
 enum {STRUCT_RTYPE_COIL,
       STRUCT_RTYPE_HELIX,
@@ -92,8 +93,10 @@ struct STRUCT_APOS {
 // TODO
 #define STRUCT_RESTRICT 0x1
 
-#define STRUCT_NBD 0x2
-#define STRUCT_NBA 0x4
+#define STRUCT_HBD 0x2  // HBond donor
+#define STRUCT_HBA 0x4  // HBond acceptor
+#define STRUCT_SBD 0x8  // SBridge donor
+#define STRUCT_SBA 0x10 // SBridge acceptor
 
 #define STRUCT_MAX_BOND_PER_ATOM 8
 
@@ -243,6 +246,9 @@ typedef struct DBM_STRUCT_NODE {
   struct STRUCT_BOND *bond;       /* pointer to bonds */
   int bond_count;                 /* number of bonds in this db */
   int bond_max,bond_add;          /* memory management */
+  struct STRUCT_BOND *nbond;      /* pointer to nbonds */
+  int nbond_count;                /* number of nbonds in this db */
+  int nbond_max,nbond_add;        /* memory management */
   int conn_flag;
   struct STRUCT_CONNECTIVITY *conn;
   int conn_count;
@@ -305,6 +311,9 @@ int structSetDefault(structObj *obj);
 int structBuildCA(struct DBM_STRUCT_NODE *n);
 
 int structReconnect(struct DBM_STRUCT_NODE *n);
+int structReconnectNC(struct DBM_STRUCT_NODE *n);
+int structCheckNCB(struct DBM_STRUCT_NODE *node, struct STRUCT_ATOM *a1, struct STRUCT_ATOM *a2, float co);
+
 int structConnectAtoms(struct DBM_STRUCT_NODE *n,struct STRUCT_BOND **,int *bc, int *bm, struct STRUCT_ATOM *a1, struct STRUCT_ATOM *a2);
 
 int structSubCommand(struct DBM_STRUCT_NODE *n,char *sub, int wc, char **wl);

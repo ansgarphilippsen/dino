@@ -65,6 +65,7 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
   node->residue_count=0;
   node->atom_count=0;
   node->bond_count=0;
+  node->nbond_count=0;
   node->conn=NULL;
   node->xtal=NULL;
   node->atom_table=NULL;
@@ -310,6 +311,24 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
       return -1;
     }
     return structComConnect(node,wl[1],wl[2]);
+  } else if(!strcmp(wl[0],"reconnect")) {
+    if(wc==1) {
+      sprintf(message,"\nmissing parameter");
+      comMessage(message);
+      return -1;
+    } else if(wc==2) {
+      if(!strcmp(wl[1],"ncb")) {
+	structReconnectNC(node);
+      } else {
+	sprintf(message,"\nunknown parameter: %s",wl[1]);
+	comMessage(message);
+	return -1;
+      }
+    } else {
+      sprintf(message,"\ntoo many words");
+      comMessage(message);
+      return -1;
+    }
   } else if(!strcmp(wl[0],"cell")) {
     if(node->xtal==NULL) {
       comMessage("\nno crystallographic info available");
@@ -574,6 +593,8 @@ int structSet(dbmStructNode *node, Set *s)
       s->pov[pc].id=STRUCT_PROP_TFAST;
     } else if(clStrcmp(s->pov[pc].prop,"rtype")) {
       s->pov[pc].id=STRUCT_PROP_RTYPE;
+    } else if(clStrcmp(s->pov[pc].prop,"nci")) {
+      s->pov[pc].id=STRUCT_PROP_NCI;
     } else if(clStrcmp(s->pov[pc].prop,"smode")) {
       s->pov[pc].id=STRUCT_PROP_SMODE;
     } else if(clStrcmp(s->pov[pc].prop,"vdwr")) {
@@ -597,7 +618,7 @@ int structSet(dbmStructNode *node, Set *s)
       return -1;
     }
     op=s->pov[pc].op;
-    if(s->pov[pc].val_count>1) {
+    if(s->pov[pc].val_count>1 && s->pov[pc].id!=STRUCT_PROP_NCI) {
       comMessage("\nerror: set: expected only one value for property ");
       comMessage(s->pov[pc].prop);
       return -1;
@@ -674,6 +695,21 @@ int structSet(dbmStructNode *node, Set *s)
       for(i=0;i<node->atom_count;i++) {
 	if(structIsAtomSelected(node, &node->atom[i], sel)) {
 	  node->atom[i].residue->type=rt;
+	}
+      }
+
+      break;
+    case STRUCT_PROP_NCI:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property nci");
+	return -1;
+      }
+
+      rt=atoi(val->val1);
+
+      for(i=0;i<node->atom_count;i++) {
+	if(structIsAtomSelected(node, &node->atom[i], sel)) {
+	  node->atom[i].flag=rt;
 	}
       }
 
@@ -1033,9 +1069,197 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
   memcpy(node->bond,nb,bc*sizeof(struct STRUCT_BOND));
   Cfree(nb);
 
+  structReconnectNC(node);
+
   structRecalcBonds(node);
 
   return 0;
+}
+
+/*
+  non-covalent bonds
+*/
+
+int structReconnectNC(struct DBM_STRUCT_NODE *node)
+{
+  int ac,bond_count,bond_max;
+  struct STRUCT_BOND *bond;
+  struct STRUCT_ATOM *cap,*lap;
+  float pos[3],dx,dy,dz;
+  caPointer *cp;
+  int cpc,lc;
+  float co=4.0,co2;
+
+  cp=Ccalloc(node->atom_count*2,sizeof(caPointer));
+
+  co2=co*co;
+
+  if(node->nbond_count>0)
+    Cfree(node->nbond);
+
+  node->nbond_count=0;
+  bond_count=0;
+  bond_max=1000;
+
+  bond=Crecalloc(NULL,bond_max,sizeof(struct STRUCT_BOND));
+
+  /*
+    loop over all atoms
+  */
+  
+  for(ac=0;ac<node->atom_count;ac++) {
+    cap=&node->atom[ac];
+    pos[0]=cap->p->x;
+    pos[1]=cap->p->y;
+    pos[2]=cap->p->z;
+    caGetWithinList(node->ca, pos, co, &cp,&cpc);
+    /*
+      loop over all atoms within cutoff
+    */
+    for(lc=0;lc<cpc;lc++) {
+      lap=(struct STRUCT_ATOM *)cp[lc];
+      // only consider atoms with larger index
+      if(lap->n>cap->n) {
+	if(structCheckNCB(node,cap,lap,co)) {
+	  bond[bond_count].atom1=cap;
+	  bond[bond_count].prop1=&cap->def_prop;
+	  bond[bond_count].atom2=lap;
+	  bond[bond_count].prop1=&lap->def_prop;
+	  bond_count++;
+	  if(bond_count>=bond_max) {
+	    bond_max+=1000;
+	    bond=Crecalloc(bond,bond_max,sizeof(struct STRUCT_BOND));
+	  }
+	}
+      }
+    }
+  }
+
+  structRecalcBondList(bond,bond_count);
+
+  node->nbond=bond;
+  node->nbond_count=bond_count;
+
+  Cfree(cp);
+
+  return 0;
+}
+
+/*
+  check if two atoms are in non covalent interaction
+*/
+
+int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_ATOM *a2, float co)
+{
+  int f1,f2,ret;
+  float co2,dx,dy,dz;
+  int bc,ac;
+  float pos[3];
+  struct STRUCT_ATOM *a3,*a4,*a5,*a6;
+  float alimit=120.0;
+  
+
+  f1=a1->flag;
+  f2=a2->flag;
+  co2=co*co;
+
+  ret=0;
+
+  /*
+    first criteria:
+    donor and acceptor
+  */
+
+  // Hydrogen Bonds
+  if((f1&STRUCT_HBA && f2&STRUCT_HBD) ||
+     (f1&STRUCT_HBD && f2&STRUCT_HBA)) {
+
+
+    /* 
+       second criteria:
+       distance
+    */
+    dx=a1->p->x-a2->p->x;
+    if(dx*dx<co2) {
+      dy=a1->p->y-a2->p->y;
+      if(dy*dy<co2) {
+	dz=a1->p->z-a2->p->z;
+	if(dz*dz<co2) {
+	  if(dx*dx+dy*dy+dz*dz<co2) {
+	    /*
+	      third criteria:
+	      angle
+	    */
+	    
+	    if(f1&STRUCT_HBA && f2&STRUCT_HBD) {
+	      a3=a1;
+	      a4=a2;
+	    } else if (f1&STRUCT_HBD && f2&STRUCT_HBA) {
+	      a4=a1;
+	      a3=a2;
+	    }
+	    
+	    ret=1;
+	    
+	    // a3 is acceptor, a4 donor
+	    
+	    // check angle for acceptor
+	    for(bc=0;bc<a3->bondc;bc++) {
+	      if(node->bond[a3->bondi[bc]].atom1==a3) {
+		a5=node->bond[a3->bondi[bc]].atom2;
+	      } else {
+		a5=node->bond[a3->bondi[bc]].atom1;
+	      }
+	      
+	      if(matfCalcAngle(a3->p,a4->p,a3->p,a5->p)<alimit) {
+		ret=0;
+		break;
+	      }
+	    }
+	    
+	    // check angle for donor
+	    if(a4->bondc>0 && ret==1) {
+	      pos[0]=0.0;
+	      pos[1]=0.0;
+	      pos[2]=0.0;
+	      for(bc=0;bc<a4->bondc;bc++) {
+		if(node->bond[a4->bondi[bc]].atom1==a4) {
+		  a5=node->bond[a4->bondi[bc]].atom2;
+		} else {
+		  a5=node->bond[a4->bondi[bc]].atom1;
+		}
+		pos[0]+=(a5->p->x-a4->p->x);
+		pos[1]+=(a5->p->y-a4->p->y);
+		pos[2]+=(a5->p->z-a4->p->z);
+	      }
+	      matfNormalize(pos,pos);
+	      
+	      pos[0]=a4->p->x-pos[0];
+	      pos[1]=a4->p->y-pos[1];
+	      pos[2]=a4->p->z-pos[2];
+	      
+	      /*
+		dummy_pos should now
+		be roughly in pos
+		of H atom
+	      */
+	      if(matfCalcAngle(a4->p,pos,a3->p,pos)<alimit) {
+		ret=0;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+
+  // Salt Bridges
+  if((f1&STRUCT_SBA && f2&STRUCT_SBD) ||
+     (f1&STRUCT_SBD && f2&STRUCT_SBA)) {
+    
+  }
+  
+  return ret;
 }
 
 int structRecalcBonds(dbmStructNode *node)

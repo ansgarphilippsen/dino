@@ -64,7 +64,9 @@ int matTranspose(double m[16], double r[16]);
 int matFitHelix(double p1[3],double p2[3], double p3[3], double ret[3]);
 
 double matCalcDistance(double *,double *);
+float matfCalcDistance(float *, float *);
 double matCalcAngle(double *, double *,double *, double *);
+float matfCalcAngle(float *, float *,float *, float *);
 double matCalcTorsion(double *, double *,double *, double *);
 
 double matCalcDistancePointToLine(double *l0, double *l1, double *p);

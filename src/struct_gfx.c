@@ -157,6 +157,11 @@ int structDrawObj(structObj *obj)
 
   glLineWidth(obj->render.line_width);
   glPointSize(obj->render.point_size);
+  if(obj->render.stipple_flag) {
+    glEnable(GL_LINE_STIPPLE);
+    glLineStipple(10,0xAAAA);
+  }
+
 
   if(obj->r==-1.0) {
     cf=1;
@@ -436,7 +441,11 @@ int structDrawObj(structObj *obj)
     glDisable(GL_CULL_FACE);
 #endif
   }
-  
+
+  if(obj->render.stipple_flag) {
+    glDisable(GL_LINE_STIPPLE);
+  }  
+
   glDisable(GL_LIGHTING);
   glColor3f(1.0,1.0,1.0);
   for(i=0;i<obj->atom_count;i++) {

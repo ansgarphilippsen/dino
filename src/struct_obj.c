@@ -355,6 +355,18 @@ int structObjSet(structObj *obj, Set *set, int flag)
   for(pc=0;pc<set->pov_count;pc++) {
     val=povGetVal(&set->pov[pc],0);
     switch(set->pov[pc].id) {
+    case STRUCT_PROP_COLOR:
+      if(obj->type==STRUCT_NBOND) {
+	if(comGetColor(val->val1,&r,&g,&b)<0) {
+	  comMessage("\nerror: set: unknown color ");
+	  comMessage(val->val1);
+	  return -1;
+	}
+	obj->nbond_prop.r=r;
+	obj->nbond_prop.g=g;
+	obj->nbond_prop.b=b;
+      }
+      break;
     case STRUCT_PROP_UCO:
       if(val->range_flag) {
 	comMessage("\nerror: unexpected range for uco");
@@ -1032,6 +1044,10 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
   obj_bc=0;
   if(obj->s_bond_count>0)
     Cfree(obj->s_bond);
+  /*
+    TODO
+    realloc memory once amount of s_bonds is determined
+  */
   obj->s_bond=Ccalloc(node->atom_count,sizeof(struct STRUCT_SINGULAR_BOND));
 
   /* find atoms that are selected but do not have any bonds */
@@ -1229,6 +1245,67 @@ int structObjIsWithin(structObj *obj, float *p, float d2)
 
 int structObjNbond(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)
 {
+  int bc,ret;
+  struct STRUCT_ATOM *ap1,*ap2;
+  int *bond_indx,bond_count;
+
+  bond_indx=Ccalloc(node->nbond_count,sizeof(int));
+  bond_count=0;
+
+  /*
+    go through all non-covalent bonds
+  */
+  for(bc=0;bc<node->nbond_count;bc++) {
+    /*
+      if both atoms of ncbond are selected
+      remember this nvbond index
+    */
+    ret=structIsAtomSelected(node,node->nbond[bc].atom1,sel);
+    if(ret<0) {
+      return -1;
+    } else if(ret>0) {
+      ret=structIsAtomSelected(node,node->nbond[bc].atom2,sel);
+      if(ret<0) {
+	return -1;
+      } else if(ret>0) {    
+      bond_indx[bond_count++]=bc;
+      }
+    }
+  }
+
+  obj->model_count=0;
+  obj->chain_count=0;
+  obj->residue_count=0;
+  obj->atom_count=0;
+  obj->bond_count=bond_count;
+
+  obj->bond=Ccalloc(bond_count,sizeof(struct STRUCT_BOND));
+
+  obj->nbond_prop.r=1.0;
+  obj->nbond_prop.g=1.0;
+  obj->nbond_prop.b=0.0;
+
+  /*
+    go through all found bonds and
+    transfer them to object
+  */
+  for(bc=0;bc<bond_count;bc++) {
+    obj->bond[bc].atom1=node->nbond[bond_indx[bc]].atom1;
+    obj->bond[bc].atom2=node->nbond[bond_indx[bc]].atom2;
+    obj->bond[bc].prop1=&obj->nbond_prop;
+    obj->bond[bc].prop2=&obj->nbond_prop;
+  }
+
+  Cfree(bond_indx);
+
+  structRecalcBondList(obj->bond,bond_count);
+
+  return 0;
+}
+
+/***************************
+int structObjNbond2(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)
+{
   int ac;
   float co=3.0,co2,pos[3];
   caPointer *cp;
@@ -1268,15 +1345,9 @@ int structObjNbond(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)
 	    dz=cap->p->z-lap->p->z;
 	    if(dz*dz<co2) {
 	      if(dx*dx+dy*dy+dz*dz<co2) {
-		// if atom is within cutoff
-		/*
-		  a) check if one is acceptor and the other donor
-		  b) check if the two atoms are NOT covalently linked
-		*/
 		if((cap->flag&STRUCT_NBD && lap->flag&STRUCT_NBA) ||
 		   (cap->flag&STRUCT_NBA && lap->flag&STRUCT_NBD)) {
 
-		  // add new nbond
 		  nbond[nbond_count].atom1=cap;
 		  nbond[nbond_count].atom2=lap;
 		  nbond[nbond_count].c[0]=0.7;
@@ -1310,6 +1381,7 @@ int structObjNbond(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)
 
   return 0;
 }
+*******************/
 
 int structObjGenVA(structObj *obj)
 {

@@ -58,11 +58,12 @@ typedef struct STRUCT_OBJ {
   int bond_count;
   struct STRUCT_SINGULAR_BOND *s_bond;
   int s_bond_count;
-  struct STRUCT_NBOND *nbond;
-  int nbond_count;
+
   cgfxVA va;  /* vertex array for spline objects */
 
   cgfxVA sphere; // generic sphere for CPK speedup
+
+  struct STRUCT_ATOM_PROP nbond_prop; // generic property for nbond
 
   unsigned int sphere_list;
 
