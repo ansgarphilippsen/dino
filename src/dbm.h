@@ -165,7 +165,7 @@ struct DBM {
 int dbmInit(void);
 int dbmNew(int wc, const char **wl);
 int dbmLoad(int, const char **);
-dbmNode *dbmNewNode(int type, const char *name);
+dbmNode *dbmNewNode(int type, char *name);
 int dbmDeleteNode(const char *name);
 int dbmGetNodeType(const char *);
 

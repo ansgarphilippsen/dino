@@ -734,7 +734,7 @@ static void center_on_ds(dbmNode *n)
 }
 
 
-dbmNode *dbmNewNode(int type, const char *oname)
+dbmNode *dbmNewNode(int type, char *oname)
 {
   int i,c;
   char name[256];
