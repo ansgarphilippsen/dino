@@ -1,5 +1,5 @@
 <?php
-include "init.inc.php";
+include "f_init.inc.php";
 
 $title = "<b>Categories Overview</b>";
 

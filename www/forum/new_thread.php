@@ -1,5 +1,5 @@
 <?php
-include "init.inc.php";
+include "f_init.inc.php";
 
 if($id<1) {
   header("Location: $base_link");

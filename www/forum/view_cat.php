@@ -1,5 +1,5 @@
 <?php
-include "init.inc.php";
+include "f_init.inc.php";
 
 $query = "SELECT * FROM $tb_cat WHERE id=$id";
 $result = mysql_query($query) or die(mysql_error());

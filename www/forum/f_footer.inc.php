@@ -6,7 +6,7 @@ echo "<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH=100%>\n";
 echo "<TR><TD ALIGN=LEFT>\n";
 echo "LEFT FOOTER";
 echo "</TD><TD ALIGN=RIGHT>\n";
-$query = "SELECT * FROM category";
+$query = "SELECT * FROM $tb_cat";
 $result = mysql_query($query) or die(mysql_error());
 echo "<small>Quick Jump</small><BR>\n";
 echo "<FORM ACTION='view_cat.php' METHOD=GET>\n";
@@ -22,5 +22,9 @@ echo "</TABLE>\n";
 
 echo "</TD></TR>\n";
 echo "</TABLE>\n";
+
+echo "</TD></TR>\n";
+echo "</TABLE>\n";
+
 echo "</HTML>\n";
 ?>
