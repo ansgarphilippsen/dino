@@ -386,39 +386,53 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   int ntitle,natom;
   char title[80];
   int tcount,tmax,tsize;
+  char message[256];
   
   fread(dummy,sizeof(dummy),1,f);
   fread(&header,sizeof(header),1,f);
   fread(dummy,sizeof(dummy),1,f);
 
-  if(sf) {
-    swap_4b((unsigned char *)&header.istart);
-    swap_4b((unsigned char *)&header.nsavc);
-    swap_4b((unsigned char *)&header.diff);
-    swap_4bs((unsigned char *)&header.delta,2);
+  fread(dummy,sizeof(dummy),1,f);
+  fread(&ntitle,sizeof(natom),1,f);
 
+  if(ntitle<0 || ntitle>1e4) {
+    // try swapping
+    swap_int(&ntitle,1);
+
+    if(ntitle<0 || ntitle>1e4) {
+      // still not ok, probably invalid file
+      comMessage("Error reading header (even tried byte swapping)\n");
+    } else {
+      comMessage("(byte-swapping)");
+      sf=1;
+    }
+    
   }
-  /*
-    fprintf(stderr,"swap: %d sizeof(header:) %d, hdr: %4s  istart:%d  nsavc: %d  diff:%d  delta:%f\n", sf, sizeof(header),
+
+  if(sf) {
+    swap_int(&header.istart,1);
+    swap_int(&header.nsavc,1);
+    swap_int(&header.diff,1);
+    swap_double(&header.delta,1);
+  }
+
+  sprintf(message,"hdr: %4s  istart:%d  nsavc: %d  diff:%d  delta:%f", 
 	  header.hdr,header.istart,header.nsavc, header.diff, header.delta);
-  */
+  debmsg(message);
+
   if(header.diff!=0) {
     comMessage("error: all atoms must be free atoms\n");
     return -1;
   }
 
-  fread(dummy,sizeof(dummy),1,f);
-  fread(&ntitle,sizeof(natom),1,f);
-  if(sf)
-    swap_4b((unsigned char *)&ntitle);
-
-  //  fprintf(stderr,"ntitle: %d\n",ntitle);
 
   for(i=0;i<ntitle;i++) {
     fread(title,sizeof(title),1,f);
     title[79]='\0';
-    //    fprintf(stderr,"%s\n",title);
+    sprintf(message,"titel %d: %s",i+1,title);
+    debmsg(message);
   }
+
   fread(dummy,sizeof(dummy),1,f);
 
   fread(dummy,sizeof(dummy),1,f);
@@ -426,16 +440,18 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   fread(dummy,sizeof(dummy),1,f);
 
   if(sf)
-    swap_4b((unsigned char *)&natom);
+    swap_int(&natom,1);
 
-  //  fprintf(stderr,"natom:%d\n",natom);
+  sprintf(message,"natom:%d\n",natom);
+  debmsg(message);
 
   /*
     we don't know number of trajectories . . .
-    memory is allocated for 10, and increased as more are read
+    memory is allocated for 100, and increased as more are read
+    or is it nsavc from the header ???
   */
   tcount=0;
-  tmax=10;
+  tmax=100;
 
   if(node->trj_flag) {
     /* there is already a trajectory associated */
@@ -465,9 +481,9 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
     fread(dummy,sizeof(dummy),1,f);
 
     if(sf) {
-      swap_4bs((unsigned char *)x,natom);
-      swap_4bs((unsigned char *)y,natom);
-      swap_4bs((unsigned char *)z,natom);
+      swap_float(x,natom);
+      swap_float(y,natom);
+      swap_float(z,natom);
     }
     
     for(i=0;i<natom;i++) {
@@ -475,14 +491,19 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
       pos[tcount*natom+i].y=y[i];
       pos[tcount*natom+i].z=z[i];
     }
+
     tcount++;
     if(tcount>=tmax) {
-      pos=Crecalloc(pos,tmax+10,node->trj.size);
-      tmax+=10;
+      tmax+=100;
+      pos=Crecalloc(pos,tmax,node->trj.size);
     }
   }
-  
-  //  fprintf(stderr,"tcount: %d\n",tcount-1);
+
+  // shrink memory to fit size
+  pos=Crecalloc(pos,tcount,node->trj.size);
+
+  sprintf(message,"frames read: %d\n",tcount-1);
+  debmsg(message);
 
   node->trj.frame_count=tcount-1;
   node->trj.pos=pos;
