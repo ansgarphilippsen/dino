@@ -433,9 +433,12 @@ static int init_main()
                 XmNleftAttachment, XmATTACH_FORM,
                 XmNbottomAttachment, XmATTACH_WIDGET,
 		XmNbottomWidget,gui.mform,
+#ifndef DARWIN // workaround for unexplained problem under darwin
 		XmNwidth,HeightOfScreen(XtScreen(gui.frame))-56,
 		XmNheight,HeightOfScreen(XtScreen(gui.frame))-56,
+#endif
                 NULL);
+  debmsg("guiInit: managing frame");
   XtManageChild(gui.frame);
 
   return 0;

@@ -16,6 +16,10 @@
 #define sqrtf(x) ((float)(sqrt((double)(x))))
 #endif
 
+#ifdef DARWIN
+#define sqrtf(x) ((float)(sqrt((double)(x))))
+#endif
+
 #define MAT_NEW_EXTRACTION
 
 /**************************************************
