@@ -75,14 +75,18 @@ static struct SHELL_ALIAS {
   int count, max;
 } shell_alias;
 
-extern int shell_mode;
+extern int shell_mode,debug_mode;
 
 static char *shell_subexp;
 int interrupt_flag;
 
-int shellInit(void)
+int shellInit(const char *logfile)
 {
-  shellInterpInit();
+  FILE *lf;
+  if((lf=fopen(logfile,"w"))==NULL) {
+    debmsg("logfile could not be opened!");
+  }
+  shellInterpInit(lf);
 
   rpn_stack.buf_size=STACK_BUFFER_INC;
   rpn_stack.buf=Crecalloc(NULL,sizeof(char),rpn_stack.buf_size);

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <ctype.h>
 #include <math.h>
 #include <string.h>
 
@@ -719,6 +720,14 @@ dbmNode *dbmNewNode(int type, const char *oname)
   char name[256];
   int owflag=0;
 
+  // replace invalid chars in name with undercore
+  for(i=0;i<clStrlen(oname);i++) {
+    if(!(isalnum(oname[i]) ||
+	 oname[i]=='-' ||
+	 oname[i]=='_')) {
+      oname[i]='_';
+    }
+  }
   clStrcpy(name,oname);
 
   if(owflag) {
@@ -735,7 +744,7 @@ dbmNode *dbmNewNode(int type, const char *oname)
 	}
       i++;
     }
-    clStrcpy(oname,name);
+    //clStrcpy(oname,name);
   }
   for(i=0;i<dbm.nodec_max;i++) {
     if(dbm.node[i].common.type==DBM_NODE_EMPTY) {

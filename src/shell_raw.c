@@ -19,6 +19,7 @@
 #ifndef USE_TCL
 static int parse(const char *raw_prompt2);
 static int add_prompt(char **prompt,int *prompt_max, int *prompt_len,char c);
+#define is_valid_var_char(c) (isalnum(c) || c=='_' || c=='-')
 #endif
 static void add_history(const char *s);
 #ifdef USE_TCL
@@ -49,6 +50,8 @@ static struct SHELL_HISTORY {
 
 static int current_history_entry=0;
 
+static FILE *logfile;
+
 #define VAR_MAX_NAME_SIZE 64
 #define VAR_MAX_VALUE_SIZE 256
 #define VAR_MAX_ENTRIES 512
@@ -75,7 +78,7 @@ static int script_flag;
 */
 
 
-int shellInterpInit()
+int shellInterpInit(FILE *lf)
 {
 #ifdef USE_TCL
   int v1,v2;
@@ -90,6 +93,8 @@ int shellInterpInit()
   shell_var.max=VAR_MAX_ENTRIES;
   shell_var.entry=Crecalloc(NULL,shell_var.max,sizeof(struct SHELL_VAR_ENTRY));
 #endif
+
+  logfile=lf;
 
 #ifdef USE_TCL
   // new interpreter instance
@@ -240,7 +245,9 @@ int shellParseRaw(const char *s, int hf)
   }
 
 #else
-  parse(s);
+  if(parse(s)==SHELL_OK) {
+    shellLog(s);
+  }
 #endif
 
   if(hf)
@@ -248,6 +255,13 @@ int shellParseRaw(const char *s, int hf)
   return 0;
 }
 
+void shellLog(const char *s)
+{
+  if(logfile && clStrlen(s)>0) {
+    fprintf(logfile,"%s",s);
+    fflush(logfile);
+  }
+}
 
 int shellSetVar(const char *name2, const char *value2)
 {
@@ -592,7 +606,7 @@ static int parse(const char *raw_prompt2)
 	  } else {
 	    // get variable name
 	    var_c=0;
-	    while(isalnum(raw_prompt[c]) && c<clStrlen(raw_prompt)) {
+	    while(is_valid_var_char(raw_prompt[c]) && c<clStrlen(raw_prompt)) {
 	      var[var_c++]=raw_prompt[c++];
 	    }
 	    var[var_c]='\0';

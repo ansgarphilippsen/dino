@@ -45,6 +45,9 @@ struct GLOBAL_COM {
   long t,t2;
 
   unsigned char cube_lookup[144];
+
+  int ms_mask,ms_axis,ms_ivalue;
+  
 };
 
 enum  {COM_PLAY_ON,
@@ -89,7 +92,7 @@ int comTransform(int device, int mask, int axis, int value);
 int comGrab(transMat *tm, char *name);
 int comGetCurrentCenter(double *);
 
-int comWriteModelview(FILE *f);
+void comWriteModelview(void);
 
 int comSetDefMat(struct RENDER_MATERIAL *mat);
 
@@ -101,6 +104,8 @@ void comCMICallback(const cmiToken *t);
 
 void comSetInitCommand(const char *s);
 void comBench(void);
+
+void comOutit();
 
 void tunnelvision(structObj *o);
 

@@ -2932,66 +2932,69 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
     else
       ap=obj->atom[ac].ap;
 
-    strcpy(record,"HETATM");
-    for(i=0;i<record_atom_count;i++)
-      if(!strcmp(record_atom[i],ap->residue->name)) {
-	strcpy(record,"ATOM  ");
-	break;
-      }
-
-    memset(aname,0,sizeof(aname));
-    if(strlen(ap->chem.element)==2) {
-      sprintf(aname,"%s",ap->name);
-    } else {
-      if(!strcmp(ap->chem.element,"H")) {
-	if(isdigit(ap->name[0])) {
-	  sprintf(aname,"%s",ap->name);
-	} else if(strlen(ap->name)>3) {
-	  aname[0]=ap->name[3];
-	  aname[1]=ap->name[0];
-	  aname[2]=ap->name[1];
-	  aname[3]=ap->name[2];
-	  aname[4]='\0';
+    if(!(ap->restrict)) {
+      
+      strcpy(record,"HETATM");
+      for(i=0;i<record_atom_count;i++)
+	if(!strcmp(record_atom[i],ap->residue->name)) {
+	  strcpy(record,"ATOM  ");
+	  break;
+	}
+      
+      memset(aname,0,sizeof(aname));
+      if(strlen(ap->chem.element)==2) {
+	sprintf(aname,"%s",ap->name);
+      } else {
+	if(!strcmp(ap->chem.element,"H")) {
+	  if(isdigit(ap->name[0])) {
+	    sprintf(aname,"%s",ap->name);
+	  } else if(strlen(ap->name)>3) {
+	    aname[0]=ap->name[3];
+	    aname[1]=ap->name[0];
+	    aname[2]=ap->name[1];
+	    aname[3]=ap->name[2];
+	    aname[4]='\0';
+	  } else {
+	    sprintf(aname," %s",ap->name);
+	  }
 	} else {
 	  sprintf(aname," %s",ap->name);
 	}
-      } else {
-	sprintf(aname," %s",ap->name);
+      }    
+      if(node->chain_flag)
+	chain=ap->chain->name;
+      else
+	chain=spc;
+      switch(tid) {
+      case STRUCT_WRITE_PDB:
+	fprintf(f,"%6s%5d %-4s %3s %c%4d    %8.3f%8.3f%8.3f%6.2f%6.2f        \n",
+		record,ac+1,aname,ap->residue->name,chain[0],ap->residue->num,
+		ap->p->x,ap->p->y,ap->p->z,ap->weight,ap->bfac);
+	break;
+      case STRUCT_WRITE_XPL:
+	fprintf(f,"%6s%5d %-4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f   %4s\n",
+		record,ac+1,aname,ap->residue->name,ap->residue->num,
+		ap->p->x,ap->p->y,ap->p->z,ap->weight,ap->bfac,chain);
+	break;
+      case STRUCT_WRITE_CRD:
+	fprintf(f,"%5d %4d %3s  %-4s%10.5f%10.5f%10.5f %c  %4d   %9.5f\n",
+		ap->anum,ap->residue->num,ap->residue->name,ap->name,
+		ap->p->x,ap->p->y,ap->p->z,chain[0],ap->residue->num,ap->weight);
+	break;
+      case STRUCT_WRITE_XYZR:
+	fprintf(f,"%.3f %.3f %.3f %.3f\n",
+		ap->p->x,ap->p->y,ap->p->z,ap->chem.vdwr);
+	
+	break;
       }
-    }    
-    if(node->chain_flag)
-      chain=ap->chain->name;
-    else
-      chain=spc;
-    switch(tid) {
-    case STRUCT_WRITE_PDB:
-      fprintf(f,"%6s%5d %-4s %3s %c%4d    %8.3f%8.3f%8.3f%6.2f%6.2f        \n",
-	      record,ac+1,aname,ap->residue->name,chain[0],ap->residue->num,
-	      ap->p->x,ap->p->y,ap->p->z,ap->weight,ap->bfac);
-      break;
-    case STRUCT_WRITE_XPL:
-      fprintf(f,"%6s%5d %-4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f   %4s\n",
-	      record,ac+1,aname,ap->residue->name,ap->residue->num,
-	      ap->p->x,ap->p->y,ap->p->z,ap->weight,ap->bfac,chain);
-      break;
-    case STRUCT_WRITE_CRD:
-      fprintf(f,"%5d %4d %3s  %-4s%10.5f%10.5f%10.5f %c  %4d   %9.5f\n",
-	      ap->anum,ap->residue->num,ap->residue->name,ap->name,
-	      ap->p->x,ap->p->y,ap->p->z,chain[0],ap->residue->num,ap->weight);
-      break;
-    case STRUCT_WRITE_XYZR:
-      fprintf(f,"%.3f %.3f %.3f %.3f\n",
-	      ap->p->x,ap->p->y,ap->p->z,ap->chem.vdwr);
-      
-      break;
-    }
-    ac++;
-    if(obj==NULL) {
-      if(ac>=node->atom_count)
-	break;
-    } else {
-      if(ac>=obj->atom_count)
-	break;
+      ac++;
+      if(obj==NULL) {
+	if(ac>=node->atom_count)
+	  break;
+      } else {
+	if(ac>=obj->atom_count)
+	  break;
+      }
     }
   }
 

@@ -11,9 +11,7 @@ extern struct GFX gfx;
 GLdouble write_pov_mm[16],write_pov_pm[16],write_pov_rm[16];
 GLint write_pov_vp[4];
 
-int write_pov_flag, write_pov_mode;
-
-#define POV_SURF_NEW 1
+int write_pov_flag, write_pov_mode, write_pov_ver;
 
 /*
   Utility funtions for basic POV elements
@@ -110,14 +108,14 @@ static int writePOVGetColorCode(float r, float g, float b)
 
 static char write_pov_mega_tex_buf[256];
 
-static const char * writePOVMegaTex(const char *o,float r, float g, float b) 
+static const char * writePOVTriSmoothTex(const char *o,float r, float g, float b) 
 {
   char *buf=write_pov_mega_tex_buf;
   sprintf(buf,"%s_tex%03d",o,writePOVGetColorCode(r,g,b));
   return buf;
 }
 
-static void writePOVGenMegaTex(FILE *f, const char *o, const char *tx, const char *tp, const char *fi) 
+static void writePOVGenTriSmoothTex(FILE *f, const char *o, const char *tx, const char *tp, const char *fi) 
 {
   int i,j,k;
   float r,g,b;
@@ -130,7 +128,7 @@ static void writePOVGenMegaTex(FILE *f, const char *o, const char *tx, const cha
 	b=(float)k/7.0;
 
 	fprintf(f,"#declare %s = texture {%s pigment {color rgbft <%.2f,%.2f,%.2f,%s,%s>}}\n",
-		writePOVMegaTex(o,r,g,b),tx,r,g,b,fi,tp);
+		writePOVTriSmoothTex(o,r,g,b),tx,r,g,b,fi,tp);
 		
       }
     }
@@ -186,32 +184,41 @@ static int writePOVTriangle(FILE *f, transMat *transform,int mode, float ov1[3],
   
   switch(mode) {
   case WRITE_POV_DEFAULT:
-	fprintf(f,"smooth_triangle {");
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-	fprintf(f," material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}",
-		mat,
-		(c1[0]+c1[0]+c2[0])/3.0,
-		(c1[1]+c1[1]+c2[1])/3.0,
-		(c1[2]+c1[2]+c2[2])/3.0,
-		fi,tp);
-	fprintf(f,"}\n");
+    if(write_pov_ver==WRITE_POV_V31) {
+      // old v3.1 
+      fprintf(f,"smooth_triangle {");
+      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
+	      v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
+      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
+	      v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
+      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
+	      v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
+      fprintf(f," material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}",
+	      mat,
+	      (c1[0]+c1[0]+c2[0])/3.0,
+	      (c1[1]+c1[1]+c2[1])/3.0,
+	      (c1[2]+c1[2]+c2[2])/3.0,
+	      fi,tp);
+      fprintf(f,"}\n");
+    } else if(write_pov_ver==WRITE_POV_V35) {
+      // new v3.5
+      fprintf(f,"smooth_triangle {");
+      
+      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
+	      v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
+      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
+	      v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
+      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
+	      v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
+      
+      strncpy(tex1,writePOVTriSmoothTex(obj,c1[0],c1[1],c1[2]),63);
+      strncpy(tex2,writePOVTriSmoothTex(obj,c2[0],c2[1],c2[2]),63);
+      strncpy(tex3,writePOVTriSmoothTex(obj,c3[0],c3[1],c3[2]),63);
+      fprintf(f,"texture_list { %s %s %s}\n\n",tex1,tex2,tex3);
+      fprintf(f,"}\n");
+    }
     break;
-  case WRITE_POV_NOCOLOR:
-	fprintf(f,"smooth_triangle {");
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-	fprintf(f,"}\n");
-    break;
-  case WRITE_POV_NEW:
+  case WRITE_POV_PATCH:
     fprintf(f,"smooth_color_triangle {");
     fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>,",
 	    v1[0],v1[1],v1[2],n1[0],n1[1],n1[2],c1[0],c1[1],c1[2],
@@ -225,6 +232,8 @@ static int writePOVTriangle(FILE *f, transMat *transform,int mode, float ov1[3],
     fprintf(f,"}\n");
     break;
   case WRITE_POV_SMOOTH:
+    // use smooth macro
+    // version does not matter
     if(c1[0]==c2[0] && c1[1]==c2[1] && c1[2]==c2[2] &&
        c2[0]==c3[0] && c2[1]==c3[1] && c2[2]==c3[2]) {
       fprintf(f,"smooth_triangle {");
@@ -239,6 +248,7 @@ static int writePOVTriangle(FILE *f, transMat *transform,int mode, float ov1[3],
 	      c1[0],c1[1],c1[2],fi,tp);
       fprintf(f,"}\n");
     } else {
+      // this is the macro definition
       fprintf(f,"colored_smooth_triangle (");
       fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>,",
 	      v1[0],v1[1],v1[2],n1[0],n1[1],n1[2],c1[0],c1[1],c1[2],
@@ -252,22 +262,16 @@ static int writePOVTriangle(FILE *f, transMat *transform,int mode, float ov1[3],
       fprintf(f,")\n");
     }
     break;
-  case WRITE_POV_MEGA:
-      fprintf(f,"smooth_triangle {");
-      
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-	      v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-	      v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-	      v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-      
-      strncpy(tex1,writePOVMegaTex(obj,c1[0],c1[1],c1[2]),63);
-      strncpy(tex2,writePOVMegaTex(obj,c2[0],c2[1],c2[2]),63);
-      strncpy(tex3,writePOVMegaTex(obj,c3[0],c3[1],c3[2]),63);
-      fprintf(f,"texture_list { %s %s %s}\n\n",tex1,tex2,tex3);
-      fprintf(f,"}\n");
-      
+  case WRITE_POV_NOCOLOR:
+    // version does not matter
+    fprintf(f,"smooth_triangle {");
+    fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
+	    v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
+    fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
+	    v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
+    fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
+	    v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
+    fprintf(f,"}\n");
     break;
   }
   return 1;
@@ -288,37 +292,36 @@ static int writePOVCylinder(FILE *f, transMat *transform, int mode, float ov1[3]
     return 0;
   }
 
-  switch(mode) {
-  case WRITE_POV_NOCOLOR:
+  if(mode==WRITE_POV_NOCOLOR) {
     fprintf(f,"cylinder {<%.4f,%.4f,%.4f>,<%.4f,%.4f,%.4f>,%s",
 	    v1[0],v1[1],v1[2],
 	    v2[0],v2[1],v2[2],
 	    rad);
     fprintf(f," material {%s}",mat);
     fprintf(f,"}\n");
-    break;
-  case WRITE_POV_DEFAULT:
-  case WRITE_POV_SMOOTH:
-  case WRITE_POV_NEW:
-  case WRITE_POV_MEGA:
+  } else {
+    // use macro color_cylinder
     fprintf(f,"color_cylinder (<%.4f,%.4f,%.4f>,<%.3f,%.3f,%.3f>,<%.4f,%.4f,%.4f>,<%.3f,%.3f,%.3f>,%s)\n",
 	    v1[0],v1[1],v1[2],c1[0],c1[1],c1[2],
 	    v2[0],v2[1],v2[2],c2[0],c2[1],c2[2],
 	    rad);
-    
-    break;
   }
   return 1;
 }
 
-static int writePOVSphere(FILE *f, transMat *transform, int mode, float v1[3],float c1[3], char *rad, const char *mat, const char *tp, const char *fi, float *lim)
+static int writePOVSphere(FILE *f, transMat *transform, int mode, float v1[3],float c1[3], char *rad, const char *mat, const char *tp, const char *fi, float *lim, float frad)
 {
   float v2[4];
   if(!writePOVTransform(transform,v1,v2,1)) return 0;
   writePOVCheckLim(v2,lim);
 
-  fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%s ",
-	  v2[0],v2[1],v2[2], rad);
+  if(frad>0.0) {
+    fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%s*%f",
+	    v2[0],v2[1],v2[2], rad, frad);
+  } else {
+    fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%s ",
+	    v2[0],v2[1],v2[2], rad);
+  }
   if(write_pov_mode==WRITE_POV_NOCOLOR) {
     fprintf(f,"material {%s}",mat);
   } else {
@@ -329,6 +332,51 @@ static int writePOVSphere(FILE *f, transMat *transform, int mode, float v1[3],fl
   }
   fprintf(f,"}\n");
 
+  return 1;
+}
+
+// vertex array output
+static int write_pov_va(FILE *f, cgfxVA *va, int mode, char *mat_name, char *obj_name,transMat *transform, float *lim)
+{
+  int i;
+  if(mode==WRITE_VA_TRIS) {
+    // prepare the output
+    if(write_pov_mode==WRITE_POV_DEFAULT) {
+      if(write_pov_ver==WRITE_POV_V31) {
+	fprintf(f,"union {\n");
+      } else if(write_pov_ver==WRITE_POV_V35) {
+	// probably this should be mesh2
+	fprintf(f,"mesh {\n");
+      }
+    } else if(write_pov_mode==WRITE_POV_PATCH) {
+      if(write_pov_ver==WRITE_POV_V31) {
+	fprintf(f,"mesh {\n");
+      } else if(write_pov_ver==WRITE_POV_V35) {
+	// TODO PATCHED v35
+      }
+    } else if(write_pov_mode==WRITE_POV_SMOOTH) {
+      // using a macro, so version doesn't matter
+      fprintf(f,"union {\n");
+      fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
+    } else {
+      // no-color version
+      fprintf(f,"mesh {\n");
+    }
+
+    for(i=0;i<va->count;i+=3) {
+      writePOVTriangle(f,transform,write_pov_mode,
+		       va->p[i+0].v,va->p[i+0].n,va->p[i+0].c,
+		       va->p[i+1].v,va->p[i+1].n,va->p[i+1].c,
+		       va->p[i+2].v,va->p[i+2].n,va->p[i+2].c,
+		       obj_name, lim);
+    }
+
+    if(write_pov_mode==WRITE_POV_PATCH ||
+       write_pov_mode==WRITE_POV_NOCOLOR) {
+      fprintf(f,"material {%s}\n",mat_name);
+    }
+    fprintf(f,"}\n");
+  }
   return 1;
 }
 
@@ -386,6 +434,11 @@ static int writePOVStructObj(FILE *f, structObj *obj, int k,float *lim)
 
   fprintf(f,"#if (%s)\n",obj_name);
 
+  if(write_pov_ver==WRITE_POV_V35 && write_pov_mode==WRITE_POV_DEFAULT) {
+    // prepare the smoothing textures to use
+    writePOVGenTriSmoothTex(f,obj_name,tex_name,tp_name,fi_name);
+  }
+
   switch(obj->render.mode) {
   case RENDER_SLINE:
     fprintf(f,"union {\n");
@@ -402,33 +455,9 @@ static int writePOVStructObj(FILE *f, structObj *obj, int k,float *lim)
     break;
   case RENDER_TUBE:
   case RENDER_HSC:
-    if(write_pov_mode==WRITE_POV_MEGA) {
-      writePOVGenMegaTex(f,obj_name,tex_name,tp_name,fi_name);
-    }
 
-    if(write_pov_mode==WRITE_POV_NEW ||
-       write_pov_mode==WRITE_POV_NOCOLOR ||
-       write_pov_mode==WRITE_POV_MEGA) {
-      fprintf(f,"mesh {\n");
-    } else { // SMOOTH or DEFAULT
-      fprintf(f,"union {\n");
-    }
-    if(write_pov_mode==WRITE_POV_SMOOTH) {
-      fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
-    }
-    for(i=0;i<obj->va.count;i+=3) {
-      writePOVTriangle(f,&obj->node->transform,write_pov_mode,
-		       obj->va.p[i+0].v,obj->va.p[i+0].n,obj->va.p[i+0].c,
-		       obj->va.p[i+1].v,obj->va.p[i+1].n,obj->va.p[i+1].c,
-		       obj->va.p[i+2].v,obj->va.p[i+2].n,obj->va.p[i+2].c,
-		       obj_name, lim);
-    }
+    write_pov_va(f,&obj->va,WRITE_VA_TRIS, mat_name,obj_name,&obj->node->transform,lim);
 
-    if(write_pov_mode==WRITE_POV_NEW ||
-       write_pov_mode==WRITE_POV_NOCOLOR) {
-      fprintf(f,"material {%s}\n",mat_name);
-    }
-    fprintf(f,"}\n");
     break;
   case RENDER_SIMPLE:
     fprintf(f,"union {\n");
@@ -489,7 +518,7 @@ static int writePOVStructObj(FILE *f, structObj *obj, int k,float *lim)
       sprintf(ps_name,"%.4f",obj->atom[i].prop.radius);
       writePOVSphere(f,&obj->node->transform,write_pov_mode,v1,n1,
 		     ps_name,
-		     mat_name,tp_name,fi_name,lim);
+		     mat_name,tp_name,fi_name,lim,1.0);
     }
     fprintf(f,"}\n");
     break;
@@ -611,21 +640,31 @@ static int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
 
   fprintf(f,"#if (%s)\n",obj_name);
 
-#ifdef POV_SURF_NEW
 
-  if(write_pov_mode==WRITE_POV_MEGA) {
-    writePOVGenMegaTex(f,obj_name,tex_name,tp_name,fi_name);
-  }
-
-  if(write_pov_mode==WRITE_POV_NEW ||
-     write_pov_mode==WRITE_POV_NOCOLOR ||
-     write_pov_mode==WRITE_POV_MEGA) {
-    fprintf(f,"mesh{\n");
-  } else {
+  // copied from write_pov_va BAD BAD STYLE
+  // prepare the output
+  if(write_pov_mode==WRITE_POV_DEFAULT) {
+    if(write_pov_ver==WRITE_POV_V31) {
+      fprintf(f,"union {\n");
+    } else if(write_pov_ver==WRITE_POV_V35) {
+      // probably this should be mesh2
+      fprintf(f,"mesh {\n");
+    }
+  } else if(write_pov_mode==WRITE_POV_PATCH) {
+    if(write_pov_ver==WRITE_POV_V31) {
+      fprintf(f,"mesh {\n");
+    } else if(write_pov_ver==WRITE_POV_V35) {
+      // TODO PATCHED v35
+    }
+  } else if(write_pov_mode==WRITE_POV_SMOOTH) {
+    // using a macro, so this doesn't matter
     fprintf(f,"union {\n");
-  }
-  if(write_pov_mode==WRITE_POV_SMOOTH)
     fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
+  } else {
+    // no-color version
+    fprintf(f,"mesh {\n");
+  }
+  
 
   for(i=0;i<obj->facec;i++) {
     p1=obj->face[i*3+0];
@@ -640,128 +679,11 @@ static int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
 
   }
 
-  if(write_pov_mode==WRITE_POV_NEW ||
-     write_pov_mode==WRITE_POV_NOCOLOR ||
-     write_pov_mode==WRITE_POV_MEGA) {
+  if(write_pov_mode==WRITE_POV_PATCH ||
+     write_pov_mode==WRITE_POV_NOCOLOR) {
     fprintf(f,"material {%s}\n",mat_name);
   }
   fprintf(f,"}\n");
-
-#else
-
-  if(write_pov_mode==WRITE_POV_NEW ||
-     write_pov_mode==WRITE_POV_NOCOLOR ||
-     write_pov_mode==WRITE_POV_MEGA) {
-    fprintf(f,"mesh{\n");
-  } else {
-    fprintf(f,"union {\n");
-  }
-  if(write_pov_mode==WRITE_POV_SMOOTH)
-    fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
-
-  for(i=0;i<obj->facec;i++) {
-    p1=obj->face[i*3+0];
-    p2=obj->face[i*3+1];
-    p3=obj->face[i*3+2];
-    if(!writePOVTransform(&obj->node->transform,obj->vert[p1].p,v1,1)) continue;
-    if(!writePOVTransform(&obj->node->transform,obj->vert[p2].p,v2,1)) continue;
-    if(!writePOVTransform(&obj->node->transform,obj->vert[p3].p,v3,1)) continue;
-
-    if(v1[0]==v2[0] && v2[0]==v3[0])
-      if(v1[1]==v2[1] && v2[1]==v3[1])
-	if(v1[2]==v2[2] && v2[2]==v3[2])
-	  continue;
-
-    writePOVCheckLim(v1,lim);
-    writePOVCheckLim(v2,lim);
-    writePOVCheckLim(v3,lim);
-    
-    writePOVTransform(&obj->node->transform,obj->vert[p1].n,n1,0);
-    writePOVTransform(&obj->node->transform,obj->vert[p2].n,n2,0);
-    writePOVTransform(&obj->node->transform,obj->vert[p3].n,n3,0);
-
-    c1=obj->vert[p1].c;
-    c2=obj->vert[p2].c;
-    c3=obj->vert[p3].c;
-
-    if(write_pov_mode==WRITE_POV_DEFAULT) {
-      fprintf(f,"smooth_triangle {");
-      
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-	      v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-	      v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-	      v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-      fprintf(f," pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      (c1[0]+c1[0]+c2[0])/3.0,
-	      (c1[1]+c1[1]+c2[1])/3.0,
-	      (c1[2]+c1[2]+c2[2])/3.0,
-	      fi_name,tp_name);
-    } else if(write_pov_mode==WRITE_POV_NOCOLOR) {
-      if( (v1[0]==v2[0] && v1[1]==v2[1] && v1[2]==v2[2]) ||
-	  (v3[0]==v2[0] && v3[1]==v2[1] && v3[2]==v2[2]) ||
-	  (v1[0]==v3[0] && v1[1]==v3[1] && v1[2]==v3[2])) {
-      } else {
-	fprintf(f,"smooth_triangle {");
-	
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-	fprintf(f," texture {%s}}\n", mat_name);
-      }
-    } else if(write_pov_mode==WRITE_POV_MEGA) {
-      // format of megapov
-      fprintf(f,"#local tex1 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      mat_name,c1[0],c1[1],c1[2],fi_name,tp_name);
-      fprintf(f,"#local tex2 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      mat_name,c2[0],c2[1],c2[2],fi_name,tp_name);
-      fprintf(f,"#local tex3 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      mat_name,c3[0],c3[1],c3[2],fi_name,tp_name);
-      fprintf(f,"smooth_triangle {");
-      
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-	      v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-	      v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-	      v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-      fprintf(f,"texture_list { tex1 tex2 tex3}\n\n");
-      fprintf(f,"}\n");
-    } else {
-      if(write_pov_mode==WRITE_POV_NEW) {
-	fprintf(f,"smooth_color_triangle {");
-      } else {
-	fprintf(f,"colored_smooth_triangle (");
-      }
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>,",
-	      v1[0],v1[1],v1[2],n1[0],n1[1],n1[2],c1[0],c1[1],c1[2],
-	      fi_name,tp_name);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>,",
-	      v2[0],v2[1],v2[2],n2[0],n2[1],n2[2],c2[0],c2[1],c2[2],
-	      fi_name,tp_name);
-      fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>",
-	      v3[0],v3[1],v3[2],n3[0],n3[1],n3[2],c3[0],c3[1],c3[2],
-	      fi_name,tp_name);
-      if(write_pov_mode==WRITE_POV_NEW) 
-	fprintf(f,"}\n");
-      else
-	fprintf(f,")\n");
-      
-    }
-    
-  }
-  if(write_pov_mode==WRITE_POV_DEFAULT ||
-     write_pov_mode==WRITE_POV_NEW) {
-        fprintf(f,"material {%s}\n",mat_name);
-  }
-
-
-  fprintf(f,"}\n");
-#endif
 
   fprintf(f,"#end\n");
 
@@ -776,6 +698,7 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
   char mat_name[64],tex_name[64];
   char tp_name[64],lw_name[64],ps_name[64],fi_name[64];
   char obj_name[64];
+  char pstmp[64];
   float lw,ps,rad;
 
   sprintf(mat_name,"_%s_%s_mat",obj->node->name,obj->name);
@@ -822,8 +745,13 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
     if(obj->type==SCAL_CONTOUR && obj->render.mode==RENDER_LINE)
       fprintf(f,"#declare %s = %.4f;\n",lw_name,lw);
     if((obj->type==SCAL_CONTOUR && obj->render.mode==RENDER_POINT) ||
-       (obj->type==SCAL_GRID))
+       (obj->type==SCAL_GRID && obj->render.mode==RENDER_OFF)) {
       fprintf(f,"#declare %s = %.4f;\n",ps_name,ps);
+    } else if(obj->type==SCAL_GRID && obj->render.mode==RENDER_ON) {
+      fprintf(f,"#declare %s = %.4f;\n",ps_name,1.0);
+    }
+
+
     return 0;
   }
 
@@ -837,11 +765,11 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
       fprintf(f,"union {\n");
       for(i=0;i<obj->point_count;i++) {
 	n1[0]=obj->r;
-	n1[1]=obj->g;
-	n1[2]=obj->b;
+	n1[0]=obj->g;
+	n1[0]=obj->b;
 	writePOVSphere(f,&obj->node->transform,WRITE_POV_NOCOLOR,
 		       obj->point[i].v,n1,ps_name,
-		       mat_name,tp_name,fi_name,lim);
+		       mat_name,tp_name,fi_name,lim,1.0);
 
       }
       fprintf(f,"material {%s}\n",mat_name);
@@ -890,8 +818,8 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
       writePOVCheckLim(v1,lim);
       if(obj->render.mode==RENDER_ON) {
 	rad=obj->point[i].rad;
-	fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%s ",
-		v1[0],v1[1],v1[2], ps_name);
+	fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%s*%f ",
+		v1[0],v1[1],v1[2], ps_name, obj->point[i].rad);
       } else {
 	rad=ps;
 	fprintf(f,"disc {<%.4f,%.4f,%.4f>, <0,0,1>, %s ",
@@ -972,23 +900,31 @@ static int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
   switch (obj->type) {
   case GRID_SURFACE:
 
-#ifdef POV_SURF_NEW
-    if(write_pov_mode==WRITE_POV_MEGA) {
-      writePOVGenMegaTex(f,obj_name,tex_name,tp_name,fi_name);
+    // copied from write_pov_va BAD BAD STYLE
+    // prepare the output
+    if(write_pov_mode==WRITE_POV_DEFAULT) {
+      if(write_pov_ver==WRITE_POV_V31) {
+	fprintf(f,"union {\n");
+      } else if(write_pov_ver==WRITE_POV_V35) {
+	// probably this should be mesh2
+	fprintf(f,"mesh {\n");
+      }
+    } else if(write_pov_mode==WRITE_POV_PATCH) {
+      if(write_pov_ver==WRITE_POV_V31) {
+	fprintf(f,"mesh {\n");
+      } else if(write_pov_ver==WRITE_POV_V35) {
+	// TODO PATCHED v35
+      }
+    } else if(write_pov_mode==WRITE_POV_SMOOTH) {
+      // using a macro, so this doesn't matter
+      fprintf(f,"union {\n");
+      fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
+    } else {
+      // no-color version
+      fprintf(f,"mesh {\n");
     }
 
-    if(write_pov_mode==WRITE_POV_NEW || 
-       write_pov_mode==WRITE_POV_NOCOLOR ||
-       write_pov_mode==WRITE_POV_MEGA)
-      fprintf(f,"mesh {\n");
-    else
-      fprintf(f,"union {\n");
-    
-    if(write_pov_mode==WRITE_POV_SMOOTH)
-      fprintf(f,"#declare triangle_base_texture = material{%s}\n",mat_name);
-
     for(i=0;i<obj->facec;i++) {
-
       writePOVTriangle(f,&obj->node->transform,write_pov_mode,
 		       obj->face[i].v1,obj->face[i].n1,obj->face[i].c1,
 		       obj->face[i].v2,obj->face[i].n2,obj->face[i].c2,
@@ -998,103 +934,11 @@ static int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
 
     if(write_pov_mode==WRITE_POV_DEFAULT ||
        write_pov_mode==WRITE_POV_NOCOLOR ||
-       write_pov_mode==WRITE_POV_NEW) {
+       write_pov_mode==WRITE_POV_PATCH) {
       fprintf(f,"material {%s}\n",mat_name);
     }
     fprintf(f,"}\n");
-#else    
-    if(write_pov_mode==WRITE_POV_NEW || write_pov_mode==WRITE_POV_MEGA)
-      fprintf(f,"mesh {\n");
-    else
-      fprintf(f,"union {\n");
-    
-    if(write_pov_mode==WRITE_POV_SMOOTH)
-      fprintf(f,"#declare triangle_base_texture = material{%s}\n",mat_name);
-    
-    t=obj->render.transparency;
-    
-    for(i=0;i<obj->facec;i++) {
-      
-      if(!writePOVTransform(&obj->node->transform,obj->face[i].v1,v1,1)) continue;
-      if(!writePOVTransform(&obj->node->transform,obj->face[i].v2,v2,1)) continue;
-      if(!writePOVTransform(&obj->node->transform,obj->face[i].v3,v3,1)) continue;
-      
-      if(v1[0]==v2[0] && v2[0]==v3[0])
-	if(v1[1]==v2[1] && v2[1]==v3[1])
-	  if(v1[2]==v2[2] && v2[2]==v3[2])
-	    continue;
-      
-      writePOVCheckLim(v1,lim);
-      writePOVCheckLim(v2,lim);
-      writePOVCheckLim(v3,lim);
-      
-      writePOVTransform(&obj->node->transform,obj->face[i].n1,n1,0);
-      writePOVTransform(&obj->node->transform,obj->face[i].n2,n2,0);
-      writePOVTransform(&obj->node->transform,obj->face[i].n3,n3,0);
-      c1=obj->face[i].c1;
-      c2=obj->face[i].c2;
-      c3=obj->face[i].c3;
-      
-      if(write_pov_mode==WRITE_POV_DEFAULT) {
-	fprintf(f,"smooth_triangle {");
-	
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-	fprintf(f," pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-		(c1[0]+c1[0]+c2[0])/3.0,
-		(c1[1]+c1[1]+c2[1])/3.0,
-		(c1[2]+c1[2]+c2[2])/3.0,
-		fi_name, tp_name);
-      } else if(write_pov_mode==WRITE_POV_MEGA) {
-	// format of megapov
-	fprintf(f,"#local tex1 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-		mat_name,c1[0],c1[1],c1[2],fi_name,tp_name);
-	fprintf(f,"#local tex2 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-		mat_name,c2[0],c2[1],c2[2],fi_name,tp_name);
-	fprintf(f,"#local tex3 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-		mat_name,c3[0],c3[1],c3[2],fi_name,tp_name);
-	fprintf(f,"smooth_triangle {");
-	
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v1[0],v1[1],v1[2],n1[0],n1[1],n1[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
-		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
-		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-	fprintf(f,"texture_list { tex1 tex2 tex3}\n\n");
-	fprintf(f,"}\n");
-      } else {
-	if(write_pov_mode==WRITE_POV_NEW) 
-	  fprintf(f,"smooth_color_triangle {");
-	else
-	  fprintf(f,"colored_smooth_triangle (");
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>,",
-		v1[0],v1[1],v1[2],n1[0],n1[1],n1[2],c1[0],c1[1],c1[2],
-		fi_name,tp_name);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>,",
-		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2],c2[0],c2[1],c2[2],
-		fi_name,tp_name);
-	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,rgbft<%.4f,%.4f,%.4f,%s,%s>",
-		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2],c3[0],c3[1],c3[2],
-		fi_name,tp_name);
-	if(write_pov_mode==WRITE_POV_NEW) 
-	  fprintf(f,"}\n");
-	else
-	  fprintf(f,")\n");
-	
-      }
-      
-    }
-    if(write_pov_mode==WRITE_POV_DEFAULT ||
-       write_pov_mode==WRITE_POV_NEW) {
-      fprintf(f,"material {%s}\n",mat_name);
-    }
-    fprintf(f,"}");
-#endif
+
     break;
   case GRID_CONTOUR:
     fprintf(f,"// .%s.%s\n",obj->node->name,obj->name);
@@ -1190,32 +1034,13 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
 
   fprintf(f,"#if (%s)\n",obj_name);
   if(obj->render.mode==RENDER_TUBE) {
-    if(write_pov_mode==WRITE_POV_MEGA) {
-      writePOVGenMegaTex(f,obj_name,tex_name,tp_name,fi_name);
+
+    if(write_pov_ver==WRITE_POV_V35) {
+      writePOVGenTriSmoothTex(f,obj_name,tex_name,tp_name,fi_name);
     }
 
-    if(write_pov_mode==WRITE_POV_NEW ||
-       write_pov_mode==WRITE_POV_NOCOLOR ||
-       write_pov_mode==WRITE_POV_MEGA) {
-      fprintf(f,"mesh {\n");
-    } else { // SMOOTH or DEFAULT
-      fprintf(f,"union {\n");
-    }
-    if(write_pov_mode==WRITE_POV_SMOOTH) {
-      fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
-    }
-    for(i=0;i<obj->va.count;i+=3) {
-      writePOVTriangle(f,&obj->node->transform,write_pov_mode,
-		       obj->va.p[i+0].v,obj->va.p[i+0].n,obj->va.p[i+0].c,
-		       obj->va.p[i+1].v,obj->va.p[i+1].n,obj->va.p[i+1].c,
-		       obj->va.p[i+2].v,obj->va.p[i+2].n,obj->va.p[i+2].c,
-		       obj_name, lim);
-    }
+    write_pov_va(f,&obj->va,WRITE_VA_TRIS, mat_name,obj_name,&obj->node->transform,lim);
 
-    if(write_pov_mode==WRITE_POV_NEW ||
-       write_pov_mode==WRITE_POV_NOCOLOR) {
-      fprintf(f,"material {%s}\n",mat_name);
-    }
   } else {
     fprintf(f,"union {\n");
     for(i=0;i<obj->point_count;i++) {
@@ -1348,7 +1173,11 @@ static int writePOVScene(FILE *f)
 {
   double cpos[4];
 
-  fprintf(f,"#version 3.1;\n");
+  if(write_pov_ver==WRITE_POV_V31) {
+    fprintf(f,"#version 3.1;\n");
+  } else if(write_pov_ver==WRITE_POV_V35) {
+    fprintf(f,"#version 3.5;\n");
+  }
 
   fprintf(f,"background {color rgb <%.3f,%.3f,%.3f>}\n\n\n",
 	  gfx.r,gfx.g,gfx.b);
@@ -1391,7 +1220,7 @@ static int writePOVScene(FILE *f)
   main funtion called from outside
 */
 
-int writePOV(FILE *fpov, FILE *finc,char *fpovn, int flag, int mode)
+int writePOV(FILE *fpov, FILE *finc,char *fpovn, int flag, int mode, int version)
 {
   int i,j,k;
   FILE *f;
@@ -1400,6 +1229,7 @@ int writePOV(FILE *fpov, FILE *finc,char *fpovn, int flag, int mode)
 
   write_pov_flag=flag;
   write_pov_mode=mode;
+  write_pov_ver=version;
   
   lim[0]=lim[1]=lim[2]=-1e9;
   lim[3]=lim[4]=lim[5]=1e9;
@@ -1420,9 +1250,6 @@ int writePOV(FILE *fpov, FILE *finc,char *fpovn, int flag, int mode)
 
   writePOVScene(fpov);
 
-  if(write_pov_mode==WRITE_POV_MEGA) {
-    fprintf(finc,"#version unofficial MegaPov 0.7;\n");
-  }
 
   if(write_pov_mode==WRITE_POV_SMOOTH)
     fprintf(finc,pov_tri_macro);

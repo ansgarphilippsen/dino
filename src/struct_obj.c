@@ -561,18 +561,6 @@ int structObjSet(structObj *obj, Set *set, int flag)
  	case STRUCT_PROP_COLOR3:
 	  r=r3; g=g3; b=b3;
 	  if(set->range_flag) {
-	    /********
-	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val1);
-	      return -1;
-	    }
-	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val2);
-	      return -1;
-	    }
-	    *******/
 	    if(set->range.src==NULL) {
 	      // this dataset
 	      if(structGetRangeVal(obj->node,obj->atom[ac].ap,set->range.prop,&rval)<0)

@@ -288,7 +288,10 @@ int scalDrawObj(scalObj *obj)
 
       for(i=0;i<obj->point_count;i++) {
 	glPushMatrix();
-	glColor3fv(obj->point[i].c);
+	glColor4f(obj->point[i].c[0],
+		  obj->point[i].c[1],
+		  obj->point[i].c[2],
+		  obj->render.transparency);
 	glTranslatef(obj->point[i].v[0],
 		     obj->point[i].v[1],
 		     obj->point[i].v[2]);

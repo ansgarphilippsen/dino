@@ -355,7 +355,6 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	      if(dbmGetRangeVal(&s->range,(float*)obj->vert[vc].p,&rval)<0)
 		return -1;
 	    }
-	    //	    fprintf(stderr,"%f %f %f\n",rval1,rval2,rval);
 	    frac1=rval2-rval1;
 	    frac2=rval-rval1;
 	    if(frac1==0.0) {
@@ -365,6 +364,13 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 		frac2=-2.0;
 	    } else {
 	      frac2/=frac1;
+	    }
+	    if(s->range.clamp) {
+	      if(frac2<0.0) {
+		frac2=0.0;
+	      } else if(frac2>1.0) {
+		frac2=1.0;
+	      }
 	    }
 	    if(frac2>=0.0 && frac2<=1.0) {
 	      if(s->blend) {

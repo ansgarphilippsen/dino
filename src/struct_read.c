@@ -1336,8 +1336,12 @@ static void line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *se, char *line)
   char tmp[8];
   if(line[0]=='H') {
     se->type=STRUCT_RTYPE_HELIX;
-    se->chain[0]=line[19];
-    se->chain[1]='\0';
+    if(line[19]==' ') {
+      se->chain[0]='\0';
+    } else {
+      se->chain[0]=line[19];
+      se->chain[1]='\0';
+    }
     tmp[0]=line[21];
     tmp[1]=line[22];
     tmp[2]=line[23];
@@ -1353,8 +1357,12 @@ static void line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *se, char *line)
     //fprintf(stderr,"HELIX: %s %3d %3d\n",se->chain,se->start,se->end);
   } else {
     se->type=STRUCT_RTYPE_STRAND;
-    se->chain[0]=line[21];
-    se->chain[1]='\0';
+    if(line[21]==' ') {
+      se->chain[0]='\0';
+    } else {
+      se->chain[0]=line[21];
+      se->chain[1]='\0';
+    }
     tmp[0]=line[22];
     tmp[1]=line[23];
     tmp[2]=line[24];
@@ -1939,7 +1947,8 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       for(j=0;j<sf->secs_count;j++) {
 	secsr1=sf->secs_entry[j].start;
 	secsr2=sf->secs_entry[j].end;
-	if(clStrcmp(sf->secs_entry[j].chain,ccname)) {
+	if(clStrcmp(sf->secs_entry[j].chain,ccname) ||
+	   (clStrlen(sf->secs_entry[j].chain)==0 && clStrlen(ccname)==0)) {
 	  // EXCLUSIVE setting !
 	  if(cri>secsr1 && cri<secsr2) {
 	    cap->residue->type=sf->secs_entry[j].type;

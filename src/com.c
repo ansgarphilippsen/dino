@@ -1418,7 +1418,8 @@ int comWrite(int wc,const char **wl)
   float scale;
   FILE *f,*f2;
   int pov_flag=0;
-  int pov_mode=0;
+  int pov_mode=WRITE_POV_DEFAULT;
+  int pov_ver=WRITE_POV_V31;
   char pov_def[256];
   struct WRITE_PARAM wparam;
 
@@ -1514,15 +1515,14 @@ int comWrite(int wc,const char **wl)
 	wparam.accum=newi;
       }
       n++;
-    } else if(!strcmp(wl[n],"-new") ||
-	      !strcmp(wl[n],"-patch")) {
-      pov_mode=WRITE_POV_NEW;
+    } else if(!strcmp(wl[n],"-patch")) {
+      pov_mode=WRITE_POV_PATCH;
     } else if(!strcmp(wl[n],"-nocolor")) {
       pov_mode=WRITE_POV_NOCOLOR;
     } else if(!strcmp(wl[n],"-smooth")) {
       pov_mode=WRITE_POV_SMOOTH;
-    } else if(!strcmp(wl[n],"-mega")) {
-      pov_mode=WRITE_POV_MEGA;
+    } else if(!strcmp(wl[n],"-v35")) {
+      pov_ver=WRITE_POV_V35;
     } else if(!strcmp(wl[n],"-plane")) {
       pov_flag+=WRITE_POV_PLANE;
     } else if(!strcmp(wl[n],"-def")) {
@@ -1575,10 +1575,14 @@ int comWrite(int wc,const char **wl)
       fclose(f);
       return -1;
     }
-    sprintf(message,"Writing povray (3.1) files %s and %s...\n",file,file2);
+    if(pov_ver==WRITE_POV_V35) {
+      sprintf(message,"Writing povray (3.5 EXPERIMENTAL!) files %s and %s...\n",file,file2);
+    } else {
+      sprintf(message,"Writing povray (3.1) files %s and %s...\n",file,file2);
+    }
     comMessage(message);
 
-    writePOV(f,f2,file2,pov_flag, pov_mode);
+    writePOV(f,f2,file2,pov_flag, pov_mode, pov_ver);
     fclose(f2);
     fclose(f);
   } else if(!strcmp(type,"ps")) {
@@ -1926,7 +1930,6 @@ int comTransform(int device, int mask, int axis, int ivalue)
   mask &= GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_BUTTON3_MASK | GUI_BUTTON4_MASK | GUI_BUTTON5_MASK | GUI_SHIFT_MASK | GUI_CNTRL_MASK | GUI_LOCK_MASK;
 #endif
 
-
   for(i=0;i<com.tlist_count;i++) {
     if(com.tlist[i].device==device && 
        (com.tlist[i].mask&mask)==com.tlist[i].mask) {
@@ -2014,12 +2017,12 @@ int comTestTex3D(int u, int v, int w)
 #endif
 }
 
-int comWriteModelview(FILE *f)
+void comWriteModelview()
 {
-  fprintf(f,"scene set rtc=%s\n",
+  char buf[256];
+  sprintf(buf,"scene set rtc=%s\n",
 	  transGetAll(&gfx.transform));
-
-  return 0;
+  shellLog(buf);
 }
 
 /*
@@ -2077,6 +2080,12 @@ void comBench(void)
     
     com.benchmark=0;
   }
+}
+
+void comOutit()
+{     
+  comWriteModelview();
+  com.benchmark=0;
 }
 
 #ifdef USE_CMI
@@ -2176,3 +2185,4 @@ void tunnelvision(structObj *obj)
   tunnelvision2(obj,1);
 }
 ************************************************/
+

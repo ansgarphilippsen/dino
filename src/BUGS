@@ -1,6 +1,8 @@
 current problems
 ----------------
 
+set color1=xxx,color2=yyy,color3=zzz will use only zzz as all colors
+
 picking doesn't work after resize
 
 explicit colors broken
@@ -24,15 +26,11 @@ known problems for DINO v0.8.5
 
 - scalar-field type contour transparency has problems detecting front-to-back
 
-- struct obj transparency not working
-
 - alternate model char in PDB format not working
 
 - picking in split scene does not work
 
 - MEAD coordinate file does not recognize atom types, ie all atoms white
-
-- render !intpol coredumps
 
 - surface solid rendering can be VERY slow on linux machines using only a 
   software stencil buffer
@@ -51,11 +49,6 @@ known problems for DINO v0.8.5
 - writing pics larger than the current screen size might not scale
   correctly under linux
 
-- offscreen rendering on linux might missmatches graphics display, use
-  -dump option of write as workaround
-
 - POVray output only partial for geom objects
 
 - POVray output only renders filled triangles for surface and topo objects
-
-- on weird scalar fields insane memory usage possible

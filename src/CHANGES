@@ -1,3 +1,17 @@
+added .dinorc file (exec block only)
+
+added -v35 for POVRAY v3.5 output
+
+render intpol for struct.trace working again
+
+DINO centers on first dataset that is loaded IF scene transformation is untouched
+
+struct obj transparency working
+
+invalid chars are replaced by _ in dataset names (valid chars [a-zA-Z0-9_-])
+
+variable names may have - or _
+
 new matrix/vector extraction code for tcl support
 
 added gz support to msms files (FINALLY)

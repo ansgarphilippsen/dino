@@ -166,7 +166,7 @@ int dinoMain(int argc,char **argv)
   if(sceneInit()<0) return -1;
 
 #ifdef NEW_SHELL
-  if(shellInit()<0) return -1;
+  if(shellInit(logfile)<0) return -1;
 #else
   debmsg("calling shellInit");
   shellInit((shell_callback)comWorkPrompt,logfile);
@@ -205,6 +205,9 @@ int dinoMain(int argc,char **argv)
 
 void dinoExit(int n)
 {
+  // must come first
+  comOutit();
+
 #ifndef OSX
 #ifdef NEW_SHELL
   guitOutit();

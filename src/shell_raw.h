@@ -4,7 +4,7 @@
 #define SHELL_ERROR -1
 #define SHELL_OK 0
 
-int shellInterpInit(void);
+int shellInterpInit(FILE *lf);
 int shellParseRaw(const char *s, int hf);
 
 #ifdef USE_TCL
@@ -19,6 +19,7 @@ void shellListVars(const char *rg);
 void shellTimeProc(void);
 
 void shellOut(const char *s);
+void shellLog(const char *s);
 
 const char *shellGetHistory(int dir);
 
