@@ -367,11 +367,12 @@ int matMakeO2T(double a, double b, double c, double alpha, double beta, double g
   r[1]=(b*c*ca-b*c*cc*cb)/(b*sc);
   r[2]=sqrt(c*c-r[0]*r[0]-r[1]*r[1]);
 
+  /*
   fprintf(stdout,"%.3f %.3f %.3f\n%.3f %.3f %.3f\n%.3f %.3f %.3f\n",
 	  p[0],p[1],p[2],
 	  q[0],q[1],q[2],
 	  r[0],r[1],r[2]);
-
+	  */
 
   return 0;
 }
@@ -616,7 +617,7 @@ int matExtract1D(const char *string2, int dim, double *res)
   }
   clStrcat(expr,"[\\}]?(.*)");
 
-  fprintf(stderr,"%s\n%s\n",string,expr);
+//  fprintf(stderr,"%s\n%s\n",string,expr);
  
   ret=regcomp(&preg,expr,REG_EXTENDED);
   if(ret>0) {
@@ -673,7 +674,7 @@ int matExtract2D(const char *string2, int dim2, int dim1, double *res)
   }
   clStrcat(expr,"[\\}]?(.*)");
 
-  fprintf(stderr,"%s\n%s\n",string,expr);
+//  fprintf(stderr,"%s\n%s\n",string,expr);
  
   ret=regcomp(&preg,expr,REG_EXTENDED);
   if(ret>0) {
@@ -1451,9 +1452,10 @@ int matTransformXYtoNM(double on[3],double om[3], double mat[16])
   /* verified that My2 = m2 */
 
   matMultMV(mat2,n,c);
+  /*
   fprintf(stderr,"  %f %f %f\n  %f %f %f\n",
 	  n[0],n[1],n[2],c[0],c[1],c[2]);
-
+	  */
   matMultMM(mat2,mat1,mat);
 
   return 0;

@@ -191,11 +191,18 @@ int guiInit(int argc, char **argv)
 
 #ifdef SGI_STEREO
   if(stereo_available==SGI_STEREO_HIGH) {
-    cmiMessage("high end stereo detected\n");
+    cmiMessage("HighEnd stereo detected\n");
+    gui.stereo_available=1;
   } else if(stereo_available==SGI_STEREO_LOW) {
-    cmiMessage("low end stereo detected\n");
+    cmiMessage("LowEnd stereo detected\n");
+    gui.stereo_available=1;
+  } else {
+    gui.stereo_available=0;
   }
+#else
+  gui.stereo_available=0;
 #endif
+
 
   debmsg("guiInit: setting colormap");
   gui.cmap=get_colormap(gui.visinfo);
@@ -233,7 +240,7 @@ int guiInit(int argc, char **argv)
   if(stereo_available!=SGI_STEREO_NONE) {
     debmsg("guiInit: initializing stereo");
     if(SGIStereoInit(gui.dpy,XtWindow(gui.glxwin),stereo_available)<0) {
-      cmiMessage("error during stereo initialization, low end stereo forced\n");
+      cmiMessage("error during stereo initialization, LowEnd stereo forced\n");
     }
   }
 #endif
@@ -635,7 +642,10 @@ void guiCMICallback(const cmiToken *t)
 
 int guiSetStereo(int m)
 {
-  return set_stereo(m);
+  int r;
+  r=set_stereo(m);
+  //fprintf(stderr,"set_stereo: %d\n",r);
+  return r;
 }
 
 
@@ -794,8 +804,10 @@ static int init_visual(int use_stereo)
   char message[256];
 
   buf[bufc++]=GLX_RGBA;
+#ifdef SGI_STEREO
   if(use_stereo)
     buf[bufc++]=GLX_STEREO;
+#endif
   buf[bufc++]=GLX_DOUBLEBUFFER;
 #ifdef RENDER_SOLID
   buf[bufc++]=GLX_STENCIL_SIZE;

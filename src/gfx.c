@@ -203,6 +203,8 @@ int gfxInit()
 
   gfx.stereo_active=0;
   gfx.stereo_mode=GFX_STEREO_OFF;
+  gfx.eye_dist=150.0;
+  gfx.eye_offset=10.0;
 
   gfx.show=1;
 
@@ -469,41 +471,44 @@ int gfxRedraw()
     comDBRedraw();
 #endif
   } else {
-#endif
-    if(gfx.stereo_mode==GFX_STEREO_SPLIT) {
-      glwDrawBuffer(GLW_STEREO_CENTER);
-      gfx.aspect=0.5*(double)gfx.win_width/(double)gfx.win_height;
-      glViewport(0,0,gfx.win_width/2, gfx.win_height);
-      gfxSetProjection(GFX_RIGHT);
-      gfxSceneRedraw(1);
-      comDBRedraw();
-      glViewport(gfx.win_width/2+1,0,gfx.win_width/2, gfx.win_height);
-      gfxSetProjection(GFX_LEFT);
-      gfxSceneRedraw(0);
-      comDBRedraw();
-      gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;
-      glViewport(0,0,gfx.win_width, gfx.win_height);
+    glwDrawBuffer(GLW_STEREO_CENTER);
+    gfxSetProjection(gfx.current_view);
+    gfxSceneRedraw(1);
+    comDBRedraw();
+  }
+#else
+  if(gfx.stereo_mode==GFX_STEREO_SPLIT) {
+    glwDrawBuffer(GLW_STEREO_CENTER);
+    gfx.aspect=0.5*(double)gfx.win_width/(double)gfx.win_height;
+    glViewport(0,0,gfx.win_width/2, gfx.win_height);
+    gfxSetProjection(GFX_RIGHT);
+    gfxSceneRedraw(1);
+    comDBRedraw();
+    glViewport(gfx.win_width/2+1,0,gfx.win_width/2, gfx.win_height);
+    gfxSetProjection(GFX_LEFT);
+    gfxSceneRedraw(0);
+    comDBRedraw();
+    gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;
+    glViewport(0,0,gfx.win_width, gfx.win_height);
 #ifdef SGI_STEREO
-    } else if(gfx.stereo_mode==GFX_STEREO_HW) {
-      glwDrawBuffer(GLW_STEREO_RIGHT);
-      gfxSetProjection(GFX_RIGHT);
-      gfxSceneRedraw(1);
-      comDBRedraw();
-      glwDrawBuffer(GLW_STEREO_LEFT);
-      gfxSetProjection(GFX_LEFT);
-      gfxSceneRedraw(1);
-      comDBRedraw();
+  } else if(gfx.stereo_mode==GFX_STEREO_HW) {
+    glwDrawBuffer(GLW_STEREO_RIGHT);
+    gfxSetProjection(GFX_RIGHT);
+    gfxSceneRedraw(1);
+    comDBRedraw();
+    glwDrawBuffer(GLW_STEREO_LEFT);
+    gfxSetProjection(GFX_LEFT);
+    gfxSceneRedraw(1);
+    comDBRedraw();
 #endif
-    } else {
-      glwDrawBuffer(GLW_STEREO_CENTER);
-      gfxSetProjection(gfx.current_view);
-      gfxSceneRedraw(1);
-      comDBRedraw();
-    }
-#ifndef USE_CMI
+  } else {
+    glwDrawBuffer(GLW_STEREO_CENTER);
+    gfxSetProjection(gfx.current_view);
+    gfxSceneRedraw(1);
+    comDBRedraw();
   }
 #endif
-
+  
   guiSwapBuffers();
   
   return 0;

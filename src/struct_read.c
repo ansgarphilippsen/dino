@@ -395,6 +395,7 @@ int xplorPDBRead(FILE *f,dbmNode *node)
   }
   pdb.atom_count=atom_count;
   pdb.connect_count=0;
+  pdb.secs_count=0;
 
   structFileEntry2DB(&pdb,&node->structNode);
 
@@ -542,6 +543,7 @@ int charmmRead(FILE *f,dbmNode *node)
 
 
   charmm.connect_count=0;
+  charmm.secs_count=0;
 
   debmsg("charmmRead: converting to dataset");
   structFileEntry2DB(&charmm,&node->structNode);
@@ -922,6 +924,7 @@ int bonesRead(FILE *f, dbmNode *node)
   bones.atom_count=entry_count;
   bones.connect_entry=conn;
   bones.connect_count=conn_count;
+  bones.secs_count=0;
 
   //node->structNode.conn_flag=0;
 
@@ -987,6 +990,7 @@ int pqrRead(FILE *f,dbmNode *node)
   }
   pdb.atom_count=atom_count;
   pdb.connect_count=0;
+  pdb.secs_count=0;
 
   structFileEntry2DB(&pdb,&node->structNode);
 

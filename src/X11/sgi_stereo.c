@@ -378,6 +378,9 @@ int SGIStereoCommand(int mode)
 {
   switch(mode) {
   case SGI_STEREO_NONE:
+    XSGISetStereoMode(SGIStereo.display,SGIStereo.drawable,
+		      492,532,
+		      STEREO_OFF);
     system(glw_monitor_cmd[mode]);
     break;
   case SGI_STEREO_LOW:

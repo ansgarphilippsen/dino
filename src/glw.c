@@ -3,7 +3,7 @@
 #include "glw.h"
 
 #ifdef SGI_STEREO
-//#include "sgi_stereo.h"
+#include "X11/sgi_stereo.h"
 #endif
 
 #include "gfx.h"
@@ -38,7 +38,11 @@ void glwStereoSwitch(int mode)
 void glwDrawBuffer(GLenum mode)
 {
 #ifdef SGI_STEREO
-  SGIStereoDrawBuffer(mode);
+  if(gfx.stereo_active) {
+    SGIStereoDrawBuffer(mode);
+  } else {
+    glDrawBuffer(GL_BACK);
+  }
 #else
   glDrawBuffer(GL_BACK);
 #endif
