@@ -5,6 +5,7 @@
 #include <X11/extensions/XInput.h>
 #include <X11/extensions/XIproto.h>
 
+#include "dino.h"
 #include "extension.h"
 #include "gui_x11.h"
 #include "cl.h"
@@ -204,8 +205,11 @@ XDevice *extSpaceballInit(Display *dpy)
 	  any=(XAnyClassPtr) ((char*)any+any->length);
 	}
 
-//	spaceballDevice=XOpenDevice(dpy,device->id);
-	spaceballDevice=NULL;
+	spaceballDevice=XOpenDevice(dpy,device->id);
+	if(spaceballDevice==NULL) {
+	  debmsg("spaceball found but XOpenDevice failed");
+	}
+	//	spaceballDevice=NULL;
 
 	if(spaceballDevice!=NULL){
 	  XFreeDeviceList(deviceInfo);

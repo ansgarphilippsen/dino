@@ -119,6 +119,10 @@ static String fallback_resources[]={
 
 *************************************************/
 
+// cmiMessage can't be used here! revert to good'ol fprintf
+
+static void outMessage(const char *m) {fprintf(stdout,m);}
+
 //int guiInit(void (*func)(int, char **), int argc, char **argv)
 int guiInit(int argc, char **argv)
 {
@@ -296,16 +300,16 @@ int guiInit(int argc, char **argv)
     gui.visinfo=vi;
     
     if(!gui.visinfo) {
-      cmiMessage("fatal error: no suitable visual found\n");
+      outMessage("fatal error: no suitable visual found\n");
       return -1;
     }
     
 #ifdef SGI_STEREO
     if(stereo_available==SGI_STEREO_HIGH) {
-      cmiMessage("HighEnd stereo detected\n");
+      outMessage("HighEnd stereo detected\n");
       gui.stereo_available=1;
     } else if(stereo_available==SGI_STEREO_LOW) {
-      cmiMessage("LowEnd stereo detected\n");
+      outMessage("LowEnd stereo detected\n");
       gui.stereo_available=1;
     } else {
       gui.stereo_available=0;
@@ -349,7 +353,7 @@ int guiInit(int argc, char **argv)
     if(stereo_available!=SGI_STEREO_NONE) {
       debmsg("guiInit: initializing stereo");
       if(SGIStereoInit(gui.dpy,XtWindow(gui.glxwin),stereo_available)<0) {
-	cmiMessage("error during stereo initialization, LowEnd stereo forced\n");
+	outMessage("error during stereo initialization, LowEnd stereo forced\n");
       }
     }
 #endif
@@ -365,11 +369,11 @@ int guiInit(int argc, char **argv)
     
     debmsg("guiInit: checking for extra input devices");
     if(dialbox_init()) {
-      cmiMessage("Dialbox detected\n");
+      outMessage("Dialbox detected\n");
     }
     if(spaceball_init()) {
       if(gui.spaceballDevice!=NULL)
-	cmiMessage("Spaceball detected\n");
+	outMessage("Spaceball detected\n");
     }
     
   }
@@ -584,11 +588,12 @@ int guiMainLoop()
       a dials device was detected,
       branch to dials event handler
     */
-    // TODO
-    /****
     if(gui.dialsDevice!=NULL || gui.spaceballDevice!=NULL)
       if(event.xany.type>gui.xiEventBase)
-	    extension_event(XtWindowToWidget(event.xany.display, event.xany.window),NULL,&event);
+	extension_event(XtWindowToWidget(event.xany.display, event.xany.window),NULL,&event);
+    
+
+    /***
 #ifdef SPACETEC
     if(gui.spacetecDevice)
       spacetecEventHandler(gui.dpy, &event);
@@ -1420,7 +1425,7 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
   --------------
 
   called from the main loop whenever
-  a dial event was encountered
+  an extension event is encountered
 
 *************************************/
 
@@ -1429,13 +1434,59 @@ static int deviceMotionNotify=0,deviceButtonPress=0,
 
 static void extension_event(Widget w, XtPointer client_data, XEvent *event)
 {
-  int i,num,diff;
-  double val,va[6];
+  int i;
   XDeviceMotionEvent *device_motion;
+
+  // use CMI to transmit event!
+  cmiToken t;
+  int val[5];
 
   if(event->type == deviceMotionNotify){
     device_motion=(XDeviceMotionEvent *)event;
-    num=(int)device_motion->first_axis;
+
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+
+    val[1]=CMI_MOTION;
+
+    val[2]=0;
+   
+    if(device_motion->state & GUI_BUTTON1_MASK)
+      val[2] += CMI_BUTTON1_MASK;
+    if(device_motion->state & GUI_BUTTON2_MASK)
+      val[2] += CMI_BUTTON2_MASK;
+    if(device_motion->state & GUI_BUTTON3_MASK)
+      val[2] += CMI_BUTTON3_MASK;
+    if(device_motion->state & GUI_BUTTON4_MASK)
+      val[2] += CMI_BUTTON4_MASK;
+    if(device_motion->state & GUI_BUTTON5_MASK)
+      val[2] += CMI_BUTTON5_MASK;
+    if(device_motion->state & GUI_SHIFT_MASK)
+      val[2] += CMI_SHIFT_MASK;
+    if(device_motion->state & GUI_CNTRL_MASK)
+      val[2] += CMI_CNTRL_MASK;
+
+    
+    if(gui.spaceballDevice!=NULL) {
+      if(device_motion->deviceid==gui.spaceballDevice->device_id) {
+	if(device_motion->first_axis==0) {
+	  if(device_motion->axis_data[0]!=0) {
+	    
+	    val[0]=CMI_INPUT_SPACEBALL;
+	    //fprintf(stderr,"spaceball ");
+	    for(i=0;i<6;i++) {
+	      val[3]=i;
+	      val[4]=device_motion->axis_data[i];
+	      //fprintf(stderr,"%d ",val[4]);
+	      cmiSubmit(&t);
+	    }
+	    //fprintf(stderr,"\n");
+	  }
+	}
+      }
+    }
+  }
 
     /*
     fprintf(stderr,"\nfa: %d  ac: %d",num, device_motion->axes_count);
@@ -1476,7 +1527,6 @@ static void extension_event(Widget w, XtPointer client_data, XEvent *event)
 			 5,device_motion->axis_data[5]);
 	}
     *********/
-  } 
 	  
 }
 
@@ -1528,12 +1578,10 @@ static int spaceball_init()
     return 1;
   } else {
 #endif
-    gui.spacetecDevice=0;
-    gui.spaceballDevice=extSpaceballInit(gui.dpy);
-    
-    if(gui.spaceballDevice==NULL)
+
+    if((gui.spaceballDevice=extSpaceballInit(gui.dpy))==NULL)
       return 0;
-    
+
     /* 
        these macros find the correct event type value for the requested
        event class and store them in the global vars
@@ -1684,7 +1732,7 @@ int guiCreateOffscreenContext(int w, int h, int af)
     }
   
   if(i==MAX_OFFSCREEN_CONTEXT) {
-    cmiMessage("error: maximal offscreen context count reached");
+    outMessage("error: maximal offscreen context count reached");
     return -1;
   }
   
@@ -1692,12 +1740,12 @@ int guiCreateOffscreenContext(int w, int h, int af)
 
   // get visual
   if((visinfo=get_offscreen_visual(af))==NULL) {
-    cmiMessage("error: failed to find visual for offscreen rendering\n");
+    outMessage("error: failed to find visual for offscreen rendering\n");
   }
   
   // create new context
   if((oc->glx_context=glXCreateContext(gui.dpy, visinfo, 0, False))==NULL) {
-    cmiMessage("error: offscreen rendering context could not be created");
+    outMessage("error: offscreen rendering context could not be created");
     return -1;
   }
 
@@ -1742,7 +1790,7 @@ static XVisualInfo *get_offscreen_visual(int af)
   if(af) {
     vi=init_visual(0,0,use_stencil,1);
     if(!vi) {
-      cmiMessage("could not find visual with accumulation buffer\n");
+      outMessage("could not find visual with accumulation buffer\n");
     }
   } else {
     vi=init_visual(0,0,use_stencil,0);

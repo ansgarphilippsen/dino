@@ -70,6 +70,11 @@ static void mouse_func(int ev, int state, int x, int y)
   last_y=y;
 }
 
+static void spcb_func(int state, int axis, int value)
+{
+  comTransform(TRANS_SPACEBALL, state, axis, value);
+}
+
 static void keyb_func(int state, int key)
 {
   unsigned char k;
@@ -125,5 +130,7 @@ void inputProcess(cmiToken *t)
   case CMI_INPUT_KEYBOARD:
     keyb_func(ip[1],ip[2]);
     break;
+  case CMI_INPUT_SPACEBALL:
+    spcb_func(ip[2],ip[3],ip[4]);
   }
 }
