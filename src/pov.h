@@ -23,6 +23,7 @@
 
 int writePOV(FILE *fini,FILE *fpov,char *, int, int);
 
+/*
 int writePOVScene(FILE *f);
 int writePOVStructObj(FILE *f, structObj *o, int k, float *lim);
 int writePOVSurfObj(FILE *f, surfObj *o, int k, float *lim);
@@ -35,5 +36,6 @@ int writePOVTransform(transMat *m,float *v1, float *v2,int );
 int writePOVCheckLim(float *v, float *lim);
 
 int writePOVCheckName(char *name);
+*/
 
 #endif

@@ -14,8 +14,7 @@ LIBGLW = /usr/X11R6/lib/libGLw.a
 LIBMOTIF = /usr/X11R6/lib/libXm.a
 
 # static version
-#INCLUDE = -I ../lesstif/include -I../mesa/include -I/usr/include/CC 
-#-I/usr/X11R6/include
+#INCLUDE = -I ../lesstif/include -I../mesa/include -I/usr/include/CC -I/usr/X11R6/include
 #LIBGL = ../mesa/lib/libGL.a ../mesa/lib/libGLU.a ../mesa/lib/libGLw.a
 #LIBGLW =
 #LIBMOTIF = /usr/X11R6/lib/libXm.a

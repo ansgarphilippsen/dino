@@ -1242,7 +1242,8 @@ int comWrite(int wc,char **wl)
 	accum=atoi(wl[n+1]);
       }
       n++;
-    } else if(!strcmp(wl[n],"-new")) {
+    } else if(!strcmp(wl[n],"-new") ||
+	      !strcmp(wl[n],"-patch")) {
       pov_mode=WRITE_POV_NEW;
     } else if(!strcmp(wl[n],"-nocolor")) {
       pov_mode=WRITE_POV_NOCOLOR;
