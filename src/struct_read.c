@@ -53,7 +53,7 @@ int pdbRead(FILE *f,dbmNode *node)
   struct STRUCT_FILE pdb;
   struct PDB_CRYST_ENTRY pdb_cryst;
   int pdb_cryst_flag=0;
-  int model_count;
+  int model_count,model_flag;
   char num[16];
   struct STRUCT_FILE_ATOM_ENTRY tmpae;
   struct STRUCT_FILE_CONNECT_ENTRY tmpce;
@@ -61,7 +61,8 @@ int pdbRead(FILE *f,dbmNode *node)
   int d1,d2[5];
   char c1[6],c2[6],c3[6],c4[6],c5[6];
   
-  model_count=-1;
+  model_flag=0;
+  model_count=0;
 
   prep_struct_file(&pdb,5000,5000,100);
 
@@ -77,12 +78,17 @@ int pdbRead(FILE *f,dbmNode *node)
     }
     record[6]='\0';
     if(clStrcmp(record,"MODEL")) {
-      if(model_count==-1)
-	model_count=0;
+      //if(model_count==-1)
+      //model_count=0;
+      model_flag=1;
       model_count++;
     } else if(clStrcmp(record,"ATOM") ||
 	      clStrcmp(record,"HETATM")) {
-      tmpae.mnum=model_count;
+      if(model_flag) {
+	tmpae.mnum=model_count;
+      } else {
+	tmpae.mnum=0;
+      }
       clStrcpy(tmpae.mname,"");
       line_to_atom_entry(&tmpae,line, STRUCT_FILE_FORMAT_PDB);
       add_atom_entry(&pdb,&tmpae);
@@ -666,6 +672,9 @@ int charmmLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
 
 
   ae->c3=0.0;
+
+  ae->mnum=1;
+  clStrcpy(ae->mname,"");
 
   return 0;
 }
