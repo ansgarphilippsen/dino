@@ -330,21 +330,13 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
     finally create GLX window
   */
   debmsg("guiInit: creating and initializing GLX area");
-#ifdef LINUX
-  gui.glxwin=XtVaCreateManagedWidget("glxwin",
-				     glwDrawingAreaWidgetClass,
-				     gui.frame,
-				     GLwNvisualInfo, gui.visinfo,
-				     XtNcolormap, gui.cmap,
-				     NULL);
-#else
   gui.glxwin=XtVaCreateManagedWidget("glxwin",
 				     glwMDrawingAreaWidgetClass,
 				     gui.frame,
 				     GLwNvisualInfo, gui.visinfo,
 				     XtNcolormap, gui.cmap,
 				     NULL);
-#endif  
+
   /* 
      Add callbacks for the glx widget 
   */
