@@ -201,6 +201,9 @@ int gfxInit()
   gfx.slab_flag=0;
   gfx.spin=0;
 
+  gfx.stereo_active=0;
+  gfx.stereo_mode=GFX_STEREO_OFF;
+
   gfx.show=1;
 
   gfx.fog_color[0]=gfx_fog_color[0];
@@ -437,6 +440,7 @@ int gfxGLInit(void)
   
 int gfxRedraw() 
 {
+  int ws;
 #ifndef USE_CMI
   if (gui.stereo_mode==GUI_STEREO_SPLIT) {
     glwDrawBuffer(GLW_STEREO_RIGHT);
@@ -466,11 +470,36 @@ int gfxRedraw()
 #endif
   } else {
 #endif
-    glwDrawBuffer(GLW_STEREO_CENTER);
-    gfxSetProjection(gfx.current_view);
-    gfxSceneRedraw(1);
-    
-    comDBRedraw();
+    if(gfx.stereo_mode==GFX_STEREO_SPLIT) {
+      glwDrawBuffer(GLW_STEREO_CENTER);
+      gfx.aspect=0.5*(double)gfx.win_width/(double)gfx.win_height;
+      glViewport(0,0,gfx.win_width/2, gfx.win_height);
+      gfxSetProjection(GFX_RIGHT);
+      gfxSceneRedraw(1);
+      comDBRedraw();
+      glViewport(gfx.win_width/2+1,0,gfx.win_width/2, gfx.win_height);
+      gfxSetProjection(GFX_LEFT);
+      gfxSceneRedraw(0);
+      comDBRedraw();
+      gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;
+      glViewport(0,0,gfx.win_width, gfx.win_height);
+#ifdef SGI_STEREO
+    } else if(gfx.stereo_mode==GFX_STEREO_HW) {
+      glwDrawBuffer(GLW_STEREO_RIGHT);
+      gfxSetProjection(GFX_RIGHT);
+      gfxSceneRedraw(1);
+      comDBRedraw();
+      glwDrawBuffer(GLW_STEREO_LEFT);
+      gfxSetProjection(GFX_LEFT);
+      gfxSceneRedraw(1);
+      comDBRedraw();
+#endif
+    } else {
+      glwDrawBuffer(GLW_STEREO_CENTER);
+      gfxSetProjection(gfx.current_view);
+      gfxSceneRedraw(1);
+      comDBRedraw();
+    }
 #ifndef USE_CMI
   }
 #endif

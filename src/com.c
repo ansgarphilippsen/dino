@@ -2093,6 +2093,7 @@ void comCMICallback(const cmiToken *t)
     case CMI_EXIT: dinoExit(0); break;
     case CMI_RAW: cp=(char *)t->value; comRawCommand(cp); break;
     case CMI_INPUT: inputProcess(t); break;
+    case CMI_MESSAGE: comMessage((const char *)t->value); break;
       
     default: break;
     }

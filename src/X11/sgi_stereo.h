@@ -33,6 +33,7 @@ struct SGI_STEREO_INFO {
 
 int SGIStereoInit(Display *display, GLXDrawable drawable, int m);
 int SGIStereoCommand(int mode);
+int SGIStereoIsActive(void);
 void SGIStereoDrawBuffer(GLenum mode);
 
 #endif

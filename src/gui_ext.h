@@ -33,9 +33,14 @@ int guiGetImage(struct WRITE_IMAGE *img);
 
 void guiSwapBuffers(void);
 
+int guiQueryStereo(void);
 
 #ifdef USE_CMI
 void guiCMICallback(const cmiToken *t);
+#endif
+
+#ifdef SGI_STEREO
+int guiSetStereo(int m);
 #endif
 
 #ifndef INTERNAL_COLOR

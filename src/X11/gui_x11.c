@@ -104,8 +104,6 @@ static String fallback_resources[]={
    guiInit
    -------
 
-   this monolithic function is simply horrible
-
 *************************************************/
 
 //int guiInit(void (*func)(int, char **), int argc, char **argv)
@@ -168,7 +166,8 @@ int guiInit(int argc, char **argv)
   */
   
 #ifdef SGI_STEREO
-  if(!nostereo && XSGIStereoQueryExtension(gui.dpy,&ev,&er) ) {
+  if(nostereo==0 && XSGIStereoQueryExtension(gui.dpy,&ev,&er) ) {
+    debmsg("using stereo");
     use_stereo=1;
     stereo_available=SGI_STEREO_HIGH;
   } else {
@@ -250,13 +249,11 @@ int guiInit(int argc, char **argv)
 
   debmsg("guiInit: checking for extra input devices");
   if(dialbox_init()) {
-    fprintf(stderr,"Dialbox detected\n");
+    cmiMessage("Dialbox detected\n");
   }
   if(spaceball_init()) {
     if(gui.spaceballDevice!=NULL)
-      fprintf(stderr,"Spaceball detected\n");
-    else
-      fprintf(stderr,"\n");
+      cmiMessage("Spaceball detected\n");
   }
 
 
@@ -590,7 +587,12 @@ void guiRegisterUserMenu(Window w)
 }
 
 
-
+/*
+  set stereo mode
+  returns the actual stereo mode, 
+  0 for off
+  1 for on
+*/
 
 static int set_stereo(int m) 
 {
@@ -599,6 +601,15 @@ static int set_stereo(int m)
   } else {
     SGISwitchStereo(SGI_STEREO_OFF);
   }
+  return SGIStereoIsActive();
+}
+
+int guiQueryStereo(void)
+{
+  if(gui.stereo_available==SGI_STEREO_NONE)
+    return 0;
+  else
+    return 1;
 }
 
 void guiCMICallback(const cmiToken *t)
@@ -610,7 +621,6 @@ void guiCMICallback(const cmiToken *t)
     switch(t->command) {
     case CMI_REFRESH: gui.redraw++; break;
     case CMI_MESSAGE: guiMessage((char *)t->value); break;
-    case CMI_STEREO: set_stereo((*((int *)t->value)));
     case CMI_DS_NEW: omAddDB(cp[0]); break;
     case CMI_DS_DEL: omDelDB(cp[0]); break;
     case CMI_DS_REN: /*TODO*/ break;
@@ -621,6 +631,11 @@ void guiCMICallback(const cmiToken *t)
     case CMI_OBJ_HIDE: omHideObj(cp[0],cp[1]); break;
     }
   }
+}
+
+int guiSetStereo(int m)
+{
+  return set_stereo(m);
 }
 
 

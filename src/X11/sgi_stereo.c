@@ -474,3 +474,7 @@ int SGIStereoPerspective2(GLdouble fovy, GLdouble aspect,
   return 0;
 }
 
+int SGIStereoIsActive(void)
+{
+  return SGIStereo.active;
+}

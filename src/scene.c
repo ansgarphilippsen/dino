@@ -1089,24 +1089,49 @@ int sceneCommand(int wc, const char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"split")) {
 #ifdef USE_CMI
-    comMessage("no implemented with cmi");
+    if(gfx.stereo_mode==GFX_STEREO_OFF) {
+      gfx.stereo_mode=GFX_STEREO_SPLIT;
+      cmiRefresh();
+#ifdef SGI_STEREO
+    } else if(gfx.stereo_mode==GFX_STEREO_HW) {
+      cmiStereo(0);
+      gfx.stereo_mode=GFX_STEREO_SPLIT;
+      comRedraw();
+#endif
+    } else {
+      gfx.stereo_mode=GFX_STEREO_OFF;
+      comRedraw();
+    }
 #else
     if(gui.stereo_mode==GUI_STEREO_NORMAL) {
       glwStereoSwitch(GUI_STEREO_OFF);
+      gfxSetViewport();
       gui.stereo_mode=GUI_STEREO_SPLIT;
     } else if(gui.stereo_mode==GUI_STEREO_OFF) {
       gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
       gui.stereo_mode=GUI_STEREO_SPLIT;
       comRedraw();
     } else if(gui.stereo_mode==GUI_STEREO_SPLIT) {
-      gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
       gui.stereo_mode=GUI_STEREO_OFF;
-      glViewport(0,0,gui.win_width, gui.win_height);
+      gfxSetViewport();
       comRedraw();
     }
 #endif
-#ifndef USE_CMI
   } else if(!strcmp(wl[0],"stereo")) {
+#ifdef USE_CMI
+    if(guiQueryStereo()) {
+      if(wc==1) {
+	// toggle mode only;
+	if(gfx.stereo_active) {
+	  gfx.stereo_active=guiSetStereo(0);
+	} else {
+	  gfx.stereo_active=guiSetStereo(1);
+	}
+      }
+    } else {
+      comMessage("hardware stereo not available\n");
+    }
+#else
     if(gui.stereo_available) {
       if(wc==1) {
 	if(gui.stereo_mode) {
@@ -1129,10 +1154,6 @@ int sceneCommand(int wc, const char **wl)
       sprintf(message,"Stereo mode not available\n");
       comMessage(message);
       return -1;
-    }
-  } else if(!strcmp(wl[0],"mono")) {
-    if(gui.stereo_mode) {
-      glwStereoSwitch(0);
     }
 #endif
   } else if(!strcmp(wl[0],"grab")) {

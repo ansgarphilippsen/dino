@@ -17,6 +17,10 @@ enum                     {GFX_CENTER,
 enum          {GFX_PERSP,
 	       GFX_ORTHO};
 
+enum {GFX_STEREO_OFF=0,
+      GFX_STEREO_SPLIT,
+      GFX_STEREO_HW};
+
 struct GFX_LIGHT {
   int on,local;
   GLfloat pos[4];
@@ -45,7 +49,7 @@ struct GFX
   // this is a copy from struct GUI to allow
   // frontend - backend separation
   int win_width,win_height;
-  int stereo_mode, stereo_available;
+  int stereo_active,stereo_mode;
   float eye_dist, eye_offset;
 #endif
   int current_view;
