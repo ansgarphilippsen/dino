@@ -12,6 +12,7 @@
 #include "com.h"
 #include "Cmalloc.h"
 #include "cl.h"
+#include "mat.h"
 
 /*
   TODO
@@ -20,10 +21,6 @@
    rpn stack non scalar
 */
 
-#define RPN_TYPE_NULL   0
-#define RPN_TYPE_SCALAR 1
-#define RPN_TYPE_VECTOR 2
-#define RPN_TYPE_MATRIX 3
 
 static int work_script(void);
 static int call_script(const char *f,const char **wl, int wc);
@@ -36,7 +33,7 @@ static void rpn_dup(void);
 static void rpn_swap(void);
 static void rpn_show(void);
 static const char *rpn_peek(void);
-static int rpn_get_type(const char *v);
+static int rpn_get_value(const char *v, double *res);
 static void alias_list(const char *reg);
 static const char * alias_get(const char *reg);
 static void alias_def(const char *name, const char **wl, int wc);
@@ -528,13 +525,44 @@ static void rpn_show(void)
   }
 }
 
-static int rpn_get_type(const char *v)
+#define RPN_TYPE_NULL    0
+#define RPN_TYPE_SCALAR  1
+#define RPN_TYPE_VECTOR  2
+#define RPN_TYPE_VECTOR3 3
+#define RPN_TYPE_VECTOR4 4
+#define RPN_TYPE_MATRIX  5
+#define RPN_TYPE_MATRIX3 6
+#define RPN_TYPE_MATRIX4 7
+
+static int rpn_get_value(const char *v,double *res)
 {
-  if(v==NULL) {
-    return RPN_TYPE_NULL;
-  } else {
-    return RPN_TYPE_SCALAR;
+  int d1,d2;
+  char message[256];
+
+  if(v!=NULL) {
+    if(matExtractMatrix(v,&d1,&d2,res)!=0) {
+      res[0]=atof(v);
+      return RPN_TYPE_SCALAR;
+    } else {
+      if(d1==3 && d2==1) {
+	return RPN_TYPE_VECTOR3;
+      } else if(d1==4 && d2==1) {
+	return RPN_TYPE_VECTOR4;
+      } else if(d1==3 && d2==3) {
+	return RPN_TYPE_MATRIX3;
+      } else if(d1==4 && d2==4) {
+	return RPN_TYPE_MATRIX4;
+      } else {
+	// this should not happen
+	sprintf(message,"internal error in rpn_get_value (%d %d)\n",d1,d2);
+	comMessage(message);
+	res[0]=0.0;
+	return RPN_TYPE_NULL;
+      }
+    }
   }
+  res[0]=0.0;
+  return RPN_TYPE_NULL;
 }
 
 static char op_special[][8]={
@@ -554,13 +582,26 @@ static char op_unary[][8]={
 
 static char op_result[1024];
 
+#define RPN_ERROR_S(s) \
+  sprintf(message,"error: operator %s not valid for scalar\n",s);\
+  comMessage(message);
+
+#define RPN_ERROR_V(s) \
+  sprintf(message,"error: operator %s not valid for vector\n",s);\
+  comMessage(message);
+
+#define RPN_ERROR_M(s) \
+  sprintf(message,"error: operator %s not valid for matrix\n",s);\
+  comMessage(message);
+
 static void rpn_opr(const char *op)
 {
   int i,op_type;
   char message[256];
   const char *val1, *val2;
-  int type1, type2,tresult;
+  int type1,type1s,type2,type2s,tresult;
   double fval1, fval2, fresult;
+  double res1[16],res2[16],res3[16],res4[16];
   
   if(clStrlen(op)==0) {
     return;
@@ -599,11 +640,39 @@ static void rpn_opr(const char *op)
   } else if(op_type==1) {
     // unary op
     val1=rpn_pop();
-    type1=rpn_get_type(val1);
-    if(type1==RPN_TYPE_SCALAR) fval1=atof(val1);
+    type1=rpn_get_value(val1,res2);
+    type1s=type1;
+    if(type1==RPN_TYPE_SCALAR) { 
+      fval1=res2[0];
+    } else if(type1==RPN_TYPE_VECTOR3) {
+      // store a v4 representation in res1
+      matV3toV4(res2,res1);
+      type1=RPN_TYPE_VECTOR;
+    } else if(type1==RPN_TYPE_VECTOR4) {
+      // copy the representation to res1
+      matCopyVV(res2,res1);
+      type1=RPN_TYPE_VECTOR;
+    } else if(type1==RPN_TYPE_MATRIX3) {
+      // store a m4 representation 
+      matM3toM4(res2,res1);
+      type1=RPN_TYPE_MATRIX;
+    } else if(type1==RPN_TYPE_MATRIX4) {
+      matCopyMM(res2,res1);
+      type1=RPN_TYPE_MATRIX;
+    }
+
+    /*
+      type1s stores the 'actual' vector or matrix
+      dimension, while most calculations will be 
+      done on the 4 vect or 4x4 mat, stored in res1
+      the original values remain in res2, the result
+      will be in res3
+    */
 
     if(clStrcmp(op,"+-")) {
       if(type1==RPN_TYPE_SCALAR) fresult=-fval1;
+      if(type1==RPN_TYPE_VECTOR) ;
+      if(type1==RPN_TYPE_MATRIX) ;
     } else if(clStrcmp(op,"inc")) {
       if(type1==RPN_TYPE_SCALAR) fresult=fval1+1.0;
     } else if(clStrcmp(op,"dec")) {
@@ -612,26 +681,46 @@ static void rpn_opr(const char *op)
       if(type1==RPN_TYPE_SCALAR) fresult=fabs(fval1);
     } else if(clStrcmp(op,"log")) {
       if(type1==RPN_TYPE_SCALAR) fresult=log10(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"ln")) {
       if(type1==RPN_TYPE_SCALAR) fresult=log(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"exp")) {
       if(type1==RPN_TYPE_SCALAR) fresult=exp(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"sqrt")) {
       if(type1==RPN_TYPE_SCALAR) fresult=sqrt(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"inv")) {
       if(type1==RPN_TYPE_SCALAR) fresult=1.0/fval1;
     } else if(clStrcmp(op,"sin")) {
       if(type1==RPN_TYPE_SCALAR) fresult=sin(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"cos")) {
       if(type1==RPN_TYPE_SCALAR) fresult=cos(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"tan")) {
       if(type1==RPN_TYPE_SCALAR) fresult=tan(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"asin")) {
       if(type1==RPN_TYPE_SCALAR) fresult=asin(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"acos")) {
       if(type1==RPN_TYPE_SCALAR) fresult=acos(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"atan")) {
       if(type1==RPN_TYPE_SCALAR) fresult=atan(fval1);
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"int")) {
       if(type1==RPN_TYPE_SCALAR) fresult=floor(fval1);
     } else if(clStrcmp(op,"float")) {
@@ -646,8 +735,8 @@ static void rpn_opr(const char *op)
     // binary op
     val2=rpn_pop();
     val1=rpn_pop();
-    type1=rpn_get_type(val1);
-    type2=rpn_get_type(val2);
+    type1=rpn_get_value(val1,res1);
+    type2=rpn_get_value(val2,res2);
     if(type1==RPN_TYPE_SCALAR) fval1=atof(val1);
     if(type2==RPN_TYPE_SCALAR) fval2=atof(val1);
 

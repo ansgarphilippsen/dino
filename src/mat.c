@@ -16,6 +16,7 @@
 #define sqrtf(x) ((float)(sqrt((double)(x))))
 #endif
 
+#define MAT_NEW_EXTRACTION
 
 /**************************************************
 
@@ -513,11 +514,202 @@ int matLUbksb(double *aa,int *indx,double *b)
   return 0;
 }
 
+
+/*
+  float versions for extraction routines
+*/
+
+int matExtract1Df(const char *string, int dim, float *res)
+{
+  int i;
+  double v1[16];
+
+  if(matExtract1D(string,dim,v1)==-1)
+    return -1;
+  else
+    for(i=0;i<dim;i++)
+      res[i]=(float)v1[i];
+
+  return 0;
+}
+
+int matExtract2Df(const char *string, int dim1, int dim2, float *res)
+{
+  int i;
+  double r[128];
+
+  if(matExtract2D(string,dim1,dim2,r)==-1)
+    return -1;
+
+  for(i=0;i<dim1*dim2;i++)
+    res[i]=(float)r[i];
+
+  return 0;
+}
+
+/*
+  matrix extraction routines
+*/
+
+#ifdef MAT_NEW_EXTRACTION
+
+int matExtractMatrix(const char *s, int *d1, int *d2, double *res)
+{
+  int ret=-1;
+  if(matExtract1D(s,3,res)==0) {
+    (*d1)=3;
+    (*d2)=1;
+    ret=0;
+  } 
+  if(matExtract1D(s,4,res)==0) {
+    (*d1)=4;
+    (*d2)=1;
+    ret=0;
+  } 
+  if(matExtract2D(s,3,3,res)==0) {
+    (*d1)=3;
+    (*d2)=3;
+    ret=0;
+  }
+  if(matExtract2D(s,4,4,res)==0) {
+    (*d1)=4;
+    (*d2)=4;
+    ret=0;
+  }
+  return ret;
+}
+
+int matGetDim(const char *s,int *d1, int *d2)
+{
+  double res[16];
+  return matExtractMatrix(s,d1,d2,res);
+}
+
+static regmatch_t mat_pmatch_buf[20];
+static char mat_regex_string[1024];
+static char mat_regex_expr[1024];
+
+int matExtract1D(const char *string2, int dim, double *res)
+{
+  int i,j,ret;
+  regex_t preg;
+  regmatch_t *pmatch;
+  static char message[256];
+  static char *sub="([-0-9+.eE]*)";
+  char *expr=mat_regex_expr;
+  char *string=mat_regex_string;
+
+  pmatch=mat_pmatch_buf;
+
+  j=0;
+  for(i=0;i<clStrlen(string2);i++) {
+    if(!isspace(string2[i]))
+      string[j++]=string2[i];
+  }
+  string[j]='\0';
+
+  clStrcpy(expr,"[\\{]?");
+  for(i=0;i<dim;i++) {
+    clStrcat(expr,sub);
+    if(i+1<dim)
+      clStrcat(expr,",");
+  }
+  clStrcat(expr,"[\\}]?(.*)");
+
+  fprintf(stderr,"%s\n%s\n",string,expr);
+ 
+  ret=regcomp(&preg,expr,REG_EXTENDED);
+  if(ret>0) {
+    regerror(ret,&preg,message,256);
+    fprintf(stderr,"regcomp: %s\n",message);
+    return -1;
+  } else {
+    ret=regexec(&preg,string,dim+3,pmatch,0);
+    if(ret==REG_NOMATCH) {
+      regfree(&preg);
+      return -1;
+    } else {
+      for(i=0;i<dim;i++) {
+	res[i]=atof(clSubstr(string,pmatch[i+1].rm_so,pmatch[i+1].rm_eo-1));
+      }
+      regfree(&preg);
+      if(pmatch[i+1].rm_so!=pmatch[i+1].rm_eo) {
+	return -1;
+      }
+    }
+  }
+  return 0;
+}
+
+int matExtract2D(const char *string2, int dim2, int dim1, double *res)
+{
+  int i,j,k,ret;
+  regex_t preg;
+  regmatch_t *pmatch;
+  static char message[256];
+  static char *sub="([-0-9+.eE]*)";
+  char *expr=mat_regex_expr;
+  char *string=mat_regex_string;
+
+  pmatch=mat_pmatch_buf;
+  j=0;
+  for(i=0;i<clStrlen(string2);i++) {
+    if(!isspace(string2[i]))
+      string[j++]=string2[i];
+  }
+  string[j]='\0';
+
+  clStrcpy(expr,"[\\{]?");
+  for(k=0;k<dim2;k++) {
+    clStrcat(expr,"\\{");
+    for(i=0;i<dim1;i++) {
+      clStrcat(expr,sub);
+      if(i+1<dim1)
+	clStrcat(expr,",");
+    }
+    clStrcat(expr,"\\}");
+    if(k+1<dim2)
+      clStrcat(expr,",");
+  }
+  clStrcat(expr,"[\\}]?(.*)");
+
+  fprintf(stderr,"%s\n%s\n",string,expr);
+ 
+  ret=regcomp(&preg,expr,REG_EXTENDED);
+  if(ret>0) {
+    regerror(ret,&preg,message,256);
+    fprintf(stderr,"regcomp: %s\n",message);
+    return -1;
+  } else {
+    ret=regexec(&preg,string,dim1*dim2+3,pmatch,0);
+    if(ret==REG_NOMATCH) {
+      regfree(&preg);
+      return -1;
+    } else {
+      for(i=0;i<dim1*dim2;i++) {
+	res[i]=atof(clSubstr(string,pmatch[i+1].rm_so,pmatch[i+1].rm_eo-1));
+      }
+      regfree(&preg);
+      if(pmatch[i+1].rm_so!=pmatch[i+1].rm_eo) {
+	return -1;
+      }
+    }
+  }
+  return 0;
+}
+
+#else
+
+int matExtractMatrix(const char *string, int *d1, int *d2, double *res)
+{
+  return -1;
+}
+
 int matGetDim(const char *s,int *dd1, int *dd2)
 {
   int sp=0;
   int bc=0;
-  int d1=0,d2=0,d2s=-1;
+  int d0=0,d1=0,d2=0,d2s=-1;
 
   while(sp<strlen(s)) {
     if(s[sp]=='{') {
@@ -566,89 +758,6 @@ int matGetDim(const char *s,int *dd1, int *dd2)
   return 0;
 }
 
-/*
-  float versions for extraction routines
-*/
-
-int matExtract1Df(const char *string, int dim, float *res)
-{
-  int i;
-  double v1[16];
-
-  if(matExtract1D(string,dim,v1)==-1)
-    return -1;
-  else
-    for(i=0;i<dim;i++)
-      res[i]=(float)v1[i];
-
-  return 0;
-}
-
-int matExtract2Df(const char *string, int dim1, int dim2, float *res)
-{
-  int i;
-  double r[128];
-
-  if(matExtract2D(string,dim1,dim2,r)==-1)
-    return -1;
-
-  for(i=0;i<dim1*dim2;i++)
-    res[i]=(float)r[i];
-
-  return 0;
-}
-
-/*
-  matrix extraction routines
-*/
-//#define MAT_NEW_EXTRACTION
-#ifdef MAT_NEW_EXTRACTION
-
-int matExtract1D(const char *string, int dim, double *res)
-{
-  int i,ret;
-  regex_t preg;
-  regmatch_t *pmatch;
-  static char message[256];
-  static char *sub="([-0-9+. ]*)";
-  static char expr[1024];
-
-  pmatch=Ccalloc(dim+1,sizeof(regmatch_t));
-
-  clStrcpy(expr,sub);
-  for(i=1;i<dim;i++) {
-    clStrcat(expr,",");
-    clStrcat(expr,sub);
-  }
- 
-  ret=regcomp(&preg,expr,REG_EXTENDED);
-  if(ret>0) {
-    regerror(ret,&preg,message,256);
-    fprintf(stderr,"regcomp: %s\n",message);
-    return -1;
-  } else {
-    ret=regexec(&preg,string,5,pmatch,0);
-    if(ret==REG_NOMATCH) {
-      regfree(&preg);
-      Cfree(pmatch);
-      return -1;
-    } else {
-      for(i=0;i<dim;i++) {
-	res[i]=atof(clSubstr(string,pmatch[i+1].rm_so,pmatch[i+1].rm_eo-1));
-      }
-      regfree(&preg);
-      Cfree(pmatch);
-    }
-  }
-  return 0;
-}
-
-int matExtract2D(const char *string, int dim1, int dim2, double *res)
-{
-  return -1;
-}
-
-#else
 
 int matExtract1D(const char *string, int dim, double *res)
 {
@@ -1006,6 +1115,15 @@ int matfCopyVV(float *v1,float *v2)
   v2[0]=v1[0];
   v2[1]=v1[1];
   v2[2]=v1[2];
+  return 0;
+}
+
+int matCopyVV(double *v1,double *v2)
+{
+  v2[0]=v1[0];
+  v2[1]=v1[1];
+  v2[2]=v1[2];
+  v2[3]=v1[3];
   return 0;
 }
 
@@ -1634,5 +1752,35 @@ int matExtractVector(const char *s, int *count, float **result)
 
   return 0;
 
+}
+
+int matV3toV4(double *v3,double *v4)
+{
+  v4[0]=v3[0]; v4[1]=v3[1]; v4[2]=v3[2]; v4[3]=1.0;
+  return 0;
+}
+
+int matV4toV3(double *v4,double *v3)
+{
+  // normalize by 1.0/v4[3] ???
+  v3[0]=v4[0]; v3[1]=v4[1]; v3[2]=v4[2];
+  return 0;
+}
+
+int matM3toM4(double *m3,double *m4)
+{
+  m4[0]=m3[0]; m4[1]=m3[1]; m4[2]=m3[2]; m4[3]=0.0;
+  m4[4]=m3[3]; m4[5]=m3[4]; m4[6]=m3[5]; m4[7]=0.0;
+  m4[8]=m3[6]; m4[9]=m3[7]; m4[10]=m3[6]; m4[11]=0.0;
+  m4[12]=0.0; m4[13]=0.0; m4[14]=0.0; m4[15]=1.0;
+  return 0;
+}
+
+int matM4toM3(double *m4,double *m3)
+{
+  m3[0]=m4[0]; m3[1]=m4[1]; m3[2]=m4[2];
+  m3[3]=m4[4]; m3[4]=m4[5]; m3[5]=m4[6];
+  m3[6]=m4[8]; m3[7]=m4[8]; m3[8]=m4[10];
+  return 0;
 }
 

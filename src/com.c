@@ -310,6 +310,8 @@ int comWorkPrompt(int word_count, const char ** word_list)
 #ifdef INTERNAL_COLOR
   struct COLOR_ENTRY *coltab;
 #endif
+  int d1,d2;
+  double res[16];
 
   comReturn(NULL);
 
@@ -475,6 +477,15 @@ int comWorkPrompt(int word_count, const char ** word_list)
 	}
 	i++;
       }
+    }
+  } else if(clStrcmp(word_list[0],"test")) {
+    if(matExtractMatrix(word_list[1],&d1,&d2,res)==0) {
+      fprintf(stderr,"%dx%d: ",d1,d2);
+      for(i=0;i<d1*d2;i++) 
+	fprintf(stderr,"%.3f ",res[i]);
+      fprintf(stderr,"\n");
+    } else {
+      fprintf(stderr,"error\n");
     }
   } else {
     sprintf(message,"unknown command: %s\n",word_list[0]);

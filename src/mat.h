@@ -10,6 +10,10 @@ typedef struct MAT_WORD_LIST
   char word[MAT_MAX_WORD_COUNT][MAT_MAX_STRING_LENGTH];
 }matWordList;
 
+int matV3toV4(double *v3,double *v4);
+int matV4toV3(double *v3,double *v4);
+int matM3toM4(double *v3,double *v4);
+int matM4toM3(double *v3,double *v4);
 int matMultMV(double *m,double *v,double *r);
 int matMultVM(double *v,double *m, double *r);
 int matMultMVf(float *m,float *v,float *r);
@@ -28,6 +32,7 @@ int matInverse(double *m1, double *m2);
 int matLUdcmp(double *aa, int *indx, double *dd,double *r);
 int matLUbksb(double *aa,int *indx,double *b);
 int matGetDim(const char *s,int *d1, int *d2);
+int matExtractMatrix(const char *string, int *d1, int *d2, double *res);
 int matExtract1D(const char *string, int dim, double *res);
 int matExtract1Df(const char *string, int dim, float *res);
 int matExtract2D(const char *string, int dim1, int dim2, double *res);
@@ -44,6 +49,7 @@ float matfCalcNDot(float *v1, float *v2);
 int matfNormalize(float *v1, float *v2);
 int matCalcCircleM(float p1[3], float p2[3],float p3[3],float m[3]);
 int matfCopyVV(float *v1,float *v2);
+int matCopyVV(double *v1,double *v2);
 double matCalcLen(double *);
 float matfCalcLen(float *);
 int matfCalcDiff(float *, float *, float *);
