@@ -1591,7 +1591,7 @@ float dbmGetProperty(float *pos, struct DBM_RANGE *range)
 }
 ***************/
 
-int dbmGetMinMax(dbmNode *node, char *prop, float *min, float *max)
+int dbmGetMinMax(dbmNode *node, const char *prop, float *min, float *max)
 {
   (*min)=0.0;
   (*max)=0.0;

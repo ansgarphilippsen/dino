@@ -189,7 +189,7 @@ int dbmSplitPOV(const char *expr, char *prop, char *op, char *val);
 int dbmGetColorHash(const char *expr, double *r, double *g, double *b);
 
 float dbmGetProperty(float *pos, struct DBM_RANGE *r);
-int dbmGetMinMax(dbmNode *node, char *prop, float *min, float *max);
+int dbmGetMinMax(dbmNode *node, const char *prop, float *min, float *max);
 float dbmGetMin(dbmNode *node, char *prop);
 float dbmGetMax(dbmNode *node, char *prop);
 

@@ -953,11 +953,11 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       memcpy(render1,render2,sizeof(Render));
       memcpy(render2,render,sizeof(Render));
       if(render->cgfx_flag & CGFX_USE_RAD) {
-	render2->helix_width*=sp[0].rad;
-	render2->strand_width*=sp[0].rad;
-	render2->helix_thickness*=sp[0].rad;
-	render2->strand_thickness*=sp[0].rad;
-	render2->tube_width*=sp[0].rad;
+	render2->helix_width*=sp[i+1].rad;
+	render2->strand_width*=sp[i+1].rad;
+	render2->helix_thickness*=sp[i+1].rad;
+	render2->strand_thickness*=sp[i+1].rad;
+	render2->tube_width*=sp[i+1].rad;
       }
       if(render->mode==RENDER_HSC) {
 

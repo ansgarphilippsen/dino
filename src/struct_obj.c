@@ -76,10 +76,13 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
 	return -1;
       }
     } else {
+      // DEPRECATED
+      /*
       if(bw!=obj->render.bond_width) {
 	for(i=0;i<obj->atom_count;i++)
 	  obj->atom[i].prop.radius=obj->render.bond_width;
       }
+      */
       if(obj->render.mode==RENDER_HELIX ||
 	 obj->render.mode==RENDER_STRAND ||
 	 obj->render.mode==RENDER_STRAND2) {
@@ -362,6 +365,8 @@ int structObjSet(structObj *obj, Set *set, int flag)
   struct POV_VALUE *val;
   float r,g,b,r2,g2,b2;
   float rval,p[3],frac1,frac2,rval1,rval2;
+  float vmin,vmax;
+  char message[256];
 
   if(flag==0)
     return 0;
@@ -370,10 +375,49 @@ int structObjSet(structObj *obj, Set *set, int flag)
     return 0;
   }
 
+  /*
   if(set->range_flag) {
     rval1=atof(set->range.val1);
     rval2=atof(set->range.val2);
   }
+  */
+
+  if(set->range_flag) {
+    // get min and max
+    // if dataset is self
+    if(set->range.src==NULL) {
+      if(structGetMinMax(obj->node, set->range.prop,&vmin,&vmax)<0) {
+	sprintf(message,"\nerror: unknown range property %s",set->range.prop);
+	comMessage(message);
+	return -1;
+      }
+    } else {
+      if(dbmGetMinMax(set->range.src,set->range.prop,&vmin,&vmax)<0) {
+	sprintf(message,"\nerror: unknown range property %s",set->range.prop);
+	comMessage(message);
+	return -1;
+      }
+    }
+    if(clStrcmp(set->range.val1,"min"))
+      rval1=vmin;
+    else if(clStrcmp(set->range.val1,"max"))
+      rval1=vmax;
+    else
+      rval1=atof(set->range.val1);
+
+    if(clStrcmp(set->range.val2,"min"))
+      rval2=vmin;
+    else if(clStrcmp(set->range.val2,"max"))
+      rval2=vmax;
+    else
+      rval2=atof(set->range.val2);
+    
+    sprintf(message,"\nusing range of property %s from %g to %g",
+	    set->range.prop,rval1,rval2);
+    comMessage(message);
+  }
+
+
 
   for(pc=0;pc<set->pov_count;pc++) {
     if(clStrcmp(set->pov[pc].prop,"color") ||
@@ -1789,7 +1833,7 @@ int structObjGrab(structObj *obj, int wc, char **wl)
 
 #endif
 
-structObjDelete(structObj *obj)
+int structObjDelete(structObj *obj)
 {
   /*
     free all pointers associated with an object
@@ -1802,5 +1846,5 @@ structObjDelete(structObj *obj)
   Cfree(obj->atom_flag);
   if(obj->va.max>0)
     Cfree(obj->va.p);
-  
+  return 0;
 }

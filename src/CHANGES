@@ -3,7 +3,7 @@ added range flag clamp
 diameter of tube determined by tubew, not bw
 
 atom prop rad can be used to modify the hsc/tube rendering with render 
-flag radflag
+flag userad
 
 rewrote shell code completely!
 

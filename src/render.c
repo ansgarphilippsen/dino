@@ -856,9 +856,9 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"radflag")) {
+    } else if(!strcmp(prop,"userad")) {
       /********************
-	      intpol
+	      userad
       ********************/
       if(!strcmp(op,"!")) {
 	render->cgfx_flag&=(~CGFX_USE_RAD);
