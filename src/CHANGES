@@ -1,3 +1,7 @@
+added render nice/fast to geom
+
+fixed degenerate cylinders in povray output
+
 re-implemented spaceball and dialbox (both via xinput)
 
 added scaling for mouse, spaceball and dials to .dinorc file

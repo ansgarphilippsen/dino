@@ -15,8 +15,10 @@ GLint write_pov_vp[4];
 int write_pov_flag, write_pov_mode, write_pov_ver;
 
 
-#define epsilon 0.0
-#define dlim(v1,v2) (fabs(v1[0]-v2[0])<=epsilon && fabs(v1[1]-v2[1])<=epsilon && fabs(v1[2]-v2[2])<=epsilon)
+static int dlim(float *v1, float *v2) {
+  static float epsilon= 1e-5;
+  return (fabs(v1[0]-v2[0])<epsilon && fabs(v1[1]-v2[1])<epsilon && fabs(v1[2]-v2[2])<epsilon);
+}
 
 /*
   Utility funtions for basic POV elements
@@ -292,6 +294,7 @@ static int writePOVTriangle(FILE *f, transMat *transform,int mode, float ov1[3],
 static int writePOVCylinder(FILE *f, transMat *transform, int mode, float ov1[3], float c1[3], float ov2[3], float c2[3], char *rad, const char *mat, const char *tp, const char *fi, float *lim)
 {
   float v1[4],v2[4];
+  float epsilon = 1e-4;
 
   if(!writePOVTransform(transform,ov1,v1,1)) return 0;
   if(!writePOVTransform(transform,ov2,v2,1)) return 0;
@@ -300,7 +303,7 @@ static int writePOVCylinder(FILE *f, transMat *transform, int mode, float ov1[3]
   writePOVCheckLim(v2,lim);
 
   // check for deprecated cylinder
-  if(v1[0]==v2[0] && v1[1]==v2[1] && v1[2]==v2[2]) {
+  if(dlim(v1,v2)) {
     return 0;
   }
 
