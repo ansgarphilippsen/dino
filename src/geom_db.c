@@ -51,7 +51,7 @@ int geomCommand(struct DBM_GEOM_NODE *node,int wc, char **wl)
     comMessage(message);
     return -1;
   }
-  wl[0]=geom_return;
+  comReturn(geom_return);
   return 0;
 }
 
