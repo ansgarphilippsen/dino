@@ -42,8 +42,8 @@ arraystretch{1.3}
 \backslash 
 setlength
 \backslash 
-arrayrulewidth{0.4pt}
-\layout Chapter*
+arrayrulewidth{0.05mm}
+\layout Chapter
 
 Introduction
 \layout Standard
@@ -65,7 +65,7 @@ visualization is used for
 \layout Standard
 
 - picture generation to convey results to others
-\layout Chapter*
+\layout Chapter
 
 Results
 \layout Section
@@ -73,35 +73,61 @@ Results
 Overview
 \layout Standard
 
-The structural data is compacted/classed/grouped into five distinct 
+The diverse structural data has been classified into four distinct 
 \emph on 
 datasets
 \emph default 
-, build of basic data units (See table 
-\begin_inset LatexCommand \ref{datasets}
+, based on the 
+\emph on 
+basic data units
+\emph default 
+ they comprise:
+\layout Description
 
-\end_inset 
+structure Individual atoms and their organization into a macromolecular
+ structure 
+\layout Description
 
-).
- 
+scalar-field A regular three dimensional grid with a scalar value at each
+ grid-point
+\layout Description
+
+surface A molecular surface, approximated by a collection of triangles
+\layout Description
+
+topograph A rectangular two dimensional grid with a height value at each
+ grid point
+\layout Standard
+
+
 \emph on 
 Objects
 \emph default 
- serve as the visual interface to a dataset, with several different types
- of possible representation per dataset implemented as different object
- types.
+ serve as the visual interface to a dataset, constructed by a conversion
+ of the basic data units into a three dimensional representation.
+ Several different conversions may be implemented for a dataset, leading
+ to different representations of the same structural data.
+ Object can be extensively modified after creation; both processes are governed
+ by several factors, including properties from other dataset, as explained
+ in detail further below.
 \layout Standard
 
-The procedures to load, create, modify and explore a multitude of datasets
- and object has been implemented in a realtime interactive 3D visualization
+The ways and means to load a multitude of datasets, to create, modify and
+ display objects interactively, and to export the graphical representation
+ into several forms, has been implemented in a realtime 3D visualization
  program named DINO.
+\layout Section
+
+Datasets
 \layout Standard
 
-Each data unit consists of a set of attributes.
+- Each data unit consists of a set of attributes.
 \layout Standard
 
-Once an object is created, its graphical appearance, such as color or shape,
- can be modified.
+- Rigid body transformation of datasets
+\layout Standard
+
+- No size limitations
 \layout Standard
 
 \begin_float wide-tab 
@@ -367,28 +393,12 @@ Datasets
 
 The five datasets implemented in DINO.
 \end_float 
-\layout Standard
-
------
-\layout Standard
-
-- Compacting of structural data into one of four/five datasets
-\layout Standard
-
-- Convert/Interpret structural data into 3D objects
-\layout Standard
-
-- Modify objects based on data properties
-\layout Standard
-
-- Rigid body transformation of datasets
-\layout Standard
-
-- Output of resulting visual representation into several forms
-\layout Standard
-
-- No size limitations
 \layout Section
+
+
+\begin_inset LatexCommand \label{objects}
+
+\end_inset 
 
 Objects
 \layout Standard
@@ -418,6 +428,12 @@ The object units are converted to 3D primitives, based on rendering attributes
 As an object is build from a dataset, a conversion from the data units into
  3D elements is performed, retaining a link between the 3D elements and
  the data units.
+ 
+\layout Standard
+
+i) a selection mechanism, specifying which basic data units are used for
+ the conversion, and ii) by object properties, controlling adjustable conversion
+ parameters.
  
 \layout Section
 
