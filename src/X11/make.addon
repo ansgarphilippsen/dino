@@ -1,0 +1,4 @@
+ifdef READLINE
+GUILIBS = -lreadline -lhistory -ltermcap
+endif
+
