@@ -110,7 +110,7 @@ pagestyle{plain}
 
 
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -2891,10 +2891,10 @@ collapsed false
 \begin_inset  Tabular
 <lyxtabular version="3" rows="20" columns="4">
 <features>
-<column alignment="left" valignment="center" width="15mm">
+<column alignment="left" valignment="center" leftline="true" width="15mm">
 <column alignment="left" valignment="center" leftline="true" width="84mm">
 <column alignment="left" valignment="center" leftline="true" width="15mm">
-<column alignment="left" valignment="center" leftline="true" width="20mm">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="20mm">
 <row topline="true" bottomline="true">
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -2935,6 +2935,8 @@ default
 
 \layout Standard
 
+
+\family typewriter 
 bg
 \end_inset 
 </cell>
@@ -2969,6 +2971,8 @@ black
 
 \layout Standard
 
+
+\family typewriter 
 center
 \end_inset 
 </cell>
@@ -3003,6 +3007,8 @@ position
 
 \layout Standard
 
+
+\family typewriter 
 depthc
 \end_inset 
 </cell>
@@ -3037,6 +3043,8 @@ false
 
 \layout Standard
 
+
+\family typewriter 
 dither
 \end_inset 
 </cell>
@@ -3071,6 +3079,8 @@ false
 
 \layout Standard
 
+
+\family typewriter 
 eyedist
 \end_inset 
 </cell>
@@ -3105,6 +3115,8 @@ float
 
 \layout Standard
 
+
+\family typewriter 
 far
 \end_inset 
 </cell>
@@ -3139,6 +3151,8 @@ float
 
 \layout Standard
 
+
+\family typewriter 
 fixz
 \end_inset 
 </cell>
@@ -3173,6 +3187,8 @@ true
 
 \layout Standard
 
+
+\family typewriter 
 fogc
 \end_inset 
 </cell>
@@ -3207,6 +3223,8 @@ black
 
 \layout Standard
 
+
+\family typewriter 
 fogm
 \end_inset 
 </cell>
@@ -3253,6 +3271,8 @@ linear
 
 \layout Standard
 
+
+\family typewriter 
 fogd
 \end_inset 
 </cell>
@@ -3293,6 +3313,8 @@ float
 
 \layout Standard
 
+
+\family typewriter 
 fogo
 \end_inset 
 </cell>
@@ -3329,6 +3351,8 @@ float
 
 \layout Standard
 
+
+\family typewriter 
 fov
 \end_inset 
 </cell>
@@ -3363,6 +3387,8 @@ float
 
 \layout Standard
 
+
+\family typewriter 
 mmat
 \end_inset 
 </cell>
@@ -3396,6 +3422,8 @@ Modelview, includes rotation and translation
 
 \layout Standard
 
+
+\family typewriter 
 near
 \end_inset 
 </cell>
@@ -3430,6 +3458,8 @@ float
 
 \layout Standard
 
+
+\family typewriter 
 rot
 \end_inset 
 </cell>
@@ -3464,6 +3494,8 @@ identity
 
 \layout Standard
 
+
+\family typewriter 
 rtc
 \end_inset 
 </cell>
@@ -3497,6 +3529,8 @@ Rotation, Translation and Center of Rotation in one
 
 \layout Standard
 
+
+\family typewriter 
 slabw
 \end_inset 
 </cell>
@@ -3531,6 +3565,8 @@ float
 
 \layout Standard
 
+
+\family typewriter 
 trans
 \end_inset 
 </cell>
@@ -3565,6 +3601,8 @@ vector
 
 \layout Standard
 
+
+\family typewriter 
 view
 \end_inset 
 </cell>
@@ -3710,21 +3748,56 @@ wide true
 collapsed true
 
 \layout Standard
-\line_top 
+\line_top \align center 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="13" columns="4">
+<lyxtabular version="3" rows="18" columns="4">
 <features>
-<column alignment="left" valignment="center" leftline="true" width="15mm">
-<column alignment="left" valignment="center" leftline="true" width="79mm">
+<column alignment="left" valignment="center" leftline="true" width="20mm">
+<column alignment="left" valignment="center" leftline="true" width="90mm">
 <column alignment="left" valignment="center" leftline="true" width="15mm">
 <column alignment="left" valignment="center" leftline="true" rightline="true" width="15mm">
+<row topline="true" bottomline="true">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Light Properties
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
 <row topline="true" bottomline="true">
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
+
+\family typewriter 
 Property
 \end_inset 
 </cell>
@@ -3759,6 +3832,8 @@ default other
 
 \layout Standard
 
+
+\family typewriter 
 on 
 \shape italic 
 or
@@ -3797,6 +3872,8 @@ off
 
 \layout Standard
 
+
+\family typewriter 
 global 
 \shape italic 
 or
@@ -3836,6 +3913,8 @@ global
 
 \layout Standard
 
+
+\family typewriter 
 pos
 \end_inset 
 </cell>
@@ -3876,6 +3955,8 @@ pos
 
 \layout Standard
 
+
+\family typewriter 
 amb
 \end_inset 
 </cell>
@@ -3911,6 +3992,8 @@ Ambient lighting contribution, either a grayscale value or an rgb triplet
 
 \layout Standard
 
+
+\family typewriter 
 diff
 \end_inset 
 </cell>
@@ -3946,6 +4029,8 @@ Diffuse lighting contribution, either a grayscale value or an rgb triplet
 
 \layout Standard
 
+
+\family typewriter 
 spec
 \end_inset 
 </cell>
@@ -3981,6 +4066,8 @@ Specular hilight contribution, either a grayscale value or an rgb triplet
 
 \layout Standard
 
+
+\family typewriter 
 kc
 \end_inset 
 </cell>
@@ -4015,6 +4102,8 @@ Constant attenuation factor
 
 \layout Standard
 
+
+\family typewriter 
 kl
 \end_inset 
 </cell>
@@ -4049,6 +4138,8 @@ Linear attenuation factor
 
 \layout Standard
 
+
+\family typewriter 
 kq
 \end_inset 
 </cell>
@@ -4083,6 +4174,8 @@ Quadratic attenuation factor
 
 \layout Standard
 
+
+\family typewriter 
 spotc
 \end_inset 
 </cell>
@@ -4117,6 +4210,8 @@ Spotlight cutoff angle from 0-90 degrees, or 180 to turn spotlight off
 
 \layout Standard
 
+
+\family typewriter 
 spote
 \end_inset 
 </cell>
@@ -4151,6 +4246,8 @@ spot exponent
 
 \layout Standard
 
+
+\family typewriter 
 spotd
 \end_inset 
 </cell>
@@ -4179,6 +4276,142 @@ spot direction
 \end_inset 
 </cell>
 </row>
+<row topline="true" bottomline="true">
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Clipping Plane Properties
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Property
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Description
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Default
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+pos
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Position of the clipping plane
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+{0,0,0}
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+dir
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Direction of the plane normal
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+{0,0,1}
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
 </lyxtabular>
 
 \end_inset 
@@ -4191,7 +4424,7 @@ spot direction
 
 \end_inset 
 
-Light Properties
+Light and Clipping Plane Properties
 \end_inset 
 
 
@@ -4242,7 +4475,7 @@ CLIP set PROP1[,PROP2 ...]
 \layout Standard
 
 Sets on or more clipping plane properties (seet table 
-\begin_inset LatexCommand \vref{clip_prop}
+\begin_inset LatexCommand \vref{light_prop}
 
 \end_inset 
 
@@ -4256,7 +4489,7 @@ CLIP get PROP
 \layout Standard
 
 Retrieves a clipping plane property (see table 
-\begin_inset LatexCommand \vref{clip_prop}
+\begin_inset LatexCommand \vref{light_prop}
 
 \end_inset 
 
@@ -4270,117 +4503,6 @@ CLIP grab INPUTDEVICE
 \layout Standard
 
 Routes all transformations from INPUTDEVICE to specified clipping plane.
-\layout Standard
-
-
-\begin_inset Float table
-placement htbp
-wide true
-collapsed true
-
-\layout Standard
-\align center 
-
-\begin_inset  Tabular
-<lyxtabular version="3" rows="3" columns="3">
-<features>
-<column alignment="left" valignment="top" leftline="true" width="0pt">
-<column alignment="left" valignment="top" leftline="true" width="0pt">
-<column alignment="center" valignment="top" leftline="true" rightline="true" width="0pt">
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Property
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Explanation
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Default
-\end_inset 
-</cell>
-</row>
-<row topline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-pos
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Position of the clipping plane
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-{0,0,0}
-\end_inset 
-</cell>
-</row>
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-dir
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Direction of the plane normal
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-{0,0,1}
-\end_inset 
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset 
-
-
-\layout Caption
-
-
-\begin_inset LatexCommand \label{clip_prop}
-
-\end_inset 
-
-Clipping Plane Properties
-\end_inset 
-
-
 \layout Standard
 
 
@@ -4430,8 +4552,17 @@ Objects
 \layout Standard
 
 Objects are three dimensional representations of datasets.
- They are constructed from the data-units, resulting in a collection of
- 3D primitives which are displayed in the graphics window.
+ They are constructed from the data-units with the dataset command 
+\family typewriter 
+new
+\family default 
+ (see
+\begin_inset LatexCommand \vpageref{gen_new}
+
+\end_inset 
+
+), resulting in a collection of 3D primitives which are displayed in the
+ graphics window.
  Objects are characterized by:
 \layout Description
 
@@ -4482,7 +4613,6 @@ OBJ
 DS
 \family default 
 ), separated with a dot.
- The command and its parameters follow.
 \layout Subsection
 
 
@@ -4545,9 +4675,7 @@ or
 not
 \family default 
  (unary).
-\layout Standard
-
-There are three types of selection statements, 
+ There are three types of selection statements, 
 \emph on 
 property
 \emph default 
@@ -4559,10 +4687,16 @@ within
 \emph on 
 object
 \emph default 
-:
+:, explained in more detail below.
+ See also the attempt at a recursive definition 
+\begin_inset LatexCommand \vpageref{sel_rec_def}
+
+\end_inset 
+
+.
 \layout Subsubsection
 
-Property
+Selection by property
 \layout Syntax
 
 PROP OP VALUELIST
@@ -4759,7 +4893,7 @@ Comparison operators for selection statement
 
 \layout Subsubsection
 
-Within
+Selection within a distance
 \layout Syntax
 
 DIST <> TARGETLIST
@@ -4815,7 +4949,7 @@ any
  of the object elements .
 \layout Subsubsection
 
-Object
+Selection based on other objects
 \layout Syntax
 
 OBJLIST
@@ -4825,6 +4959,174 @@ This statement contains one or more (comma separated) object names of the
  dataset itself.
  The selection is true if any dataset element that is queried is contained
  within one of the objects.
+\layout Standard
+
+
+\begin_inset Float figure
+placement htbp
+wide true
+collapsed false
+
+\layout Standard
+\line_top \align center 
+
+\begin_inset Minipage
+position 1
+inner_position 0
+height "0pt"
+width "100text%"
+collapsed true
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+small
+\backslash 
+tt
+\end_inset 
+
+
+\layout Standard
+
+SELECTION := STATEMENT
+\layout Standard
+
+\SpecialChar ~
+STATEMENT := STATEMENT or STATEMENT
+\layout Standard
+
+\SpecialChar ~
+STATEMENT := STATEMENT and STATEMENT
+\layout Standard
+
+\SpecialChar ~
+STATEMENT := (STATEMENT)
+\layout Standard
+
+\SpecialChar ~
+STATEMENT := not STATEMENT
+\layout Standard
+
+\SpecialChar ~
+STATEMENT := PROPSTAT | WITHINSTAT | OBJSTAT
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+PROPSTAT := PROP OP VALUELIST
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+PROP := one of the selectable properties
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+OP := one of = != < <= > >=
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+VALUELIST := VALUE[,VALUE ...]
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+VALUE := simple string or number
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+VALUE := RANGE
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+RANGE := minimum:maximum
+\layout Standard
+
+\SpecialChar ~
+WITHINSTAT := DIST <> TARGETLIST
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+DIST := number in 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+AA
+\end_inset 
+
+
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+TARGETLIST := TARGET[,TARGET ...]
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+TARGET:= POINT | DSOBJ
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+POINT := {x,y,z}
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+DSOBJ := .DS.OBJ - an existing object in the target or another dataset
+\layout Standard
+
+\SpecialChar ~
+OBJSTAT := OBJ[,OBJ]
+\layout Standard
+
+\SpecialChar ~
+\SpecialChar ~
+OBJ := an existing object in the target dataset 
+\end_inset 
+
+
+\layout Standard
+\line_bottom \align center 
+Recursive Definition of Selection
+\begin_inset LatexCommand \label{sel_rec_def}
+
+\end_inset 
+
+
+\end_inset 
+
+
 \layout Subsection
 
 Ranges
@@ -5231,21 +5533,37 @@ NEW
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
+\line_top \align center 
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+renewcommand{
+\backslash 
+arraystretch}{2.0}
+\layout Standard
+
+\backslash 
+small
+\end_inset 
 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="23" columns="5">
 <features>
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="81mm">
-<column alignment="left" valignment="center" rightline="true" width="16mm">
-<column alignment="left" valignment="center" rightline="true" width="15mm">
-<column alignment="left" valignment="center" rightline="true" width="10mm">
-<column alignment="left" valignment="center" rightline="true" width="8mm">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="90mm">
+<column alignment="center" valignment="center" rightline="true" width="0pt">
+<column alignment="center" valignment="center" rightline="true" width="0pt">
+<column alignment="center" valignment="center" rightline="true" width="0pt">
+<column alignment="center" valignment="center" rightline="true" width="0pt">
 <row topline="true" bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
@@ -5287,16 +5605,28 @@ Mode
 </cell>
 </row>
 <row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-Protein Data Bank coordinate file
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+Protein Data Bank coordinate file
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 www.rcsb.org
 \end_inset 
 </cell>
@@ -5338,16 +5668,34 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-X-PLOR v3.x coordinate file
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+X-PLOR v3.x coordinate
 \family typewriter 
 \size small 
+ file
+\hfill 
+
+\family default 
+\size default 
+ 
+\family typewriter 
+\size small 
+
+\newline 
 atb.csb.yale.edu/xplor/
 \end_inset 
 </cell>
@@ -5389,16 +5737,28 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-CNS v1.0 coordinate file
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+CNS v1.0 coordinate file
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 cns.csb.yale.edu
 \end_inset 
 </cell>
@@ -5440,15 +5800,27 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
 
 CHARMM coordinate file
 \family typewriter 
 \size small 
 
+\hfill 
+ 
 \newline 
 yuri.harvard.edu
 \end_inset 
@@ -5491,16 +5863,34 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-MEAD coordinate file
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+MEAD coordinate
 \family typewriter 
 \size small 
+ file
+\hfill 
+
+\family default 
+\size default 
+ 
+\family typewriter 
+\size small 
+
+\newline 
 www.scripps.edu/bashford
 \end_inset 
 </cell>
@@ -5542,10 +5932,20 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
 
 Special BD Trajectory format
 \end_inset 
@@ -5588,16 +5988,28 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-electron density or mask from the CCP4 suite
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+electron density or mask from the CCP4 suite
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 www.dl.ac.uk/CCP/CCP4/
 \end_inset 
 </cell>
@@ -5639,16 +6051,28 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-X-PLOR v3.x electron density or mask
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+X-PLOR v3.x electron density or mask
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 atb.csb.yale.edu/xplor/
 \end_inset 
 </cell>
@@ -5690,13 +6114,34 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
 CNS v1.0 electron density or mask
+\family typewriter 
+\size small 
+
+\hfill 
+
+\size default 
+ 
+\size small 
+
 \newline 
+
+\size default 
 cns.csb.yale.edu
 \end_inset 
 </cell>
@@ -5738,12 +6183,30 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
 UHBD grid file
+\hfill 
+
+\family typewriter 
+\size small 
+ 
+\family default 
+\size default 
+
 \newline 
 
 \family typewriter 
@@ -5789,16 +6252,28 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-CHARMM electrostatic potential
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+CHARMM electrostatic potential
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 yuri.harvard.edu
 \end_inset 
 </cell>
@@ -5840,16 +6315,28 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-MEAD electrostatic potential
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+MEAD electrostatic potential
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 www.scripps.edu/bashford
 \end_inset 
 </cell>
@@ -5891,16 +6378,28 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-DELPHI/INSIGHTII electrostatic potential
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+DELPHI/INSIGHTII electrostatic potential
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 trantor.bioc.columbia.edu/delphi/
 \end_inset 
 </cell>
@@ -5942,16 +6441,26 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
 
 fixed (64
 \begin_inset Formula $^{3}$
 \end_inset 
 
-) DELPHI electrostatic potential (i.e.
+) DELPHI potential (i.e.
  as output from GRASP)
 \end_inset 
 </cell>
@@ -5993,10 +6502,20 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
 
 simple DINO scalar field
 \end_inset 
@@ -6039,15 +6558,27 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
 
 X-PLOR v3.x electron density or mask (ASCII)
 \family typewriter 
 \size small 
 
+\hfill 
+ 
 \newline 
 atb.csb.yale.edu/xplor/
 \end_inset 
@@ -6090,13 +6621,36 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
 CNS v1.0 electron density or mask (ASCII)
+\family typewriter 
+\size small 
+
+\hfill 
+
+\family default 
+\size default 
+ 
+\family typewriter 
+\size small 
+
 \newline 
+
+\size default 
 cns.csb.yale.edu
 \end_inset 
 </cell>
@@ -6138,16 +6692,34 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-MSMS surface 
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+MSMS surface
 \family typewriter 
 \size small 
+
+\hfill 
+
+\family default 
+\size default 
+ 
+\family typewriter 
+\size small 
+
+\newline 
 www.scripps.edu/pub/olson-web/people/sanner
 \end_inset 
 </cell>
@@ -6189,16 +6761,28 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-MSP surface
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+MSP surface
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 www.biohedron.com
 \end_inset 
 </cell>
@@ -6240,16 +6824,28 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-GRASP surface
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+GRASP surface
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 trantor.bioc.columbia.edu/grasp/
 \end_inset 
 </cell>
@@ -6291,16 +6887,28 @@ bin
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
 
-ADS surface
-\newline 
 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
+
+ADS surface
 \family typewriter 
 \size small 
+
+\hfill 
+ 
+\newline 
 www.embl-heidelberg.de/~gabdoull/ads/
 \end_inset 
 </cell>
@@ -6342,10 +6950,20 @@ asc
 </cell>
 </row>
 <row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="minipage">
 \begin_inset Text
 
 \layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+vspace{-2mm}
+\end_inset 
 
 greyscale TIFF image
 \end_inset 
@@ -6393,7 +7011,7 @@ n.a.
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{dbm_load}
 
@@ -6516,6 +7134,11 @@ INPUTDEVICE
 \layout RefEntry
 
 new
+\begin_inset LatexCommand \label{gen_new}
+
+\end_inset 
+
+
 \layout Syntax
 
 \SpecialChar ~
@@ -6524,7 +7147,7 @@ new
 .DS new [-name N][-type T][-set SET_EXPR][-sel SELECT_EXPR]
 \layout Standard
 
-Creates a new object.
+Creates a new object from the dataset.
  If no name is given with 
 \family typewriter 
 -name
@@ -6606,10 +7229,15 @@ SELECT_EXPR
 *
 \family default 
  will remove all restrictions.
- This command does not act cumulatively.
+ This command does 
+\emph on 
+not
+\emph default 
+ act cumulatively, ie the restriction is removed prior to each restrict
+ command.
 \layout RefEntry
 
-rot
+rotx roty rotz
 \layout Syntax
 
 .DS (rotx | roty | rotz) ANGLE
@@ -6712,7 +7340,7 @@ The syntax of the selection is given in section
 .
 \layout RefEntry
 
-trans
+transx transy transz
 \layout Syntax
 
 .DS (transx | transy | transz) VALUE
