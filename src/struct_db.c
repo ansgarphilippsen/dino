@@ -43,13 +43,13 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
   node->obj_max=64;
   node->obj=Ccalloc(node->obj_max,sizeof(structObj));
   if(node->obj==NULL) {
-    sprintf(message,"\nmemory error in structNewNode");
+    sprintf(message,"memory error in structNewNode\n");
     comMessage(message);
     return -1;
   }
   node->obj_flag=Ccalloc(node->obj_max,sizeof(int));
   if(node->obj_flag==NULL) {
-    sprintf(message,"\nmemory error in structNewNode");
+    sprintf(message,"memory error in structNewNode\n");
     comMessage(message);
     return -1;
   }
@@ -157,12 +157,12 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     return structComSet(node,wc-1,wl+1);
   } else if(!strcmp(wl[0],"copy") ||
 	    !strcmp(wl[0],"cp")) {
-    sprintf(message,"\n%s: copy not available",node->name);
+    sprintf(message,"%s: copy not available\n",node->name);
     comMessage(message);
     return -1;
   } else if(!strcmp(wl[0],"move") ||
 	    !strcmp(wl[0],"mv")) {
-    sprintf(message,"\n%s: move not available",node->name);
+    sprintf(message,"%s: move not available\n",node->name);
     comMessage(message);
     return -1;
   } else if(!strcmp(wl[0],"restrict")) {
@@ -180,7 +180,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     } else if(wc==2) {
       node->frame+=atoi(wl[1]);
     } else {
-      sprintf(message,"\ntoo many parameters: usage: step [n]");
+      sprintf(message,"too many parameters: usage: step [n]\n");
       comMessage(message);
       return -1;
     }
@@ -192,7 +192,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"play")) {
     if(!node->trj_flag) {
-      sprintf(message,"\n%s: no trajectory loaded",node->name);
+      sprintf(message,"%s: no trajectory loaded\n",node->name);
       comMessage(message);
       return -1;
     } else {
@@ -200,7 +200,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     }
   } else if(!strcmp(wl[0],"stop")) {
     if(!node->trj_flag) {
-      comMessage("\nno trajectory present");
+      comMessage("no trajectory present\n");
       return -1;
     }
     comPlay((dbmNode *)node,COM_PLAY_OFF);
@@ -209,7 +209,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"grab")) {
     if(wc!=2) {
-      sprintf(message,"\nSyntax: grab devicename");
+      sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
     } else {
       if(comGrab(&node->transform,wl[1])<0)
@@ -237,7 +237,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"fix")) {
     if(wc>1) {
-      sprintf(message,"\nwarning: fix: superfluous parameter ignored");
+      sprintf(message,"warning: fix: superfluous parameter ignored\n");
       comMessage(message);
     }
     structFix(node);
@@ -246,54 +246,54 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"rotx")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after rotx");
+      comMessage("error: missing value after rotx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"roty")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after roty");
+      comMessage("error: missing value after roty\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"rotz")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after rotz");
+      comMessage("error: missing value after rotz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transx")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transx");
+      comMessage("error: missing value after transx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transy")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transy");
+      comMessage("error: missing value after transy\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transz")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transz");
+      comMessage("error: missing value after transz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"center")) {
     if(wc<2) {
-      sprintf(message,"\nmissing value for center");
+      sprintf(message,"missing value for center\n");
       comMessage(message);
       return -1;
     }
     if(matExtract1D(wl[1],3,v)!=0) {
-      sprintf(message,"\nerror in vector");
+      sprintf(message,"error in vector\n");
       comMessage(message);
       return -1;
     }
@@ -303,36 +303,36 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"connect")) {
     if(wc!=3) {
-      sprintf(message,"\nsyntax: .struct connect ATOM1 ATOM2");
+      sprintf(message,"syntax: .struct connect ATOM1 ATOM2\n");
       comMessage(message);
       return -1;
     }
     return structComConnect(node,wl[1],wl[2]);
   } else if(!strcmp(wl[0],"reconnect")) {
     if(wc==1) {
-      sprintf(message,"\nmissing parameter");
+      sprintf(message,"missing parameter\n");
       comMessage(message);
       return -1;
     } else if(wc==2) {
       if(!strcmp(wl[1],"ncb")) {
 	structReconnectNC(node);
       } else {
-	sprintf(message,"\nunknown parameter: %s",wl[1]);
+	sprintf(message,"unknown parameter: %s\n",wl[1]);
 	comMessage(message);
 	return -1;
       }
     } else {
-      sprintf(message,"\ntoo many words");
+      sprintf(message,"too many words\n");
       comMessage(message);
       return -1;
     }
   } else if(!strcmp(wl[0],"cell")) {
     if(node->xtal==NULL) {
-      comMessage("\nno crystallographic info available");
+      comMessage("no crystallographic info available\n");
       return -1;
     }
     if(wc==1) {
-      sprintf(message,"\n%s %f.2 %f.2 %f.2  %f.2 %f.2 %f.2",
+      sprintf(message,"%s %f.2 %f.2 %f.2  %f.2 %f.2 %f.2\n",
 	      node->xtal->space_group_name,
 	      node->xtal->a, node->xtal->b, node->xtal->c,
 	      node->xtal->alpha, node->xtal->beta, node->xtal->gamma);
@@ -345,11 +345,11 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
 	node->show_cell=0;
 	comRedraw();
       } else {
-	sprintf(message,"\nerror: unknown cell command '%s'",wl[1]);
+	sprintf(message,"error: unknown cell command '%s'\n",wl[1]);
       }
     }
   } else {
-    sprintf(message,"\n%s: unknown command %s",node->name,wl[0]);
+    sprintf(message,"%s: unknown command %s\n",node->name,wl[0]);
     comMessage(message);
     return -1;
   }
@@ -379,18 +379,18 @@ int structComNew(dbmStructNode *node, int wc, char **wl)
   for(i=0;i<co.param_count;i++) {
     if(co.param[i].p==NULL) {
       if(co.param[i].wc!=0) {
-	comMessage("\nerror: new: expected an argument beginning with -"); 
+	comMessage("error: new: expected an argument beginning with -\n"); 
 	ret=-1;
 	break;
       }
     } else if(clStrcmp(co.param[i].p,"name") || 
 	      clStrcmp(co.param[i].p,"n")) {
       if(co.param[i].wc<1) {
-	comMessage("\nerror: new: missing value for -name");
+	comMessage("error: new: missing value for -name\n");
 	ret=-1;
 	break;
       } else if(co.param[i].wc>1) {
-	comMessage("\nerror: new: too many values for -name");
+	comMessage("error: new: too many values for -name\n");
 	ret=-1;
 	break;
       } else {
@@ -399,11 +399,11 @@ int structComNew(dbmStructNode *node, int wc, char **wl)
     } else if(clStrcmp(co.param[i].p,"type") ||
 	      clStrcmp(co.param[i].p,"t")) {
       if(co.param[i].wc<1) {
-	comMessage("\nerror: new: missing value for -type");
+	comMessage("error: new: missing value for -type\n");
 	ret=-1;
 	break;
       } else if(co.param[i].wc>1) {
-	comMessage("\nerror: new: too many values for -type");
+	comMessage("error: new: too many values for -type\n");
 	ret=-1;
 	break;
       } else {
@@ -414,7 +414,7 @@ int structComNew(dbmStructNode *node, int wc, char **wl)
 	} else if(clStrcmp(co.param[i].wl[0],"nbond")) { 
 	  type=STRUCT_NBOND;
 	} else {
-	  clStrcpy(message,"\nerror: new: unknown type ");
+	  clStrcpy(message,"error: new: unknown type \n");
 	  clStrncat(message,co.param[i].wl[0],100);
 	  comMessage(message);
 	  ret=-1;
@@ -437,7 +437,7 @@ int structComNew(dbmStructNode *node, int wc, char **wl)
       }
       sel_flag=1;
     } else {
-      clStrcpy(message,"\nunknown paramater ");
+      clStrcpy(message,"unknown paramater \n");
       clStrncat(message,co.param[i].p,100);
       comMessage(message);
       ret=-1;
@@ -489,7 +489,7 @@ int structComGet(dbmStructNode *node, int wc, char **wl)
   int i;
 
   if(wc==0) {
-    comMessage("\nerror: get: missing property");
+    comMessage("error: get: missing property\n");
     return -1;
   }
   for(i=0;i<wc;i++)
@@ -527,11 +527,11 @@ int structComRestrict(dbmStructNode *node, int wc, char **wl)
 
   // output how many atoms were flaged
   if(c==0)
-    sprintf(message,"\nall atoms unrestricted");
+    sprintf(message,"all atoms unrestricted\n");
   else if(c==node->atom_count)
-    sprintf(message,"\nrestriction affects ALL of %d atoms",node->atom_count);
+    sprintf(message,"restriction affects ALL of %d atoms\n",node->atom_count);
   else
-    sprintf(message,"\nrestriction affects %d of %d atoms",c,node->atom_count);
+    sprintf(message,"restriction affects %d of %d atoms\n",c,node->atom_count);
   comMessage(message);
 
   selectDelete(&sel);
@@ -611,18 +611,18 @@ int structSet(dbmStructNode *node, Set *s)
     } else if(clStrcmp(s->pov[pc].prop,"frame")) {
       s->pov[pc].id=STRUCT_PROP_FRAME;
     } else {
-      comMessage("\nerror: set: unknown property ");
+      comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].op!=POV_OP_EQ && s->pov[pc].id!=STRUCT_PROP_TFAST) {
-      comMessage("\nerror: set: expected operator = for property ");
+      comMessage("error: set: expected operator = for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     op=s->pov[pc].op;
     if(s->pov[pc].val_count>1 && s->pov[pc].id!=STRUCT_PROP_NCI) {
-      comMessage("\nerror: set: expected only one value for property ");
+      comMessage("error: set: expected only one value for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
@@ -633,7 +633,7 @@ int structSet(dbmStructNode *node, Set *s)
     switch(s->pov[pc].id) {
     case STRUCT_PROP_ROT:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property rot");
+	comMessage("error: set: unexpected range in property rot\n");
 	return -1;
       }
       if(transSetRot(&node->transform,val->val1)<0)
@@ -641,7 +641,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_TRANS:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property trans");
+	comMessage("error: set: unexpected range in property trans\n");
 	return -1;
       }
       if(transSetTra(&node->transform,val->val1)<0)
@@ -649,7 +649,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_RTC:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property rtc");
+	comMessage("error: set: unexpected range in property rtc\n");
 	return -1;
       }
       if(transSetAll(&node->transform,val->val1)<0)
@@ -658,11 +658,11 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_RCEN:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property rcen");
+	comMessage("error: set: unexpected range in property rcen\n");
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v1)!=0) {
-	comMessage("\nerror in vector: ");
+	comMessage("error in vector: \n");
 	comMessage(val->val1);
 	return -1;
       }   
@@ -674,7 +674,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_SMODE:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property smode");
+	comMessage("error: set: unexpected range in property smode\n");
 	return -1;
       }
       if(clStrcmp(val->val1,"atom")) {
@@ -682,14 +682,14 @@ int structSet(dbmStructNode *node, Set *s)
       } else if(clStrcmp(val->val1,"residue")) {
 	node->smode=SEL_RESIDUE;
       } else {
-	comMessage("\nerror: unknown smode ");
+	comMessage("error: unknown smode \n");
 	comMessage(val->val1);
 	return -1;
       }
       break;
     case STRUCT_PROP_RTYPE:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property rtype");
+	comMessage("error: set: unexpected range in property rtype\n");
 	return -1;
       }
       if(clStrcmp(val->val1,"coil")) {
@@ -699,7 +699,7 @@ int structSet(dbmStructNode *node, Set *s)
       } else if (clStrcmp(val->val1,"strand")) {
 	rt=STRUCT_RTYPE_STRAND;
       } else {
-	comMessage("\nunknown rtype: ");
+	comMessage("unknown rtype: \n");
 	comMessage(val->val1);
 	return -1;
       }
@@ -713,7 +713,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_NCI:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property nci");
+	comMessage("error: set: unexpected range in property nci\n");
 	return -1;
       }
 
@@ -728,7 +728,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_RAD:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property vdwr");
+	comMessage("error: set: unexpected range in property vdwr\n");
 	return -1;
       }
 
@@ -741,11 +741,11 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_COLOR:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property color");
+	comMessage("error: set: unexpected range in property color\n");
 	return -1;
       }
       if(comGetColor(val->val1,&r,&g,&b)<0) {
-	comMessage("\nerror: set: unknown color ");
+	comMessage("error: set: unknown color \n");
 	comMessage(val->val1);
 	return -1;
       }
@@ -768,7 +768,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_TFAST:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property tfast");
+	comMessage("error: set: unexpected range in property tfast\n");
 	return -1;
       }
       if(op==POV_OP_NOT) {
@@ -776,35 +776,35 @@ int structSet(dbmStructNode *node, Set *s)
       } else if(op==POV_OP_NN) {
 	node->trj_fast=1;
       } else {
-	comMessage("\nsyntax error with property tfast");
+	comMessage("syntax error with property tfast\n");
 	return -1;
       }
       break;
     case STRUCT_PROP_FRAME:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property tfast");
+	comMessage("error: set: unexpected range in property tfast\n");
 	return -1;
       }
       if(node->trj_flag) {
 	if(atoi(val->val1)<1 || atoi(val->val1)>node->trj.frame_count) {
-	  comMessage("\nerror: frame number out of limits"); 
+	  comMessage("error: frame number out of limits\n"); 
 	  return -1;
 	} else {
 	  structSetFrame(node,atoi(val->val1)-1);
 	  comRedraw();
 	}
       } else {
-	comMessage("\nerror: no trajectory loaded");
+	comMessage("error: no trajectory loaded\n");
 	return -1;
       }
       break;
     case STRUCT_PROP_CELL:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property cell");
+	comMessage("error: set: unexpected range in property cell\n");
 	return -1;
       }
       if(matExtract1Df(val->val1,6,v1)==-1) {
-	comMessage("\nerror in cell expression, expected {a,b,c,alpha,beta,gamma}");
+	comMessage("error in cell expression, expected {a,b,c,alpha,beta,gamma}\n");
 	return -1;
       }
       if(node->xtal==NULL) {
@@ -821,7 +821,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_SG:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property cell");
+	comMessage("error: set: unexpected range in property cell\n");
 	return -1;
       }
       if(node->xtal==NULL) {
@@ -854,13 +854,13 @@ int structComConnect(dbmStructNode *node, char *s1, char *s2)
 
   n1=structSubGetNum(node,m1,c1,r1,a1);
   if(n1<0) {
-    sprintf(message,"\natom not found: %s",s1);
+    sprintf(message,"atom not found: %s\n",s1);
     comMessage(message);
     return -1;
   }
   n2=structSubGetNum(node,m2,c2,r2,a2);
   if(n2<0) {
-    sprintf(message,"\natom not found: %s",s2);
+    sprintf(message,"atom not found: %s\n",s2);
     comMessage(message);
     return -1;
   }
@@ -905,11 +905,11 @@ int structGet(dbmStructNode *node, char *prop)
     comReturn(transGetAll(&node->transform));
   } else if(!strcmp(prop,"cell")){
     if(node->xtal==NULL) {
-      sprintf(message,"\n%s: no cell defined",node->name);
+      sprintf(message,"%s: no cell defined\n",node->name);
       comMessage(message);
       ret=-1;
     } else {
-      sprintf(message,"\n%s: cell: %.3f %.3f %.3f   %.2f %.2f %.2f  %s",
+      sprintf(message,"%s: cell: %.3f %.3f %.3f   %.2f %.2f %.2f  %s\n",
 	      node->name,
 	      node->xtal->a,node->xtal->b,node->xtal->c,
 	      node->xtal->alpha,node->xtal->beta,node->xtal->gamma,
@@ -929,7 +929,7 @@ int structGet(dbmStructNode *node, char *prop)
       comReturn("unknown");
     }
   } else {
-    sprintf(message,"\n%s: unknown parameter %s", node->name,prop);
+    sprintf(message,"%s: unknown parameter %s\n", node->name,prop);
     comMessage(message);
     ret=-1;
   }
@@ -961,7 +961,7 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
 
   bc=0;
 
-//  fprintf(stderr,"\n%d",node->model_count);
+//  fprintf(stderr,"%d\n",node->model_count);
 
   if(node->conn_flag)
     for(mc=0;mc<node->model_count;mc++) {
@@ -969,7 +969,7 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
     for(cc=0;cc<cmp->chain_count;cc++) {
       ccp=cmp->chain[cc];
       prev=NULL;
-//      fprintf(stderr,"\n%d %s %d",mc,ccp->name, ccp->residue_count);
+//      fprintf(stderr,"%d %s %d\n",mc,ccp->name, ccp->residue_count);
       for(rc=0;rc<ccp->residue_count;rc++) {
 	crp=ccp->residue[rc];
 	centry=conGetEntry(crp->name);
@@ -1471,13 +1471,13 @@ int structSubCommand(dbmStructNode *node,char *rsub, int wc, char **wl)
 	  if(rex(atom,cap->name)){
 	    /* MATCH */
 	    /*
-	      fprintf(stdout,"\nfound atom #%d",cap->n);
+	      fprintf(stdout,"found atom #%d\n",cap->n);
 	    */
 	    c++;
 	    if(!strcmp(wl[0],"get")) {
 	      return structSubComGet(node,cap,wc-1,wl+1);
 	    } else {
-	      sprintf(message,"\n%s: unknown command %s",node->name,wl[0]);
+	      sprintf(message,"%s: unknown command %s\n",node->name,wl[0]);
 	      comMessage(message);
 	      return -1;
 	    }
@@ -1486,7 +1486,7 @@ int structSubCommand(dbmStructNode *node,char *rsub, int wc, char **wl)
   }
 
   if(c==0) {
-    sprintf(message,"\n%s: not found: %s",node->name,rsub);
+    sprintf(message,"%s: not found: %s\n",node->name,rsub);
     comMessage(message);
     return -1;
   }
@@ -1529,7 +1529,7 @@ int structSubMatch(struct DBM_STRUCT_NODE *node, char *rsub, char *model, char *
 	break;
       }
     if(i==node->atom_count) {
-      sprintf(message,"\natom %d not found",anum);
+      sprintf(message,"atom %d not found\n",anum);
       comMessage(message);
       return -1;
     }
@@ -1568,7 +1568,7 @@ int structSubMatch(struct DBM_STRUCT_NODE *node, char *rsub, char *model, char *
     strcpy(atom,e[i++]);
     
     if(c-i>0) {
-      comMessage("\nparse error in subindexing");
+      comMessage("parse error in subindexing\n");
       return -1;
     }
   }
@@ -1602,7 +1602,7 @@ int structSubComGet(dbmStructNode *node,struct STRUCT_ATOM *ap,int wc, char **wl
   float v[3];
   char message[256];
   if(wc<=0) {
-    sprintf(message,"\n%s: missing parameter for get",node->name);
+    sprintf(message,"%s: missing parameter for get\n",node->name);
     comMessage(message);
     return -1;
   }
@@ -1637,7 +1637,7 @@ int structSubComGet(dbmStructNode *node,struct STRUCT_ATOM *ap,int wc, char **wl
   } else if(!strcmp(wl[0],"rnum")) {
     sprintf(message,"%d",ap->residue->num);
   } else {
-    sprintf(message,"\n%s:SubGet: unknown parameter %s",node->name,wl[0]);
+    sprintf(message,"%s:SubGet: unknown parameter %s\n",node->name,wl[0]);
     comMessage(message);
     return -1;
   }
@@ -1765,7 +1765,7 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
   else if(clStrcmp(pov->prop,"ele"))
     prop=STRUCT_SEL_ELE;
   else {
-    sprintf(message,"\nerror: %s: unknown atom property %s",node->name, pov->prop);
+    sprintf(message,"error: %s: unknown atom property %s\n",node->name, pov->prop);
     comMessage(message);
     return -1;
   }
@@ -1775,7 +1775,7 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
   if(!(op==POV_OP_EQ || op==POV_OP_LT || op==POV_OP_LE ||
        op==POV_OP_GT || op==POV_OP_GE || op==POV_OP_NE ||
        op==POV_OP_WI || op==POV_OP_OBJ)) {
-    sprintf(message,"\nerror: invalid operator");
+    sprintf(message,"error: invalid operator\n");
     comMessage(message);
     return -1;
   }
@@ -1791,7 +1791,7 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
     val=povGetVal(pov,i);
     if(val->range_flag) {
       if(op!=POV_OP_EQ) {
-	sprintf(message,"\nerror: %s: expected operator = for range",node->name);
+	sprintf(message,"error: %s: expected operator = for range\n",node->name);
 	comMessage(message);
 	return -1;
       }
@@ -1808,18 +1808,18 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
     switch(prop) {
     case STRUCT_SEL_OBJECT:
       if(rf) {
-	comMessage("\nerror: range not supported for .object selection");
+	comMessage("error: range not supported for .object selection\n");
 	return -1;
       }
       // identify object
       if(v1[0]!='.') {
-	comMessage("\nerror: expected object to start with .");
+	comMessage("error: expected object to start with .\n");
 	return -1;
       }
       v1++;
       v2=clStrchr(v1,'.');
       if(v2!=NULL) {
-	comMessage("\nerror: .dataset.object selection not allowed");
+	comMessage("error: .dataset.object selection not allowed\n");
 	return -1;
       }
       f=0;
@@ -1833,7 +1833,7 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
 	}
       }
       if(!f) {
-	comMessage("\nerror: object ");
+	comMessage("error: object \n");
 	comMessage(v1);
 	comMessage(" not found");
 	return -1;
@@ -1841,7 +1841,7 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       break;
     case STRUCT_SEL_WITHIN:
       if(rf) {
-	comMessage("\nerror: range not supported for < >");
+	comMessage("error: range not supported for < >\n");
 	return -1;
       }
       if(val->wi_flag) {
@@ -1886,11 +1886,11 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       break;
     case STRUCT_SEL_ANAME:
       if(rf) {
-	comMessage("\nerror: range not allowed for aname");
+	comMessage("error: range not allowed for aname\n");
 	return -1;
       }
       if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("\nerror: expected operator = or != for aname");
+	comMessage("error: expected operator = or != for aname\n");
 	return -1;
       }
       if(rex(v1,atom->name))
@@ -1913,11 +1913,11 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       break;
     case STRUCT_SEL_RNAME:
       if(rf) {
-	comMessage("\nerror: range not allowed for rname");
+	comMessage("error: range not allowed for rname\n");
 	return -1;
       }
       if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("\nerror: expected operator = or != for rname");
+	comMessage("error: expected operator = or != for rname\n");
 	return -1;
       }
       if(rex(v1,atom->residue->name))
@@ -1925,11 +1925,11 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       break;
     case STRUCT_SEL_RTYPE:
       if(rf) {
-	comMessage("\nerror: range not allowed for rtype");
+	comMessage("error: range not allowed for rtype\n");
 	return -1;
       }
       if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("\nerror: expected operator = or != for rtype");
+	comMessage("error: expected operator = or != for rtype\n");
 	return -1;
       }
       switch(atom->residue->type) {
@@ -1940,11 +1940,11 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       break;
     case STRUCT_SEL_CLASS:
       if(rf) {
-	comMessage("\nerror: range not allowed for class");
+	comMessage("error: range not allowed for class\n");
 	return -1;
       }
       if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("\nerror: expected operator = or != for class");
+	comMessage("error: expected operator = or != for class\n");
 	return -1;
       }
       switch(atom->residue->class) {
@@ -1955,11 +1955,11 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       break;
     case STRUCT_SEL_CHAIN:
       if(rf) {
-	comMessage("\nerror: range not allowed for chain");
+	comMessage("error: range not allowed for chain\n");
 	return -1;
       }
       if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("\nerror: expected operator = or != for chain");
+	comMessage("error: expected operator = or != for chain\n");
 	return -1;
       }
       if(rex(v1,atom->chain->name))
@@ -2012,11 +2012,11 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       break;
     case STRUCT_SEL_ELE:
       if(rf) {
-	comMessage("\nerror: range not allowed for ele");
+	comMessage("error: range not allowed for ele\n");
 	return -1;
       }
       if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("\nerror: expected operator = or != for aname");
+	comMessage("error: expected operator = or != for aname\n");
 	return -1;
       }
       if(rex(v1,atom->chem.element))
@@ -2536,7 +2536,7 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     if(!strcmp(wl[i],"-type") ||
        !strcmp(wl[i],"-t")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing parameter for -type");
+	sprintf(message,"missing parameter for -type\n");
 	comMessage(message);
 	return -1;
       }
@@ -2544,7 +2544,7 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     } else if(!strcmp(wl[i],"-swap")) {
       swap_flag=1;
     } else {
-      sprintf(message,"\nunknow option %s",wl[i]);
+      sprintf(message,"unknow option %s\n",wl[i]);
       comMessage(message);
       return -1;
     }
@@ -2558,14 +2558,14 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     strcpy(ext,bp+1);
     sprintf(gunzip,"gunzip < %s",filename);
     if((f=popen(gunzip,"r"))==NULL) {
-      sprintf(message,"\nError while piping %s",filename);
+      sprintf(message,"Error while piping %s\n",filename);
       comMessage(message);
       return -1;
     }
   } else {
     cmp=0;
     if((f=fopen(filename,"r"))==NULL) {
-      sprintf(message,"\nError opening %s",filename);
+      sprintf(message,"Error opening %s\n",filename);
       comMessage(message);
       return -1;
     }
@@ -2581,7 +2581,7 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     } else if(!strcmp(ext,"binpos")) {
       id=STRUCT_TRJ_BINPOS;
     } else {
-      sprintf(message,"\nunknown extension %s, please specify type",ext);
+      sprintf(message,"unknown extension %s, please specify type\n",ext);
       comMessage(message);
       if(cmp) pclose(f); else fclose(f);
       return -1;
@@ -2597,7 +2597,7 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
   } else if(!strcmp(type,"binpos")) {
     id=STRUCT_TRJ_BINPOS;
   } else {
-    sprintf(message,"\nunknown type %s",type);
+    sprintf(message,"unknown type %s\n",type);
     comMessage(message);
     if(cmp) pclose(f); else fclose(f);
     return -1;
@@ -2620,7 +2620,7 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
   } else if(id==STRUCT_TRJ_BINPOS) {
     ret=binposTrjRead(f,node, swap_flag);
   } else {
-    sprintf(message,"\nthis type is not yet supported");
+    sprintf(message,"this type is not yet supported\n");
     comMessage(message);
     ret=-1;
   }
@@ -2743,7 +2743,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
   char aname[32];
 
   if(wc<=0) {
-    sprintf(message,"\nwrite: missing filename");
+    sprintf(message,"write: missing filename\n");
     comMessage(message);
     return -1;
   }
@@ -2770,14 +2770,14 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
     if(!strcmp(wl[i],"-type") ||
        !strcmp(wl[i],"-t")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing parameter for %s",wl[i]);
+	sprintf(message,"missing parameter for %s\n",wl[i]);
 	comMessage(message);
 	return -1;
       }
       strcpy(type,wl[i+1]);
       i+=2;
     } else {
-      sprintf(message,"\nunknown option %s",wl[i]);
+      sprintf(message,"unknown option %s\n",wl[i]);
       comMessage(message);
       return -1;
     }
@@ -2793,7 +2793,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
     } else if(!strcmp(ext,"xyzr")) {
       tid=STRUCT_WRITE_XYZR;
     } else {
-      sprintf(message,"\nunknown extension %s, please specify type",ext);
+      sprintf(message,"unknown extension %s, please specify type\n",ext);
       comMessage(message);
       return -1;
     }
@@ -2808,7 +2808,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
     } else if(!strcmp(type,"xyzr")){
       tid=STRUCT_WRITE_XYZR;
     } else {
-      sprintf(message,"\nunknown type %s",type);
+      sprintf(message,"unknown type %s\n",type);
       comMessage(message);
       return -1;
     }
@@ -2820,7 +2820,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
     open file
   */
   if((f=fopen(file,"w"))==NULL) {
-    sprintf(message,"\ncannot open %s",file);
+    sprintf(message,"cannot open %s\n",file);
     comMessage(message);
     return -1;
   }
@@ -2974,7 +2974,7 @@ int structComDel(dbmStructNode *node, int wc, char **wl)
   int i;
 
   if(wc==0) {
-    sprintf(message,"\n%s: missing parameter",node->name);
+    sprintf(message,"%s: missing parameter\n",node->name);
     comMessage(message);
     return -1;
   } else {
@@ -3006,7 +3006,7 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
     if(!strcmp(wl[i],"-wait") ||
        !strcmp(wl[i],"-w")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing value for -wait");
+	sprintf(message,"missing value for -wait\n");
 	comMessage(message);
 	return -1;
       }
@@ -3014,7 +3014,7 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
     } else if(!strcmp(wl[i],"-delay") ||
 	      !strcmp(wl[i],"-d")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing value for -delay");
+	sprintf(message,"missing value for -delay\n");
 	comMessage(message);
 	return -1;
       }
@@ -3022,51 +3022,51 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
     } else if(!strcmp(wl[i],"-begin") ||
 	      !strcmp(wl[i],"-b")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing value for -begin");
+	sprintf(message,"missing value for -begin\n");
 	comMessage(message);
 	return -1;
       }
       node->play.start=atoi(wl[++i]);
       if(node->play.start<0 || node->play.start>node->trj.frame_count) {
-	sprintf(message,"\nbegin out of bounds");
+	sprintf(message,"begin out of bounds\n");
 	comMessage(message);
 	return -1;
       }
     } else if(!strcmp(wl[i],"-end") ||
 	      !strcmp(wl[i],"-e")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing value for -end");
+	sprintf(message,"missing value for -end\n");
 	comMessage(message);
 	return -1;
       }
       node->play.end=atoi(wl[++i]);
       if(node->play.end<0 || node->play.end>=node->trj.frame_count) {
-	sprintf(message,"\nend out of bounds");
+	sprintf(message,"end out of bounds\n");
 	comMessage(message);
 	return -1;
       }
     } else if(!strcmp(wl[i],"-step") ||
 	      !strcmp(wl[i],"-s")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing value for -end");
+	sprintf(message,"missing value for -end\n");
 	comMessage(message);
 	return -1;
       }
       node->play.step=atoi(wl[++i]);
       if(node->play.step==0) {
-	sprintf(message,"\nstep must be nonzero");
+	sprintf(message,"step must be nonzero\n");
 	comMessage(message);
 	return -1;
       }
       if(abs(node->play.step)>=node->trj.frame_count) {
-	sprintf(message,"\nstep larger than trajectory");
+	sprintf(message,"step larger than trajectory\n");
 	comMessage(message);
 	return -1;
       }
     } else if(!strcmp(wl[i],"-mode") ||
 	      !strcmp(wl[i],"-m")) {
       if(i+1>=wc) {
-	sprintf(message,"\nmissing value for -mode");
+	sprintf(message,"missing value for -mode\n");
 	comMessage(message);
 	return -1;
       }
@@ -3078,12 +3078,12 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
       } else if(!strcmp(wl[i],"single")) {
 	node->play.mode=STRUCT_PLAY_SINGLE;
       } else {
-	sprintf(message,"\nunknown mode %s",wl[i]);
+	sprintf(message,"unknown mode %s\n",wl[i]);
 	comMessage(message);
 	return -1;
       }
     } else {
-      sprintf(message,"\nunknown parameter %s",wl[i]);
+      sprintf(message,"unknown parameter %s\n",wl[i]);
       comMessage(message);
       return -1;
     }
@@ -3097,7 +3097,7 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
 int structGetRangeVal(dbmStructNode *node, struct STRUCT_ATOM *atom, const char *prop, float *r)
 {
   if(prop==NULL) {
-    comMessage("\nerror: range: prop missing in range statement");
+    comMessage("error: range: prop missing in range statement\n");
     (*r)=0.0;
     return -1;
   }
@@ -3118,7 +3118,7 @@ int structGetRangeVal(dbmStructNode *node, struct STRUCT_ATOM *atom, const char 
   } else if(clStrcmp(prop,"z")) {
     (*r)=atom->p->z;
   } else {
-    comMessage("\nerror: range: unknown atom property ");
+    comMessage("error: range: unknown atom property \n");
     comMessage(prop);
     (*r)=0.0;
     return -1;
@@ -3128,7 +3128,7 @@ int structGetRangeVal(dbmStructNode *node, struct STRUCT_ATOM *atom, const char 
 
 int structGetRangeXYZVal(dbmStructNode *node, const char *prop, float *p, float *r)
 {
-  comMessage("\nnot implemented");
+  comMessage("not implemented\n");
   return -1;
 }
 

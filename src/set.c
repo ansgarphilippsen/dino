@@ -198,7 +198,7 @@ int selectBuildStack(Select *s, int argc,char **argv)
       notc++;
       c++;
       if(c>=argc) {
-	comMessage("\nerror: select: not must be followed by expression");
+	comMessage("error: select: not must be followed by expression\n");
 	return -1;
       }
     }
@@ -219,7 +219,7 @@ int selectBuildStack(Select *s, int argc,char **argv)
 	nargc++;
 	c++;
 	if(c>=argc && pc>0) {
-	  comMessage("\nerror: select: missmatched ( )");
+	  comMessage("error: select: missmatched ( )\n");
 	  return -1;
 	}
       }
@@ -273,13 +273,13 @@ int selectBuildStack(Select *s, int argc,char **argv)
        clStrcmp(argv[c],"OR")) {
       op=SELECT_OR;
     } else {
-      comMessage("\nerror: select: unexpected internal error");
+      comMessage("error: select: unexpected internal error\n");
       return -1;
     }
     
     c++;
   }
-  comMessage("\nerror: select: expected expression after logical operator");
+  comMessage("error: select: expected expression after logical operator\n");
   return -1;
 }
 
@@ -425,7 +425,7 @@ int setNew(Set *s, int argc, char **argv)
     } else if(clStrcmp(co.param[i].p,"blend")) {
       s->blend=1;
     } else {
-      comMessage("\nerror: set: unknown flag: -");
+      comMessage("error: set: unknown flag: -\n");
       comMessage(co.param[i].p);
       ret=-1;
       break;
@@ -542,7 +542,7 @@ int setSplit(Set *s)
       i++;
       while(pc>0) {
 	if(i>=s->buf_len) {
-	  comMessage("\nerror: set: unmatched <");
+	  comMessage("error: set: unmatched <\n");
 	  return -1;
 	}
 	if(s->buf[i]=='<')
@@ -556,7 +556,7 @@ int setSplit(Set *s)
       i++;
       while(pc>0) {
 	if(i>=s->buf_len) {
-	  comMessage("\nerror: set: unmatched {");
+	  comMessage("error: set: unmatched {\n");
 	  return -1;
 	}
 	if(s->buf[i]=='{')
@@ -579,7 +579,7 @@ int povNew(POV *pov, char *s, int *vc, int *vm, struct POV_VALUE **vl)
   char *val;
 
   if(s==NULL) {
-    comMessage("\ninternal error in povNew");
+    comMessage("internal error in povNew\n");
     return -1;
   }
   pov->prop=s;
@@ -679,14 +679,14 @@ int povNew(POV *pov, char *s, int *vc, int *vm, struct POV_VALUE **vl)
     if(val[i]=='<') {
       j++;
       if(j>1) {
-	comMessage("\nerror: pov: unexpected nesting of <>");
+	comMessage("error: pov: unexpected nesting of <>\n");
 	return -1;
       }
       val[i]=' ';
     } else if(val[i]=='>') {
       j--;
       if(j<0) {
-	comMessage("\nerror: pov: unbalanced <>");
+	comMessage("error: pov: unbalanced <>\n");
 	return -1;
       }
       val[i]=' ';
@@ -714,7 +714,7 @@ int povNew(POV *pov, char *s, int *vc, int *vm, struct POV_VALUE **vl)
   pov->val_count++;
 
   if(pc!=0) {
-    comMessage("\nerror: unmatched { }");
+    comMessage("error: unmatched { }\n");
     return -1;
   }
   
@@ -744,7 +744,7 @@ int povSplitVal(POV *pov, char *val, int *vc, int *vm, struct POV_VALUE **vl)
 
   if(pov->op==POV_OP_WI) {
     if(v[(*vc)].range_flag) {
-      comMessage("\nerror: range not supported for <>");
+      comMessage("error: range not supported for <>\n");
       return -1;
     }
 
@@ -752,13 +752,13 @@ int povSplitVal(POV *pov, char *val, int *vc, int *vm, struct POV_VALUE **vl)
     if(val[0]=='{') {
       v[(*vc)].wi_flag=0;
       if(matExtract1Df(val,3,v[(*vc)].vect)!=0) {
-	comMessage("\nerror: in vector: ");
+	comMessage("error: in vector: \n");
 	comMessage(val);
 	return -1;
       }
     } else {
       if(val[0]!='.') {
-	comMessage("\nerror: expected a value beginning with . for <>");
+	comMessage("error: expected a value beginning with . for <>\n");
 	return -1;
       }
       v[(*vc)].wi_flag=1;
@@ -807,7 +807,7 @@ int rangeNew(Range *r, int argc, char **argv)
   char message[256];
 
   if(argc<=0) {
-    comMessage("\nerror: range: missing parameters");
+    comMessage("error: range: missing parameters\n");
     return -1;
   }
 
@@ -858,7 +858,7 @@ int rangeNew(Range *r, int argc, char **argv)
     comMessage("warning: range syntax <x,y> deprecated, use x:y instead\n");
   }
   if(l!=0) {
-    comMessage("\nerror: range: unbalanced < >");
+    comMessage("error: range: unbalanced < >\n");
     return -1;
   }
 
@@ -904,31 +904,31 @@ int rangeNew(Range *r, int argc, char **argv)
   for(i=0;i<pov_count;i++) {
     if(clStrcmp(pov[i].prop,"src")) {
       if(pov[i].op!=POV_OP_EQ) {
-	comMessage("\nerror: range: expected operator = for src");
+	comMessage("error: range: expected operator = for src\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       }
       if(pov[i].val_count==0) {
-	comMessage("\nerror: range: missing value for src");
+	comMessage("error: range: missing value for src\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       } else if(pov[i].val_count>1) {
-	comMessage("\nerror: range: expected only one value for src");
+	comMessage("error: range: expected only one value for src\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       } else {
 	pv=povGetVal(&pov[i],0);
 	if(pv->range_flag) {
-	  comMessage("\nerror: range: src cannot have range as value");
+	  comMessage("error: range: src cannot have range as value\n");
 	  Cfree(pov);
 	  Cfree(vlist);
 	  return -1;
 	}
 	if(pv->val1[0]!='.') {
-	  comMessage("\nerror: range: expected src value to start with .");
+	  comMessage("error: range: expected src value to start with .\n");
 	  return -1;
 	}
 
@@ -936,7 +936,7 @@ int rangeNew(Range *r, int argc, char **argv)
 	  r->src=NULL;
 	} else {
 	  if((r->src=comGetDB(pv->val1))==NULL) {
-	    comMessage("\nerror: range: unknown dataset: ");
+	    comMessage("error: range: unknown dataset: \n");
 	    comMessage(pv->val1);
 	    Cfree(pov);
 	    Cfree(vlist);
@@ -946,25 +946,25 @@ int rangeNew(Range *r, int argc, char **argv)
       }
     } else if(clStrcmp(pov[i].prop,"prop")) {
       if(pov[i].op!=POV_OP_EQ) {
-	comMessage("\nerror: range: expected operator = for prop");
+	comMessage("error: range: expected operator = for prop\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       }
       if(pov[i].val_count==0) {
-	comMessage("\nerror: range: missing value for prop");
+	comMessage("error: range: missing value for prop\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       } else if(pov[i].val_count>1) {
-	comMessage("\nerror: range: expected only one value for prop");
+	comMessage("error: range: expected only one value for prop\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       } else {
 	pv=povGetVal(&pov[i],0);
 	if(pv->range_flag) {
-	  comMessage("\nerror: range: prop cannot have range as value");
+	  comMessage("error: range: prop cannot have range as value\n");
 	  Cfree(pov);
 	  Cfree(vlist);
 	  return -1;
@@ -973,18 +973,18 @@ int rangeNew(Range *r, int argc, char **argv)
       }
     } else if(clStrcmp(pov[i].prop,"val")) {
       if(pov[i].op!=POV_OP_EQ) {
-	comMessage("\nerror: range: expected operator = for val");
+	comMessage("error: range: expected operator = for val\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       }
       if(pov[i].val_count==0) {
-	comMessage("\nerror: range: missing value for val");
+	comMessage("error: range: missing value for val\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
       } else if(pov[i].val_count>1) {
-	comMessage("\nerror: range: expected only one value for val");
+	comMessage("error: range: expected only one value for val\n");
 	Cfree(pov);
 	Cfree(vlist);
 	return -1;
@@ -1025,14 +1025,14 @@ int rangeDelete(Range *r)
 
 int selectDump(Select *s)
 {
-  fprintf(stderr,"\n\npov: %p %d %d  vl: %p",
+  fprintf(stderr,"\npov: %p %d %d  vl: %p\n",
 	  s->pov,s->pov_count,s->pov_max,s->vlist);
 
-  fprintf(stderr,"\nbuf: %p %d %d  wl: %p %d %d",
+  fprintf(stderr,"buf: %p %d %d  wl: %p %d %d\n",
 	  s->buf, s->buf_len, s->buf_max,
 	  s->wl, s->wc, s->wl_max);
 
-  fprintf(stderr,"\nstack: %p %d %d  %p  %p",
+  fprintf(stderr,"stack: %p %d %d  %p  %p\n",
 	  s->stack, s->stack_count, s->stack_max,
 	  s->eval, s->result);
 

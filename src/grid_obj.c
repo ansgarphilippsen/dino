@@ -35,7 +35,7 @@ int gridObjCommand(struct DBM_GRID_NODE *node, gridObj *obj, int wc, char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"render")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing expression", obj->name);
+      sprintf(message,"%s: missing expression\n", obj->name);
       comMessage(message);
       return -1;
     }
@@ -47,7 +47,7 @@ int gridObjCommand(struct DBM_GRID_NODE *node, gridObj *obj, int wc, char **wl)
        obj->render.mode!=RENDER_POINT &&
        obj->render.mode!=RENDER_SURFACE){
       obj->render.mode=RENDER_SURFACE;
-      comMessage("\ninvalid render mode");
+      comMessage("invalid render mode\n");
       return -1;
     }
     comRedraw();
@@ -82,7 +82,7 @@ int gridObjCommand(struct DBM_GRID_NODE *node, gridObj *obj, int wc, char **wl)
     obj->map=-1;
     return 0;
   } else { 
-    sprintf(message,"\n%s: unknow command: %s",obj->name, wl[0]);
+    sprintf(message,"%s: unknow command: %s\n",obj->name, wl[0]);
     comMessage(message);
     return -1;
   }
@@ -112,7 +112,7 @@ int gridObjComGet(gridObj *obj, int wc, char **wl)
   int i;
 
   if(wc==0) {
-    sprintf(message,"\n%s: missing property", obj->name);
+    sprintf(message,"%s: missing property\n", obj->name);
     comMessage(message);
     return -1;
   }
@@ -131,7 +131,7 @@ int gridObjComMap(gridObj *obj, int wc, char **wl)
   
 
   if(wc<1) {
-    comMessage("\nerror: missing texture name");
+    comMessage("error: missing texture name\n");
     return -1;
   }
   clStrcpy(texname,wl[0]);
@@ -145,7 +145,7 @@ int gridObjComMap(gridObj *obj, int wc, char **wl)
   }
 
   if(m==-1) {
-    sprintf(message,"\nerror: texture %s not found",texname);
+    sprintf(message,"error: texture %s not found\n",texname);
     comMessage(message);
     return -1;
   }
@@ -187,18 +187,18 @@ int gridObjComRenew(gridObj *obj, int wc, char **wl)
   for(i=0;i<co.param_count;i++) {
     if(co.param[i].p==NULL) {
       if(co.param[i].wc!=0) {
-	comMessage("\nerror: renew: expected an argument beginning with -"); 
+	comMessage("error: renew: expected an argument beginning with -\n"); 
 	ret=-1;
 	break;
       }
     } else if(clStrcmp(co.param[i].p,"name") || 
 	      clStrcmp(co.param[i].p,"n")) {
-      comMessage("\nerror: renew: -name is not allowed");
+      comMessage("error: renew: -name is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"type") ||
 	      clStrcmp(co.param[i].p,"t")) {
-      comMessage("\nerror: renew: -type is not allowed");
+      comMessage("error: renew: -type is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"set") ||
@@ -219,7 +219,7 @@ int gridObjComRenew(gridObj *obj, int wc, char **wl)
     } else if(clStrcmp(co.param[i].p,"v")) {
       vflag=1;
     } else {
-      clStrcpy(message,"\nunknown paramater ");
+      clStrcpy(message,"unknown paramater \n");
       clStrncat(message,co.param[i].p,100);
       comMessage(message);
       ret=-1;
@@ -294,17 +294,17 @@ int gridObjSet(gridObj *obj, Set *s, int flag)
     } else if(clStrcmp(s->pov[pc].prop,"lstep")) {
       s->pov[pc].id=GRID_PROP_LSTEP;
     } else {
-      comMessage("\nerror: set: unknown property ");
+      comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].op!=POV_OP_EQ) {
-      comMessage("\nerror: set: expected operator = for property ");
+      comMessage("error: set: expected operator = for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].val_count>1) {
-      comMessage("\nerror: set: expected only one value for property ");
+      comMessage("error: set: expected only one value for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
@@ -334,12 +334,12 @@ int gridObjSet(gridObj *obj, Set *s, int flag)
 		else
 		  value2=val->val2;
 		if(comGetColor(value1,&r,&g,&b)<0) {
-		  comMessage("\nerror: set: unknown color ");
+		  comMessage("error: set: unknown color \n");
 		  comMessage(value1);
 		  return -1;
 		}
 		if(comGetColor(value2,&r2,&g2,&b2)<0) {
-		  comMessage("\nerror: set: unknown color ");
+		  comMessage("error: set: unknown color \n");
 		  comMessage(value2);
 		  return -1;
 		}
@@ -354,11 +354,11 @@ int gridObjSet(gridObj *obj, Set *s, int flag)
 		    }
 		  } else {
 		    if(obj->type==GRID_CONTOUR) {
-		      comMessage("\ncross range not supported for type contour");
+		      comMessage("cross range not supported for type contour\n");
 		      return -1;
 		    }
 		    if(!obj->node->attach_flag) {
-		      comMessage("\nerror: -range only meaningful with attached structure");
+		      comMessage("error: -range only meaningful with attached structure\n");
 		      return -1;
 		    }
 		    if(obj->vert[vc].gp->attach_node!=NULL) {
@@ -404,7 +404,7 @@ int gridObjSet(gridObj *obj, Set *s, int flag)
 		}
 	      } else {
 		if(comGetColor(val->val1,&r,&g,&b)<0) {
-		  comMessage("\nerror: set: unknown color ");
+		  comMessage("error: set: unknown color \n");
 		  comMessage(val->val1);
 		  return -1;
 		}
@@ -421,32 +421,32 @@ int gridObjSet(gridObj *obj, Set *s, int flag)
       switch(id) {
       case GRID_PROP_STEP:
 	if(s->range_flag) {
-	  comMessage("\nerror: set: unexpected range for step");
+	  comMessage("error: set: unexpected range for step\n");
 	  return -1;
 	}
 	if(atoi(val->val1)<1) {
-	  comMessage("\nerror: set: expected positive integer step value");
+	  comMessage("error: set: expected positive integer step value\n");
 	  return -1;
 	}
 	obj->step=atoi(val->val1);
 	break;
       case GRID_PROP_LSTART:
 	if(s->range_flag) {
-	  comMessage("\nerror: set: unexpected range for step");
+	  comMessage("error: set: unexpected range for step\n");
 	  return -1;
 	}
 	obj->level_start=atof(val->val1)*255.0;
 	break;
       case GRID_PROP_LEND:
 	if(s->range_flag) {
-	  comMessage("\nerror: set: unexpected range for step");
+	  comMessage("error: set: unexpected range for step\n");
 	  return -1;
 	}
 	obj->level_end=atof(val->val1)*255.0;
 	break;
       case GRID_PROP_LSTEP:
 	if(s->range_flag) {
-	  comMessage("\nerror: set: unexpected range for step");
+	  comMessage("error: set: unexpected range for step\n");
 	  return -1;
 	}
 	obj->level_step=atof(val->val1)*255.0;
@@ -480,7 +480,7 @@ int gridObjGet(gridObj *obj, char *prop)
     sprintf(message,"{%.5f,%.5f,%.5f}",x,y,z);
     comReturn(message);
   } else {
-    sprintf(message,"\n%s: get: unknown property %s",obj->name, prop); 
+    sprintf(message,"%s: get: unknown property %s\n",obj->name, prop); 
     comMessage(message);
     return -1;
   }
@@ -517,7 +517,7 @@ int gridObjRenew(gridObj *obj, Set *set, Select *sel, int vflag)
       area+=matCalcTriArea(obj->face[i].v1,
 			   obj->face[i].v2,
 			   obj->face[i].v3);
-    sprintf(message,"\narea: %.4f A^2",area);
+    sprintf(message,"area: %.4f A^2\n",area);
     comMessage(message);
   }
   
@@ -554,7 +554,7 @@ int gridGenerate(gridObj *obj, Select *sel)
   fy=field->scale_y;
   fz=field->scale_z;
 
-  comMessage("\nGenerating ");
+  comMessage("Generating \n");
 
   // if step size is larger then 1 generate subgrid
   if(step>1) {
@@ -792,7 +792,7 @@ int gridGenerate2(gridObj *obj, Select *sel)
   int step=obj->step;
   int vmax,fmax;
 
-  comMessage("\nGenerating ");
+  comMessage("Generating \n");
 
   if(obj->vertc>0)
     Cfree(obj->vert);

@@ -384,7 +384,7 @@ int conLoad(struct CONNECTIVITY *conn, char *filename)
 	i++;
 	conAssembleEntry(&entry[entry_count++],&i,wl,CON_TOP);
       } else {
-	fprintf(stderr,"\nunknown file entry: %s",wl[i]);
+	fprintf(stderr,"unknown file entry: %s\n",wl[i]);
 	break;
       }
     }

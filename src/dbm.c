@@ -94,7 +94,7 @@ int dbmLoad(int wc, const char **wl)
   int cmp,ret,dbm_flag,rn_flag;
   
   if(wc<1) {
-    comMessage("\nfilename missing");
+    comMessage("filename missing\n");
     return -1;
   }
 
@@ -123,7 +123,7 @@ int dbmLoad(int wc, const char **wl)
     if(!strcmp(wl[n],"-type") ||
        !strcmp(wl[n],"-t")) {
       if(n+1>=wc) {
-	sprintf(message,"\nmissing parameter for %s",wl[n]);
+	sprintf(message,"missing parameter for %s\n",wl[n]);
 	comMessage(message);
 	return -1;
       }
@@ -132,7 +132,7 @@ int dbmLoad(int wc, const char **wl)
     } else if(!strcmp(wl[n],"-name") ||
 	      !strcmp(wl[n],"-n")) {
       if(n+1>=wc) {
-	sprintf(message,"\nmissing parameter for %s",wl[n]);
+	sprintf(message,"missing parameter for %s\n",wl[n]);
 	comMessage(message);
 	return -1;
       }
@@ -146,7 +146,7 @@ int dbmLoad(int wc, const char **wl)
     } else if(!strcmp(wl[n],"-rn")) {
       rn_flag=1;
     } else {
-      sprintf(message,"\nunknown option %s",wl[n]);
+      sprintf(message,"unknown option %s\n",wl[n]);
       comMessage(message);
       return -1;
     }
@@ -158,7 +158,7 @@ int dbmLoad(int wc, const char **wl)
       strcpy(file2,file);
       strcat(file,".gz");
       if(stat(file,&st)!=0) {
-	sprintf(message,"\nerror accessing %s",file2);
+	sprintf(message,"error accessing %s\n",file2);
 	comMessage(message);
 	return -1;
       } else {
@@ -182,14 +182,14 @@ int dbmLoad(int wc, const char **wl)
       strcpy(ext,bp+1);
       sprintf(gunzip,"gunzip < %s",file);
       if((f=popen(gunzip,"r"))==NULL) {
-	sprintf(message,"\nError while piping %s",file);
+	sprintf(message,"Error while piping %s\n",file);
 	comMessage(message);
 	return -1;
       }
     } else {
       cmp=0;
       if((f=fopen(file,"r"))==NULL) {
-	sprintf(message,"\nError opening %s",file);
+	sprintf(message,"Error opening %s\n",file);
 	comMessage(message);
 	return -1;
       }
@@ -205,7 +205,7 @@ int dbmLoad(int wc, const char **wl)
       n++;
     }
     if(strlen(ext_def[n].ext)==0) {
-      sprintf(message,"\nunknown extension %s, please specify type",ext);
+      sprintf(message,"unknown extension %s, please specify type\n",ext);
       comMessage(message);
       if(cmp) pclose(f); else fclose(f);
 
@@ -220,7 +220,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
 
-    sprintf(message,"\nloading %s, type pdb ",name);
+    sprintf(message,"loading %s, type pdb \n",name);
     comMessage(message);
     if(pdbRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -250,7 +250,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"\nloading %s, type %s ...",name, type);
+    sprintf(message,"loading %s, type %s ...\n",name, type);
     comMessage(message);
     if(xplorPDBRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -279,7 +279,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"\nloading %s, type charmm ...",name);
+    sprintf(message,"loading %s, type charmm ...\n",name);
     comMessage(message);
     if(charmmRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -307,7 +307,7 @@ int dbmLoad(int wc, const char **wl)
       CHARMM BDTRJ
  */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
-    sprintf(message,"\nloading %s, type bdtrj ...",name);
+    sprintf(message,"loading %s, type bdtrj ...\n",name);
     comMessage(message);
     if(bdtrjRead(&node->structNode, f, dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -327,7 +327,7 @@ int dbmLoad(int wc, const char **wl)
       DINO GRID
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type dgrid ...",name);
+    sprintf(message,"loading %s, type dgrid ...\n",name);
     comMessage(message);
 
     ret=scalRead(&node->scalNode, SCAL_READ_DINO,f,dbm_flag);
@@ -343,7 +343,7 @@ int dbmLoad(int wc, const char **wl)
       CHARMM binary potential
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type binary charmm ...",name);
+    sprintf(message,"loading %s, type binary charmm ...\n",name);
     comMessage(message);
 
     ret=scalRead(&node->scalNode, SCAL_READ_CHARMM_BINARY,f,dbm_flag);
@@ -360,7 +360,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"\nloading %s, type pqr ...",name);
+    sprintf(message,"loading %s, type pqr ...\n",name);
     comMessage(message);
     if(pqrRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -389,7 +389,7 @@ int dbmLoad(int wc, const char **wl)
       XPLOR binary map
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type binary xplor map ...",name);
+    sprintf(message,"loading %s, type binary xplor map ...\n",name);
     comMessage(message);
 
     ret=scalRead(&node->scalNode, SCAL_READ_XPLOR_BINARY,f,dbm_flag);
@@ -405,7 +405,7 @@ int dbmLoad(int wc, const char **wl)
       CNS binary map
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type binary cns map ...",name);
+    sprintf(message,"loading %s, type binary cns map ...\n",name);
     comMessage(message);
 
     ret=scalRead(&node->scalNode, SCAL_READ_CNS_BINARY,f,dbm_flag);
@@ -418,7 +418,7 @@ int dbmLoad(int wc, const char **wl)
     }
   } else if(!strcmp(type,"cnsa")) {
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type ascii cns map ...",name);
+    sprintf(message,"loading %s, type ascii cns map ...\n",name);
     comMessage(message);
 
     ret=scalRead(&node->scalNode, SCAL_READ_CNS_ASCII,f,dbm_flag);
@@ -434,7 +434,7 @@ int dbmLoad(int wc, const char **wl)
       XPLOR ascii map
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type ascii xplor map ...",name);
+    sprintf(message,"loading %s, type ascii xplor map ...\n",name);
     comMessage(message);
 
     ret=scalRead(&node->scalNode, SCAL_READ_XPLOR_ASCII,f,dbm_flag);
@@ -450,7 +450,7 @@ int dbmLoad(int wc, const char **wl)
       CCP4 map format
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type binary ccp4 map ...",name);
+    sprintf(message,"loading %s, type binary ccp4 map ...\n",name);
     comMessage(message);
 
     if(scalRead(&node->scalNode,SCAL_READ_CCP4_BINARY,f,dbm_flag)!=0) {
@@ -465,7 +465,7 @@ int dbmLoad(int wc, const char **wl)
       UHBD potential map
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type binary uhbd map ...",name);
+    sprintf(message,"loading %s, type binary uhbd map ...\n",name);
     comMessage(message);
 
     if(scalRead(&node->scalNode,SCAL_READ_UHBD_BINARY,f,dbm_flag)!=0) {
@@ -481,7 +481,7 @@ int dbmLoad(int wc, const char **wl)
       MEAD potential map
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type mead map ...",name);
+    sprintf(message,"loading %s, type mead map ...\n",name);
     comMessage(message);
 
     if(scalRead(&node->scalNode,SCAL_READ_MEAD,f,dbm_flag)!=0) {
@@ -497,7 +497,7 @@ int dbmLoad(int wc, const char **wl)
       DELPHI 2 potential map aka GRASP
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type delphi/grasp map ...",name);
+    sprintf(message,"loading %s, type delphi/grasp map ...\n",name);
     comMessage(message);
 
     if(scalRead(&node->scalNode,SCAL_READ_DELPHIG,f,dbm_flag)!=0) {
@@ -514,7 +514,7 @@ int dbmLoad(int wc, const char **wl)
       DELPHI potential map
     */
     node=dbmNewNode(DBM_NODE_SCAL,name);
-    sprintf(message,"\nloading %s, type delphi map ...",name);
+    sprintf(message,"loading %s, type delphi map ...\n",name);
     comMessage(message);
 
     if(scalRead(&node->scalNode,SCAL_READ_DELPHI,f,dbm_flag)!=0) {
@@ -530,19 +530,19 @@ int dbmLoad(int wc, const char **wl)
     strcpy(file2,file);
     strcat(file2,".vert");
     if((f=fopen(file2,"r"))==NULL) {
-      sprintf(message,"\nError opening %s",file2);
+      sprintf(message,"Error opening %s\n",file2);
       comMessage(message);
       return -1;
     }
     strcpy(file3,file);
     strcat(file3,".face");
     if((f2=fopen(file3,"r"))==NULL) {
-      sprintf(message,"\nError opening %s",file3);
+      sprintf(message,"Error opening %s\n",file3);
       comMessage(message);
       return -1;
     }
     node=dbmNewNode(DBM_NODE_SURF, name);
-    sprintf(message,"\nloading %s, type msms ...",name);
+    sprintf(message,"loading %s, type msms ...\n",name);
     comMessage(message);
     if(msmsRead(f,f2,node,dbm_flag)!=0) {
       fclose(f);
@@ -561,11 +561,11 @@ int dbmLoad(int wc, const char **wl)
     /* MSP surface format */
     node=dbmNewNode(DBM_NODE_SURF, name);
     if((f=fopen(file,"r"))==NULL) {
-      sprintf(message,"\nError opening %s",file);
+      sprintf(message,"Error opening %s\n",file);
       comMessage(message);
       return -1;
     }
-    sprintf(message,"\nloading %s, type msp ...",name);
+    sprintf(message,"loading %s, type msp ...\n",name);
     comMessage(message);
     if(mspRead(f,node)!=0) {
       fclose(f);
@@ -582,11 +582,11 @@ int dbmLoad(int wc, const char **wl)
     /* GRASP surface format */
     node=dbmNewNode(DBM_NODE_SURF, name);
     if((f=fopen(file,"r"))==NULL) {
-      sprintf(message,"\nError opening %s",file);
+      sprintf(message,"Error opening %s\n",file);
       comMessage(message);
       return -1;
     }
-    sprintf(message,"\nloading %s, type grasp ...",name);
+    sprintf(message,"loading %s, type grasp ...\n",name);
     comMessage(message);
     if(graspRead(f,node,dbm_flag)!=0) {
       fclose(f);
@@ -605,11 +605,11 @@ int dbmLoad(int wc, const char **wl)
     /* ADS surface interface format */
     node=dbmNewNode(DBM_NODE_SURF, name);
     if((f=fopen(file,"r"))==NULL) {
-      sprintf(message,"\nError opening %s",file);
+      sprintf(message,"Error opening %s\n",file);
       comMessage(message);
       return -1;
     }
-    sprintf(message,"\nloading %s, type ads ...",name);
+    sprintf(message,"loading %s, type ads ...\n",name);
     comMessage(message);
     if(adsRead(f,node)!=0) {
       fclose(f);
@@ -626,7 +626,7 @@ int dbmLoad(int wc, const char **wl)
     /* topography format requested */
     if((node=dbmNewNode(DBM_NODE_GRID,name))==NULL)
       return -1;
-    sprintf(message,"\nloading %s, type topo ...",name);
+    sprintf(message,"loading %s, type topo ...\n",name);
     comMessage(message);
     if(gridRead(fileno(f),file,&node->gridNode)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -638,7 +638,7 @@ int dbmLoad(int wc, const char **wl)
     /* uppsala bones format requested */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"\nloading %s, type bones ...",name);
+    sprintf(message,"loading %s, type bones ...\n",name);
     comMessage(message);
     if(bonesRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -663,7 +663,7 @@ int dbmLoad(int wc, const char **wl)
     comMessage(message);
   } else {
     if(cmp) pclose(f); else fclose(f);
-    comMessage("\nUnknown type ");
+    comMessage("Unknown type \n");
     comMessage(type);
     return -1;
   }
@@ -729,7 +729,7 @@ dbmNode *dbmNewNode(int type, const char *oname)
 	dbm.node[i].geomNode.obj_max=64;
 	transReset(&dbm.node[i].geomNode.transform);
 	if((dbm.node[i].geomNode.obj=Ccalloc(64,sizeof(geomObj *)))==NULL) {
-	  comMessage("\nmemory allocation error in NewNode");
+	  comMessage("memory allocation error in NewNode\n");
 	  return NULL;
 	}
 	break;
@@ -737,7 +737,7 @@ dbmNode *dbmNewNode(int type, const char *oname)
       return &dbm.node[i];
     }
   }
-  comMessage("\ndbmNewNode: No more free Nodes");
+  comMessage("dbmNewNode: No more free Nodes\n");
   return NULL;
 }
 
@@ -925,7 +925,7 @@ int dbmSurfCheckDist(surfObj *obj, double *v, double d)
 
 int dbmGridCheckDist(gridObj *obj, double *v, double d)
 {
-  fprintf(stderr,"\nnot implemented");
+  fprintf(stderr,"not implemented\n");
   return -1;
 }
 
@@ -1147,12 +1147,12 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
 	ct=1;
       } else if(!strcmp(wl[i],"-range")) {
 	if(type==DBM_NODE_GEOM) {
-	  comMessage("\nset: -range not supported for geometric objects");
+	  comMessage("set: -range not supported for geometric objects\n");
 	  return -1;
 	}
 	ct=2;
       } else {
-	sprintf(message,"\nset: unknown parameter %s",wl[i]);
+	sprintf(message,"set: unknown parameter %s\n",wl[i]);
 	comMessage(message);
 	return -1;
       }
@@ -1180,7 +1180,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
     strcpy(s->sel_string,selection);
   } else {
     if((lsp=lexGenerate(selection))==NULL) {
-      sprintf(message,"\nset: syntax error in selection: %s",selection);
+      sprintf(message,"set: syntax error in selection: %s\n",selection);
       comMessage(message);
       return -1;
     } else {
@@ -1194,7 +1194,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
     range[strlen(range)-1]='\0';
     strcpy(s->range.expr,range);
     if(dbmRangeExtract(node,&s->range)==-1) {
-      sprintf(message,"\nset: syntax error in range: %s",range);
+      sprintf(message,"set: syntax error in range: %s\n",range);
       comMessage(message);
       return -1;
     }
@@ -1203,7 +1203,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
   }  
   
   /*
-  fprintf(stderr,"\nset:%s\nselection:%s\nrange:%s",set,selection,range);
+  fprintf(stderr,"set:%s\nselection:%s\nrange:%s\n",set,selection,range);
   */
 
   dbmSplit(set,',',&wc,&wl);
@@ -1215,7 +1215,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
     if(val[0]=='<') {
       rf=1;
       if(val[strlen(val)-1]!='>') {
-	sprintf(message,"\nsyntax error in range");
+	sprintf(message,"syntax error in range\n");
 	comMessage(message);
 	return -1;
       }
@@ -1268,7 +1268,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
 	s->e[s->ec].id=GEOM_COLOR;
 	break;
       default:
-	sprintf(message,"\ninternal error #39 during SetExtr");
+	sprintf(message,"internal error #39 during SetExtr\n");
 	comMessage(message);
 	return -1;
       }
@@ -1277,7 +1277,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
 		     &s->e[s->ec].value.v[0][0],
 		     &s->e[s->ec].value.v[0][1],
 		     &s->e[s->ec].value.v[0][2])<0) {
-	sprintf(message,"\nset: unknown color: %s", val1);
+	sprintf(message,"set: unknown color: %s\n", val1);
 	comMessage(message);
 	return -1;
       }
@@ -1286,7 +1286,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
 		       &s->e[s->ec].value.v[1][0],
 		       &s->e[s->ec].value.v[1][1],
 		       &s->e[s->ec].value.v[1][2])<0) {
-	  sprintf(message,"\nset: unknown color: %s", val2);
+	  sprintf(message,"set: unknown color: %s\n", val2);
 	  comMessage(message);
 	  return -1;
 	}
@@ -1330,7 +1330,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
 		  !strcmp(val1,"MC3")) 
 	    s->e[s->ec].value.i[0]=3;
 	  else {
-	    sprintf(message,"\nunknown method %s",val1);
+	    sprintf(message,"unknown method %s\n",val1);
 	    comMessage(message);
 	    return -1;
 	  }
@@ -1399,7 +1399,7 @@ int dbmSetExtract(dbmNode *node,struct DBM_SET *s,char *expr,int type)
 	break;
       case DBM_NODE_GEOM:
 	if(rf) {
-	  comMessage("\nset: range not supported for geometric object");
+	  comMessage("set: range not supported for geometric object\n");
 	  return -1;
 	}
 	if(!strcmp(prop,"position") ||
@@ -1479,12 +1479,12 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
              src
       *******************/
       if(strcmp(op,"=")) {
-	sprintf(message,"\ninvalid or missing operator");
+	sprintf(message,"invalid or missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -1495,7 +1495,7 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
 	if(comIsDB(val)) {
 	  range->src=comGetDB(val);
 	} else {
-	  sprintf(message,"\nunknown database: %s",val);
+	  sprintf(message,"unknown database: %s\n",val);
 	  comMessage(message);
 	  return -1;
 	}
@@ -1505,12 +1505,12 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
              prop
       *******************/
       if(strcmp(op,"=")) {
-	sprintf(message,"\ninvalid or missing operator");
+	sprintf(message,"invalid or missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -1520,17 +1520,17 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
               val
       *******************/
       if(strcmp(op,"=")) {
-	sprintf(message,"\ninvalid or missing operator");
+	sprintf(message,"invalid or missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
       if(val[0]!='<' || val[strlen(val)-1]!='>') {
-	sprintf(message,"\nsyntax error in range: %s",val);
+	sprintf(message,"syntax error in range: %s\n",val);
 	comMessage(message);
 	return -1;
       }
@@ -1561,10 +1561,10 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range)
 	range->v2=(float)atof(v2);
       }
       /*
-      fprintf(stderr,"\n%f %f",range->v1,range->v2);
+      fprintf(stderr,"%f %f\n",range->v1,range->v2);
       */
     } else {
-      sprintf(message,"\nunknown range property: %s",prop);
+      sprintf(message,"unknown range property: %s\n",prop);
       comMessage(message);
       return -1;
     }
@@ -1676,7 +1676,7 @@ int dbmNew(int wc, const char **wl)
   dbmNode *node;
 
   if(wc<1) {
-    comMessage("\ndbmNew: missing type");
+    comMessage("dbmNew: missing type\n");
     return -1;
   }
 
@@ -1688,13 +1688,13 @@ int dbmNew(int wc, const char **wl)
     if(!strcmp(wl[i],"-name")) {
       i++;
       if(i>=wc) {
-	comMessage("\ndbmNew: missing name");
+	comMessage("dbmNew: missing name\n");
 	return -1;
       } else {
 	strcpy(name,wl[i]);
       }
     } else {
-      sprintf(message,"\ndbmNew: unknown parameter %s",wl[i]);
+      sprintf(message,"dbmNew: unknown parameter %s\n",wl[i]);
       comMessage(message);
       return -1;
     }
@@ -1708,16 +1708,16 @@ int dbmNew(int wc, const char **wl)
   comReturn(message);
 
   if(!strcmp(type,"struct")) {
-    comMessage("\ndbmNew: type 'struct' not yet supported");
+    comMessage("dbmNew: type 'struct' not yet supported\n");
     return -1;
   } else if(!strcmp(type,"scal")) {
-    comMessage("\ndbmNew: type 'scal' not yet supported");
+    comMessage("dbmNew: type 'scal' not yet supported\n");
     return -1;
   } else if(!strcmp(type,"vect")) {
-    comMessage("\ndbmNew: type 'vect' not yet supported");
+    comMessage("dbmNew: type 'vect' not yet supported\n");
     return -1;
   } else if(!strcmp(type,"surf")) {
-    comMessage("\ndbmNew: type 'surf' not yet supported");
+    comMessage("dbmNew: type 'surf' not yet supported\n");
     return -1;
   } else if(!strcmp(type,"geom")) {
     node=dbmNewNode(DBM_NODE_GEOM,name);
@@ -1786,7 +1786,7 @@ int dbmIsWithin(float *p, float d2, const char *db, const char *obj)
       }
     }
   if(!flag) {
-    comMessage("\nerror: unknown dataset or object: .");
+    comMessage("error: unknown dataset or object: .\n");
     comMessage(db);
     comMessage(".");
     comMessage(obj);
@@ -1839,7 +1839,7 @@ int dbmIsElementInObj(const char *db, const char *obj, int ele_num)
       }
     }
   if(!flag) {
-    comMessage("\nerror: unknown dataset or object: .");
+    comMessage("error: unknown dataset or object: .\n");
     comMessage(db);
     comMessage(".");
     comMessage(obj);

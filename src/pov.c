@@ -265,7 +265,7 @@ static int writePOVTriangle(FILE *f, transMat *transform,int mode, float ov1[3],
       strncpy(tex1,writePOVMegaTex(obj,c1[0],c1[1],c1[2]),63);
       strncpy(tex2,writePOVMegaTex(obj,c2[0],c2[1],c2[2]),63);
       strncpy(tex3,writePOVMegaTex(obj,c3[0],c3[1],c3[2]),63);
-      fprintf(f,"\ntexture_list { %s %s %s}\n",tex1,tex2,tex3);
+      fprintf(f,"texture_list { %s %s %s}\n\n",tex1,tex2,tex3);
       fprintf(f,"}\n");
       
     break;
@@ -729,7 +729,7 @@ static int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
 	      v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
       fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
 	      v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-      fprintf(f,"\ntexture_list { tex1 tex2 tex3}\n");
+      fprintf(f,"texture_list { tex1 tex2 tex3}\n\n");
       fprintf(f,"}\n");
     } else {
       if(write_pov_mode==WRITE_POV_NEW) {
@@ -1065,7 +1065,7 @@ static int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
 		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
 	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
 		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-	fprintf(f,"\ntexture_list { tex1 tex2 tex3}\n");
+	fprintf(f,"texture_list { tex1 tex2 tex3}\n\n");
 	fprintf(f,"}\n");
       } else {
 	if(write_pov_mode==WRITE_POV_NEW) 
@@ -1350,7 +1350,7 @@ static int writePOVScene(FILE *f)
 
   fprintf(f,"#version 3.1;\n");
 
-  fprintf(f,"\nbackground {color rgb <%.3f,%.3f,%.3f>}\n\n",
+  fprintf(f,"background {color rgb <%.3f,%.3f,%.3f>}\n\n\n",
 	  gfx.r,gfx.g,gfx.b);
 
   fprintf(f,"camera {\n perspective\n location <0,0,0>\n direction <0,0,-1>\n up <0,1,0>\n right <1,0,0>\n");
@@ -1369,13 +1369,13 @@ static int writePOVScene(FILE *f)
   fprintf(f,"light_source {<0,0,0> color rgb 0.1 shadowless}\n");
 
   if(gfx.fog) {
-    fprintf(f,"\n// depth effect\n");
+    fprintf(f,"// depth effect\n\n");
     fprintf(f,"plane {z, %.3f texture {pigment {color rgbft <0,0,0,1,1>}}\n",
 	    -gfx.transform.tra[2]-gfx.transform.slabn);
     fprintf(f,"hollow interior {fade_power 2 fade_distance %.3f}\n}\n",
 	    (gfx.transform.slabf-gfx.transform.slabn)*0.5);
   } else {
-    fprintf(f,"\n// uncomment for depth effect \n");
+    fprintf(f,"// uncomment for depth effect \n\n");
     fprintf(f,"//plane {z, %.3f texture {pigment {color rgbft <0,0,0,1,1>}}\n",
 	    -gfx.transform.tra[2]-gfx.transform.slabn);
     fprintf(f,"//hollow interior {fade_power 2 fade_distance %.3f}\n//}\n",
@@ -1474,7 +1474,7 @@ int writePOV(FILE *fpov, FILE *finc,char *fpovn, int flag, int mode)
     }
 
     if(k==1) {
-      fprintf(fpov,"\n// bounding box\n");
+      fprintf(fpov,"// bounding box\n\n");
       fprintf(fpov,"// %.3f %.3f %.3f  %.3f %.3f %.3f\n\n",
 	      lim[3]-1.0,lim[4]-1.0,lim[5]-1.0,
 	      lim[0]+1.0,lim[1]+1.0,lim[2]+1.0);

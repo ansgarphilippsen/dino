@@ -122,7 +122,7 @@ int sceneCommand(int wc, const char **wl)
 #endif
 
   if(wc<=0) {
-    sprintf(message,"\nscene: error: no command given");
+    sprintf(message,"scene: error: no command given\n");
     comMessage(message);
     return -1;
   }
@@ -159,12 +159,12 @@ int sceneCommand(int wc, const char **wl)
             center
      **********************/
     if(wc<2) {
-      sprintf(message,"\nscene: missing value for center");
+      sprintf(message,"scene: missing value for center\n");
       comMessage(message);
       return -1;
     }
     if(matExtract1D(wl[1],3,v1)!=0) {
-      sprintf(message,"\nscene: error in vector");
+      sprintf(message,"scene: error in vector\n");
       comMessage(message);
       return -1;
     }
@@ -193,7 +193,7 @@ int sceneCommand(int wc, const char **wl)
              rotx
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
@@ -204,7 +204,7 @@ int sceneCommand(int wc, const char **wl)
             roty
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
@@ -215,7 +215,7 @@ int sceneCommand(int wc, const char **wl)
              rotz
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
@@ -226,12 +226,12 @@ int sceneCommand(int wc, const char **wl)
              rotm
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
     if(matExtract2D(wl[1],3,3,v1)!=0) {
-      sprintf(message,"\nscene: error in 3x3 matrix %s",wl[1]);
+      sprintf(message,"scene: error in 3x3 matrix %s\n",wl[1]);
       comMessage(message);
       return -1;
     }
@@ -246,7 +246,7 @@ int sceneCommand(int wc, const char **wl)
 	     transx
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
@@ -257,7 +257,7 @@ int sceneCommand(int wc, const char **wl)
              transy
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
@@ -268,7 +268,7 @@ int sceneCommand(int wc, const char **wl)
              transz
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
@@ -279,12 +279,12 @@ int sceneCommand(int wc, const char **wl)
              transm
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
     if(matExtract1D(wl[1],3,v1)!=0) {
-      sprintf(message,"\nscene: expected vector: %s",wl[1]);
+      sprintf(message,"scene: expected vector: %s\n",wl[1]);
       comMessage(message);
       return -1;
     }
@@ -297,7 +297,7 @@ int sceneCommand(int wc, const char **wl)
              set
      **********************/
     if(wc<2) {
-      sprintf(message,"\nmissing arguments for set");
+      sprintf(message,"missing arguments for set\n");
       comMessage(message);
       return -1;
     }
@@ -314,12 +314,12 @@ int sceneCommand(int wc, const char **wl)
               set near
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -332,7 +332,7 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(op,"-=")) {
 	  gfx.transform.slabn-=newd;
 	} else {
-	  sprintf(message,"\nscene: unknown operator: %s",op);
+	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -343,12 +343,12 @@ int sceneCommand(int wc, const char **wl)
 	       set far
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -361,7 +361,7 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(op,"-=")) {
 	  gfx.transform.slabf-=newd;
 	} else {
-	  sprintf(message,"\nscene: unknown operator: %s",op);
+	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -372,18 +372,18 @@ int sceneCommand(int wc, const char **wl)
 	       slabwidth
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	newd=atof(val);
 	if(newd<=0.0) {
-	  comMessage("\nerror: slab width must be larger than 0.0");
+	  comMessage("error: slab width must be larger than 0.0\n");
 	  return -1;
 	}
 	oldd=gfx.transform.slabf-gfx.transform.slabn;
@@ -395,7 +395,7 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(op,"-=")) {
 	  oldd-=newd;
 	} else {
-	  sprintf(message,"\nscene: unknown operator: %s",op);
+	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -408,12 +408,12 @@ int sceneCommand(int wc, const char **wl)
 	       set fog offset
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -426,17 +426,17 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(op,"-=")) {
 	  gfx.fog_dist-=newd;
 	} else {
-	  sprintf(message,"\nscene: unknown operator: %s",op);
+	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
 	/****
 	if(gfx.fog_dist<-1.0) {
-	  comMessage("\nfogo clamped to -1.0");
+	  comMessage("fogo clamped to -1.0\n");
 	  gfx.fog_dist=-1.0;
 	}
 	if(gfx.fog_dist>1.0) {
-	  comMessage("\nfogo clamped to 1.0");
+	  comMessage("fogo clamped to 1.0\n");
 	  gfx.fog_dist=1.0;
 	}
 	*****/
@@ -452,7 +452,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetFog();
 	comRedraw();
       } else if(!strcmp(prop,"ortho")) {
-	comMessage("\nwarning: orthographic projection deprecated!");
+	comMessage("warning: orthographic projection deprecated!\n");
 	if(gfx.mode==GFX_PERSP) {
 	  scenePersp2Ortho();
 	  gfx.mode=GFX_ORTHO;
@@ -466,12 +466,12 @@ int sceneCommand(int wc, const char **wl)
 	       set eyedist
 	**********************/
       if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -485,7 +485,7 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(op,"-=")) {
 	  gfx.eye_dist-=newd;
 	} else {
-	  sprintf(message,"\nscene: unknown operator: %s",op);
+	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -501,7 +501,7 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(op,"-=")) {
 	  gui.eye_dist-=newd;
 	} else {
-	  sprintf(message,"\nscene: unknown operator: %s",op);
+	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -515,12 +515,12 @@ int sceneCommand(int wc, const char **wl)
 	       set fovy
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -533,7 +533,7 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(op,"-=")) {
 	  gfx.fovy=newd;
 	} else {
-	  sprintf(message,"\nscene: unknown operator: %s",op);
+	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -552,12 +552,12 @@ int sceneCommand(int wc, const char **wl)
 	} else if(strlen(val)==0 && strlen(op)==0) {
 	  gfx.fixz=1;
 	} else if(strlen(val)==0 && strlen(op)>0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	} else {
 	  if(strcmp(op,"=")) {
-	    sprintf(message,"\nscene: unknown operator: %s",op);
+	    sprintf(message,"scene: unknown operator: %s\n",op);
 	    comMessage(message);
 	    return -1;
 	  } else {
@@ -580,12 +580,12 @@ int sceneCommand(int wc, const char **wl)
 	} else if(strlen(val)==0 && strlen(op)==0) {
 	  gfx.dither=1;
 	} else if(strlen(val)==0 && strlen(op)>0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	} else {
 	  if(strcmp(op,"=")) {
-	    sprintf(message,"\nscene: unknown operator: %s",op);
+	    sprintf(message,"scene: unknown operator: %s\n",op);
 	    comMessage(message);
 	    return -1;
 	  } else {
@@ -672,12 +672,12 @@ int sceneCommand(int wc, const char **wl)
 	  glEnable(GL_FOG);
 	  gfx.fog=1;
 	} else if(strlen(val)==0 && strlen(op)>0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	} else {
 	  if(strcmp(op,"=")) {
-	    sprintf(message,"\nscene: unknown operator: %s",op);
+	    sprintf(message,"scene: unknown operator: %s\n",op);
 	    comMessage(message);
 	    return -1;
 	  } else {
@@ -695,22 +695,22 @@ int sceneCommand(int wc, const char **wl)
 	comRedraw();
       } else if(!strcmp(prop,"bg")) {
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
 	if(comGetColor(val, &c[0], &c[1], &c[2])!=0) {
-	  sprintf(message,"\nscene: unknown color: %s", val);
+	  sprintf(message,"scene: unknown color: %s\n", val);
 	  comMessage(message);
 	  return -1;
 	}
@@ -725,22 +725,22 @@ int sceneCommand(int wc, const char **wl)
 	comRedraw();
       } else if(!strcmp(prop,"fogc")) {
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
 	if(comGetColor(val, &c[0], &c[1], &c[2])!=0) {
-	  sprintf(message,"\nscene: unknown color: %s", val);
+	  sprintf(message,"scene: unknown color: %s\n", val);
 	  comMessage(message);
 	  return -1;
 	}
@@ -751,17 +751,17 @@ int sceneCommand(int wc, const char **wl)
 	comRedraw();
       } else if(clStrcmp(prop,"fogm")) {
 	if(clStrlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(clStrlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(!clStrcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -772,22 +772,22 @@ int sceneCommand(int wc, const char **wl)
 	} else if(clStrcmp(val,"exp2")) {
 	  gfx.fog_mode=GL_EXP2;
 	} else {
-	  comMessage("\nscene: expected linear, exp or exp2 as fog mode");
+	  comMessage("scene: expected linear, exp or exp2 as fog mode\n");
 	}
 	glFogi(GL_FOG_MODE, gfx.fog_mode);
       } else if(clStrcmp(prop,"fogd")) {
 	if(clStrlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(clStrlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(!clStrcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -799,17 +799,17 @@ int sceneCommand(int wc, const char **wl)
 	       set view
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
@@ -820,7 +820,7 @@ int sceneCommand(int wc, const char **wl)
 	else if(!strcmp(val,"right"))
 	  gfx.stereo_view=GFX_RIGHT;
 	else {
-	  sprintf(message,"\ninvalid value for view");
+	  sprintf(message,"invalid value for view\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -832,22 +832,22 @@ int sceneCommand(int wc, const char **wl)
 	     set transmat
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
 	if(matExtract1D(val,3,v1)!=0) {
-	  sprintf(message,"\nscene: error in matrix");
+	  sprintf(message,"scene: error in matrix\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -861,22 +861,22 @@ int sceneCommand(int wc, const char **wl)
 	     set rotmat
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
 	if(matExtract2D(val,3,3,v1)!=0) {
-	  sprintf(message,"\nscene: error in matrix");
+	  sprintf(message,"scene: error in matrix\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -892,22 +892,22 @@ int sceneCommand(int wc, const char **wl)
 	     set modelmat
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
 	if(matExtract2D(val,4,4,v1)!=0) {
-	  sprintf(message,"\nscene: error in 4x4 matrix");
+	  sprintf(message,"scene: error in 4x4 matrix\n");
 	  comMessage(message);
 	  return -1;
 	}
@@ -926,24 +926,24 @@ int sceneCommand(int wc, const char **wl)
 	     set rot trans cen
 	**********************/
 	if(strlen(op)==0) {
-	  sprintf(message,"\nscene: missing operator");
+	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strlen(val)==0) {
-	  sprintf(message,"\nscene: missing value");
+	  sprintf(message,"scene: missing value\n");
 	  comMessage(message);
 	  return -1;
 	}
 	if(strcmp(op,"=")) {
-	  sprintf(message,"\nscene: invalid operator: %s",op);
+	  sprintf(message,"scene: invalid operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
 	transSetAll(&gfx.transform, val);
 	comRedraw();
       } else {
-	sprintf(message,"\nunknown expression %s%s%s",prop,op,val);
+	sprintf(message,"unknown expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
@@ -953,7 +953,7 @@ int sceneCommand(int wc, const char **wl)
              get
      **********************/
     if(wc!=2) {
-      sprintf(message,"\nwrong number of arguments");
+      sprintf(message,"wrong number of arguments\n");
       comMessage(message);
       return -1;
     }
@@ -1043,7 +1043,7 @@ int sceneCommand(int wc, const char **wl)
       else
 	sprintf(message,"center");
     } else {    
-      sprintf(message,"\nunkown property: %s",wl[1]);
+      sprintf(message,"unkown property: %s\n",wl[1]);
       comMessage(message);
       return -1;
     }
@@ -1054,7 +1054,7 @@ int sceneCommand(int wc, const char **wl)
   } else if(!strcmp(wl[0],"pop")) {
     ret=scenePop();
     if(ret==NULL) {
-      comMessage("\nscene stack is empty");
+      comMessage("scene stack is empty\n");
       comReturn("");
       return -1;
     } else {
@@ -1064,7 +1064,7 @@ int sceneCommand(int wc, const char **wl)
   } else if(!strcmp(wl[0],"peek")) {
     ret=scenePeek();
     if(ret==NULL) {
-      comMessage("\nscene stack is empty");
+      comMessage("scene stack is empty\n");
       comReturn("");
       return -1;
     } else {
@@ -1120,13 +1120,13 @@ int sceneCommand(int wc, const char **wl)
 	} else if(!strcmp(wl[1],"on")) {
 	  glwStereoSwitch(1);
 	} else {
-	  sprintf(message,"\nunknown command '%s'",wl[1]);
+	  sprintf(message,"unknown command '%s'\n",wl[1]);
 	  comMessage(message);
 	  return -1;
 	}
       }
     } else {
-      sprintf(message,"\nStereo mode not available");
+      sprintf(message,"Stereo mode not available\n");
       comMessage(message);
       return -1;
     }
@@ -1137,7 +1137,7 @@ int sceneCommand(int wc, const char **wl)
 #endif
   } else if(!strcmp(wl[0],"grab")) {
     if(wc!=2) {
-      sprintf(message,"\nSyntax: grab devicename");
+      sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
     } else {
       if(comGrab(&gfx.transform,wl[1])<0)
@@ -1165,7 +1165,7 @@ int sceneCommand(int wc, const char **wl)
   } else if(!strcmp(wl[0],"light")) {
     glEnable(GL_LIGHTING);
   } else {
-    sprintf(message,"\nscene: unknown command %s",wl[0]);
+    sprintf(message,"scene: unknown command %s\n",wl[0]);
     comMessage(message);
     return -1;
   }
@@ -1252,7 +1252,7 @@ int scenePersp2Ortho(void)
   fx=gfx.aspect*fy;
 
   /*
-  fprintf(stderr,"\n%g  %g %g  %g %g  %g",fact,nx,ny,fx,fy,sinw*gfx.transform.tra[2]);
+  fprintf(stderr,"%g  %g %g  %g %g  %g\n",fact,nx,ny,fx,fy,sinw*gfx.transform.tra[2]);
   */
   gfx.left=-1.0;
   gfx.right=1.0;
@@ -1272,7 +1272,7 @@ int scenePersp2Ortho(void)
   qf=(gfx.transform.slabf+gfx.transform.tra[2]);
 
   /*
-  fprintf(stderr,"\n%g %g %g",q,qn*q,qf*q);
+  fprintf(stderr,"%g %g %g\n",q,qn*q,qf*q);
   */
 
   gfx.transform.slabn=0.0;
@@ -1360,7 +1360,7 @@ int sceneSubCommand(char *sub, int wc, const char **wl)
       return -1;
 
   } else {
-    sprintf(message,"\nerror: scene: unknown sub expression %s",sub);
+    sprintf(message,"error: scene: unknown sub expression %s\n",sub);
     comMessage(message);
     return -1;
   }
@@ -1371,7 +1371,7 @@ int sceneSubLightCom(int l, int wc, const char **wl)
 {
   char message[256];
   if(wc<=0) {
-    comMessage("\nerror: scene: missing command");
+    comMessage("error: scene: missing command\n");
     return -1;
   }
   if(clStrcmp(wl[0],"set")) {
@@ -1390,30 +1390,30 @@ int sceneSubLightCom(int l, int wc, const char **wl)
     gfx.light[l].local=0;
   } else if(clStrcmp(wl[0],"show")) {
     if(gfx.light[l].on)
-      sprintf(message,"\nlight%d is on",l);
+      sprintf(message,"light%d is on\n",l);
     else
-      sprintf(message,"\nlight%d is off",l);
+      sprintf(message,"light%d is off\n",l);
     comMessage(message);
-    sprintf(message,"\nposition {%.3f,%.3f,%.3f,%.3f}",
+    sprintf(message,"position {%.3f,%.3f,%.3f,%.3f}\n",
 	    gfx.light[l].pos[0],gfx.light[l].pos[1],
 	    gfx.light[l].pos[2],gfx.light[l].pos[3]);
     comMessage(message);
-    sprintf(message,"\nambient  {%.3f,%.3f,%.3f,%.3f}",
+    sprintf(message,"ambient  {%.3f,%.3f,%.3f,%.3f}\n",
 	    gfx.light[l].amb[0],gfx.light[l].amb[1],
 	    gfx.light[l].amb[2],gfx.light[l].amb[3]);
     comMessage(message);
-    sprintf(message,"\ndiffuse  {%.3f,%.3f,%.3f,%.3f}",
+    sprintf(message,"diffuse  {%.3f,%.3f,%.3f,%.3f}\n",
 	    gfx.light[l].diff[0],gfx.light[l].diff[1],
 	    gfx.light[l].diff[2],gfx.light[l].diff[3]);
     comMessage(message);
-    sprintf(message,"\nspecular {%.3f,%.3f,%.3f,%.3f}",
+    sprintf(message,"specular {%.3f,%.3f,%.3f,%.3f}\n",
 	    gfx.light[l].spec[0],gfx.light[l].spec[1],
 	    gfx.light[l].spec[2],gfx.light[l].spec[3]);
     comMessage(message);
     sprintf(message,"attenuation c %.3f  l %.3f   q %.3f",
 	    gfx.light[l].kc,gfx.light[l].kl,gfx.light[l].kq);
   } else {
-    comMessage("\nerror: scene: unknown command ");
+    comMessage("error: scene: unknown command \n");
     comMessage(wl[0]);
     return -1;
   }
@@ -1429,7 +1429,7 @@ int sceneSubLightSet(int l, int wc, const char **wl)
   char message[256];
 
   if(wc<=0) {
-    comMessage("\nerror: missing parameters for set");
+    comMessage("error: missing parameters for set\n");
     return -1;
   }
 
@@ -1437,18 +1437,18 @@ int sceneSubLightSet(int l, int wc, const char **wl)
     return -1;
   
   if(set.range_flag) {
-    comMessage("\nerror: unexpected range");
+    comMessage("error: unexpected range\n");
     return -1;
   }
 
   for(pc=0;pc<set.pov_count;pc++) {
     if(set.pov[pc].val_count>1) {
-      comMessage("\nerror: expected at most one value");
+      comMessage("error: expected at most one value\n");
       return -1;
     }
     val=povGetVal(set.pov+pc,0);
     if(val->range_flag) {
-      comMessage("\nerror: unexpected range");
+      comMessage("error: unexpected range\n");
       return -1;
     }
     if(clStrcmp(set.pov[pc].prop,"on")) {
@@ -1463,11 +1463,11 @@ int sceneSubLightSet(int l, int wc, const char **wl)
       gfx.light[l].local=0;
     } else if(clStrcmp(set.pov[pc].prop,"pos")) {
       if(val->val1[0]!='{') {
-	comMessage("\nerror: expected {x,y,z,w} for pos");
+	comMessage("error: expected {x,y,z,w} for pos\n");
 	return -1;
       }
       if(matExtract1Df(val->val1,4,v)<0) {
-	comMessage("\nerror: in vector ");
+	comMessage("error: in vector \n");
 	comMessage(val->val1);
 	return -1;
       }
@@ -1485,7 +1485,7 @@ int sceneSubLightSet(int l, int wc, const char **wl)
 	gfx.light[l].amb[2]=atof(val->val1);
       } else {
 	if(matExtract1Df(val->val1,4,v)<0) {
-	  comMessage("\nerror: in vector ");
+	  comMessage("error: in vector \n");
 	  comMessage(val->val1);
 	  return -1;
 	}
@@ -1502,7 +1502,7 @@ int sceneSubLightSet(int l, int wc, const char **wl)
 	gfx.light[l].diff[2]=atof(val->val1);
       } else {
 	if(matExtract1Df(val->val1,4,v)<0) {
-	  comMessage("\nerror: in vector ");
+	  comMessage("error: in vector \n");
 	  comMessage(val->val1);
 	  return -1;
 	}
@@ -1519,7 +1519,7 @@ int sceneSubLightSet(int l, int wc, const char **wl)
 	gfx.light[l].spec[2]=atof(val->val1);
       } else {
 	if(matExtract1Df(val->val1,4,v)<0) {
-	  comMessage("\nerror: in vector ");
+	  comMessage("error: in vector \n");
 	  comMessage(val->val1);
 	  return -1;
 	}
@@ -1546,11 +1546,11 @@ int sceneSubLightSet(int l, int wc, const char **wl)
       glLightf(GL_LIGHT0+l, GL_SPOT_EXPONENT, gfx.light[l].spote);
     } else if(clStrcmp(set.pov[pc].prop,"spotd")) {
       if(val->val1[0]!='{') {
-	comMessage("\nerror: expected {x,y,z} for spotd");
+	comMessage("error: expected {x,y,z} for spotd\n");
 	return -1;
       } else {
 	if(matExtract1Df(val->val1,3,v)<0) {
-	  comMessage("\nerror: in vector ");
+	  comMessage("error: in vector \n");
 	  comMessage(val->val1);
 	  return -1;
 	}
@@ -1560,7 +1560,7 @@ int sceneSubLightSet(int l, int wc, const char **wl)
 	glLightfv(GL_LIGHT0+l, GL_SPOT_DIRECTION, gfx.light[l].spotd);
       }
     } else {
-      comMessage("\nerror: scene: unknown light property ");
+      comMessage("error: scene: unknown light property \n");
       comMessage(set.pov[pc].prop);
     }
   }
@@ -1573,7 +1573,7 @@ int sceneSubLightGet(int l, int wc, const char **wl)
 {
   char message[256];
   if(wc!=1) {
-    comMessage("\nerror: expected one property for get");
+    comMessage("error: expected one property for get\n");
     return -1;
   }
   if(clStrcmp(wl[0],"on")) {
@@ -1600,7 +1600,7 @@ int sceneSubLightGet(int l, int wc, const char **wl)
 	    gfx.light[l].spec[2],gfx.light[l].spec[3]);
     comReturn(message);
   } else {
-    comMessage("\nerror: unknown light property ");
+    comMessage("error: unknown light property \n");
     comMessage(wl[0]);
     return -1;
   }
@@ -1611,7 +1611,7 @@ int sceneSubClipCom(int c, int wc, const char **wl)
 {
   char message[256];
   if(wc<=0) {
-    comMessage("\nerror: scene: missing command");
+    comMessage("error: scene: missing command\n");
     return -1;
   }
   if(clStrcmp(wl[0],"set")) {
@@ -1624,7 +1624,7 @@ int sceneSubClipCom(int c, int wc, const char **wl)
     gfx.clip[c].on=0;
   } else if(clStrcmp(wl[0],"grab")) {
     if(wc!=2) {
-      sprintf(message,"\nSyntax: grab devicename");
+      sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
     } else {
       if(comGrab(&gfx.clip[c].transform,wl[1])<0)
@@ -1647,7 +1647,7 @@ int sceneSubClipSet(int c, int wc, const char **wl)
   char message[256];
 
   if(wc<=0) {
-    comMessage("\nerror: missing parameters for set");
+    comMessage("error: missing parameters for set\n");
     return -1;
   }
 
@@ -1655,18 +1655,18 @@ int sceneSubClipSet(int c, int wc, const char **wl)
     return -1;
   
   if(set.range_flag) {
-    comMessage("\nerror: unexpected range");
+    comMessage("error: unexpected range\n");
     return -1;
   }
 
   for(pc=0;pc<set.pov_count;pc++) {
     if(set.pov[pc].val_count>1) {
-      comMessage("\nerror: expected at most one value");
+      comMessage("error: expected at most one value\n");
       return -1;
     }
     val=povGetVal(set.pov+pc,0);
     if(val->range_flag) {
-      comMessage("\nerror: unexpected range");
+      comMessage("error: unexpected range\n");
       return -1;
     }
     if(clStrcmp(set.pov[pc].prop,"on")) {
@@ -1675,11 +1675,11 @@ int sceneSubClipSet(int c, int wc, const char **wl)
       gfx.clip[c].on=0;
     } else if(clStrcmp(set.pov[pc].prop,"pos")) {
       if(val->val1[0]!='{') {
-	comMessage("\nerror: expected {x,y,z} for pos");
+	comMessage("error: expected {x,y,z} for pos\n");
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v)<0) {
-	comMessage("\nerror: in vector ");
+	comMessage("error: in vector \n");
 	comMessage(val->val1);
 	return -1;
       }
@@ -1688,11 +1688,11 @@ int sceneSubClipSet(int c, int wc, const char **wl)
       gfx.clip[c].pos[2]=v[2];
     } else if(clStrcmp(set.pov[pc].prop,"dir")) {
       if(val->val1[0]!='{') {
-	comMessage("\nerror: expected {x,y,z} for dir");
+	comMessage("error: expected {x,y,z} for dir\n");
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v)<0) {
-	comMessage("\nerror: in vector ");
+	comMessage("error: in vector \n");
 	comMessage(val->val1);
 	return -1;
       }
@@ -1738,14 +1738,14 @@ int sceneMorph(int wc, const char **wl)
     td[i]/=(double)step;
   }  
 
-  fprintf(stderr,"\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
+  fprintf(stderr,"%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n\n",
 	  rd[0],rd[1],rd[2],rd[3],
 	  rd[4],rd[5],rd[6],rd[7],
 	  rd[8],rd[9],rd[10],rd[11],
 	  rd[12],rd[13],rd[14],rd[15]);
-  fprintf(stderr,"\n%f %f %f ",t1[0],t1[1],t1[2]);
-  fprintf(stderr,"\n%f %f %f ",t2[0],t2[1],t2[2]);
-  fprintf(stderr,"\n%f %f %f ",td[0],td[1],td[2]);
+  fprintf(stderr,"%f %f %f \n",t1[0],t1[1],t1[2]);
+  fprintf(stderr,"%f %f %f \n",t2[0],t2[1],t2[2]);
+  fprintf(stderr,"%f %f %f \n",td[0],td[1],td[2]);
 
 
   for(j=0;j<=step;j++) {

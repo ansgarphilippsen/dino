@@ -139,7 +139,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
   for(wc=0;wc<raw_count;wc++) {
     if(!strcmp(raw_list[wc],"(")) {
       if(cpoe!=NULL) {
-	sprintf(message,"\nsyntax error: no logical operator before ()");
+	sprintf(message,"syntax error: no logical operator before ()\n");
 	comMessage(message);
 	Cfree(raw_d);
 	Cfree(lex_exp_buf);
@@ -153,7 +153,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
       prev=LEX_OP;
     } else if(!strcmp(raw_list[wc],")")) {
       if(bc<=0) {
-	sprintf(message,"\nsyntax error: () unmatched");
+	sprintf(message,"syntax error: () unmatched\n");
 	comMessage(message);
 	Cfree(raw_d);
 	Cfree(lex_exp_buf);
@@ -168,7 +168,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
 	word_list[++word_count]=&lex_exp_buf[ep];
       } else {
 	if(prev!=LEX_EXP) {
-	  sprintf(message,"\nsyntax error: expression missing before ')'");
+	  sprintf(message,"syntax error: expression missing before ')'\n");
 	  comMessage(message);
 	  Cfree(raw_d);
 	  Cfree(lex_exp_buf);
@@ -193,7 +193,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
       } else {
 	if(prev!=LEX_EXP) {
 	  sprintf(message,
-		  "\nsyntax error: expression missing before 'or'");
+		  "syntax error: expression missing before 'or'\n");
 	  comMessage(message);
 	Cfree(raw_d);
 	Cfree(lex_exp_buf);
@@ -218,7 +218,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
       } else {
 	if(prev!=LEX_EXP) {
 	  sprintf(message,
-		  "\nsyntax error: expression missing before 'or'");
+		  "syntax error: expression missing before 'or'\n");
 	  comMessage(message);
 	Cfree(raw_d);
 	Cfree(lex_exp_buf);
@@ -234,7 +234,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
     } else if(!strcmp(raw_list[wc],"!") ||
 	      !strcmp(raw_list[wc],"not")) {
       if(cpoe!=NULL) {
-	sprintf(message,"\nsyntax error: invalid 'not' placement");
+	sprintf(message,"syntax error: invalid 'not' placement\n");
 	comMessage(message);
 	Cfree(raw_d);
 	Cfree(lex_exp_buf);
@@ -254,7 +254,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
     
   }
   if(bc>0) {
-    sprintf(message,"\nsyntax error: () unmatched");
+    sprintf(message,"syntax error: () unmatched\n");
     comMessage(message);
     Cfree(raw_d);
     Cfree(lex_exp_buf);
@@ -270,7 +270,7 @@ struct LEX_STACK * lexGenerate(char *raw_s)
     word_list[++word_count]=&lex_exp_buf[ep];
   } else {
     if(strcmp(word_list[word_count-1],")")!=0) {
-      sprintf(message,"\nsyntax error: must end with expression");
+      sprintf(message,"syntax error: must end with expression\n");
       comMessage(message);
 	Cfree(raw_d);
 	Cfree(lex_exp_buf);

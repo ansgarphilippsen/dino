@@ -64,7 +64,7 @@ int gridCommand(struct DBM_GRID_NODE *node,int wc, char **wl)
     return gridComDel(node,wc-1,wl+1);
   } else if(!strcmp(wl[0],"grab")) {
     if(wc!=2) {
-      comMessage("\nsyntax: grab device");
+      comMessage("syntax: grab device\n");
       return -1;
     }
     if(comGrab(&node->transform,wl[1])<0)
@@ -73,66 +73,66 @@ int gridCommand(struct DBM_GRID_NODE *node,int wc, char **wl)
     comGetCurrentCenter(node->transform.cen);
   } else if(!strcmp(wl[0],"fix")) {
     if(wc>1)
-      comMessage("\nwarning: ignored superfluous words after fix");
+      comMessage("warning: ignored superfluous words after fix\n");
 
     memcpy(&node->transform_save, &node->transform,sizeof(transMat));
     comRedraw();
   } else if(!strcmp(wl[0],"reset")) {
     if(wc>1)
-      comMessage("\nwarning: ignored superfluous words after reset");
+      comMessage("warning: ignored superfluous words after reset\n");
 
     memcpy(&node->transform, &node->transform_save,sizeof(transMat));
     comRedraw();
   } else if(!strcmp(wl[0],"rotx")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after rotx");
+      comMessage("error: missing value after rotx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"roty")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after roty");
+      comMessage("error: missing value after roty\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"rotz")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after rotz");
+      comMessage("error: missing value after rotz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transx")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transx");
+      comMessage("error: missing value after transx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transy")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transy");
+      comMessage("error: missing value after transy\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transz")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transz");
+      comMessage("error: missing value after transz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
   } else if(clStrcmp(wl[0],"tex")) {
     if(wc<2) {
-      comMessage("\nerror: missing filename");
+      comMessage("error: missing filename\n");
       return -1;
     }
     return gridLoad(node, wl[1],"texture1");
   } else {
-    sprintf(message,"\nunknown command: %s", wl[0]);
+    sprintf(message,"unknown command: %s\n", wl[0]);
     comMessage(message);
     return -1;
   }
@@ -161,18 +161,18 @@ int gridComNew(dbmGridNode *node,int wc, char **wl)
   for(i=0;i<co.param_count;i++) {
     if(co.param[i].p==NULL) {
       if(co.param[i].wc!=0) {
-	comMessage("\nerror: new: expected an argument beginning with -"); 
+	comMessage("error: new: expected an argument beginning with -\n"); 
 	ret=-1;
 	break;
       }
     } else if(clStrcmp(co.param[i].p,"name") || 
 	      clStrcmp(co.param[i].p,"n")) {
       if(co.param[i].wc<1) {
-	comMessage("\nerror: new: missing value for -name");
+	comMessage("error: new: missing value for -name\n");
 	ret=-1;
 	break;
       } else if(co.param[i].wc>1) {
-	comMessage("\nerror: new: too many values for -name");
+	comMessage("error: new: too many values for -name\n");
 	ret=-1;
 	break;
       } else {
@@ -181,11 +181,11 @@ int gridComNew(dbmGridNode *node,int wc, char **wl)
     } else if(clStrcmp(co.param[i].p,"type") ||
 	      clStrcmp(co.param[i].p,"t")) {
       if(co.param[i].wc<1) {
-	comMessage("\nerror: new: missing value for -type");
+	comMessage("error: new: missing value for -type\n");
 	ret=-1;
 	break;
       } else if(co.param[i].wc>1) {
-	comMessage("\nerror: new: too many values for -type");
+	comMessage("error: new: too many values for -type\n");
 	ret=-1;
 	break;
       } else {
@@ -194,7 +194,7 @@ int gridComNew(dbmGridNode *node,int wc, char **wl)
 	} else if(clStrcmp(co.param[i].wl[0],"contour")) {
 	  type=GRID_CONTOUR;
 	} else {
-	  clStrcpy(message,"\nerror: new: unknown type ");
+	  clStrcpy(message,"error: new: unknown type \n");
 	  clStrncat(message,co.param[i].wl[0],100);
 	  comMessage(message);
 	  ret=-1;
@@ -219,7 +219,7 @@ int gridComNew(dbmGridNode *node,int wc, char **wl)
     } else if(clStrcmp(co.param[i].p,"v")) {
       vflag=1;
     } else {
-      clStrcpy(message,"\nunknown paramater ");
+      clStrcpy(message,"unknown paramater \n");
       clStrncat(message,co.param[i].p,100);
       comMessage(message);
       ret=-1;
@@ -272,7 +272,7 @@ int gridComGet(dbmGridNode *node,int wc, char **wl)
   int i;
 
   if(wc==0) {
-    comMessage("\nerror: get: missing property");
+    comMessage("error: get: missing property\n");
     return -1;
   }
   for(i=0;i<wc;i++)
@@ -287,7 +287,7 @@ int gridComDel(dbmGridNode *node,int wc, char **wl)
   int i;
 
   if(wc==0) {
-    sprintf(message,"\n%s: missing parameter",node->name);
+    sprintf(message,"%s: missing parameter\n",node->name);
     comMessage(message);
     return -1;
   } else {
@@ -313,25 +313,25 @@ int gridComAttach(dbmGridNode *node, int wc, char **wl)
     return gridAttach(node,NULL,0);
   }
   if(!comIsDB(wl[0])) {
-    sprintf(message,"\nunknown database %s",wl[0]);
+    sprintf(message,"unknown database %s\n",wl[0]);
     comMessage(message);
     return -1;
   }
   cutoff=4.0;
   for(i=1;i<wc;i++)
     if(!strcmp(wl[i],"-i")) {
-      comMessage("\ninfo: attach: -i no longer supported, ignored");
+      comMessage("info: attach: -i no longer supported, ignored\n");
     } else if(!strcmp(wl[i],"-cutoff") ||
 	      !strcmp(wl[i],"-co")) {
       if(i+1>=wc) {
-	sprintf(message,"\ndistance missing for -cutoff");
+	sprintf(message,"distance missing for -cutoff\n");
 	comMessage(message);
 	return -1;
       } else {
 	cutoff=atof(wl[++i]);
       }
     } else {
-      sprintf(message,"\nunknown parameter %s",wl[i]);
+      sprintf(message,"unknown parameter %s\n",wl[i]);
       comMessage(message);
       return -1;
     }
@@ -365,11 +365,11 @@ int gridComRestrict(dbmGridNode *node, int wc, char **wl)
 
   // output how many elements were flaged
   if(c==0)
-    sprintf(message,"\nall grid-points unrestricted");
+    sprintf(message,"all grid-points unrestricted\n");
   else if(c==node->field.point_count)
-    sprintf(message,"\nrestriction affects ALL of %d grid-points",c);
+    sprintf(message,"restriction affects ALL of %d grid-points\n",c);
   else
-    sprintf(message,"\nrestriction affects %d of %d grid-points",
+    sprintf(message,"restriction affects %d of %d grid-points\n",
 	    c,node->field.point_count);
   comMessage(message);
 
@@ -430,17 +430,17 @@ int gridSet(dbmGridNode *node, Set *s)
     } else if (clStrcmp(s->pov[pc].prop,"trans")) {
       s->pov[pc].id=GRID_PROP_TRANS;
     } else {
-      comMessage("\nerror: set: unknown property ");
+      comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].op!=POV_OP_EQ) {
-      comMessage("\nerror: set: expected operator = for property ");
+      comMessage("error: set: expected operator = for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].val_count>1) {
-      comMessage("\nerror: set: expected only one value for property ");
+      comMessage("error: set: expected only one value for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
@@ -451,14 +451,14 @@ int gridSet(dbmGridNode *node, Set *s)
     switch(s->pov[pc].id) {
     case GRID_PROP_SCALEZ:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property scalez");
+	comMessage("error: set: unexpected range in property scalez\n");
 	return -1;
       }
       node->field.scale_z=atof(val->val1)/256.0;
       break;
     case GRID_PROP_SCALEXY:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property scalez");
+	comMessage("error: set: unexpected range in property scalez\n");
 	return -1;
       }
       /*
@@ -474,7 +474,7 @@ int gridSet(dbmGridNode *node, Set *s)
       break;
     case GRID_PROP_ROT:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property rot");
+	comMessage("error: set: unexpected range in property rot\n");
 	return -1;
       }
       if(transSetRot(&node->transform,val->val1)<0)
@@ -482,7 +482,7 @@ int gridSet(dbmGridNode *node, Set *s)
       break;
     case GRID_PROP_TRANS:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property trans");
+	comMessage("error: set: unexpected range in property trans\n");
 	return -1;
       }
       if(transSetTra(&node->transform,val->val1)<0)
@@ -522,7 +522,7 @@ int gridGet(dbmGridNode *node, char *prop)
   } else if(!strcmp(prop,"trans")) {
     comReturn(transGetTra(&node->transform));
   } else {
-    sprintf(message,"\n%s: unknown property %s",node->name, prop);
+    sprintf(message,"%s: unknown property %s\n",node->name, prop);
     comMessage(message);
     return -1;
   }
@@ -645,12 +645,12 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
     else if(clStrcmp(pov->prop,"ele"))
       prop=GRID_SEL_ELE;
     else {
-      sprintf(message,"\nerror: %s: unknown property %s",node->name, pov->prop);
+      sprintf(message,"error: %s: unknown property %s\n",node->name, pov->prop);
       comMessage(message);
       return -1;
     }
     if(!node->attach_flag) {
-      sprintf(message,"\nerror: %s: need attached structure for property %s",node->name, pov->prop);
+      sprintf(message,"error: %s: need attached structure for property %s\n",node->name, pov->prop);
       comMessage(message);
       return -1;
     }
@@ -668,7 +668,7 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
   if(!(op==POV_OP_EQ || op==POV_OP_LT || op==POV_OP_LE ||
        op==POV_OP_GT || op==POV_OP_GE || op==POV_OP_NE ||
        op==POV_OP_WI || op==POV_OP_OBJ)) {
-    sprintf(message,"\nerror: invalid operator");
+    sprintf(message,"error: invalid operator\n");
     comMessage(message);
     return -1;
   }
@@ -683,7 +683,7 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
     val=povGetVal(pov,i);
     if(val->range_flag) {
       if(op!=POV_OP_EQ) {
-	sprintf(message,"\nerror: %s: expected operator = for range",node->name);
+	sprintf(message,"error: %s: expected operator = for range\n",node->name);
 	comMessage(message);
 	return -1;
       }
@@ -700,12 +700,12 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
     switch(prop) {
     case GRID_SEL_OBJECT:
       if(rf) {
-	comMessage("\nerror: range not supported for .object selection");
+	comMessage("error: range not supported for .object selection\n");
 	return -1;
       }
       // identify object
       if(v1[0]!='.') {
-	comMessage("\nerror: expected object to start with .");
+	comMessage("error: expected object to start with .\n");
 	return -1;
       }
       v1++;
@@ -713,7 +713,7 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
       if(v2!=NULL) {
 	/* .dataset.object -> use attached datasets */
 	if(!node->attach_flag) {
-	  comMessage("\nno datasets attached for .dataset.object selection");
+	  comMessage("no datasets attached for .dataset.object selection\n");
 	  return -1;
 	}
 	strncpy(db_s,v1,1023);
@@ -730,7 +730,7 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
 	  /* ignore */
 	}
       } else {
-	comMessage("\nobject selection for own topog objects not implemented");
+	comMessage("object selection for own topog objects not implemented\n");
 	return -1;
 	// TODO later
 	f=0;
@@ -750,7 +750,7 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
 	  }
 	}
 	if(!f) {
-	  comMessage("\nerror: object ");
+	  comMessage("error: object \n");
 	  comMessage(v1);
 	  comMessage(" not found");
 	  return -1;
@@ -759,7 +759,7 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
       break;
     case GRID_SEL_WITHIN:
       if(rf) {
-	comMessage("\nerror: range not supported for < >");
+	comMessage("error: range not supported for < >\n");
 	return -1;
       }
       ipos[0]=(float)point->x;
@@ -853,7 +853,7 @@ int gridAttach(dbmGridNode *node, dbmNode *attach, int iflag)
 
 
   if(attach==NULL) {
-    comMessage("\nde-attaching ...");
+    comMessage("de-attaching ...\n");
     node->attach_flag=0;
     for(i=0;i<node->field.point_count;i++)
       node->field.point[i].attach_node=NULL;
@@ -864,13 +864,13 @@ int gridAttach(dbmGridNode *node, dbmNode *attach, int iflag)
   }
 
   if(attach->common.type!=DBM_NODE_STRUCT) {
-    comMessage("\ninvalid node type for attach: must be a structure db");
+    comMessage("invalid node type for attach: must be a structure db\n");
     return -1;
   }
 
   max_dist=node->attach_cutoff*node->attach_cutoff;
 
-  comMessage("\nattaching ...");
+  comMessage("attaching ...\n");
 
   limit=node->attach_cutoff;
   a_ca=attach->structNode.ca;
@@ -1027,7 +1027,7 @@ int gridGetRangeVal(dbmGridNode *node, const char *prop, gridPoint *p, float *r)
   if(clStrcmp(prop,"h")) {
     (*r)=((float)p->z)/256.0;
   } else {
-    comMessage("\nerror: range: unknown property ");
+    comMessage("error: range: unknown property \n");
     comMessage(prop);
     (*r)=0.0;
     return -1;
@@ -1103,7 +1103,7 @@ int gridLoadTexture(char *file, gridTexture *tex)
   if(clStrcmp(ext,"tiff") || clStrcmp(ext,"tif")) {
     gridTiffReadTex(file,tex);
   } else {
-    sprintf(message,"\nerror: unknown extension %s",ext);
+    sprintf(message,"error: unknown extension %s\n",ext);
     return -1;
   }
 

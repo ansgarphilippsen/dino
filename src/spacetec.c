@@ -37,9 +37,9 @@ void spacetecEventHandler(Display *dpy, XEvent *e)
 void spacetecMotion(Display *dpy, float data[7], void *appdata) 
 {
   int i;
-//  fprintf(stderr,"\nmotion: %f %f %f %f %f %f %f %f",
+//  fprintf(stderr,"motion: %f %f %f %f %f %f %f %f\n",
 //	  data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
-//  fprintf(stderr,"\nmotion: %5d %5d %5d %5d %5d %5d %5d %5d",
+//  fprintf(stderr,"motion: %5d %5d %5d %5d %5d %5d %5d %5d\n",
 //	  data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]); 
 
   for(i=0;i<6;i++)

@@ -274,10 +274,10 @@ static int shellEcho(int wc, const char **wl)
     if(!strcmp(wl[i],">") ||
        !strcmp(wl[i],">>")) {
       if(wc-i<2) {
-	shellOut("\nError: Missing file for redirection");
+	shellOut("Error: Missing file for redirection\n");
 	return -1;
       } else if(wc-i>2) {
-	shellOut("\nError: Chars after filename");
+	shellOut("Error: Chars after filename\n");
 	return -1;
       }
       if(!strcmp(wl[i],">")) {
@@ -286,7 +286,7 @@ static int shellEcho(int wc, const char **wl)
 	f=fopen(wl[i+1],"a");
       }
       if(f==NULL) {
-	sprintf(message,"\nError: cannot open %s",wl[i+1]);
+	sprintf(message,"Error: cannot open %s\n",wl[i+1]);
 	shellOut(message);
 	return -1;
       }
@@ -378,19 +378,19 @@ static int shellOpr(const char *op2)
     for(i=0;i<2;i++) {
       if(vc[i][0]=='{') {
 	if(matGetDim(vc[i],&d1,&d2)!=0) {
-	  shellOut("\nmatrix error in stack position 1");
+	  shellOut("matrix error in stack position 1\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
 	if(d1==3 && d2==1) {
 	  matExtract1D(vc[i],d1,vec[i]);
 	} else {
-	  shellOut("\nexpected vector length 3 in stack position 1");
+	  shellOut("expected vector length 3 in stack position 1\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
       } else {
-	shellOut("\nexpected vector length 3 in stack position 1");
+	shellOut("expected vector length 3 in stack position 1\n");
 	strcpy(op,"0");
 	return SHELL_ERROR;
       }
@@ -403,7 +403,7 @@ static int shellOpr(const char *op2)
     // calculate angle between v1v2 and v2v3 (three vectors)
 
     if(shell.estackp<2) {
-      shellOut("\nerror: dist requires two vectors on stack");
+      shellOut("error: dist requires two vectors on stack\n");
     }
 
     for(i=0;i<3;i++) {
@@ -418,19 +418,19 @@ static int shellOpr(const char *op2)
     for(i=0;i<3;i++) {
       if(vc[i][0]=='{') {
 	if(matGetDim(vc[i],&d1,&d2)!=0) {
-	  shellOut("\nmatrix error in stack position 1");
+	  shellOut("matrix error in stack position 1\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
 	if(d1==3 && d2==1) {
 	  matExtract1D(vc[i],d1,vec[i]);
 	} else {
-	  shellOut("\nexpected vector length 3 in stack position 1");
+	  shellOut("expected vector length 3 in stack position 1\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
       } else {
-	shellOut("\nexpected vector length 3 in stack position 1");
+	shellOut("expected vector length 3 in stack position 1\n");
 	strcpy(op,"0");
 	return SHELL_ERROR;
       }
@@ -461,19 +461,19 @@ static int shellOpr(const char *op2)
     for(i=0;i<4;i++) {
       if(vc[i][0]=='{') {
 	if(matGetDim(vc[i],&d1,&d2)!=0) {
-	  shellOut("\nmatrix error in stack position 1");
+	  shellOut("matrix error in stack position 1\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
 	if(d1==3 && d2==1) {
 	  matExtract1D(vc[i],d1,vec[i]);
 	} else {
-	  shellOut("\nexpected vector length 3 in stack position 1");
+	  shellOut("expected vector length 3 in stack position 1\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
       } else {
-	shellOut("\nexpected vector length 3 in stack position 1");
+	shellOut("expected vector length 3 in stack position 1\n");
 	strcpy(op,"0");
 	return SHELL_ERROR;
       }
@@ -498,7 +498,7 @@ static int shellOpr(const char *op2)
       if(!strcmp(unary_op[i],op))
 	break;
     if(i==sizeof(unary_op)/8) {
-      shellOut("\nunknown operator ");
+      shellOut("unknown operator \n");
       shellOut(op);
       return SHELL_ERROR;
     } else {
@@ -522,7 +522,7 @@ static int shellOpr(const char *op2)
 
   if(v1[0]=='{') {
     if(matGetDim(v1,&d1,&d2)!=0) {
-      shellOut("\nmatrix error in 1");
+      shellOut("matrix error in 1\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -533,7 +533,7 @@ static int shellOpr(const char *op2)
     else
       matExtract1D(v1,d1,vec1);
     } else {
-      sprintf(message,"\ninvalid matrix dimension: %dx%d",d1,d2);
+      sprintf(message,"invalid matrix dimension: %dx%d\n",d1,d2);
       shellOut(message);
       strcpy(op,"0");
       return SHELL_ERROR;
@@ -543,7 +543,7 @@ static int shellOpr(const char *op2)
   if(bflag)
     if(v2[0]=='{') {
       if(matGetDim(v2,&d3,&d4)!=0) {
-	shellOut("\nmatrix error in 2");
+	shellOut("matrix error in 2\n");
 	strcpy(op,"0");
 	return SHELL_ERROR;
       }
@@ -554,7 +554,7 @@ static int shellOpr(const char *op2)
 	else
 	  matExtract1D(v2,d3,vec2);
       } else {
-	sprintf(message,"\ninvalid matrix dimension: %dx%d",d1,d2);
+	sprintf(message,"invalid matrix dimension: %dx%d\n",d1,d2);
 	shellOut(message);
 	strcpy(op,"0");
 	return SHELL_ERROR;
@@ -568,7 +568,7 @@ static int shellOpr(const char *op2)
     if(v1[0]=='{') {
       if(v2[0]=='{') {
 	if(d1!=d3 || d2!=d4) {
-	  shellOut("\nmatrix dimensions not compatible");
+	  shellOut("matrix dimensions not compatible\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
@@ -581,7 +581,7 @@ static int shellOpr(const char *op2)
 	
 	strcpy(shell.estack[shell.estackp].expr,message);
       } else {
-	shellOut("\nmissmatch error");
+	shellOut("missmatch error\n");
 	strcpy(op,"0");
 	return SHELL_ERROR;
       }
@@ -596,7 +596,7 @@ static int shellOpr(const char *op2)
     if(v1[0]=='{') {
       if(v2[0]=='{') {
 	if(d1!=d3 || d2!=d4) {
-	  shellOut("\nmatrix dimensions not compatible");
+	  shellOut("matrix dimensions not compatible\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
@@ -611,7 +611,7 @@ static int shellOpr(const char *op2)
 	strcpy(shell.estack[shell.estackp].expr,message);
 	  
       } else {
-	shellOut("\nmissmatch error");
+	shellOut("missmatch error\n");
 	strcpy(op,"0");
 	return SHELL_ERROR;
       }
@@ -654,7 +654,7 @@ static int shellOpr(const char *op2)
 	  strcpy(shell.estack[shell.estackp].expr,message);
 	  
 	} else {
-	  shellOut("\nmatrix dimensions not compatible");
+	  shellOut("matrix dimensions not compatible\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
@@ -687,12 +687,12 @@ static int shellOpr(const char *op2)
          Binary Operator /
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ndivide by matrix error");
+      shellOut("divide by matrix error\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
     if(atof(v1)==0.0) {
-      shellOut("\nDivide by zero");
+      shellOut("Divide by zero\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -714,7 +714,7 @@ static int shellOpr(const char *op2)
 	Binary Operator pow
     **************************/
     if(v1[0]=='{' || v2[0]=='{') {
-      shellOut("\ninvalid matrix operator pow");
+      shellOut("invalid matrix operator pow\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     } else {
@@ -726,17 +726,17 @@ static int shellOpr(const char *op2)
 	  Binary Operator x
     **************************/
     if(v1[0]!='{' || v2[0]!='{') {
-      shellOut("\ninvalid scalar operator x");
+      shellOut("invalid scalar operator x\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
     if(d2>1) {
-      shellOut("\ninvalid 2D matrix operator x");
+      shellOut("invalid 2D matrix operator x\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
     if(d1!=3 || d3!=3) {
-      shellOut("\nvector dimension not 3");
+      shellOut("vector dimension not 3\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -755,7 +755,7 @@ static int shellOpr(const char *op2)
     if(v1[0]=='{' && v2[0]!='{') {
       if(d1==4) {
 	if(v1[3]==0.0) {
-	  shellOut("\nw must be non-zero");
+	  shellOut("w must be non-zero\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
@@ -772,7 +772,7 @@ static int shellOpr(const char *op2)
     } else if(v1[0]!='{' && v2[0]=='{') {
       if(d3==4) {
 	if(v2[3]==0.0) {
-	  shellOut("\nw must be non-zero");
+	  shellOut("w must be non-zero\n");
 	  strcpy(op,"0");
 	  return SHELL_ERROR;
 	}
@@ -787,7 +787,7 @@ static int shellOpr(const char *op2)
       matAssemble2D(vec3,3,3,message);
       strcpy(shell.estack[shell.estackp].expr,message);
     } else {
-      shellOut("\nrmat requires one scalar and one vector");
+      shellOut("rmat requires one scalar and one vector\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -845,7 +845,7 @@ static int shellOpr(const char *op2)
          Unary Operator ln
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator ln");
+      shellOut("invalid matrix operator ln\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -856,7 +856,7 @@ static int shellOpr(const char *op2)
          Unary Operator log
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator log");
+      shellOut("invalid matrix operator log\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -867,7 +867,7 @@ static int shellOpr(const char *op2)
          Unary Operator exp
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator exp");
+      shellOut("invalid matrix operator exp\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -878,7 +878,7 @@ static int shellOpr(const char *op2)
          Unary Operator sin
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator sin");
+      shellOut("invalid matrix operator sin\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -889,7 +889,7 @@ static int shellOpr(const char *op2)
          Unary Operator cos
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator cos");
+      shellOut("invalid matrix operator cos\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -900,7 +900,7 @@ static int shellOpr(const char *op2)
          Unary Operator tan
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator tan");
+      shellOut("invalid matrix operator tan\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -911,7 +911,7 @@ static int shellOpr(const char *op2)
          Unary Operator asin
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator asin");
+      shellOut("invalid matrix operator asin\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -922,7 +922,7 @@ static int shellOpr(const char *op2)
          Unary Operator acos
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator acos");
+      shellOut("invalid matrix operator acos\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -933,7 +933,7 @@ static int shellOpr(const char *op2)
          Unary Operator atan
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator atan");
+      shellOut("invalid matrix operator atan\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -983,7 +983,7 @@ static int shellOpr(const char *op2)
 	
 	sprintf(shell.estack[shell.estackp].expr,"%g",sqrt(result));
       } else {
-	shellOut("\ninvalid 2D matrix operator abs");
+	shellOut("invalid 2D matrix operator abs\n");
 	strcpy(op,"0");
 	return SHELL_ERROR;
       }
@@ -995,7 +995,7 @@ static int shellOpr(const char *op2)
          Unary Operator sqrt
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator sqrt");
+      shellOut("invalid matrix operator sqrt\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -1006,12 +1006,12 @@ static int shellOpr(const char *op2)
          Unary Operator inv
      **************************/
     if(v1[0]=='{') {
-      shellOut("\ninvalid matrix operator inv");
+      shellOut("invalid matrix operator inv\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
     if(atof(v1)==0.0) {
-      shellOut("\nDivide by zero");
+      shellOut("Divide by zero\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -1022,12 +1022,12 @@ static int shellOpr(const char *op2)
          Unary Operator det
      **************************/
     if(v1[0]!='{') {
-      shellOut("\nInvalid scalar operator det");
+      shellOut("Invalid scalar operator det\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
     if(d1!=d2) {
-      shellOut("\nnon-square matrix");
+      shellOut("non-square matrix\n");
       strcpy(op,"0");
       return SHELL_ERROR;
     }
@@ -1050,7 +1050,7 @@ static int shellOpr(const char *op2)
       det*=vec3[i*4+i];
     sprintf(shell.estack[shell.estackp].expr,"%g",det);
   } else {
-    shellOut("\nUnknown operator");
+    shellOut("Unknown operator\n");
     strcpy(op,"0");
     return SHELL_ERROR;
   }
@@ -1098,18 +1098,18 @@ static int shellParse(int wc, const char **wl,int pos)
   if(wl[0][0]=='@') {
 
     if(shell.instance_count>1024) {
-      shellOut("\nMaximum nesting level (1024) reached");
+      shellOut("Maximum nesting level (1024) reached\n");
       return SHELL_ERROR;
     }
     scriptfile=&wl[0][1];
     if((f=fopen(scriptfile,"r"))==NULL) {
-      sprintf(message,"\nerror accessing file: %s",scriptfile);
+      sprintf(message,"error accessing file: %s\n",scriptfile);
       shellOut(message);
       return SHELL_ERROR;
     }
     fstat(fileno(f),&st);
     if(st.st_size==0) {
-      sprintf(message,"\nzero length file: %s",scriptfile);
+      sprintf(message,"zero length file: %s\n",scriptfile);
       shellOut(message);
       return SHELL_ERROR;
     }
@@ -1210,7 +1210,7 @@ static int shellParse(int wc, const char **wl,int pos)
       comReturn(shell.estack[shell.estackp].expr);
   } else if(!strcmp(wl[0],"show")) {
     if(shell.estackp<0)
-      shellOut("\nstack is empty");
+      shellOut("stack is empty\n");
     
     for(i=shell.estackp;i>=0;i--) {
       shellOut("\n");
@@ -1247,7 +1247,7 @@ static int shellParse(int wc, const char **wl,int pos)
       chdir(shell.cwd);
     } else {
       if(chdir(wl[1])<0) {
-	shellOut("\nerror during chdir");
+	shellOut("error during chdir\n");
       }
     }
   } else if(!strcmp(wl[0],"pwd")) {
@@ -1255,7 +1255,7 @@ static int shellParse(int wc, const char **wl,int pos)
     shellOut("\n");
     shellOut(message);
   } else if(!strcmp(wl[0],"pause")) {
-    shellOut("\n<Pause>");
+    shellOut("<Pause>\n");
     shell.current->save_state=shell.current->state;
     shell.current->state=SHELL_PAUSE;
   } else if(!strcmp(wl[0],"break")) {
@@ -1265,11 +1265,11 @@ static int shellParse(int wc, const char **wl,int pos)
     if(wc<3) { 
       if(wc==1) {
 	for(i=0;i<shell.aliasc;i++) {
-	  sprintf(message,"\n%s: %s",shell.alias[i].name,shell.alias[i].value);
+	  sprintf(message,"%s: %s\n",shell.alias[i].name,shell.alias[i].value);
 	  shellOut(message);
 	}
       } else {
-	sprintf(message,"\nsyntax error");
+	sprintf(message,"syntax error\n");
 	return SHELL_ERROR;
       }
     } else {
@@ -1542,7 +1542,7 @@ static int shellWorkScript()
 
   if(strlen(shell.static_buf)>0) {
     if(shellGetVar("silent")==NULL && shellGetVar("quiet")==NULL)
-      fprintf(stderr,"\n%s",shell.static_buf);
+      fprintf(stderr,"%s\n",shell.static_buf);
     /*
       write the raw prompt out into the logfile
       this does not make much sense, since the
@@ -1566,7 +1566,7 @@ static int shellWorkScript()
 
     if(shellWorkPrompt(shell.static_buf,pos,&res)==SHELL_ERROR) {
       /*
-      shellOut("\nError during parsing");
+      shellOut("Error during parsing\n");
       */
     }
 
@@ -1595,7 +1595,7 @@ static int shell_unknown_cmd(ClientData clientData,
     argv[i]=Tcl_GetString(objv[i+1]);
 
   shellParse(argc,argv,0);
-  //  fprintf(stderr,"\n%s",comGetReturn());
+  //  fprintf(stderr,"%s\n",comGetReturn());
 
   //  fprintf(stderr,"caught unknown tcl command\n");
   Tcl_SetResult(interp,comGetReturn(),TCL_STATIC);
@@ -1815,7 +1815,7 @@ int shellInit(shell_callback func, const char *logfile)
     shell.logfile=fopen("/dev/null","w");
   } else {
     if((shell.logfile=fopen(shell.logfilename,"w"))==NULL) {
-      fprintf(stderr,"\nerror opening logfile");
+      fprintf(stderr,"error opening logfile\n");
       shell.logfile=fopen("/dev/null","w");
     }
   }  

@@ -39,7 +39,7 @@ int surfObjCommand(struct DBM_SURF_NODE *node, surfObj *obj, int wc, char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"render")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing expression", obj->name);
+      sprintf(message,"%s: missing expression\n", obj->name);
       comMessage(message);
       return -1;
     }
@@ -58,7 +58,7 @@ int surfObjCommand(struct DBM_SURF_NODE *node, surfObj *obj, int wc, char **wl)
        obj->render.mode!=RENDER_POINT &&
        obj->render.mode!=RENDER_SURFACE){
       obj->render.mode=RENDER_SURFACE;
-      comMessage("\ninvalid render mode");
+      comMessage("invalid render mode\n");
       return -1;
     }
     comRedraw();
@@ -76,7 +76,7 @@ int surfObjCommand(struct DBM_SURF_NODE *node, surfObj *obj, int wc, char **wl)
     return surfObjComRenew(obj, wc-1, wl+1);
   } else if(!strcmp(wl[0],"reverse")) {
     if(wc>1) {
-      comMessage("\nsuperfluous words ignored");
+      comMessage("superfluous words ignored\n");
     }
     for(i=0;i<obj->vertc;i++) {
       obj->vert[i].n[0]=-obj->vert[i].n[0];
@@ -84,7 +84,7 @@ int surfObjCommand(struct DBM_SURF_NODE *node, surfObj *obj, int wc, char **wl)
       obj->vert[i].n[2]=-obj->vert[i].n[2];
     }
   } else { 
-    sprintf(message,"\n%s: unknow command: %s",obj->name, wl[0]);
+    sprintf(message,"%s: unknow command: %s\n",obj->name, wl[0]);
     comMessage(message);
     return -1;
   }
@@ -114,7 +114,7 @@ int surfObjComGet(surfObj *obj, int wc, char **wl)
   int i;
 
   if(wc==0) {
-    sprintf(message,"\n%s: missing property", obj->name);
+    sprintf(message,"%s: missing property\n", obj->name);
     comMessage(message);
     return -1;
   }
@@ -143,18 +143,18 @@ int surfObjComRenew(surfObj *obj, int wc, char **wl)
   for(i=0;i<co.param_count;i++) {
     if(co.param[i].p==NULL) {
       if(co.param[i].wc!=0) {
-	comMessage("\nerror: renew: expected an argument beginning with -"); 
+	comMessage("error: renew: expected an argument beginning with -\n"); 
 	ret=-1;
 	break;
       }
     } else if(clStrcmp(co.param[i].p,"name") || 
 	      clStrcmp(co.param[i].p,"n")) {
-      comMessage("\nerror: renew: -name is not allowed");
+      comMessage("error: renew: -name is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"type") ||
 	      clStrcmp(co.param[i].p,"t")) {
-      comMessage("\nerror: renew: -type is not allowed");
+      comMessage("error: renew: -type is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"set") ||
@@ -175,7 +175,7 @@ int surfObjComRenew(surfObj *obj, int wc, char **wl)
     } else if(clStrcmp(co.param[i].p,"v")) {
       vflag=1;
     } else {
-      clStrcpy(message,"\nunknown paramater ");
+      clStrcpy(message,"unknown paramater \n");
       clStrncat(message,co.param[i].p,100);
       comMessage(message);
       ret=-1;
@@ -233,19 +233,19 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
       if(surfGetMinMax(obj->node, s->range.prop,&vmin,&vmax)<0) {
 	if(obj->node->attach_flag) {
 	  if(dbmGetMinMax(obj->node->last_attach,s->range.prop,&vmin,&vmax)<0) {
-	    sprintf(message,"\nerror: unknown range property %s",s->range.prop);
+	    sprintf(message,"error: unknown range property %s\n",s->range.prop);
 	    comMessage(message);
 	    return -1;
 	  }
 	} else {
-	  sprintf(message,"\nerror: unknown range property %s",s->range.prop);
+	  sprintf(message,"error: unknown range property %s\n",s->range.prop);
 	  comMessage(message);
 	  return -1;
 	}
       }
     } else {
       if(dbmGetMinMax(s->range.src,s->range.prop,&vmin,&vmax)<0) {
-	sprintf(message,"\nerror: unknown range property %s",s->range.prop);
+	sprintf(message,"error: unknown range property %s\n",s->range.prop);
 	comMessage(message);
 	return -1;
       }
@@ -264,7 +264,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
     else
       rval2=atof(s->range.val2);
     
-    sprintf(message,"\nusing range of property %s from %g to %g",
+    sprintf(message,"using range of property %s from %g to %g\n",
 	    s->range.prop,rval1,rval2);
     comMessage(message);
   }
@@ -275,17 +275,17 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
        clStrcmp(s->pov[pc].prop,"col")) {
       s->pov[pc].id=SURF_PROP_COLOR;
     } else {
-      comMessage("\nerror: set: unknown property ");
+      comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].op!=POV_OP_EQ) {
-      comMessage("\nerror: set: expected operator = for property ");
+      comMessage("error: set: expected operator = for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].val_count>1) {
-      comMessage("\nerror: set: expected only one value for property ");
+      comMessage("error: set: expected only one value for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
@@ -310,12 +310,12 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	case SURF_PROP_COLOR:
 	  if(s->range_flag) {
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
 	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val2);
 	      return -1;
 	    }
@@ -336,7 +336,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	      if(dbmGetRangeVal(&s->range,(float*)obj->vert[vc].p,&rval)<0)
 		return -1;
 	    }
-	    //	    fprintf(stderr,"\n%f %f %f",rval1,rval2,rval);
+	    //	    fprintf(stderr,"%f %f %f\n",rval1,rval2,rval);
 	    frac1=rval2-rval1;
 	    frac2=rval-rval1;
 	    if(frac1==0.0) {
@@ -366,7 +366,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	    }
 	  } else {
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
@@ -419,7 +419,7 @@ int surfObjGet(surfObj *obj, char *prop)
     sprintf(message,"{%.5f,%.5f,%.5f}",x,y,z);
     comReturn(message);
   } else {
-    sprintf(message,"\n%s: get: unknown property %s",obj->name, prop); 
+    sprintf(message,"%s: get: unknown property %s\n",obj->name, prop); 
     comMessage(message);
     return -1;
   }
@@ -446,7 +446,7 @@ int surfObjRenew(surfObj *obj, Set *set, Select *sel, int vflag)
       area+=matCalcTriArea(obj->vert[obj->face[i*3+0]].p,
 			   obj->vert[obj->face[i*3+1]].p,
 			   obj->vert[obj->face[i*3+2]].p);
-    sprintf(message,"\narea: %.4f A^2",area);
+    sprintf(message,"area: %.4f A^2\n",area);
     comMessage(message);
   }
   
@@ -481,7 +481,7 @@ int surfGenerate(surfObj *obj, Select *sel)
 
   vert_id=Ccalloc(node->vc+16,sizeof(int));
   
-  comMessage("\nGenerating ...");
+  comMessage("Generating ...\n");
 
   memset(obj->vert_flag,0,sizeof(unsigned char)*obj->node->vc);
 

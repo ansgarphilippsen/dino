@@ -20,11 +20,11 @@ cubeArray *caInit(float xyz1[3], float xyz2[3], int list_max, float size)
   char message[256];
 
   if(size<=0.0) {
-    fprintf(stderr,"\ninternal error #2 in caInit()");
+    fprintf(stderr,"internal error #2 in caInit()\n");
     return NULL;
   }
   if((ca=Cmalloc(sizeof(cubeArray)))==NULL) {
-    fprintf(stderr,"\n memory allocation error in caInit()");
+    fprintf(stderr," memory allocation error in caInit()\n");
     return NULL;
   }
 
@@ -48,7 +48,7 @@ cubeArray *caInit(float xyz1[3], float xyz2[3], int list_max, float size)
 
     if(a*b*c>500000) {
       size+=size2;
-      sprintf(message,"\ncaInit: adjusting cubearray size to %.2f",size);
+      sprintf(message,"caInit: adjusting cubearray size to %.2f\n",size);
       comMessage(message);
     } else {
       flag=1;
@@ -76,7 +76,7 @@ cubeArray *caInit(float xyz1[3], float xyz2[3], int list_max, float size)
 
   ca->element=Ccalloc(ca->ecount,sizeof(caElement));
   if(ca->element==NULL) {
-    fprintf(stderr,"\nmemory allocation error in caInit()");
+    fprintf(stderr,"memory allocation error in caInit()\n");
     return NULL;
   }
   for(i=0;i<ca->ecount;i++)
@@ -91,7 +91,7 @@ cubeArray *caInit(float xyz1[3], float xyz2[3], int list_max, float size)
 
   ca->list=Ccalloc(ca->lmax,sizeof(caPointer));
   if(ca->list==NULL) {
-    fprintf(stderr,"\nmemory allocation error in caInit()");
+    fprintf(stderr,"memory allocation error in caInit()\n");
     return NULL;
   }
 
@@ -178,7 +178,7 @@ int caFix(cubeArray *ca)
   ca->lcount=lcount;
 
   if(ca->list==NULL) {
-    fprintf(stderr,"\nmemory allocation error in caFix()");
+    fprintf(stderr,"memory allocation error in caFix()\n");
     return -1;
   }
   lcount=0;

@@ -740,7 +740,7 @@ int gfxResizeEvent(void)
 #ifdef TRANSP_NEW
   gfx.save_buf_size=(gfx.win_width)*gfx.win_height;
   gfx.save_buf=Crecalloc(gfx.save_buf,gfx.save_buf_size,sizeof(float));
-  //  fprintf(stderr,"\n%d", gfx.save_buf_size);
+  //  fprintf(stderr,"%d\n", gfx.save_buf_size);
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glOrtho(0,0,gfx.win_width,gfx.win_height,1,1);
@@ -815,7 +815,7 @@ int gfxGenFeedback(void)
   } while(ret<0 && failure<8);
 
   if(ret<0) {
-    comMessage("\nError during feedback buffer generation: scene reset to !sort");
+    comMessage("Error during feedback buffer generation: scene reset to !sort\n");
     gfx.sort=0;
     gfx.fbuf_entries=0;
     gfx.fbuf_size=100000;

@@ -38,70 +38,70 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 
     if(!strcmp(prop,"simple")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_SIMPLE;
     } else  if(!strcmp(prop,"cpk")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_CPK;
     } else if(!strcmp(prop,"custom")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_CUSTOM;
     } else if(!strcmp(prop,"helix")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_HELIX;
     } else if(!strcmp(prop,"strand")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_STRAND;
     } else if(!strcmp(prop,"strand2")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_STRAND2;
     } else if(!strcmp(prop,"tube")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_TUBE;
     } else if(!strcmp(prop,"hsc")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_HSC;
     } else if(!strcmp(prop,"sline")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_SLINE;
     } else if(!strcmp(prop,"cyl")) {
       if(strlen(op)!=0) {
-	sprintf(message,"\nrender:: error in expression %s%s%s",prop,op,val);
+	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
@@ -111,12 +111,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
           render fill
        ********************/
       if(strlen(op)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
@@ -127,12 +127,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
           render lines
        ********************/
       if(strlen(op)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
@@ -143,36 +143,36 @@ int renderSet(struct RENDER *render, int owc, char **owl)
           render dots
        ********************/
       if(strlen(op)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_POINT;
     } else if(!strcmp(prop,"off")){
       if(strlen(op)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_OFF;
     } else if(!strcmp(prop,"on")){
       if(strlen(op)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)>0) {
-      	sprintf(message,"\nexpression syntax error");
+      	sprintf(message,"expression syntax error\n");
 	comMessage(message);
 	return -1;
       }
@@ -194,7 +194,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->nice=1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -215,7 +215,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->nice=0;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -236,7 +236,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->dbl_light=1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -257,7 +257,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->dbl_light=0;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -278,7 +278,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->face_reverse=1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -299,7 +299,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->cull=1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -308,12 +308,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     detail
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -325,12 +325,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->detail-=atoi(val);
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
       if(render->detail<1 || render->detail>90) {
-	sprintf(message,"\nvalue out of range (1-90)");
+	sprintf(message,"value out of range (1-90)\n");
 	comMessage(message);
 	render->detail=oldi;
 	return -1;
@@ -343,12 +343,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     detail1
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -360,12 +360,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->detail1-=atoi(val);
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
       if(render->detail1<1 || render->detail1>90) {
-	sprintf(message,"\nvalue out of range (1-90)");
+	sprintf(message,"value out of range (1-90)\n");
 	comMessage(message);
 	render->detail1=oldi;
 	return -1;
@@ -375,12 +375,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     detail2
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -392,12 +392,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->detail2-=atoi(val);
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
       if(render->detail2<1 || render->detail2>100) {
-	sprintf(message,"\nvalue out of range (1-100)");
+	sprintf(message,"value out of range (1-100)\n");
 	comMessage(message);
 	render->detail2=oldi;
 	return -1;
@@ -407,12 +407,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     lw
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -423,7 +423,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->line_width=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -434,12 +434,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     bw
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -450,7 +450,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->bond_width=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -466,12 +466,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     tuber
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -482,7 +482,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->tube_ratio=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -491,12 +491,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     tubew
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -507,7 +507,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->tube_width=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -516,12 +516,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	     sr
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -532,7 +532,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->sphere_radius=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -545,12 +545,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	       ps
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -561,7 +561,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->point_size=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -572,12 +572,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	   helixwidth
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -588,7 +588,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->helix_width-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -597,12 +597,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
          helixthickness
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -613,7 +613,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->helix_thickness-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -622,12 +622,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  strandwidth
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -638,7 +638,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->strand_width-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -647,12 +647,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  strandthickness
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -663,7 +663,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->strand_thickness-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -675,12 +675,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  arrowthickness
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -691,7 +691,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->arrow_thickness-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -703,12 +703,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  base thickness
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -719,7 +719,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->base_thickness-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -731,12 +731,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  sugar thickness
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -747,7 +747,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->sugar_thickness-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -759,12 +759,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	      render t
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -775,7 +775,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->transparency-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator: %s",op);
+	sprintf(message,"invalid operator: %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -788,12 +788,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	      polygon offset f
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -804,7 +804,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->polyf-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator: %s",op);
+	sprintf(message,"invalid operator: %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -813,12 +813,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	      polygon offset units
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -829,7 +829,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->polyu-=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator: %s",op);
+	sprintf(message,"invalid operator: %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -850,7 +850,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->cgfx_flag|=CGFX_INTPOL_COL;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -871,7 +871,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->cgfx_flag|=CGFX_USE_RAD;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -880,12 +880,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  strand method
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -893,12 +893,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	if(atoi(val)==0 || atoi(val)==1) {
 	  render->strand_method=atoi(val);
 	} else {
-	  sprintf(message,"\ninvalid strand method %d", atoi(val));
+	  sprintf(message,"invalid strand method %d\n", atoi(val));
 	  comMessage(message);
 	  return -1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -907,12 +907,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  NA method
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -920,12 +920,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	if(atoi(val)==0 || atoi(val)==1) {
 	  render->na_method=atoi(val);
 	} else {
-	  sprintf(message,"\ninvalid NA method %d", atoi(val));
+	  sprintf(message,"invalid NA method %d\n", atoi(val));
 	  comMessage(message);
 	  return -1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -934,12 +934,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  helix method
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -947,12 +947,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	if(atoi(val)==0 || atoi(val)==1) {
 	  render->helix_method=atoi(val);
 	} else {
-	  sprintf(message,"\ninvalid strand method %d", atoi(val));
+	  sprintf(message,"invalid strand method %d\n", atoi(val));
 	  comMessage(message);
 	  return -1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -974,28 +974,28 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->solid=1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
     } else if(!strcmp(prop,"solidc")) {
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
       if(strcmp(op,"=")) {
-	sprintf(message,"\ninvalid operator: %s",op);
+	sprintf(message,"invalid operator: %s\n",op);
 	comMessage(message);
 	return -1;
       }
       if(comGetColor(val, &col[0], &col[1], &col[2])!=0) {
-	sprintf(message,"\nunknown color: %s", val);
+	sprintf(message,"unknown color: %s\n", val);
 	comMessage(message);
 	return -1;
       }
@@ -1020,7 +1020,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->stipple_flag=1;
 	}
       } else {
-	sprintf(message,"\ninvalid operator %s",op);
+	sprintf(message,"invalid operator %s\n",op);
 	comMessage(message);
 	return -1;
       }
@@ -1029,12 +1029,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	       stipplei
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -1045,7 +1045,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->stipplei=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -1054,12 +1054,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	       stipplei
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -1070,7 +1070,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->stippleo=atof(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -1079,12 +1079,12 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	       stipplef
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
@@ -1095,7 +1095,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       } else if(!strcmp(op,"-=")) {
 	render->stipple_factor=atoi(val);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
@@ -1104,24 +1104,24 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	       stipplep
       ********************/
       if(strlen(op)==0) {
-	sprintf(message,"\nmissing operator");
+	sprintf(message,"missing operator\n");
 	comMessage(message);
 	return -1;
       }
       if(strlen(val)==0) {
-	sprintf(message,"\nmissing value");
+	sprintf(message,"missing value\n");
 	comMessage(message);
 	return -1;
       }
       if(!strcmp(op,"=")) {
 	render->stipple_pattern=strtol(val,NULL,0);
       } else {
-	sprintf(message,"\ninvalid operator %s", op);
+	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
     } else {
-      sprintf(message,"\nrender:: unknown property %s",prop);
+      sprintf(message,"render:: unknown property %s\n",prop);
       comMessage(message);
       return -1;
     }
@@ -1154,12 +1154,12 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
   for(c=0;c<wc;c++) {
     dbmSplitPOV(wl[c],prop,op,val);
     if(strlen(op)==0) {
-      comMessage("\nerror:material: missing operator for ");
+      comMessage("error:material: missing operator for \n");
       comMessage(prop);
       return -1;
     }
     if(strcmp(op,"=")) {
-      comMessage("\nerror: material: expected operator =");
+      comMessage("error: material: expected operator =\n");
       return -1;
     }
 
@@ -1170,7 +1170,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->amb[2]=atof(val);
       } else {
 	if(matExtract1Df(val,3,v)!=0) {
-	  comMessage("\nerror in vector ");
+	  comMessage("error in vector \n");
 	  comMessage(val);
 	  return -1;
 	}
@@ -1185,7 +1185,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->diff[2]=atof(val);
       } else {
 	if(matExtract1Df(val,3,v)!=0) {
-	  comMessage("\nerror in vector ");
+	  comMessage("error in vector \n");
 	  comMessage(val);
 	  return -1;
 	}
@@ -1203,7 +1203,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->diff[2]=atof(val);
       } else {
 	if(matExtract1Df(val,3,v)!=0) {
-	  comMessage("\nerror in vector ");
+	  comMessage("error in vector \n");
 	  comMessage(val);
 	  return -1;
 	}
@@ -1213,7 +1213,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->diff[0]=v[0];
 	mat->diff[1]=v[1];
 	mat->diff[2]=v[2];
-	fprintf(stderr,"\n%f %f %f",v[0],v[1],v[2]);
+	fprintf(stderr,"%f %f %f\n",v[0],v[1],v[2]);
       }
     } else if(!strcmp(prop,"spec")) {
       if(val[0]!='{') {
@@ -1222,7 +1222,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->spec[2]=atof(val);
       } else {
 	if(matExtract1Df(val,3,v)!=0) {
-	  comMessage("\nerror in vector ");
+	  comMessage("error in vector \n");
 	  comMessage(val);
 	  return -1;
 	}
@@ -1237,7 +1237,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->emm[2]=atof(val);
       } else {
 	if(matExtract1Df(val,3,v)!=0) {
-	  comMessage("\nerror in vector ");
+	  comMessage("error in vector \n");
 	  comMessage(val);
 	  return -1;
 	}
@@ -1248,7 +1248,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
     } else if(!strcmp(prop,"shin")) {
       mat->shin=atof(val);
     } else {
-      comMessage("\nerror: material: unknown property ");
+      comMessage("error: material: unknown property \n");
       comMessage(prop);
       return -1;
     }

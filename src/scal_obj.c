@@ -43,14 +43,14 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
     return scalObjComSet(obj, wc-1, wl+1);
   } else if(!strcmp(wl[0],"render")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing expression", obj->name);
+      sprintf(message,"%s: missing expression\n", obj->name);
       comMessage(message);
       return -1;
     }
 
 
     if(renderSet(&obj->render,wc-1,wl+1)!=0) {
-      sprintf(message,"\n%s: syntax error in render statement",obj->name);
+      sprintf(message,"%s: syntax error in render statement\n",obj->name);
       return -1;
     }
 
@@ -60,14 +60,14 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 	 obj->render.mode!=RENDER_POINT &&
 	 obj->render.mode!=RENDER_SURFACE){
 	obj->render.mode=RENDER_LINE;
-	comMessage("\ninvalid render mode");
+	comMessage("invalid render mode\n");
 	return -1;
       }
     } else if(obj->type==SCAL_GRID) {
       if(obj->render.mode!=RENDER_ON && 
 	 obj->render.mode!=RENDER_OFF) {
 	obj->render.mode=RENDER_OFF;
-	comMessage("\ninvalid render mode");
+	comMessage("invalid render mode\n");
 	return -1;
       }
       for(i=0;i<obj->point_count;i++)
@@ -109,13 +109,13 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
     scalObj2Surf(obj,NULL);
   } else if(!strcmp(wl[0],"write")) {
     if(wc<2) {
-      sprintf(message,"\n%s: expected filename for write command",obj->name);
+      sprintf(message,"%s: expected filename for write command\n",obj->name);
       comMessage(message);
       return -1;
     }
     return scalObjWrite(obj, wc-1, wl+1);
   } else {
-    sprintf(message,"\n%s: unknown command %s",obj->name,wl[0]);
+    sprintf(message,"%s: unknown command %s\n",obj->name,wl[0]);
     comMessage(message);
     return -1;    
   }
@@ -140,18 +140,18 @@ int scalObjComRenew(scalObj *obj, int wc, char **wl)
   for(i=0;i<co.param_count;i++) {
     if(co.param[i].p==NULL) {
       if(co.param[i].wc!=0) {
-	comMessage("\nerror: renew: expected an argument beginning with -"); 
+	comMessage("error: renew: expected an argument beginning with -\n"); 
 	ret=-1;
 	break;
       }
     } else if(clStrcmp(co.param[i].p,"name") || 
 	      clStrcmp(co.param[i].p,"n")) {
-      comMessage("\nerror: renew: -name is not allowed");
+      comMessage("error: renew: -name is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"type") ||
 	      clStrcmp(co.param[i].p,"t")) {
-      comMessage("\nerror: renew: -type is not allowed");
+      comMessage("error: renew: -type is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"set") ||
@@ -170,7 +170,7 @@ int scalObjComRenew(scalObj *obj, int wc, char **wl)
       }
       sel_flag=1;
     } else {
-      clStrcpy(message,"\nunknown paramater ");
+      clStrcpy(message,"unknown paramater \n");
       clStrncat(message,co.param[i].p,100);
       comMessage(message);
       ret=-1;
@@ -228,7 +228,7 @@ int scalObjComGet(scalObj *obj, int wc, char **wl)
   int i;
 
   if(wc==0) {
-    sprintf(message,"\n%s: missing property", obj->name);
+    sprintf(message,"%s: missing property\n", obj->name);
     comMessage(message);
     return -1;
   }
@@ -252,7 +252,7 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
     return -1;
 
   if(obj->type==SCAL_CONTOUR) {
-    sprintf(message,"\nContouring at %f ...",obj->level);
+    sprintf(message,"Contouring at %f ...\n",obj->level);
     comMessage(message);
 
     /* check selection syntax */
@@ -261,7 +261,7 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
 
     ret=scalMCN(obj,sel);
   } else if(obj->type==SCAL_GRID) {
-    sprintf(message,"\nGenerating grid ...");
+    sprintf(message,"Generating grid ...\n");
     comMessage(message);
     ret=scalGrid(obj,sel);
   } else if(obj->type==SCAL_GRAD) {
@@ -318,7 +318,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     } else if(clStrcmp(s->pov[pc].prop,"center") ||
 	      clStrcmp(s->pov[pc].prop,"cen")) {
       if(s->pov[pc].op!=POV_OP_EQ) {
-	comMessage("\nerror: set: expected operator = for property ");
+	comMessage("error: set: expected operator = for property \n");
 	comMessage(s->pov[pc].prop);
 	return -1;
       }
@@ -329,14 +329,14 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       if(obj->type==SCAL_GRAD) {
 	s->pov[pc].id=SCAL_PROP_SCALE;
       } else {
-	comMessage("\nerror: property scale only valid for object type grad");
+	comMessage("error: property scale only valid for object type grad\n");
 	return -1;
       }
     } else if(clStrcmp(s->pov[pc].prop,"length")) {
       if(obj->type==SCAL_GRAD) {
 	s->pov[pc].id=SCAL_PROP_LENGTH;
       } else {
-	comMessage("\nerror: property length only valid for object type grad");
+	comMessage("error: property length only valid for object type grad\n");
 	return -1;
       }
 #ifdef VR
@@ -349,35 +349,35 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       if(obj->type==SCAL_CONTOUR) {
 	s->pov[pc].id=SCAL_PROP_LEVEL;
       } else {
-	comMessage("\nerror: property level only valid for object type contour");
+	comMessage("error: property level only valid for object type contour\n");
 	return -1;
       }
     } else if(clStrcmp(s->pov[pc].prop,"dir")) {
       if(obj->type==SCAL_SLAB) {
 	s->pov[pc].id=SCAL_PROP_DIR;
       } else {
-	comMessage("\nerror: property dir only valid for object type slab");
+	comMessage("error: property dir only valid for object type slab\n");
 	return -1;
       }
     } else if(clStrcmp(s->pov[pc].prop,"rad")) {
       if(obj->type==SCAL_GRID) {
 	s->pov[pc].id=SCAL_PROP_RAD;
       } else {
-	comMessage("\nerror: property rad only valid for object type grid");
+	comMessage("error: property rad only valid for object type grid\n");
 	return -1;
       }
     } else if(clStrcmp(s->pov[pc].prop,"step")) {
       s->pov[pc].id=SCAL_PROP_STEP;
     } else if(clStrcmp(s->pov[pc].prop,"method")) {
       if(s->pov[pc].op!=POV_OP_EQ) {
-	comMessage("\nerror: set: expected operator = for property ");
+	comMessage("error: set: expected operator = for property \n");
 	comMessage(s->pov[pc].prop);
 	return -1;
       }
-      comMessage("\nwarning: set: obsolete property method ignored");
+      comMessage("warning: set: obsolete property method ignored\n");
       s->pov[pc].id=SCAL_PROP_METHOD;
     } else {
-      comMessage("\nerror: set: unknown property ");
+      comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
@@ -385,13 +385,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     op=s->pov[pc].op;
     if(!(op==POV_OP_EQ || op==POV_OP_PE || op==POV_OP_ME ||
 	 op==POV_OP_SE || op==POV_OP_DE)) {
-      comMessage("\nerror: set: expected operator '=' '+=' '-=' '*=' or '/='");
+      comMessage("error: set: expected operator '=' '+=' '-=' '*=' or '/='\n");
       // /=
       return -1;
     }
     
     if(s->pov[pc].val_count>1) {
-      comMessage("\nerror: set: expected only one value for property ");
+      comMessage("error: set: expected only one value for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
@@ -404,7 +404,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 
     if(obj->type==SCAL_CONTOUR) {
       if(val->range_flag) {
-	comMessage("\nerror: set: range not supported for contour object");
+	comMessage("error: set: range not supported for contour object\n");
 	return -1;
       }
     }
@@ -413,11 +413,11 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       if(flag==1) {
 	if(obj->type==SCAL_CONTOUR) {
 	  if(s->range_flag) {
-	    comMessage("\nerror: range not supported for contour object");
+	    comMessage("error: range not supported for contour object\n");
 	    return -1;
 	  }
 	  if(comGetColor(val->val1,&r,&g,&b)<0) {
-	    comMessage("\nerror: set: unknown color ");
+	    comMessage("error: set: unknown color \n");
 	    comMessage(val->val1);
 	    return -1;
 	  }
@@ -426,13 +426,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  obj->b=b;
 	} else if(obj->type==SCAL_GRID) {
 	  if(comGetColor(val->val1,&r,&g,&b)<0) {
-	    comMessage("\nerror: set: unknown color ");
+	    comMessage("error: set: unknown color \n");
 	    comMessage(val->val1);
 	    return -1;
 	  }
 	  if(s->range_flag) {
 	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val2);
 	      return -1;
 	    }
@@ -496,13 +496,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  }
 	} else if(obj->type==SCAL_GRAD) {
 	  if(comGetColor(val->val1,&r,&g,&b)<0) {
-	    comMessage("\nerror: set: unknown color ");
+	    comMessage("error: set: unknown color \n");
 	    comMessage(val->val1);
 	    return -1;
 	  }
 	  if(s->range_flag) {
 	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val2);
 	      return -1;
 	    }
@@ -571,18 +571,18 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  */
 	  if(s->range_flag) {
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
 	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val2);
 	      return -1;
 	    }	    
 	  } else {
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
@@ -790,7 +790,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     break;
     case SCAL_PROP_CENTER:
       if(matExtract1D(val->val1,3,vd1)!=0) {
-	comMessage("\nerror: set: syntax error in vector ");
+	comMessage("error: set: syntax error in vector \n");
 	comMessage(val->val1);
 	return -1;
       }
@@ -800,7 +800,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  obj->slab.center[1]=vd1[1];
 	  obj->slab.center[2]=vd1[2];
 	} else {
-	  comMessage("\nerror: set: expected operator = for property center");
+	  comMessage("error: set: expected operator = for property center\n");
 	  return -1;
 	}
 	slab_flag=1;
@@ -812,7 +812,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  obj->v_center=(int)vd2[1];
 	  obj->w_center=(int)vd2[2];
 	} else {
-	  comMessage("\nerror: set: expected operator = for property center");
+	  comMessage("error: set: expected operator = for property center\n");
 	  return -1;
 	}
 	obj->u_start=obj->u_center-obj->u_size/2;
@@ -828,7 +828,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	os=atoi(val->val1);
 	if(os!=1 && os!=2 && os!=4 && os!=8 && os!=16 &&
 	   os!=32 && os!=64 && os!=128 && os!=256 && os!=512 && os!=1024) {
-	  comMessage("\ninvalid size ignored");
+	  comMessage("invalid size ignored\n");
 	} else {
 	  obj->slab.usize=os;
 	  obj->slab.vsize=os;
@@ -838,7 +838,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       } else {
 	if(val->val1[0]=='{') {
 	  if(matExtract1Df(val->val1,3,v1)!=0) {
-	    comMessage("\nerror: set: expected {u,v,w} for size");
+	    comMessage("error: set: expected {u,v,w} for size\n");
 	    return -1;
 	  }
 	} else {
@@ -875,15 +875,15 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  break;
 	}
 	if(obj->u_size<2) {
-	  comMessage("\nwarning: set: u size smaller than 2, reset to 2");
+	  comMessage("warning: set: u size smaller than 2, reset to 2\n");
 	  obj->u_size=2.0;
 	}
 	if(obj->v_size<2) {
-	  comMessage("\nwarning: set: v size smaller than 2, reset to 2");
+	  comMessage("warning: set: v size smaller than 2, reset to 2\n");
 	  obj->v_size=2.0;
 	}
 	if(obj->w_size<2) {
-	  comMessage("\nwarning: set: w size smaller than 2, reset to 2");
+	  comMessage("warning: set: w size smaller than 2, reset to 2\n");
 	  obj->w_size=2.0;
 	}
 	obj->u_start=obj->u_center-obj->u_size/2;
@@ -897,7 +897,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     case SCAL_PROP_DIR:
       if(val->val1[0]=='{') {
 	if(matExtract1Df(val->val1,3,v1)!=0) {
-	  comMessage("\nerror: set: expected {x,y,z} for dir");
+	  comMessage("error: set: expected {x,y,z} for dir\n");
 	  return -1;
 	}
       } else {
@@ -910,7 +910,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	obj->slab.dir[1]=v1[1];
 	obj->slab.dir[2]=v1[2];
       } else {
-	comMessage("\nerror: expected operator '='");
+	comMessage("error: expected operator '='\n");
 	return -1;
       }
       slab_flag=1;
@@ -938,7 +938,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 #ifdef VR
     case SCAL_PROP_START: 
       if(op!= POV_OP_EQ && op!=POV_OP_PE && op!=POV_OP_ME) {
-	comMessage("\nerror: set: expected operators '=', '+=' or '-=' for property start");
+	comMessage("error: set: expected operators '=', '+=' or '-=' for property start\n");
 	return -1;
       }
       switch(op) {
@@ -949,7 +949,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       break;
     case SCAL_PROP_END: 
       if(op!= POV_OP_EQ && op!=POV_OP_PE && op!=POV_OP_ME) {
-	comMessage("\nerror: set: expected operators '=', '+=' or '-=' for property end");
+	comMessage("error: set: expected operators '=', '+=' or '-=' for property end\n");
 	return -1;
       }
       switch(op) {
@@ -961,7 +961,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 #endif
     case SCAL_PROP_STEP: 
       if(op!= POV_OP_EQ && op!=POV_OP_PE && op!=POV_OP_ME) {
-	comMessage("\nerror: set: expected operators '=', '+=' or '-=' for property step");
+	comMessage("error: set: expected operators '=', '+=' or '-=' for property step\n");
 	return -1;
       }
       os=obj->step;
@@ -972,7 +972,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       }
       if(obj->step<1 || obj->step>8) {
 	sprintf(message,
-		"\nwarning: set: stepsize out of bounds (1-8), reset to %d",
+		"warning: set: stepsize out of bounds (1-8), reset to %d\n",
 		os);
 	obj->step=os;
       }
@@ -986,7 +986,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
   }
  */
 /***
-  fprintf(stderr,"\n%d %d %d\n%d %d %d   %d %d %d",
+  fprintf(stderr,"%d %d %d\n%d %d %d   %d %d %d\n",
 	  obj->u_center,obj->v_center, obj->w_center,
 	  obj->u_start, obj->v_start, obj->w_start,
 	  obj->u_end, obj->v_end, obj->w_end);
@@ -1022,7 +1022,7 @@ int scalObjGet(scalObj *obj, char *prop)
     sprintf(message,"%2d",obj->step);
     comReturn(message);
   } else {
-    sprintf(message,"\n%s: unknown property %s",obj->name, prop);
+    sprintf(message,"%s: unknown property %s\n",obj->name, prop);
     comMessage(message);
     ret=-1;
   }
@@ -1033,7 +1033,7 @@ int scalObjGet(scalObj *obj, char *prop)
 int scalObjCp(scalObj *o1, scalObj *o2)
 {
   // TODO later
-  comMessage("\ncopy not implemented");
+  comMessage("copy not implemented\n");
   return -1;
 }
 
@@ -1147,7 +1147,7 @@ int scalVR(scalObj *obj, Select *sel)
   char message[256];
 
   /*
-  fprintf(stderr,"\n%d %d %d  %d %d %d",
+  fprintf(stderr,"%d %d %d  %d %d %d\n",
 	  obj->u_start, obj->v_start, obj->w_start,
 	  obj->u_end, obj->v_end, obj->w_end);
   */
@@ -1167,14 +1167,14 @@ int scalVR(scalObj *obj, Select *sel)
   wsize=obj->w_end-obj->w_start;
 
   if(!comTestTex3D(usize,vsize,wsize)) {
-    sprintf(message,"\nscalVR: could not allocate %dx%dx%d 3D texture",
+    sprintf(message,"scalVR: could not allocate %dx%dx%d 3D texture\n",
 	    usize,vsize,wsize);
     comMessage(message);
     return -1;
   }
 
   if((obj->vr.data=Ccalloc(usize*vsize*wsize,sizeof(float)))==NULL) {
-    comMessage("\nscalVR: memory allocation error");
+    comMessage("scalVR: memory allocation error\n");
     return -1;
   }
 
@@ -1219,7 +1219,7 @@ int scalSlab(scalObj *obj, Select *sel)
   int p,q,r;
   double uvw[3];
 
-//  fprintf(stderr,"\nslab");
+//  fprintf(stderr,"slab\n");
 
   /*
     create space for the data and texture
@@ -1278,7 +1278,7 @@ int scalSlabIntersect(scalObj *obj)
   double fu,fv,len1,len2,xyz[3],uvw[3];
   float pos[3],res;
 
-//  fprintf(stderr,"\nslabIntersect");
+//  fprintf(stderr,"slabIntersect\n");
 
   matNormalize(obj->slab.dir,dir);
 
@@ -1390,7 +1390,7 @@ int scalSlabIntersect(scalObj *obj)
     }
 
 /* 
-  fprintf(stderr,"\n%f %f   %f %f",
+  fprintf(stderr,"%f %f   %f %f\n",
 	  mindist[0],maxdist[0],mindist[1],maxdist[1]);
  */
 
@@ -1557,7 +1557,7 @@ int scalGrad(scalObj *obj, Select *sel)
   dz=v2[2]-v1[2];
 
   if(dx==0.0 || dy==0.0 || dz==0.0) {
-    comMessage("\nscalGrad: internal error #1");
+    comMessage("scalGrad: internal error #1\n");
     return -1;
   }
 
@@ -1827,7 +1827,7 @@ int scalObj2Surf(scalObj *obj,surfObj *surf)
   fcount=obj->face_count;
   face=Ccalloc(fcount,sizeof(struct SCAL2SURF_FACE));
 
-  fprintf(stderr,"\n1");
+  fprintf(stderr,"1\n");
   // optimization possible by using face->pi0, pi1 and pi2
 
   for(fc=0;fc<fcount;fc++) {
@@ -1884,7 +1884,7 @@ int scalObj2Surf(scalObj *obj,surfObj *surf)
     }
   }
   
-  fprintf(stderr,"\n2");
+  fprintf(stderr,"2\n");
   // go recursively through all faces and check normal orientation
   for(fc=0;fc<fcount;fc++) {
     for(fi=0;fi<face[fc].fc;fi++) {
@@ -1892,7 +1892,7 @@ int scalObj2Surf(scalObj *obj,surfObj *surf)
     }
   }
 
-  fprintf(stderr,"\n3");
+  fprintf(stderr,"3\n");
   // calculate normals based on weighted face normals
   for(vc=0;vc<vcount;vc++) {
     vert[vc].n[0]=0.0;
@@ -1912,10 +1912,10 @@ int scalObj2Surf(scalObj *obj,surfObj *surf)
       */
     }
     matfNormalize(vert[vc].n,vert[vc].n);
-    //    fprintf(stderr,"\n%d %f %f %f",vert[vc].fc,vert[vc].n[0],vert[vc].n[1],vert[vc].n[2]);
+    //    fprintf(stderr,"%d %f %f %f\n",vert[vc].fc,vert[vc].n[0],vert[vc].n[1],vert[vc].n[2]);
   }
 
-  fprintf(stderr,"\n4");
+  fprintf(stderr,"4\n");
   for(fc=0;fc<fcount;fc++) {
     obj->face[fc].v1[0]=vert[face[fc].i1].p[0];
     obj->face[fc].v1[1]=vert[face[fc].i1].p[1];

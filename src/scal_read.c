@@ -93,21 +93,21 @@ int scalReadDino(FILE *f, dbmScalNode *sn)
     // attempt to swap header
     swap_4bs((unsigned char *)&header,sizeof(header)/4);
     if(header.magic!=31415) {
-      comMessage("\nfile is not in dino grid format");
+      comMessage("file is not in dino grid format\n");
       return -1;
     }
     sf=1;
   }
 
   if(header.type!=1 && header.type!=2) {
-    comMessage("\ninvalid type in header");
+    comMessage("invalid type in header\n");
     return -1;
   }
 
   size=header.nu*header.nv*header.nw;
   data=Cmalloc(size*4);
   if(data==NULL) {
-    comMessage("\nmemory allocation error");
+    comMessage("memory allocation error\n");
     return -1;
   }
 

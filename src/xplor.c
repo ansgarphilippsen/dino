@@ -38,7 +38,7 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
   if(sn->field==NULL) {
-    comMessage("\nxplorRead: memory allocation error");
+    comMessage("xplorRead: memory allocation error\n");
     return -1;
   }
 
@@ -113,7 +113,7 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
 
   debmsg(message);
   if(sn->field->data==NULL) {
-    sprintf(message,"\nxplorRead: memory allocation error for %dkb",size/1024);
+    sprintf(message,"xplorRead: memory allocation error for %dkb\n",size/1024);
     comMessage(message);
     Cfree(sn->field);
     return -1;
@@ -181,7 +181,7 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
   
   /*
   sprintf(message,
-	  "\ntitlec: %d\na: %d %d %d\nb: %d %d %d\nc: %d %d %d\ncell: %f %f %f %f %f %f\nformat: %s",
+	  "titlec: %d\na: %d %d %d\nb: %d %d %d\nc: %d %d %d\ncell: %f %f %f %f %f %f\nformat: %s\n",
 	  titlec,
 	  header.na,header.amin,header.amax,
 	  header.nb,header.bmin,header.bmax,
@@ -225,13 +225,13 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
 
   fread(dummy,sizeof(dummy),1,f);
   fread(&ntitle,sizeof(int),1,f);
-  fprintf(stderr,"\n%x",ntitle);
+  fprintf(stderr,"%x\n",ntitle);
 
   if(ntitle>1024 || ntitle<0) {
     node->swap_flag=1;
     swap_4b((unsigned char *)&ntitle);
     if(ntitle>1024 || ntitle<0) {
-      comMessage("\nerror reading header (even after byte-swap)");
+      comMessage("error reading header (even after byte-swap)\n");
       return -1;
     } else {
       comMessage(" (byte swapping) ");
@@ -255,7 +255,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   }
 
   sprintf(message,
-	  "\n%d\n%s\n%d %d %d  %d %d %d  %d %d %d\n%e %e %e  %e %e %e\n%c%c%c",
+	  "%d\n%s\n%d %d %d  %d %d %d  %d %d %d\n%e %e %e  %e %e %e\n%c%c%c\n",
 	  ntitle,title,
 	  h1[0],h1[1],h1[2],h1[3],h1[4],h1[5],h1[6],h1[7],h1[8],
 	  h2[0],h2[1],h2[2],h2[3],h2[4],h2[5],
@@ -271,7 +271,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   header.format[3]='\0';
 
   if(strncmp(header.format,"ZYX",3)) {
-    sprintf(message,"\nunknown xplor map format %s",header.format);
+    sprintf(message,"unknown xplor map format %s\n",header.format);
     comMessage(message);
     return -1;
   }
@@ -279,7 +279,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   node->field=Cmalloc(sizeof(struct SCAL_FIELD));
   
   if(node->field==NULL) {
-    sprintf(message,"\nxplorRead: memory allocation error for %dkb",
+    sprintf(message,"xplorRead: memory allocation error for %dkb\n",
 	    sizeof(struct SCAL_FIELD)/1024);
     comMessage(message);
     return -1;
@@ -301,7 +301,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   node->field->data=Ccalloc(size,sizeof(float));
   
   if(node->field->data==NULL) {
-    sprintf(message,"\nxplorRead: memory allocation error for %dkb",
+    sprintf(message,"xplorRead: memory allocation error for %dkb\n",
 	    size*sizeof(float)/1024);
     comMessage(message);
     return -1;
@@ -312,7 +312,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   sdata=Ccalloc(section,sizeof(double));
   
   if(sdata==NULL) {
-    sprintf(message,"\nxplorRead: memory allocation error for %dkb",
+    sprintf(message,"xplorRead: memory allocation error for %dkb\n",
 	    section*sizeof(double)/1024);
     comMessage(message);
     return -1;
@@ -387,11 +387,11 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
     swap_4bs((unsigned char *)&header.delta,2);
 
   }
-  fprintf(stderr,"\nswap: %d sizeof(header:) %d, hdr: %4s  istart:%d  nsavc: %d  diff:%d  delta:%f", sf, sizeof(header),
+  fprintf(stderr,"swap: %d sizeof(header:) %d, hdr: %4s  istart:%d  nsavc: %d  diff:%d  delta:%f\n", sf, sizeof(header),
 	  header.hdr,header.istart,header.nsavc, header.diff, header.delta);
 
   if(header.diff!=0) {
-    comMessage("\nerror: all atoms must be free atoms");
+    comMessage("error: all atoms must be free atoms\n");
     return -1;
   }
 
@@ -400,12 +400,12 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   if(sf)
     swap_4b((unsigned char *)&ntitle);
 
-  fprintf(stderr,"\nntitle: %d",ntitle);
+  fprintf(stderr,"ntitle: %d\n",ntitle);
 
   for(i=0;i<ntitle;i++) {
     fread(title,sizeof(title),1,f);
     title[79]='\0';
-    fprintf(stderr,"\n%s",title);
+    fprintf(stderr,"%s\n",title);
   }
   fread(dummy,sizeof(dummy),1,f);
 
@@ -416,7 +416,7 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   if(sf)
     swap_4b((unsigned char *)&natom);
 
-  fprintf(stderr,"\nnatom:%d",natom);
+  fprintf(stderr,"natom:%d\n",natom);
 
   /*
     we don't know number of trajectories . . .
@@ -470,7 +470,7 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
     }
   }
   
-  fprintf(stderr,"\ntcount: %d",tcount-1);
+  fprintf(stderr,"tcount: %d\n",tcount-1);
 
   node->trj.frame_count=tcount-1;
   node->trj.pos=pos;

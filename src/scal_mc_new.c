@@ -72,7 +72,7 @@ int scalMCN(scalObj *obj, Select *sel)
 
 
   /**
-  fprintf(stderr,"\n%d %d %d   %d %d %d\n%f",umin,vmin,wmin,umax,vmax,wmax,obj->level);
+  fprintf(stderr,"%d %d %d   %d %d %d\n%f\n",umin,vmin,wmin,umax,vmax,wmax,obj->level);
   **/
   save_w_u=Ccalloc((usize+2)*(vsize+2),sizeof(int));
   save_w_v=Ccalloc((usize+2)*(vsize+2),sizeof(int));
@@ -357,7 +357,7 @@ int scalMCNAddVert(float *p)
     memcpy(scalMCNOrg.vert,ov,sizeof(scalMCNVert)*scalMCNOrg.vert_max);
     Cfree(ov);
     */
-//    fprintf(stderr,"\nrecalloc vert");
+//    fprintf(stderr,"recalloc vert\n");
     scalMCNOrg.vert=Crecalloc(scalMCNOrg.vert,
 			      scalMCNOrg.vert_max+scalMCNOrg.vert_add,
 			      sizeof(scalMCNVert));
@@ -377,7 +377,7 @@ int scalMCNAddLine(int v1,int v2)
     if(scalMCNOrg.line[i].v1==v1) {
       if(scalMCNOrg.line[i].v2==v2) {
 	return 1;
-	fprintf(stderr,"\ndouble entry detected  %d",scal_mcn_flag);
+	fprintf(stderr,"double entry detected  %d\n",scal_mcn_flag);
       }
     }
   }
@@ -424,7 +424,7 @@ int scalMCNAddFace(int v1, int v2, int v3)
     Cfree(of);
     */
 
-//    fprintf(stderr,"\nrecalloc face");
+//    fprintf(stderr,"recalloc face\n");
     scalMCNOrg.face=Crecalloc(scalMCNOrg.face,
 			      scalMCNOrg.face_max+scalMCNOrg.face_add,
 			      sizeof(scalMCNFace));

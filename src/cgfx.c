@@ -178,7 +178,7 @@ int cgfxSphereVA(float radius, float p[3], float c[4], cgfxVA *va, int detail)
     }
   }
 
-  // fprintf(stderr,"\n%d %d",inc_size,va->count);
+  // fprintf(stderr,"%d %d\n",inc_size,va->count);
 
   return 0;
 }
@@ -1188,7 +1188,7 @@ int cgfxConnectProfile(cgfxVA *va, cgfxProfile *p1, cgfxProfile *p2, int f)
     }
   }
 
-  //  fprintf(stderr,"\n%f",matfCalcDot(p1->p[0].d,p2->p[0].d));
+  //  fprintf(stderr,"%f\n",matfCalcDot(p1->p[0].d,p2->p[0].d));
 
   o=0;  // still does not work correctly, i.e. gives jagged edges for strands
 
@@ -1287,7 +1287,7 @@ int cgfxHSCTransform(cgfxProfile *profile, cgfxPoint *point, cgfxProfile *p2)
   matVectToRot(vp1,vp2,mat);
 
   if(matInverse2(mat,mati)!=0) {
-    fprintf(stderr,"\nerror in matInverse2");
+    fprintf(stderr,"error in matInverse2\n");
     return -1;
   }
 
@@ -1296,7 +1296,7 @@ int cgfxHSCTransform(cgfxProfile *profile, cgfxPoint *point, cgfxProfile *p2)
   //  matTranspose(mati,mati);
   
   /*
-  fprintf(stderr,"\n%f %f %f\n%f %f %f\n%f %f %f\n\n",
+  fprintf(stderr,"%f %f %f\n%f %f %f\n%f %f %f\n\n\n",
   	  mat[0],mat[1],mat[2],mat[4],mat[5],mat[6],mat[8],mat[9],mat[10]);
   */
 

@@ -216,7 +216,7 @@ int transSetRot(transMat *t, char *s)
 {
   double v[9];
   if(matExtract2D(s,3,3,v)!=0) {
-    comMessage("\nerror in expected 3x3 matrix: ");
+    comMessage("error in expected 3x3 matrix: \n");
     comMessage(s);
     return -1;
   }
@@ -233,7 +233,7 @@ int transSetTra(transMat *t, char *s)
 {
   double v[3];
   if(matExtract1D(s,3,v)!=0) {
-    comMessage("\nerror in expected vector: ");
+    comMessage("error in expected vector: \n");
     comMessage(s);
     return -1;
   }
@@ -245,7 +245,7 @@ int transSetCen(transMat *t, char *s)
 {
   double v[3];
   if(matExtract1D(s,3,v)!=0) {
-    comMessage("\nerror in expected vector: ");
+    comMessage("error in expected vector: \n");
     comMessage(s);
     return -1;
   }
@@ -257,7 +257,7 @@ int transSetAll(transMat *t, char *s)
 {
   double v[16];
   if(matExtract2D(s,4,4,v)!=0) {
-    comMessage("\nerror in expected 4x4 matrix: ");
+    comMessage("error in expected 4x4 matrix: \n");
     comMessage(s);
     return -1;
   }

@@ -15,16 +15,16 @@ int help(struct HELP_ENTRY *entry, const char *pre, const char *keyw)
   for(i=0;entry[i].keyw!=NULL;i++) {
     if(keyw==NULL) {
       if(clStrcmp(entry[i].keyw,"separator")) {
-	sprintf(message,"\n%s:\n",entry[i].brief);
+	sprintf(message,"%s:\n\n",entry[i].brief);
 	comMessage(message);
       } else {
-	//	sprintf(message,"\n %s:   \t%s %s",entry[i].keyw,pre,entry[i].brief);
+	//	sprintf(message," %s:   \t%s %s\n",entry[i].keyw,pre,entry[i].brief);
 	sprintf(message,"%s ",entry[i].keyw);
 	comMessage(message);
       }
     } else {
       if(clStrcmp(entry[i].keyw,keyw)) {
-	sprintf(message,"\nSyntax: %s %s\n",pre, entry[i].brief);
+	sprintf(message,"Syntax: %s %s\n\n",pre, entry[i].brief);
 	comMessage(message);
 	comMessage(entry[i].detail);
 	f=1;
@@ -33,7 +33,7 @@ int help(struct HELP_ENTRY *entry, const char *pre, const char *keyw)
   }
 
   if(f==0) {
-    sprintf(message,"\nno help for %s",keyw);
+    sprintf(message,"no help for %s\n",keyw);
     comMessage(message);
   }
   

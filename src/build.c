@@ -35,13 +35,13 @@ int buildTag(dbmStructNode *node, const char *x1, const char *x2)
 
   n1=structSubGetNum(node,m1,c1,r1,a1);
   if(n1<0) {
-    sprintf(message,"\natom not found: %s",s1);
+    sprintf(message,"atom not found: %s\n",s1);
     comMessage(message);
     return -1;
   }
   n2=structSubGetNum(node,m2,c2,r2,a2);
   if(n2<0) {
-    sprintf(message,"\natom not found: %s",s2);
+    sprintf(message,"atom not found: %s\n",s2);
     comMessage(message);
     return -1;
   }
@@ -53,7 +53,7 @@ int buildTag(dbmStructNode *node, const char *x1, const char *x2)
   tag_count=0;
   buildTagByBond(node, &node->atom[n1], &tag_count);
 
-  fprintf(stderr,"\n%d atoms tagged",tag_count);
+  fprintf(stderr,"%d atoms tagged\n",tag_count);
 
   return 0;
 }
@@ -340,14 +340,14 @@ int buildGenHierarchy(buildInst *bi)
   for(mcount=0;mcount<bi->hmc;mcount++) {
     coff=bi->hm[mcount].offset;
     cnum=bi->hm[mcount].count;
-    fprintf(stderr,"\nmodel %d: coff %d cnum %d",mcount,coff,cnum);
+    fprintf(stderr,"model %d: coff %d cnum %d\n",mcount,coff,cnum);
     for(ccount=0;ccount<cnum;ccount++) {
       roff=bi->hc[coff+ccount].offset;
       rnum=bi->hc[coff+ccount].count;
-      fprintf(stderr,"\n chain %d: roff %d rnum %d",
+      fprintf(stderr," chain %d: roff %d rnum %d\n",
 	      coff+ccount, roff, rnum);
       for(rcount=0;rcount<rnum;rcount++) {
-	fprintf(stderr,"\n  residue %d: off %d count %d",
+	fprintf(stderr,"  residue %d: off %d count %d\n",
 		roff+rcount,
 		bi->hr[roff+rcount].offset,
 		bi->hr[roff+rcount].count);
@@ -357,7 +357,7 @@ int buildGenHierarchy(buildInst *bi)
   }
   */
 
-  sprintf(message,"\n%d models, %d chains, %d residues and %d atoms",
+  sprintf(message,"%d models, %d chains, %d residues and %d atoms\n",
 	  bi->hmc,bi->hcc, bi->hrc, bi->atom_count);
 
   bi->batom=batom;

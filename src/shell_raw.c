@@ -359,7 +359,7 @@ static int parse(const char *raw_prompt2)
 	    add_char_flag=0;
 	  }
 	} else {
-	  shellOut("\nerror during prompt parsing: superfluous ]");
+	  shellOut("error during prompt parsing: superfluous ]\n");
 	  error_code=SHELL_ERROR;
 	}
       } else if(add_char=='{') {
@@ -385,7 +385,7 @@ static int parse(const char *raw_prompt2)
 	    add_char_flag=1;
 	  }
 	} else {
-	  shellOut("\nerror during prompt parsing: superfluous }");
+	  shellOut("error during prompt parsing: superfluous }\n");
 	  error_code=SHELL_ERROR;
 	}
       } else if(add_char=='$') {
@@ -395,7 +395,7 @@ static int parse(const char *raw_prompt2)
 	  add_char_flag=0;
 	  // var detected 
 	  if((++varcheck)>1013) {
-	    shellOut("\nVariable nesting limit reached");
+	    shellOut("Variable nesting limit reached\n");
 	    error_code=SHELL_ERROR;
 	  } else {
 	    // get variable name

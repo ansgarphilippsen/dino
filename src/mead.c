@@ -33,7 +33,7 @@ int meadRead(FILE *f, dbmScalNode *sn)
   fgets(line,1024,f);
   line[5]='\0';
   if(strcmp(line,"# AVS")) {
-    sprintf(message,"\nError: Expected '# AVS' on first line");
+    sprintf(message,"Error: Expected '# AVS' on first line\n");
     comMessage(message);
     return -1;
   }
@@ -49,7 +49,7 @@ int meadRead(FILE *f, dbmScalNode *sn)
     if(c==12) {
       fread(&c,sizeof(char),1,f); 
       if(c!=12) {
-	sprintf(message,"\nWarning: Expected 2nd FF");
+	sprintf(message,"Warning: Expected 2nd FF\n");
 	comMessage(message);
       }
       break;
@@ -71,7 +71,7 @@ int meadRead(FILE *f, dbmScalNode *sn)
       
     }
     if(feof(f)) {
-      comMessage("\n reached unexpected end of file");
+      comMessage(" reached unexpected end of file\n");
       return -1;
     }
   }
@@ -117,7 +117,7 @@ int meadRead(FILE *f, dbmScalNode *sn)
   fy=(dim[3]-dim[2])/((float)dim2-1.0);
   fz=(dim[5]-dim[4])/((float)dim3-1.0);
 
-  sprintf(message,"\nHeader Info\n%d %d %d\n%d %d %d  %d %d %d\n%f %f %f\n%f %f %f",
+  sprintf(message,"Header Info\n%d %d %d\n%d %d %d  %d %d %d\n%f %f %f\n%f %f %f\n",
 	  sn->field->u_size, sn->field->v_size, sn->field->w_size,
 	  sn->field->u1, sn->field->v1, sn->field->w1,
 	  sn->field->u2, sn->field->v2, sn->field->w2,

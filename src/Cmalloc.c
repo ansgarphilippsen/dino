@@ -26,7 +26,7 @@ void *Cmalloc(size_t size)
   return p;
 #else
 #ifdef CMALLOC_VERBOSE
-  fprintf(stderr,"\nMALLOC %.2f kb",size/1024.0);
+  fprintf(stderr,"MALLOC %.2f kb\n",size/1024.0);
 #endif
   return malloc(size);
 #endif
@@ -46,7 +46,7 @@ void *Ccalloc (size_t nelem, size_t elsize)
   return p;
 #else
 #ifdef CMALLOC_VERBOSE
-  fprintf(stderr,"\nCALLOC %.2f kb",nelem*elsize/1024.0);
+  fprintf(stderr,"CALLOC %.2f kb\n",nelem*elsize/1024.0);
 #endif
   return calloc(nelem, elsize);
 #endif
@@ -63,7 +63,7 @@ void Cfree(void *p)
     }
 
   if(i==65536)
-    fprintf(stderr,"\nCfree() error!");
+    fprintf(stderr,"Cfree() error!\n");
 #endif
 
   if(p!=NULL) {
@@ -71,7 +71,7 @@ void Cfree(void *p)
     free(p);
   } else {
     /*
-    fprintf(stderr,"\nwarning: Cfree(NULL) called");
+    fprintf(stderr,"warning: Cfree(NULL) called\n");
     */
   }
 }
@@ -82,7 +82,7 @@ void *Crecalloc(void *p, size_t nelem, size_t elsize)
   size=nelem*elsize;
 
 #ifdef CMALLOC_VERBOSE
-  fprintf(stderr,"\nRECALLOC (%p) %.2f kb",p,size/1024.0);
+  fprintf(stderr,"RECALLOC (%p) %.2f kb\n",p,size/1024.0);
 #endif
 
   return realloc(p,size);

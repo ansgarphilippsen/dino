@@ -33,7 +33,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
     sn->swap_flag=1;
     swap_4bs((unsigned char*)&header, sizeof(header)/4.0);
     if(header.mode!=2 && header.mode!=0) {
-      comMessage("\nccp4Read: error: map not in mode 0 or 2 (even after byte-swap");
+      comMessage("ccp4Read: error: map not in mode 0 or 2 (even after byte-swap\n");
       return -1;
     } else {
       comMessage(" (byte-swapping) ");
@@ -84,7 +84,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   sn->field->size=size;
 
   if(sn->field==NULL) {
-    comMessage("\nccp4Read: memory allocation error");
+    comMessage("ccp4Read: memory allocation error\n");
     return -1;
   }
 
@@ -97,7 +97,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   }
 
   if(sn->field==NULL || raw_data==NULL) {
-    comMessage("\nccp4Read: memory allocation error");
+    comMessage("ccp4Read: memory allocation error\n");
     Cfree(sn->field);
     Cfree(raw_data);
     return -1;
@@ -182,7 +182,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
 
 
   sprintf(message,
-	  "\nheader:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld",
+	  "header:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld\n",
 	  header.nc, header.nr, header.ns,
 	  header.ncstart, header.nrstart, header.nsstart,
 	  header.nx, header.ny, header.nz, 
@@ -190,7 +190,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
 	  header.mapc, header.mapr, header.maps);
   debmsg(message);
   sprintf(message,
-	  "\nu_size, v_size, w_size: %d,%d,%d\n",
+	  "u_size, v_size, w_size: %d,%d,%d\n\n",
 	  sn->field->u_size,sn->field->v_size, sn->field->w_size);
   debmsg(message);
 

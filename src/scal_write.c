@@ -14,7 +14,7 @@ int scalObjWrite(scalObj *obj, int wc, char **wl)
   
 
   if(obj->type!=SCAL_CONTOUR) {
-    comMessage("\nonly contour type output supported");
+    comMessage("only contour type output supported\n");
     return -1;
   }
 
@@ -25,7 +25,7 @@ int scalObjWrite(scalObj *obj, int wc, char **wl)
   strcat(n2,".face");
 
   if((f1=fopen(n1,"w"))==NULL || (f2=fopen(n2,"w"))==NULL) {
-    comMessage("\nerror opening output file");
+    comMessage("error opening output file\n");
     return -1;
   }
 

@@ -63,7 +63,7 @@ int writeGenScene(GLfloat **buf)
       fbuf_size+=100000;
       fbuf=Ccalloc(fbuf_size,sizeof(GLfloat));
     } else {
-      fprintf(stderr,"\n%d entries in feedback buffer",ret);
+      fprintf(stderr,"%d entries in feedback buffer\n",ret);
     }
   } while(ret<0 && failure<20);
 
@@ -73,7 +73,7 @@ int writeGenScene(GLfloat **buf)
     (*buf)=NULL;
     Cfree(fbuf);
     ret=-1;
-    comMessage("\nError during feedback buffer generation");
+    comMessage("Error during feedback buffer generation\n");
   }
 
   comRedraw();
@@ -113,7 +113,7 @@ int writePS(FILE *f)
       c[1]=buf[i++];
       c[2]=buf[i++];
       c[3]=buf[i++];
-      fprintf(stderr,"\nPOINT: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f",
+      fprintf(stderr,"POINT: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f\n",
 	      v[0],v[1],v[2],c[0],c[1],c[2],c[3]);
     } else if(token==GL_LINE_TOKEN ||
 	      token==GL_LINE_RESET_TOKEN) {
@@ -124,7 +124,7 @@ int writePS(FILE *f)
       c[1]=buf[i++];
       c[2]=buf[i++];
       c[3]=buf[i++];
-      fprintf(stderr,"\nLINE: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f",
+      fprintf(stderr,"LINE: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f\n",
 	      v[0],v[1],v[2],c[0],c[1],c[2],c[3]);
 
       v[0]=buf[i++];
@@ -134,12 +134,12 @@ int writePS(FILE *f)
       c[1]=buf[i++];
       c[2]=buf[i++];
       c[3]=buf[i++];
-      fprintf(stderr,"\n      %.3f %.3f %.3f   %.3f %.3f %.3f %.3f",
+      fprintf(stderr,"      %.3f %.3f %.3f   %.3f %.3f %.3f %.3f\n",
 	      v[0],v[1],v[2],c[0],c[1],c[2],c[3]);
     } else if(token==GL_POLYGON_TOKEN) {
       pc=(int)buf[i++];
       iz=0;
-      fprintf(stderr,"\nPOLY:");
+      fprintf(stderr,"POLY:\n");
       while(iz<pc) {
 	v[0]=buf[i++];
 	v[1]=buf[i++];
@@ -149,7 +149,7 @@ int writePS(FILE *f)
 	c[2]=buf[i++];
 	c[3]=buf[i++];
 	iz++;
-      fprintf(stderr,"\n%4d: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f",
+      fprintf(stderr,"%4d: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f\n",
 	      iz,v[0],v[1],v[2],c[0],c[1],c[2],c[3]);
       }
     } else if(token==GL_BITMAP_TOKEN) {
@@ -160,7 +160,7 @@ int writePS(FILE *f)
       c[1]=buf[i++];
       c[2]=buf[i++];
       c[3]=buf[i++];
-      fprintf(stderr,"\nBITMAP: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f",
+      fprintf(stderr,"BITMAP: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f\n",
 	      v[0],v[1],v[2],c[0],c[1],c[2],c[3]);
     } else if (token==GL_DRAW_PIXEL_TOKEN ||
 	       token==GL_COPY_PIXEL_TOKEN) {
@@ -171,7 +171,7 @@ int writePS(FILE *f)
       c[1]=buf[i++];
       c[2]=buf[i++];
       c[3]=buf[i++];
-      fprintf(stderr,"\nPIXEL: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f",
+      fprintf(stderr,"PIXEL: %.3f %.3f %.3f   %.3f %.3f %.3f %.3f\n",
 	      v[0],v[1],v[2],c[0],c[1],c[2],c[3]);
     } else if (token==GL_PASS_THROUGH_TOKEN) {
       i++;
@@ -215,7 +215,7 @@ int writePSHeader(FILE *f)
     fprintf(f, "%s\n", gouraudtriangleEPS[i]);
   }
   
-  fprintf(f, "\n%g setlinewidth\n", line_width);
+  fprintf(f, "%g setlinewidth\n\n", line_width);
 
   fprintf(f, "%g %g %g setrgbcolor\n",
 	  clear_color[0], clear_color[1], clear_color[2]);
@@ -259,12 +259,12 @@ int writePSObj(FILE *f, GLfloat *buf, int n)
       break;
       */
     default:
-      fprintf(stderr,"\nError: unknown token");
+      fprintf(stderr,"Error: unknown token\n");
       i=n;
       break;
     }
   }
-  fprintf(stderr,"\n%d elements found",indx_count);
+  fprintf(stderr,"%d elements found\n",indx_count);
 
   if(indx_count==0)
     return 0;
@@ -303,7 +303,7 @@ int writePSObj(FILE *f, GLfloat *buf, int n)
       i+=7;
       break;
     default:
-      fprintf(stderr,"\nError: unknown token");
+      fprintf(stderr,"Error: unknown token\n");
       i=n;
       break;
     }
@@ -318,14 +318,14 @@ int writePSObj(FILE *f, GLfloat *buf, int n)
   for(i=0;i<indx_count;i++) {
     switch((int)indx[i].entry[0]) {
     case GL_POINT_TOKEN:
-      fprintf(stderr,"\npoint");
+      fprintf(stderr,"point\n");
       break;
     case GL_LINE_TOKEN:
     case GL_LINE_RESET_TOKEN:
-      fprintf(stderr,"\nline");
+      fprintf(stderr,"line\n");
       break;
     case GL_POLYGON_TOKEN:
-      fprintf(stderr,"\npolygon");
+      fprintf(stderr,"polygon\n");
       break;
     case GL_BITMAP_TOKEN:
     case GL_DRAW_PIXEL_TOKEN:

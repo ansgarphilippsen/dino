@@ -19,7 +19,7 @@ int delphiRead(FILE *f, dbmScalNode *sn)
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
   if(sn->field==NULL) {
-    comMessage("\ndelphiRead: memory allocation error");
+    comMessage("delphiRead: memory allocation error\n");
     return -1;
   }
 
@@ -39,7 +39,7 @@ int delphiRead(FILE *f, dbmScalNode *sn)
     swap_4bs((unsigned char *)&header,18);
     if(header.nbyte!=4 || header.ivary!=0 || header.intdat!=0 ||
        header.xang!=90.0 || header.yang!=90.0 || header.zang!=90.0) {
-      comMessage("\nerror: invalid DELPHI header (even after byte-swap)");
+      comMessage("error: invalid DELPHI header (even after byte-swap)\n");
       return -1;
     } else {
       comMessage(" byte-swapping ");
@@ -49,7 +49,7 @@ int delphiRead(FILE *f, dbmScalNode *sn)
   sprintf(message,"DELPHI HEADER:");
   debmsg(message);
   title[131]='\0';
-  sprintf(message,"\n%s",title);
+  sprintf(message,"%s\n",title);
   //  comMessage(message);
   sprintf(message,"ivary:%d nbyte:%d intdat:%d ext:%f %f %f",
 	  header.ivary, header.nbyte, header.intdat, 
@@ -132,7 +132,7 @@ int delphi2Read(FILE *f, dbmScalNode *sn)
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
   if(sn->field==NULL) {
-    comMessage("\ndelphi2Read: memory allocation error");
+    comMessage("delphi2Read: memory allocation error\n");
     return -1;
   }
 
@@ -187,13 +187,13 @@ int delphi2Read(FILE *f, dbmScalNode *sn)
   sn->field->offset_z=-32.0/scale+mid[2];
 
   if(scale==0.0) {
-    comMessage("\nscale 0.0, set to 1.0");
+    comMessage("scale 0.0, set to 1.0\n");
     scale=1.0;
   }
   fact=1.0/scale;
   scalCELLtoVECT(sn->field,1.0,1.0,1.0,90.0,90.0,90.0,fact,fact,fact);
 
-  sprintf(message,"\n DELPHIG HEADER:\n %s\n %s\n %s", uplbl,nxtlbl,botlbl);
+  sprintf(message," DELPHIG HEADER:\n %s\n %s\n %s\n", uplbl,nxtlbl,botlbl);
   debmsg(message);
 
   return 0;

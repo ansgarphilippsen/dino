@@ -94,14 +94,14 @@ static int eval_line(int argc, char **argv)
     if(exec_flag==1) {
       exec_flag=0;
     } else {
-      sprintf(message,"\nstartup: misplaced }");
+      sprintf(message,"startup: misplaced }\n");
       comMessage(message);
       return -1;
     }
   } else {
     // unknown keyword
     /* ignore for now
-      sprintf(message,"\nstartup: unknown keyword %s",argv[0]);
+      sprintf(message,"startup: unknown keyword %s\n",argv[0]);
       comMessage(message);
       return -1;
     */

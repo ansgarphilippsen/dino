@@ -295,7 +295,7 @@ int matMakeT2O(double a, double b, double c, double alpha, double beta, double g
   r[2]=sqrt(c*c-r[0]*r[0]-r[1]*r[1]);
   */
   /*
-  fprintf(stdout,"\n%.5f %.5f %.5f %.5f\n%.5f %.5f %.5f %.5f\n%.5f %.5f %.5f %.5f\n%.5f %.5f %.5f %.5f",
+  fprintf(stdout,"%.5f %.5f %.5f %.5f\n%.5f %.5f %.5f %.5f\n%.5f %.5f %.5f %.5f\n%.5f %.5f %.5f %.5f\n",
 	  rm[0],rm[1],rm[2],rm[3],
 	  rm[4],rm[5],rm[6],rm[7],
 	  rm[8],rm[9],rm[10],rm[11],
@@ -366,7 +366,7 @@ int matMakeO2T(double a, double b, double c, double alpha, double beta, double g
   r[1]=(b*c*ca-b*c*cc*cb)/(b*sc);
   r[2]=sqrt(c*c-r[0]*r[0]-r[1]*r[1]);
 
-  fprintf(stdout,"\n%.3f %.3f %.3f\n%.3f %.3f %.3f\n%.3f %.3f %.3f",
+  fprintf(stdout,"%.3f %.3f %.3f\n%.3f %.3f %.3f\n%.3f %.3f %.3f\n",
 	  p[0],p[1],p[2],
 	  q[0],q[1],q[2],
 	  r[0],r[1],r[2]);
@@ -624,7 +624,7 @@ int matExtract1D(const char *string, int dim, double *res)
   ret=regcomp(&preg,expr,REG_EXTENDED);
   if(ret>0) {
     regerror(ret,&preg,message,256);
-    fprintf(stderr,"\nregcomp: %s",message);
+    fprintf(stderr,"regcomp: %s\n",message);
     return -1;
   } else {
     ret=regexec(&preg,string,5,pmatch,0);
@@ -935,7 +935,7 @@ int matCalcCircleM(float p1[3], float p2[3],float p3[3],float m[3])
   double det,det1,det2,det3;
 
   /*
-  fprintf(stderr,"\n%.3f %.3f %.3f  %.3f %.3f %.3f  %.3f %.3f %.3f",
+  fprintf(stderr,"%.3f %.3f %.3f  %.3f %.3f %.3f  %.3f %.3f %.3f\n",
 	  p1[0],p1[1],p1[2],p2[0],p2[1],p2[2],p3[0],p3[1],p3[2]);
   */
 
@@ -951,7 +951,7 @@ int matCalcCircleM(float p1[3], float p2[3],float p3[3],float m[3])
   mi=p2[0]*p1[1]-p2[0]*p3[1]+p3[0]*p2[1]-p3[0]*p1[1]+p1[0]*p3[1]-p1[0]*p2[1];
 
   /*
-  fprintf(stderr,"\n%.3f %.3f %.3f\n%.3f %.3f %.3f\n%.3f %.3f %.3f\n",
+  fprintf(stderr,"%.3f %.3f %.3f\n%.3f %.3f %.3f\n%.3f %.3f %.3f\n\n",
 	  ma,mb,mc,md,me,mf,mg,mh,mi);
   */
 
@@ -968,13 +968,13 @@ int matCalcCircleM(float p1[3], float p2[3],float p3[3],float m[3])
 
   if(det==0.0) {
     /*
-    fprintf(stderr,"\ndet=0");
+    fprintf(stderr,"det=0\n");
     */
     return -1;
   }
 
   /*
-  fprintf(stderr,"\n%.3f %.3f %.3f  %.3f",det1,det2,det3,det);
+  fprintf(stderr,"%.3f %.3f %.3f  %.3f\n",det1,det2,det3,det);
   */
 
 	  
@@ -983,7 +983,7 @@ int matCalcCircleM(float p1[3], float p2[3],float p3[3],float m[3])
   m[2]=(float)(det3/det);
 
   /*
-  fprintf(stderr,"\n%.4f %.4f %.4f",
+  fprintf(stderr,"%.4f %.4f %.4f\n",
 	  ((m[0]-p1[0])*(m[0]-p1[0]))+((m[1]-p1[1])*(m[1]-p1[1]))+((m[2]-p1[2])*(m[2]-p1[2])),
 	  ((m[0]-p2[0])*(m[0]-p2[0]))+((m[1]-p2[1])*(m[1]-p2[1]))+((m[2]-p2[2])*(m[2]-p2[2])),
 	  ((m[0]-p3[0])*(m[0]-p3[0]))+((m[1]-p3[1])*(m[1]-p3[1]))+((m[2]-p3[2])*(m[2]-p3[2])));
@@ -1193,7 +1193,7 @@ int matVectToRot(double *v1[3], double *v2[3], double *mat)
   vx=v1[1][0]; vy=v1[1][1]; vz=v1[1][2];
   wx=v1[2][0]; wy=v1[2][1]; wz=v1[2][2];
 
-  //  fprintf(stderr,"\n%f %f %f  %f %f %f  %f %f %f",
+  //  fprintf(stderr,"%f %f %f  %f %f %f  %f %f %f\n",
   //	  ux,uy,uz,vx,vy,vz,wx,wy,wz);
 
   detm=px*(qy*rz-qz*ry)-py*(qx*rz-qz*rx)+pz*(qx*ry-qy*rx);
@@ -1252,7 +1252,7 @@ int matTransformAtoB(double oa[3],double ob[3], double mat[16])
   lb=sqrt(b[0]*b[0]+b[1]*b[1]+b[2]*b[2]);
 
   if(la*lb==0.0) {
-    fprintf(stderr,"\nerror in matTransform");
+    fprintf(stderr,"error in matTransform\n");
     return -1;
   }
   matCalcCross(a,b,axis);
@@ -1306,7 +1306,7 @@ int matTransformXYtoNM(double on[3],double om[3], double mat[16])
   matNormalize(m,m);
 
   if(matTransformAtoB(x,n,mat1)<0) {
-    fprintf(stderr,"\nerror in matTransform");
+    fprintf(stderr,"error in matTransform\n");
     return -1;
   }
 
@@ -1323,7 +1323,7 @@ int matTransformXYtoNM(double on[3],double om[3], double mat[16])
 
   /*
   if(matTransformAtoB(y2,m2,mat2)<0) {
-    fprintf(stderr,"\nerror in matTransform");
+    fprintf(stderr,"error in matTransform\n");
     return -1;
   }
 
@@ -1333,7 +1333,7 @@ int matTransformXYtoNM(double on[3],double om[3], double mat[16])
   /* verified that My2 = m2 */
 
   matMultMV(mat2,n,c);
-  fprintf(stderr,"\n  %f %f %f\n  %f %f %f",
+  fprintf(stderr,"  %f %f %f\n  %f %f %f\n",
 	  n[0],n[1],n[2],c[0],c[1],c[2]);
 
   matMultMM(mat2,mat1,mat);
@@ -1369,7 +1369,7 @@ int matInverse2(double m[16],double r[16])
 	      icol=k;
 	    }
 	  } else if(ipiv[k] >1) {
-//	    fprintf(stderr,"\nerror in matInverse2");
+//	    fprintf(stderr,"error in matInverse2\n");
 	    return -1;
 	  }
 	}
@@ -1381,7 +1381,7 @@ int matInverse2(double m[16],double r[16])
     indxr[i]=irow;
     indxc[i]=icol;
     if(a[icol][icol]==0.0) {
-//      fprintf(stderr,"\nerror in matInverse2");
+//      fprintf(stderr,"error in matInverse2\n");
       return -1;
     }
     pivinv=1.0/a[icol][icol];

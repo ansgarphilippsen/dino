@@ -58,7 +58,7 @@ int gridTiffRead(int fd, char *fn, dbmGridNode *node)
 
   t=TIFFFdOpen(fd,fn,"r");
   if(t==NULL) {
-    sprintf(message,"\nreadGrid: error opening file");
+    sprintf(message,"readGrid: error opening file\n");
     comMessage(message);
     return -1;
   }
@@ -72,21 +72,21 @@ int gridTiffRead(int fd, char *fn, dbmGridNode *node)
     /*  } else if(b==16) {
 	scale=65536.0;*/
   } else {
-    sprintf(message,"\nreadGrid: BITSPERSAMPLE is %d and this is not supported",b);
+    sprintf(message,"readGrid: BITSPERSAMPLE is %d and this is not supported\n",b);
     comMessage(message);
     TIFFClose(t);
     return -1;
   }
 
   if((w*h)>(4096*4096)) {
-    sprintf(message,"\nsize exceeded or invalid file format");
+    sprintf(message,"size exceeded or invalid file format\n");
     comMessage(message);
     TIFFClose(t);
     return -1;
   }
 
   if((data=Ccalloc(w*h,sizeof(uint32)))==NULL) {
-    sprintf(message,"\nMemory allocation error #1");
+    sprintf(message,"Memory allocation error #1\n");
     comMessage(message);
     return -1;
   }
@@ -119,7 +119,7 @@ int gridTiffRead(int fd, char *fn, dbmGridNode *node)
   node->field.point=Ccalloc((w)*(h),sizeof(gridPoint));
 
   if(node->field.point==NULL) {
-    sprintf(message,"\nMemory allocation error #2");
+    sprintf(message,"Memory allocation error #2\n");
     comMessage(message);
     Cfree(data);
     TIFFClose(t);
@@ -170,7 +170,7 @@ int gridTiffReadTex(char *fn, gridTexture *tex)
   t=TIFFOpen(fn,"r");
 
   if(t==NULL) {
-    sprintf(message,"\nreadTex: error opening file");
+    sprintf(message,"readTex: error opening file\n");
     comMessage(message);
     return -1;
   }
@@ -179,13 +179,13 @@ int gridTiffReadTex(char *fn, gridTexture *tex)
   TIFFGetField(t,TIFFTAG_BITSPERSAMPLE,&b);
 
   if((w*h)>(4096*4096)) {
-    sprintf(message,"\nsize exceeded or invalid file format");
+    sprintf(message,"size exceeded or invalid file format\n");
     comMessage(message);
     return -1;
   }
 
   if((data=Ccalloc(w*h,sizeof(uint32)))==NULL) {
-    sprintf(message,"\nMemory allocation error #1");
+    sprintf(message,"Memory allocation error #1\n");
     comMessage(message);
     return -1;
   }

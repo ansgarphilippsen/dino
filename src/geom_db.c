@@ -18,19 +18,19 @@ int geomCommand(struct DBM_GEOM_NODE *node,int wc, char **wl)
   strcpy(geom_return,"");
 
   if(wc<1) {
-    comMessage("\nno command given");
+    comMessage("no command given\n");
     return -1;
   }
 
   if(!strcmp(wl[0],"help") ||
      !strcmp(wl[0],"?")) {
-    comMessage("\npossible commands: new delete list get set help");
+    comMessage("possible commands: new delete list get set help\n");
   } else if(!strcmp(wl[0],"new")) {
     geomNew(node,wc-1,wl+1);
   } else if(!strcmp(wl[0],"delete") ||
 	    !strcmp(wl[0],"del")) {
     if(wc<2) {
-      sprintf(message,"\n%s: missing parameter",node->name);
+      sprintf(message,"%s: missing parameter\n",node->name);
       comMessage(message);
       return -1;
     } else {
@@ -47,7 +47,7 @@ int geomCommand(struct DBM_GEOM_NODE *node,int wc, char **wl)
   } else if(!strcmp(wl[0],"get")) {
   } else if(!strcmp(wl[0],"set")) {
   } else {
-    sprintf(message,"\nunknown command %s",wl[0]);
+    sprintf(message,"unknown command %s\n",wl[0]);
     comMessage(message);
     return -1;
   }
@@ -72,19 +72,19 @@ int geomNew(struct DBM_GEOM_NODE *node, int wc, char **wl)
     if(!strcmp(wl[i],"-name")) {
       i++;
       if(i>=wc) {
-	comMessage("\nmissing name");
+	comMessage("missing name\n");
 	return -1;
       }
       strncpy(name,wl[i],64);
     } else if(!strcmp(wl[i],"-type")) {
       i++;
       if(i>=wc) {
-	comMessage("\nmissing type");
+	comMessage("missing type\n");
 	return -1;
       }
       strncpy(type,wl[i],64);
     } else {
-      sprintf(message,"\nunknown parameter %s",wl[i]);
+      sprintf(message,"unknown parameter %s\n",wl[i]);
       comMessage(message);
       return -1;
     }
@@ -94,13 +94,13 @@ int geomNew(struct DBM_GEOM_NODE *node, int wc, char **wl)
   if(clStrcmp(type,"prim")) {
     t=GEOM_PRIM;
   } else {
-    comMessage("\nerror: unknown geom object type: ");
+    comMessage("error: unknown geom object type: \n");
     comMessage(type);
     return -1;
   }
 
   if((obj=geomNewObj(node,name,t))==NULL) {
-    sprintf(message,"\n%s: memory allocation error in NewObj()",node->name);
+    sprintf(message,"%s: memory allocation error in NewObj()\n",node->name);
     comMessage(message);
     return -1;
   }
@@ -143,7 +143,7 @@ int geomGenNameList(geomNameList *list, char *expr)
       list[c].t=GEOM_TYPE_RECT;
       strcpy(num,expr+1);
     } else {
-      sprintf(message,"\ninvalid element id: %c",expr[0]);
+      sprintf(message,"invalid element id: %c\n",expr[0]);
       comMessage(message);
       return -1;
     }
@@ -160,7 +160,7 @@ int geomGenNameList(geomNameList *list, char *expr)
       if(nl[j][0]=='<') {
 	/* range */
 	if(nl[j][strlen(nl[j])-1]!='>') {
-	  sprintf(message,"\nerror in range expression: %s",nl[j]);
+	  sprintf(message,"error in range expression: %s\n",nl[j]);
 	  comMessage(message);
 	  return -1;
 	}
@@ -187,7 +187,7 @@ int geomGenNameList(geomNameList *list, char *expr)
 	  list[c].n1=-1;
 	  list[c].n2=-1;
 	} else {
-	  sprintf(message,"\ninvalid number %s",num);
+	  sprintf(message,"invalid number %s\n",num);
 	  comMessage(message);
 	  return -1;
 	}
@@ -200,7 +200,7 @@ int geomGenNameList(geomNameList *list, char *expr)
       list[c].n1=-1;
       list[c].n2=-1;
     } else {
-      sprintf(message,"\nunknown name: %s",expr);
+      sprintf(message,"unknown name: %s\n",expr);
       comMessage(message);
       return -1;
     }

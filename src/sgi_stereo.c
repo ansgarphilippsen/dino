@@ -102,7 +102,7 @@ int SGIStereoInit(Display *display, GLXDrawable drawable)
       take the user supplied video mode
     */
     if(video_mode<1 || video_mode>i) {
-      comMessage("\nwarning: supplied stereo video mode not found, using default");
+      comMessage("warning: supplied stereo video mode not found, using default\n");
       video_mode=0;
     } else {
       sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[video_mode-1]);

@@ -50,7 +50,7 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
   FILE *fp;
   
   if((fp=fopen(name, "wb"))==NULL) {
-    comMessage("\nerror opening file ");
+    comMessage("error opening file \n");
     comMessage(name);
     return -1;
   }
@@ -60,7 +60,7 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
 				    NULL, NULL, NULL);
   if(png_ptr==NULL) {
     fclose (fp);
-    comMessage("\nerror creating PNG write_struct");
+    comMessage("error creating PNG write_struct\n");
     return -1;
   }
  
@@ -68,7 +68,7 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
   if (info_ptr == NULL) {
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
-    comMessage("\nerror creating PNG info_struct");
+    comMessage("error creating PNG info_struct\n");
     return -1;
   }
    
@@ -76,7 +76,7 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
     /* If we get here, we had a problem reading the file */
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
-    comMessage("\nInternal PNG error");
+    comMessage("Internal PNG error\n");
     return -1;
   }
   
@@ -94,7 +94,7 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
   if(row_pointers==NULL || data==NULL) {
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
-    comMessage("\nerror during memory allocation in pngWrite()");
+    comMessage("error during memory allocation in pngWrite()\n");
     return -1;
   }
 

@@ -20,13 +20,13 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
   dbmSet s;
 
   if(wc<=0) {
-    comMessage("\nmissing command");
+    comMessage("missing command\n");
     return -1;
   }
 
   if(!strcmp(wl[0],"help") ||
      !strcmp(wl[0],"?")) {
-    comMessage("\npossible commands: add del get set list show hide help");
+    comMessage("possible commands: add del get set list show hide help\n");
   } else if(!strcmp(wl[0],"add")) {
     geomObjAdd(obj,wc-1,wl+1);
   } else if(!strcmp(wl[0],"del")) {
@@ -55,7 +55,7 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
     comRedraw();
   } else if(!strcmp(wl[0],"render")) {
     if(renderSet(&obj->render,wc-1,wl+1)!=0) {
-      sprintf(message,"\n%s: syntax error in render statement",node->name);
+      sprintf(message,"%s: syntax error in render statement\n",node->name);
       comMessage(message);
       return -1;
     }
@@ -63,7 +63,7 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
        obj->render.mode!=RENDER_ON &&
        obj->render.mode!=RENDER_TUBE) {
       obj->render.mode=RENDER_OFF;
-      comMessage("\ninvalid render mode");
+      comMessage("invalid render mode\n");
     }
   } else if(!strcmp(wl[0],"material")) {
     if(wc<2) {
@@ -76,7 +76,7 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
       comRedraw();
     }
   } else {
-    sprintf(message,"\nunknown command %s",wl[0]);
+    sprintf(message,"unknown command %s\n",wl[0]);
   }
 
   geomObjRegen(obj);
@@ -257,7 +257,7 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
   char lab[128];
 
   if(wc<=0) {
-    comMessage("\nno element given");
+    comMessage("no element given\n");
     return -1;
   }
 
@@ -276,7 +276,7 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
   else if(!strcmp(wl[0],"label"))
     ele=GEOM_ELE_LABEL;
   else {
-    sprintf(message,"\nunknown element %s",wl[0]);
+    sprintf(message,"unknown element %s\n",wl[0]);
     comMessage(message);
     return -1;
   }
@@ -299,7 +299,7 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
     dbmSplitPOV(pl[i],prop,op,val);
 
     if(strcmp(op,"=")) {
-      sprintf(message,"\ninvalid operator %s",op);
+      sprintf(message,"invalid operator %s\n",op);
       comMessage(message);
       return -1;
     }
@@ -308,34 +308,34 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
       pflag=1;
       matGetDim(val,&d1,&d2);
       if(d1!=3) {
-	sprintf(message,"\ncoordinates must be {x,y,z}");
+	sprintf(message,"coordinates must be {x,y,z}\n");
 	comMessage(message);
 	return -1;
       }
       if(ele==GEOM_ELE_POINT || ele==GEOM_ELE_LABEL) {
 	if(d2!=1) {
-	  comMessage("\nPoint requires one coordinate");
+	  comMessage("Point requires one coordinate\n");
 	  return -1;
 	} else {
 	  matExtract1Df(val,3,p);
 	}
       } else if(ele==GEOM_ELE_LINE) {
 	if(d2!=2) {
-	  comMessage("\nLine requires two coordinates");
+	  comMessage("Line requires two coordinates\n");
 	  return -1;
 	} else {
 	  matExtract2Df(val,2,3,p);
 	}
       } else if(ele==GEOM_ELE_TRI) {
 	if(d2!=3) {
-	  comMessage("\nTriangle requires three coordinates");
+	  comMessage("Triangle requires three coordinates\n");
 	  return -1;
 	} else {
 	  matExtract2Df(val,3,3,p);
 	}
       } else if(ele==GEOM_ELE_RECT) {
 	if(d2!=4) {
-	  comMessage("\nRectangle requires four coordinates");
+	  comMessage("Rectangle requires four coordinates\n");
 	  return -1;
 	} else {
 	  matExtract2Df(val,4,3,p);
@@ -343,7 +343,7 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
       }
     } else if(!strcmp(prop,"c")) {
       if((comGetColor(val,c+0,c+1,c+2)!=0)) {
-	sprintf(message,"\nunknown color %s",val);
+	sprintf(message,"unknown color %s\n",val);
 	comMessage(message);
 	return -1;
       }
@@ -355,14 +355,14 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
       strncpy(lab,val,127);
       lab[127]='\0';
     } else {
-      sprintf(message,"\nunknown property %s",prop);
+      sprintf(message,"unknown property %s\n",prop);
       comMessage(message);
       return -1;
     }
   }
 
   if(!pflag) {
-    comMessage("\ncoordinates missing");
+    comMessage("coordinates missing\n");
     return -1;
   }
 
@@ -476,7 +476,7 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
     break;
   case GEOM_ELE_LABEL:
     if(strlen(lab)==0) {
-      comMessage("\nlabel requires more than emtpy string");
+      comMessage("label requires more than emtpy string\n");
       return -1;
     }
     nlabel=&obj->label[obj->label_count++];
@@ -627,13 +627,13 @@ int geomObjList(geomObj *obj, int wc, char **wl)
   char message[256];
 
   for(i=0;i<obj->point_count;i++) {
-    sprintf(message,"\np%d: p={%g,%g,%g}",
+    sprintf(message,"p%d: p={%g,%g,%g}\n",
 	    i,obj->point[i].v[0],obj->point[i].v[1],obj->point[i].v[2]);
     comMessage(message);
     f++;
   }
   for(i=0;i<obj->line_count;i++) {
-    sprintf(message,"\nl%d: p={{%g,%g,%g},{%g,%g,%g}}",
+    sprintf(message,"l%d: p={{%g,%g,%g},{%g,%g,%g}}\n",
 	    i,
 	    obj->line[i].v1[0],obj->line[i].v1[1],obj->line[i].v1[2],
 	    obj->line[i].v2[0],obj->line[i].v2[1],obj->line[i].v2[2]);
@@ -641,7 +641,7 @@ int geomObjList(geomObj *obj, int wc, char **wl)
     f++;
   }
   for(i=0;i<obj->tri_count;i++) {
-    sprintf(message,"\ntri #%d: p={{%g,%g,%g},{%g,%g,%g},{%g,%g,%g}}",
+    sprintf(message,"tri #%d: p={{%g,%g,%g},{%g,%g,%g},{%g,%g,%g}}\n",
 	    i,
 	    obj->tri[i].v1[0],obj->tri[i].v1[1],obj->tri[i].v1[2],
 	    obj->tri[i].v2[0],obj->tri[i].v2[1],obj->tri[i].v2[2],
@@ -650,7 +650,7 @@ int geomObjList(geomObj *obj, int wc, char **wl)
     f++;
   }
   for(i=0;i<obj->rect_count;i++) {
-    sprintf(message,"\nrect #%d: p={{%g,%g,%g},{%g,%g,%g},{%g,%g,%g},{%g,%g,%g}}",
+    sprintf(message,"rect #%d: p={{%g,%g,%g},{%g,%g,%g},{%g,%g,%g},{%g,%g,%g}}\n",
 	    i,
 	    obj->rect[i].v1[0],obj->rect[i].v1[1],obj->rect[i].v1[2],
 	    obj->rect[i].v2[0],obj->rect[i].v2[1],obj->rect[i].v2[2],
@@ -660,7 +660,7 @@ int geomObjList(geomObj *obj, int wc, char **wl)
     f++;
   }
   if(!f) 
-    comMessage("\nno elements");
+    comMessage("no elements\n");
 
   return 0;
 }
@@ -683,7 +683,7 @@ int geomObjSet(geomObj *obj, struct DBM_SET *s, int flag)
     return 0;
 
   if(s->range_flag) {
-    sprintf(message,"\nranges not supported for geometric objects");
+    sprintf(message,"ranges not supported for geometric objects\n");
     comMessage(message);
     return -1;
   }
@@ -910,7 +910,7 @@ int geomSmooth(geomObj *obj)
     
     matfNormalize(n3,point_list[i].n);
     /*
-    fprintf(stderr,"\n %.2f %.2f %.2f\n %.2f %.2f %.2f\n %.2f %.2f %.2f\n",
+    fprintf(stderr," %.2f %.2f %.2f\n %.2f %.2f %.2f\n %.2f %.2f %.2f\n\n",
 	    point_list[i].v[0],point_list[i].v[1],point_list[i].v[2],
 	    point_list[i].d[0],point_list[i].d[1],point_list[i].d[2],
 	    point_list[i].n[0],point_list[i].n[1],point_list[i].n[2]);
@@ -930,7 +930,7 @@ int geomSmooth(geomObj *obj)
   Cfree(va.p);
   /*
   for(i=0;i<obj->va.count;i++) {
-    fprintf(stderr,"\n%.2f %.2f %.2f  %.2f %.2f %.2f  %.2f %.2f %.2f",
+    fprintf(stderr,"%.2f %.2f %.2f  %.2f %.2f %.2f  %.2f %.2f %.2f\n",
 	    obj->va.p[i].v[0],obj->va.p[i].v[1],obj->va.p[i].v[2],
 	    obj->va.p[i].n[0],obj->va.p[i].n[1],obj->va.p[i].n[2],
 	    obj->va.p[i].c[0],obj->va.p[i].c[1],obj->va.p[i].c[2]);

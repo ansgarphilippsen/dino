@@ -143,7 +143,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
 
     /* make sure this is not a dummy atom */
     if(ae->x>=9999.0) {
-//      fprintf(stderr,"\nignored dummy atom %d",ac);
+//      fprintf(stderr,"ignored dummy atom %d\n",ac);
       continue;
     }
 
@@ -587,7 +587,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
        clStrcmp(node->residue[rc].name,"TYR")) {
       node->residue[rc].class=STRUCT_PROTEIN;
       /*
-	fprintf(stderr,"\n%s %d protein",
+	fprintf(stderr,"%s %d protein\n",
 	node->residue[rc].name,node->residue[rc].num);
       */
     } else if (clStrcmp(node->residue[rc].name,"A") ||
@@ -814,12 +814,12 @@ int pdbLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
   ae->element[j]='\0';
 
   /*
-  fprintf(stderr,"\nATOM %d: aname: %s  ele: %s",ae->anum,ae->aname,ae->element);
+  fprintf(stderr,"ATOM %d: aname: %s  ele: %s\n",ae->anum,ae->aname,ae->element);
   */
 
   altLoc=line[16];
   /*
-  fprintf(stderr,"\nATOM %d: aname: %s altLoc: %c",ae->anum,ae->aname,altLoc);
+  fprintf(stderr,"ATOM %d: aname: %s altLoc: %c\n",ae->anum,ae->aname,altLoc);
   */
   if(!isprint(altLoc) || isspace(altLoc)) {
     for(i=0,j=0;i<3;i++)
@@ -1071,7 +1071,7 @@ int charmmRead(FILE *f,dbmNode *node)
       break;
   }
   if(feof(f)) {
-    comMessage("\nempty file");
+    comMessage("empty file\n");
     return -1;
   }
   sscanf(line,"%5d",&num);
@@ -1200,7 +1200,7 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
   float *temp;
   int pointer;
 
-  sprintf(message,"\nloading CHARMM trajectory ...");
+  sprintf(message,"loading CHARMM trajectory ...\n");
   comMessage(message);
 
   fread(dummy,sizeof(dummy),1,f);
@@ -1225,12 +1225,12 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
   header.atom_count=header.t_atom_count-header.f_atom_count;
 
   /*
-  fprintf(stderr,"\nHeader:\n%c%c%c%c",
+  fprintf(stderr,"Header:\n%c%c%c%c\n",
 	  header.hdrr[0],header.hdrr[1],header.hdrr[2],header.hdrr[3]);
 
-  fprintf(stderr,"\nntitle: %d\n%s",header.ntitle,header.title);
+  fprintf(stderr,"ntitle: %d\n%s\n",header.ntitle,header.title);
 
-  fprintf(stderr,"\nnatrec: %d nfreat: %d",header.atom_count, header.f_atom_count);
+  fprintf(stderr,"natrec: %d nfreat: %d\n",header.atom_count, header.f_atom_count);
   */
 
   sprintf(message," %d trajectories with %d atoms (%d fixed) each",
@@ -1239,7 +1239,7 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
   comMessage(message);
 
   if(node->atom_count != header.t_atom_count) {
-    sprintf(message,"\natom count missmatch: %d in dataset, %d in trajectory",
+    sprintf(message,"atom count missmatch: %d in dataset, %d in trajectory\n",
 	    node->atom_count,header.t_atom_count);
     comMessage(message);
     return -1;
@@ -1264,7 +1264,7 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
 
   node->trj.pos=Ccalloc(node->trj.frame_count,node->trj.size);
   if(node->trj.pos==NULL) {
-    sprintf(message,"\nmemory allocation error in trjRead for %dkb",
+    sprintf(message,"memory allocation error in trjRead for %dkb\n",
 	    node->trj.frame_count*node->trj.size/1024);
     comMessage(message);
     return -1;
@@ -1272,7 +1272,7 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
 
   temp=Ccalloc(node->trj.atom_count,sizeof(float));
   if(temp==NULL) {
-    sprintf(message,"\nmemory allocation error for 'temp' in trjRead, %dkb",
+    sprintf(message,"memory allocation error for 'temp' in trjRead, %dkb\n",
 	    node->trj.atom_count*sizeof(float)/1024);
     comMessage(message);
     return -1;
@@ -1284,7 +1284,7 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
     */
     if(feof(f)) {
       /* premature EOF */
-      sprintf(message,"\npremature EOF, %d frames read",i);
+      sprintf(message,"premature EOF, %d frames read\n",i);
       comMessage(message);
       node->trj.frame_count=i;
       break;
@@ -1446,13 +1446,13 @@ int bonesRead(FILE *f, dbmNode *node)
 
   /*
   for(i=0;i<entry_count;i++)
-    fprintf(stderr,"\n%3d %3d %3d %8s %3d %4s %10.3f %10.3f %10.3f",
+    fprintf(stderr,"%3d %3d %3d %8s %3d %4s %10.3f %10.3f %10.3f\n",
 	    entry[i].mnum,entry[i].cnum,
 	    entry[i].anum,entry[i].aname,entry[i].rnum,entry[i].rname,
 	    entry[i].x,entry[i].y,entry[i].z);
 
   for(i=0;i<conn_count;i++)
-    fprintf(stderr,"\n%3d %3d",conn[i].a1,conn[i].a2);
+    fprintf(stderr,"%3d %3d\n",conn[i].a1,conn[i].a2);
   */
 
   bones.atom_entry=entry;
@@ -1676,11 +1676,11 @@ int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
   }
 
   if(an<1 || an>100000) {
-    comMessage("\ntrjRead: nonsense atomcount");
+    comMessage("trjRead: nonsense atomcount\n");
     return -1;
   }
   if(fn<1 || fn>100000) {
-    comMessage("\ntrjRead: nonsense framecount");
+    comMessage("trjRead: nonsense framecount\n");
     return -1;
   }
 
@@ -1697,7 +1697,7 @@ int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
 
   node->trj.pos=Ccalloc(fn*an,sizeof(struct STRUCT_TRJ_POSITION));
   if(node->trj.pos==NULL) {
-    sprintf(message,"\nmemory allocation error in trjRead for %dkb",
+    sprintf(message,"memory allocation error in trjRead for %dkb\n",
 	    node->trj.frame_count*node->trj.size/1024);
     comMessage(message);
     return -1;
@@ -1707,9 +1707,9 @@ int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
 
   if(ret!=fn*an) {
     if(feof(f)) {
-      sprintf(message,"\ntrjRead: unexpected EOF");
+      sprintf(message,"trjRead: unexpected EOF\n");
     } else {
-      sprintf(message,"\ntrjRead: unexpected Error");
+      sprintf(message,"trjRead: unexpected Error\n");
     }
     comMessage(message);
     Cfree(node->trj.pos);
@@ -1737,7 +1737,7 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
   hdr[4]='\0';
 
   if(!clStrcmp(hdr,"fxyz")) {
-    comMessage("\nerror: invalid binpos header");
+    comMessage("error: invalid binpos header\n");
     return -1;
   }
 
@@ -1760,14 +1760,14 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
     if(acount==-1) {
       acount=ac;
       if(acount <1 || acount>1e6) {
-	comMessage("\nerror: binposTrjRead: nonsense atom count");
+	comMessage("error: binposTrjRead: nonsense atom count\n");
 	return -1;
       }
       fptr=Ccalloc(sizeof(float),acount*3);
       tptr=Crecalloc(NULL,sizeof(struct STRUCT_TRJ_POSITION),acount*fmax);
     } else {
       if(ac!=acount) {
-	comMessage("\nerror: binposTrjRead: atom count missmatch error");
+	comMessage("error: binposTrjRead: atom count missmatch error\n");
 	Cfree(fptr);
 	Cfree(tptr);
 	return -1;

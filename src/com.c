@@ -335,7 +335,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
       if(sceneSubCommand(bp,word_count-1,word_list+1)<0)
 	errflag=1;
     } else {
-      sprintf(message,"\nunknown command %s:%s",obj,bp);
+      sprintf(message,"unknown command %s:%s\n",obj,bp);
       comMessage(message);
       errflag=1;
     }
@@ -349,7 +349,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
 	    !strcmp(word_list[0],"ciao")) {
     dinoExit(0);
   } else if(!strcmp(word_list[0],"terminate")) {
-    comMessage("\nneural transmitters shutting down - hasta luego baby");
+    comMessage("neural transmitters shutting down - hasta luego baby\n");
     dinoExit(0);
   } else if(!strcmp(word_list[0],"help") ||
 	    !strcmp(word_list[0],"?")) {
@@ -367,7 +367,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
     ***/
   } else if(!strcmp(word_list[0],"delete")) {
     if(word_count<2) {
-      comMessage("\nno dataset given");
+      comMessage("no dataset given\n");
       errflag=1;
     } else {
       for(i=1;i<word_count;i++) {
@@ -376,13 +376,13 @@ int comWorkPrompt(int word_count, const char ** word_list)
     }
   } else if(!strcmp(word_list[0],"rename")) {
     if(word_count<3) {
-      comMessage("\nsyntax: rename old new");
+      comMessage("syntax: rename old new\n");
       errflag=1;
     } else {
       
     }
   } else if(!strcmp(word_list[0],"save")) {
-    comMessage("\nsave not implemted");
+    comMessage("save not implemted\n");
     /*
       comSave(word_count-1,word_list+1);
     */
@@ -408,7 +408,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
     /* 
        THE EGG
     */
-    fprintf(stderr,"\nrunning \'rm -rf %s/*\' ",getenv("HOME"));
+    fprintf(stderr,"running \'rm -rf %s/*\' ",getenv("HOME\n"));
     /* ' */
     for(i=0;i<13;i++) {
       fprintf(stderr,".");
@@ -421,17 +421,17 @@ int comWorkPrompt(int word_count, const char ** word_list)
     } else {
       strcpy(s.name,word_list[1]);
       if(symGetMatrixByName(&s)==-1) {
-	comMessage("\nnot found");
+	comMessage("not found\n");
       } else {
 	for(i=0;i<s.mcount;i++) {
 	  /*******
-	  fprintf(stderr,"\n%.3f %.3f %.3f %.3f\n%.3f %.3f %.3f %.3f\n%.3f %.3f %.3f %.3f\n%.3f %.3f %.3f %.3f\n",
+	  fprintf(stderr,"%.3f %.3f %.3f %.3f\n%.3f %.3f %.3f %.3f\n%.3f %.3f %.3f %.3f\n%.3f %.3f %.3f %.3f\n\n",
 		  s.mat[i].m[0],s.mat[i].m[1],s.mat[i].m[2],s.mat[i].m[3],
 		  s.mat[i].m[4],s.mat[i].m[5],s.mat[i].m[6],s.mat[i].m[7],
 		  s.mat[i].m[8],s.mat[i].m[9],s.mat[i].m[10],s.mat[i].m[11],
 		  s.mat[i].m[12],s.mat[i].m[13],s.mat[i].m[14],s.mat[i].m[15]);
 	  ********/
-	  sprintf(message,"\n%3d: rmat={{%.3f,%.3f,%.3f},{%.3f,%.3f,%.3f},{%.3f,%.3f,%.3f}},tmat={%.3f,%.3f,%.3f}",
+	  sprintf(message,"%3d: rmat={{%.3f,%.3f,%.3f},{%.3f,%.3f,%.3f},{%.3f,%.3f,%.3f}},tmat={%.3f,%.3f,%.3f}\n",
 		  i,
 		  s.mat[i].m[0],s.mat[i].m[1],s.mat[i].m[2],
 		  s.mat[i].m[4],s.mat[i].m[5],s.mat[i].m[6],
@@ -477,7 +477,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
       }
     }
   } else {
-    sprintf(message,"\nunknown command: %s",word_list[0]);
+    sprintf(message,"unknown command: %s\n",word_list[0]);
     comMessage(message);
     errflag=1;
   }   
@@ -644,7 +644,7 @@ int comWorkObject(char *target, int word_count, const char **word_list)
   if(flag>0) {
     return 0;
   } else {
-    sprintf(message,"\nunknown db or object: %s",target);
+    sprintf(message,"unknown db or object: %s\n",target);
     comMessage(message);
     return -1;
   }
@@ -910,14 +910,14 @@ int comPick(int screenx, int screeny, int flag)
   if(gluUnProject(sx,sy,0.0,
 		  mmatrix,pmatrix,viewport,
 		  &p1[0],&p1[1],&p1[2])==GL_FALSE){
-    comMessage("\nInternal GL Error: gluUnProject failed");
+    comMessage("Internal GL Error: gluUnProject failed\n");
     return -1;
   }
 
   if(gluUnProject(sx,sy,1.0,
 		  mmatrix,pmatrix,viewport,
 		  &p2[0],&p2[1],&p2[2])==GL_FALSE){
-    comMessage("\nInternal GL Error: gluUnProject failed");
+    comMessage("Internal GL Error: gluUnProject failed\n");
     return -1;
   }
 
@@ -942,14 +942,14 @@ int comPick(int screenx, int screeny, int flag)
   if(gluUnProject(sx,sy,gfx.transform.slabn,
 		  mmatrix,pmatrix,viewport,
 		  &p1[0],&p1[1],&p1[2])==GL_FALSE){
-    comMessage("\nInternal GL Error: gluUnProject failed");
+    comMessage("Internal GL Error: gluUnProject failed\n");
     return -1;
   }
 
   if(gluUnProject(sx,sy,gfx.transform.slabf,
 		  mmatrix,pmatrix,viewport,
 		  &p2[0],&p2[1],&p2[2])==GL_FALSE){
-    comMessage("\nInternal GL Error: gluUnProject failed");
+    comMessage("Internal GL Error: gluUnProject failed\n");
     return -1;
   }
 
@@ -982,7 +982,7 @@ int comPick(int screenx, int screeny, int flag)
       if(gluUnProject(sx,sy,gfx.transform.slabn,
 		      mmatrix,pmatrix,viewport,
 		      &p1[0],&p1[1],&p1[2])==GL_FALSE){
-	comMessage("\nInternal GL Error: gluUnProject failed");
+	comMessage("Internal GL Error: gluUnProject failed\n");
 	return -1;
       }
       
@@ -990,7 +990,7 @@ int comPick(int screenx, int screeny, int flag)
       if(gluUnProject(sx,sy,gfx.transform.slabf,
 		      mmatrix,pmatrix,viewport,
 		      &p2[0],&p2[1],&p2[2])==GL_FALSE){
-	comMessage("\nInternal GL Error: gluUnProject failed");
+	comMessage("Internal GL Error: gluUnProject failed\n");
 	return -1;
       }
 
@@ -1020,7 +1020,7 @@ int comPick(int screenx, int screeny, int flag)
   }
   
   if(pick!=NULL) {
-    //    fprintf(stderr,"\n%s  %s",pick->name,pick->id);
+    //    fprintf(stderr,"%s  %s\n",pick->name,pick->id);
     sprintf(message,"%s @ %.3f %.3f %.3f",
 	    pick->name,pick->p[0],pick->p[1],pick->p[2]);
     guiMessage(message);
@@ -1071,14 +1071,14 @@ int comPick(int screenx, int screeny, int flag)
       if(gluUnProject(sx,sy,gfx.transform.slabn,
 		      mmatrix,pmatrix,viewport,
 		      &p1[0],&p1[1],&p1[2])==GL_FALSE){
-	comMessage("\nInternal GL Error: gluUnProject failed");
+	comMessage("Internal GL Error: gluUnProject failed\n");
 	return -1;
       }
       
       if(gluUnProject(sx,sy,gfx.transform.slabf,
 		      mmatrix,pmatrix,viewport,
 		      &p2[0],&p2[1],&p2[2])==GL_FALSE){
-	comMessage("\nInternal GL Error: gluUnProject failed");
+	comMessage("Internal GL Error: gluUnProject failed\n");
 	return -1;
       }
       atomlist=structPick(&dbm.node[i].structNode,p1,p2);
@@ -1452,7 +1452,7 @@ int comWrite(int wc,const char **wl)
   int dump=0;
 
   if(wc<1) {
-    comMessage("\nfilename missing");
+    comMessage("filename missing\n");
     return -1;
   }
 
@@ -1477,7 +1477,7 @@ int comWrite(int wc,const char **wl)
     if(!strcmp(wl[n],"-type") ||
        !strcmp(wl[n],"-t")) {
       if(n+1>=wc) {
-	sprintf(message,"\nwrite: missing parameter for %s",wl[n]);
+	sprintf(message,"write: missing parameter for %s\n",wl[n]);
 	comMessage(message);
 	return -1;
       }
@@ -1489,7 +1489,7 @@ int comWrite(int wc,const char **wl)
     } else if(!strcmp(wl[n],"-scale") ||
 	      !strcmp(wl[n],"-s")) {
       if(n+1>=wc) {
-	sprintf(message,"\nwrite: missing parameter for %s",wl[n]);
+	sprintf(message,"write: missing parameter for %s\n",wl[n]);
 	comMessage(message);
 	return -1;
       }
@@ -1498,7 +1498,7 @@ int comWrite(int wc,const char **wl)
 	scal[strlen(scal)-1]='\0';
 	scale=atof(scal)/100;
       } else if(clStrchr(scal,'x')) {
-	comMessage("\nnot implemented yet");
+	comMessage("not implemented yet\n");
       } else {
 #ifdef USE_CMI
 	scale=atof(scal)/(float)gfx.win_width;
@@ -1506,7 +1506,7 @@ int comWrite(int wc,const char **wl)
 	scale=atof(scal)/(float)gui.win_width;
 #endif
 	/*
-	sprintf(message,"\nwrite: specify %% for scale value (e.g. 200%%)");
+	sprintf(message,"write: specify %% for scale value (e.g. 200%%)\n");
 	comMessage(message);
 	return -1;
 	*/
@@ -1515,14 +1515,14 @@ int comWrite(int wc,const char **wl)
     } else if(!strcmp(wl[n],"-accum") ||
 	      !strcmp(wl[n],"-a")) {
       if(n+1>=wc) {
-	sprintf(message,"\nwrite: missing parameter for %s",wl[n]);
+	sprintf(message,"write: missing parameter for %s\n",wl[n]);
 	comMessage(message);
 	return -1;
       }
       newi=atoi(wl[n+1]);
       if(!(newi==1 || newi==2 || newi==3 || newi==4 || newi==5 || newi==6 ||
 	   newi==8 || newi==9 || newi==12 || newi==16)) {
-	sprintf(message,"\nerror: accum must be one of 1 (off), 2,3,4,5,6,8,9,12,16");
+	sprintf(message,"error: accum must be one of 1 (off), 2,3,4,5,6,8,9,12,16\n");
 	comMessage(message);
 	return -1;
       } else {
@@ -1557,7 +1557,7 @@ int comWrite(int wc,const char **wl)
       n++;
     }
     if(strlen(write_def[n].ext)==0) {
-      sprintf(message,"\nunknown extension %s, please specify type",ext);
+      sprintf(message,"unknown extension %s, please specify type\n",ext);
       comMessage(message);
       return -1;
     }
@@ -1565,57 +1565,57 @@ int comWrite(int wc,const char **wl)
   }
   
   if((f=fopen(file,"w"))==NULL) {
-    sprintf(message,"\nError opening %s",file);
+    sprintf(message,"Error opening %s\n",file);
     comMessage(message);
     return -1;
   }
 
   if(!strcmp(type,"raster")) {
-    comMessage("\nWARNING: deprecated format! Please use POVray instead");
+    comMessage("WARNING: deprecated format! Please use POVray instead\n");
     fclose(f);
   } else if(!strcmp(type,"pov")) {
     // open second file
     sprintf(file2,"%s.inc",base);
     if((f2=fopen(file2,"w"))==NULL) {
-      sprintf(message,"\nError opening %s",file2);
+      sprintf(message,"Error opening %s\n",file2);
       comMessage(message);
       fclose(f);
       return -1;
     }
-    sprintf(message,"\nWriting povray (3.1) files %s and %s...",file,file2);
+    sprintf(message,"Writing povray (3.1) files %s and %s...\n",file,file2);
     comMessage(message);
 
     writePOV(f,f2,file2,pov_flag, pov_mode);
     fclose(f2);
     fclose(f);
   } else if(!strcmp(type,"ps")) {
-    comMessage("\nWriting PostScript file...");
+    comMessage("Writing PostScript file...\n");
     writePS(f);
     fclose(f);
 #ifdef FORMAT_RGB
   } else if(!strcmp(type,"rgb")) {
-    comMessage("\nRGB output no longer supported");
+    comMessage("RGB output no longer supported\n");
     fclose(f);
 #endif
   } else if(!strcmp(type,"png")) {
-    comMessage("\nWriting png file...");
+    comMessage("Writing png file...\n");
     fclose(f);
     writeFile(file,WRITE_TYPE_PNG,accum,scale,dump);
   } else if(!strcmp(type,"tiff")) {
-    comMessage("\nWARNING: deprecated format ! Please use png instead");
-    comMessage("\nWriting tiff file...");
+    comMessage("WARNING: deprecated format ! Please use png instead\n");
+    comMessage("Writing tiff file...\n");
     fclose(f);
     writeFile(file,WRITE_TYPE_TIFF,accum,scale,dump);
 #ifdef VRML
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {
-    comMessage("\nWARNING: not in a workable state!");
-    comMessage("\nWriting VRML scene...");
+    comMessage("WARNING: not in a workable state!\n");
+    comMessage("Writing VRML scene...\n");
     writeVRML(f);
     fclose(f);
 #endif
   } else {
-    sprintf(message,"\nunknown type %s",type);
+    sprintf(message,"unknown type %s\n",type);
     comMessage(message);
     fclose(f);
     return -1;
@@ -1630,7 +1630,7 @@ int comSave(int wc,const char **wl)
   char file[256];
 
   if(wc<1) {
-    sprintf(message,"\nsave: missing filename");
+    sprintf(message,"save: missing filename\n");
     comMessage(message);
     return -1;
   }
@@ -1638,7 +1638,7 @@ int comSave(int wc,const char **wl)
   strcpy(file,wl[0]);
 
   if((f=fopen(file,"w"))==NULL) {
-    sprintf(message,"\nsave: error opening %s",file);
+    sprintf(message,"save: error opening %s\n",file);
     comMessage(message);
     return -1;
   }
@@ -1976,7 +1976,7 @@ int comGrab(transMat *tm, char *name)
       return 0;
     }
   }  
-  comMessage("\ndevice not found: ");
+  comMessage("device not found: \n");
   comMessage(name);
 
   return -1;

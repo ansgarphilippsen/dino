@@ -25,7 +25,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
   if(sn->field==NULL) {
-    comMessage("\nuhbdRead: memory allocation error");
+    comMessage("uhbdRead: memory allocation error\n");
     return -1;
   }
 
@@ -43,7 +43,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
        abs(header.jm)>1e6 ||
        abs(header.km)>1e6) {
       
-      comMessage("\nerror: uhbdRead: header not recognized (even after byte-swap)");
+      comMessage("error: uhbdRead: header not recognized (even after byte-swap)\n");
       return -1;
     } else {
       comMessage(" (byte-swapping) ");
@@ -55,7 +55,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
 
   debmsg("uhbdRead:");
   if(debug_mode) {
-    fprintf(stderr,"\ntitle: %s\nscale: %g\nh: %g\no: %g %g %g\ns: %d %d %d\n",
+    fprintf(stderr,"title: %s\nscale: %g\nh: %g\no: %g %g %g\ns: %d %d %d\n\n",
 	    header.title,header.scale,header.h,
 	    header.ox,header.oy,header.oz,
 	    header.im, header.jm, header.km);
@@ -64,7 +64,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
 
   if(cflag) {
     if(header.scale==0.0) {
-      comMessage("\nwarning: scale value in header ist 0.0, unit conversion not done");
+      comMessage("warning: scale value in header ist 0.0, unit conversion not done\n");
       sfactor=1.0;
     } else {
       debmsg("uhbdRead: applying header scale factor");
@@ -83,7 +83,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
   debmsg(dmesg);
   sn->field->data=Ccalloc(size, sizeof(float));
   if(sn->field->data==NULL) {
-    comMessage("\nerror: uhbdRead: memory allocation error");
+    comMessage("error: uhbdRead: memory allocation error\n");
     return -1;
   }
 
@@ -92,7 +92,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
   debmsg(dmesg);
   uv=Ccalloc(uv_size, sizeof(float));
   if(uv==NULL) {
-    comMessage("\nerror: uhbdRead: memory allocation error");
+    comMessage("error: uhbdRead: memory allocation error\n");
     return -1;
   }
 

@@ -240,19 +240,19 @@ int adsRead(FILE *f, union DBM_NODE *node)
       propc++;
       //      sprintf(propn,"c%d",propc);
       //      propAddName(&propt,propn);
-      sprintf(message,"\ncp%d: %s",propc-1,b+9);
+      sprintf(message,"cp%d: %s\n",propc-1,b+9);
       comMessage(message);
     } else if(!strcmp(p,"DATA")) {
       break;
     } else {
-      sprintf(message,"\nadsRead: error: unknown keyword %s",p);
+      sprintf(message,"adsRead: error: unknown keyword %s\n",p);
       comMessage(message);
       return -1;
     }
   }
 
   if(usize==0 || vsize==0) {
-    comMessage("\nadsRead: error: missing or zero dimension");
+    comMessage("adsRead: error: missing or zero dimension\n");
     return -1;
   }
 
@@ -261,7 +261,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
   entry=Ccalloc(usize*vsize+128,sizeof(struct ADS_ENTRY));
 
   if(entry==NULL) {
-    comMessage("\nadsRead: memory allocation error");
+    comMessage("adsRead: memory allocation error\n");
     return -1;
   }
 
@@ -303,7 +303,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
 
     i=(ce.v+off_v)*usize+(ce.u+off_u);
     if(i<0 && i>=usize*vsize) {
-      sprintf(message,"\nadsRead: error: out of bounds with %d %d",ce.u,ce.v);
+      sprintf(message,"adsRead: error: out of bounds with %d %d\n",ce.u,ce.v);
       comMessage(message);
       Cfree(entry);
       return -1;
@@ -653,7 +653,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int flag)
   fread(&header, sizeof(header),1,f);
 
   /*
-  fprintf(stderr,"\n%s\n%s\n%s\n%s\n%s",
+  fprintf(stderr,"%s\n%s\n%s\n%s\n%s\n",
 	  header.format,
 	  header.content1,
 	  header.content2,
@@ -662,7 +662,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int flag)
   */
 
   if(!clStrncmp(header.format,"format=2",8)) {
-    comMessage("\nerror: format not recognized");
+    comMessage("error: format not recognized\n");
     return -1;
   }
 
@@ -672,7 +672,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int flag)
       swap_flag=1;
       comMessage(" (auto-swap) ");
     } else {
-      comMessage("\nerror: format not recognized");
+      comMessage("error: format not recognized\n");
       return -1;
     }
   }
@@ -688,12 +688,12 @@ int graspRead(FILE *f, union DBM_NODE *node, int flag)
   p=strtok(NULL,ws);
   latt=atoi(p);
 
-  //  fprintf(stderr,"\n%d %d",vertc,facec);
+  //  fprintf(stderr,"%d %d\n",vertc,facec);
   
   propc=0;
   p=strtok(header.content2,",");
   while(p!=NULL && propc<PROP_MAX_VALUES) {
-    sprintf(message,"\ncp%d: %s",propc,p);
+    sprintf(message,"cp%d: %s\n",propc,p);
     comMessage(message);
     propc++;
     p=strtok(NULL,",");
@@ -720,7 +720,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int flag)
     vert[i].p[1]=data[i*3+1];
     vert[i].p[2]=data[i*3+2];
     /*
-    fprintf(stderr,"\n%f %f %f",
+    fprintf(stderr,"%f %f %f\n",
 	    vert[i].p[0],
 	    vert[i].p[1],
 	    vert[i].p[2]);

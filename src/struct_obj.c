@@ -61,7 +61,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     od=obj->render.detail1;
     bw=obj->render.bond_width;
     if(renderSet(&obj->render,wc-1,wl+1)!=0) {
-      sprintf(message,"\n%s: syntax error in render statement",node->name);
+      sprintf(message,"%s: syntax error in render statement\n",node->name);
       comMessage(message);
       return -1;
     }
@@ -71,7 +71,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
 	 obj->render.mode!=RENDER_CPK &&
 	 obj->render.mode!=RENDER_CUSTOM) {
 	obj->render.mode=RENDER_SIMPLE;
-	comMessage("\ninvalid render mode");
+	comMessage("invalid render mode\n");
 	return -1;
       }
     } else {
@@ -85,7 +85,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
       if(obj->render.mode==RENDER_HELIX ||
 	 obj->render.mode==RENDER_STRAND ||
 	 obj->render.mode==RENDER_STRAND2) {
-	comMessage("\nrender modes helix and strand no longer supported");
+	comMessage("render modes helix and strand no longer supported\n");
 	obj->render.mode=RENDER_TUBE;
       }
 
@@ -95,7 +95,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
 	 obj->render.mode!=RENDER_HSC &&
 	 obj->render.mode!=RENDER_SLINE) {
 	obj->render.mode=RENDER_SIMPLE;
-	comMessage("\ninvalid render mode");
+	comMessage("invalid render mode\n");
 	return -1;
       } else {
 	if(obj->render.mode==RENDER_TUBE ||
@@ -136,7 +136,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
 #ifdef BUILD
   } else if(!strcmp(wl[0],"edit")) {
     if(obj->build!=NULL) {
-      sprintf(message,"\nalready in edit mode");
+      sprintf(message,"already in edit mode\n");
       comMessage(message);
       return -1;
     } else {
@@ -144,7 +144,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     }
   } else if(!strcmp(wl[0],"merge")) {
     if(obj->build==NULL) {
-      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      sprintf(message,"%s only available in edit mode\n",wl[0]);
       comMessage(message);
       return -1;
     } else {
@@ -152,7 +152,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     }
   } else if(!strcmp(wl[0],"unedit")) {
     if(obj->build==NULL) {
-      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      sprintf(message,"%s only available in edit mode\n",wl[0]);
       comMessage(message);
       return -1;
     } else {
@@ -160,7 +160,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     }
   } else if(!strcmp(wl[0],"grab")) {
     if(obj->build==NULL) {
-      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      sprintf(message,"%s only available in edit mode\n",wl[0]);
       comMessage(message);
       return -1;
     } else {
@@ -168,7 +168,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     }
   } else if(!strcmp(wl[0],"reset")) {
     if(obj->build==NULL) {
-      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      sprintf(message,"%s only available in edit mode\n",wl[0]);
       comMessage(message);
       return -1;
     } else {
@@ -176,7 +176,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     }
   } else if(!strcmp(wl[0],"fix")) {
     if(obj->build==NULL) {
-      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      sprintf(message,"%s only available in edit mode\n",wl[0]);
       comMessage(message);
       return -1;
     } else {
@@ -187,7 +187,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     tunnelvision(obj);
 
   } else {
-    sprintf(message,"\n%s: unknown command %s",obj->name,wl[0]);
+    sprintf(message,"%s: unknown command %s\n",obj->name,wl[0]);
     comMessage(message);
     return -1;    
   }
@@ -224,18 +224,18 @@ int structObjComRenew(structObj *obj, int wc, char **wl)
   for(i=0;i<co.param_count;i++) {
     if(co.param[i].p==NULL) {
       if(co.param[i].wc!=0) {
-	comMessage("\nerror: renew: expected an argument beginning with -"); 
+	comMessage("error: renew: expected an argument beginning with -\n"); 
 	ret=-1;
 	break;
       }
     } else if(clStrcmp(co.param[i].p,"name") || 
 	      clStrcmp(co.param[i].p,"n")) {
-      comMessage("\nerror: renew: -name is not allowed");
+      comMessage("error: renew: -name is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"type") ||
 	      clStrcmp(co.param[i].p,"t")) {
-      comMessage("\nerror: renew: -type is not allowed");
+      comMessage("error: renew: -type is not allowed\n");
       ret=-1;
       break;
     } else if(clStrcmp(co.param[i].p,"set") ||
@@ -254,7 +254,7 @@ int structObjComRenew(structObj *obj, int wc, char **wl)
       }
       sel_flag=1;
     } else {
-      clStrcpy(message,"\nunknown paramater ");
+      clStrcpy(message,"unknown paramater \n");
       clStrncat(message,co.param[i].p,100);
       comMessage(message);
       ret=-1;
@@ -314,7 +314,7 @@ int structObjComGet(structObj *obj, int wc, char **wl)
   int i;
 
   if(wc==0) {
-    sprintf(message,"\n%s: missing property", obj->name);
+    sprintf(message,"%s: missing property\n", obj->name);
     comMessage(message);
     return -1;
   }
@@ -336,15 +336,15 @@ int structObjRenew(structObj *obj, Set *set, Select *sel)
   memset(obj->atom_flag,0,sizeof(unsigned char)*obj->node->atom_count);
 
   if(obj->type==STRUCT_TRACE) {
-    comMessage("\ntracing ...");
+    comMessage("tracing ...\n");
     if(structObjTrace(obj->node, obj, sel)<0)
       return -1;
   } else if(obj->type==STRUCT_CONNECT) {
-    comMessage("\nconnecting ...");
+    comMessage("connecting ...\n");
     if(structObjConnect(obj->node, obj, sel)<0)
       return -1;
   } else if(obj->type==STRUCT_NBOND) {
-    comMessage("\nnbonding ...");
+    comMessage("nbonding ...\n");
     if(structObjNbond(obj->node, obj, sel)<0)
       return -1;
   }
@@ -389,13 +389,13 @@ int structObjSet(structObj *obj, Set *set, int flag)
     // if dataset is self
     if(set->range.src==NULL) {
       if(structGetMinMax(obj->node, set->range.prop,&vmin,&vmax)<0) {
-	sprintf(message,"\nerror: unknown range property %s",set->range.prop);
+	sprintf(message,"error: unknown range property %s\n",set->range.prop);
 	comMessage(message);
 	return -1;
       }
     } else {
       if(dbmGetMinMax(set->range.src,set->range.prop,&vmin,&vmax)<0) {
-	sprintf(message,"\nerror: unknown range property %s",set->range.prop);
+	sprintf(message,"error: unknown range property %s\n",set->range.prop);
 	comMessage(message);
 	return -1;
       }
@@ -414,7 +414,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
     else
       rval2=atof(set->range.val2);
     
-    sprintf(message,"\nusing range of property %s from %g to %g",
+    sprintf(message,"using range of property %s from %g to %g\n",
 	    set->range.prop,rval1,rval2);
     comMessage(message);
   }
@@ -443,17 +443,17 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      clStrcmp(set->pov[pc].prop,"rad")) {
       set->pov[pc].id=STRUCT_PROP_RAD;
     } else {
-      comMessage("\nerror: set: unknown property ");
+      comMessage("error: set: unknown property \n");
       comMessage(set->pov[pc].prop);
       return -1;
     }
     if(set->pov[pc].op!=POV_OP_EQ) {
-      comMessage("\nerror: set: expected operator = for property ");
+      comMessage("error: set: expected operator = for property \n");
       comMessage(set->pov[pc].prop);
       return -1;
     }
     if(set->pov[pc].val_count>1) {
-      comMessage("\nerror: set: expected only one value for property ");
+      comMessage("error: set: expected only one value for property \n");
       comMessage(set->pov[pc].prop);
       return -1;
     }
@@ -468,7 +468,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
     case STRUCT_PROP_COLOR:
       if(obj->type==STRUCT_NBOND) {
 	if(comGetColor(val->val1,&r,&g,&b)<0) {
-	  comMessage("\nerror: set: unknown color ");
+	  comMessage("error: set: unknown color \n");
 	  comMessage(val->val1);
 	  return -1;
 	}
@@ -504,7 +504,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      if(dbmGetRangeVal(&set->range,(float*)obj->atom[ac].ap->p,&rval)<0)
 		return -1;
 	    }
-	    // fprintf(stderr,"\n%f %f %f",rval1,rval2,rval);
+	    // fprintf(stderr,"%f %f %f\n",rval1,rval2,rval);
 	    frac1=rval2-rval1;
 	    frac2=rval-rval1;
 	    if(frac1==0.0) {
@@ -535,12 +535,12 @@ int structObjSet(structObj *obj, Set *set, int flag)
  	case STRUCT_PROP_COLOR3:
 	  if(set->range_flag) {
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
 	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val2);
 	      return -1;
 	    }
@@ -552,7 +552,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      if(dbmGetRangeVal(&set->range,(float*)obj->atom[ac].ap->p,&rval)<0)
 		return -1;
 	    }
-	    //	    fprintf(stderr,"\n%f %f %f",rval1,rval2,rval);
+	    //	    fprintf(stderr,"%f %f %f\n",rval1,rval2,rval);
 	    frac1=rval2-rval1;
 	    frac2=rval-rval1;
 	    if(frac1==0.0) {
@@ -603,7 +603,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	    }
 	  } else {
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("\nerror: set: unknown color ");
+	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
@@ -673,7 +673,7 @@ int structObjGet(structObj *obj, char *prop)
     sprintf(message,"{%.5f,%.5f,%.5f}",v[0],v[1],v[2]);
     comReturn(message);
   } else {
-    sprintf(message,"\n%s: get: unknown parameter %s", obj->name,prop);
+    sprintf(message,"%s: get: unknown parameter %s\n", obj->name,prop);
     comMessage(message);
     return -1;
   }
@@ -1068,7 +1068,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	  point_list[i].v[0]=n3[0];
 	  point_list[i].v[1]=n3[1];
 	  point_list[i].v[2]=n3[2];
-	  //	fprintf(stderr,"\n%f %f %f",n3[0],n3[1],n3[2]);
+	  //	fprintf(stderr,"%f %f %f\n",n3[0],n3[1],n3[2]);
 	} else {
 	  n4[0]=point_list[i].v[0];
 	  n4[1]=point_list[i].v[1];
@@ -1744,7 +1744,7 @@ int structObjEdit(structObj *obj, int wc, char **wl)
   int i;
 
   if(obj->build!=NULL) {
-    sprintf(message,"\n.%s.%s: already in editing mode",
+    sprintf(message,".%s.%s: already in editing mode\n",
 	    obj->node->name, obj->name);
     return -1;
   } else {
@@ -1846,7 +1846,7 @@ int structObjGrab(structObj *obj, int wc, char **wl)
   int i;
 
   if(wc<=0) {
-    comMessage("\nerror: grab requires at least a device");
+    comMessage("error: grab requires at least a device\n");
     return -1;
   }
 
@@ -1864,14 +1864,14 @@ int structObjGrab(structObj *obj, int wc, char **wl)
        clStrcmp(wl[i],"-target")) {
       i++;
       if(i>=wc) {
-	comMessage("\nerror: missing parameter after -target");
+	comMessage("error: missing parameter after -target\n");
 	return -1;
       }
       strncpy(target,wl[i++],256);
     }
   }
 
-  fprintf(stderr,"\n%s %s %s",dev,ax,target);
+  fprintf(stderr,"%s %s %s\n",dev,ax,target);
 
   if(comGrab(&obj->build->trans,dev)<0)
     return -1;

@@ -32,7 +32,7 @@ int scalNewNode(struct DBM_SCAL_NODE *node)
   node->obj_max=64;
   node->obj=Ccalloc(node->obj_max,sizeof(struct DBM_SCAL_OBJ *));
   if(node->obj==NULL) {
-    comMessage("\n memory allocation error in scalNewNode()");
+    comMessage(" memory allocation error in scalNewNode()\n");
     return -1;
   }
 
@@ -79,22 +79,22 @@ int scalCommand(dbmScalNode *node, int wc, char **wl)
 	    !strcmp(wl[0],"delete")) {
     return scalComDel(node, wc-1, wl+1);
   } else if(!strcmp(wl[0],"restrict")) {
-    comMessage("\nrestriction not implemented for scalar field dataset");
+    comMessage("restriction not implemented for scalar field dataset\n");
     return -1;
     // TODO later
   } else if(!strcmp(wl[0],"copy") ||
 	    !strcmp(wl[0],"cp")) {
-    sprintf(message,"\n%s: copy not available",node->name);
+    sprintf(message,"%s: copy not available\n",node->name);
     comMessage(message);
     return -1;
   } else if(!strcmp(wl[0],"move") ||
 	    !strcmp(wl[0],"mv")) {
-    sprintf(message,"\n%s: move not available",node->name);
+    sprintf(message,"%s: move not available\n",node->name);
     comMessage(message);
     return -1;
   } else if(!strcmp(wl[0],"grab")) {
     if(wc!=2) {
-      comMessage("\nsyntax: grab device");
+      comMessage("syntax: grab device\n");
       return -1;
     }
     if(comGrab(&node->transform,wl[1])<0)
@@ -104,71 +104,71 @@ int scalCommand(dbmScalNode *node, int wc, char **wl)
     //   comGetCurrentCenter(node->transform.cen);
   } else if(!strcmp(wl[0],"fix")) {
     if(wc>1)
-      comMessage("\nwarning: ignored superfluous words after fix");
+      comMessage("warning: ignored superfluous words after fix\n");
 
     memcpy(&node->transform_save, &node->transform,sizeof(transMat));
     comRedraw();
   } else if(!strcmp(wl[0],"reset")) {
     if(wc>1)
-      comMessage("\nwarning: ignored superfluous words after reset");
+      comMessage("warning: ignored superfluous words after reset\n");
 
     memcpy(&node->transform, &node->transform_save,sizeof(transMat));
     comRedraw();
   } else if(!strcmp(wl[0],"rotx")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after rotx");
+      comMessage("error: missing value after rotx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"roty")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after roty");
+      comMessage("error: missing value after roty\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"rotz")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after rotz");
+      comMessage("error: missing value after rotz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transx")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transx");
+      comMessage("error: missing value after transx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transy")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transy");
+      comMessage("error: missing value after transy\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transz")) {
     if(wc<2) {
-      comMessage("\nerror: missing value after transz");
+      comMessage("error: missing value after transz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"write")) {
-    comMessage("\nwrite not implemented for scalar field dataset");
+    comMessage("write not implemented for scalar field dataset\n");
     return -1;
     // TODO later
   } else if(!strcmp(wl[0],"sub")) {
     if(wc!=2) {
-      comMessage("\nSyntax: .scal1 sub .scal2");
+      comMessage("Syntax: .scal1 sub .scal2\n");
       return -1;
     }
     scalSub(node,wl[1]);
     // TODO add mul
   } else {
-    sprintf(message,"\n%s: unknown command %s",node->name,wl[0]);
+    sprintf(message,"%s: unknown command %s\n",node->name,wl[0]);
     comMessage(message);
     return -1;
   }
@@ -197,18 +197,18 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
   for(i=0;i<co.param_count;i++) {
     if(co.param[i].p==NULL) {
       if(co.param[i].wc!=0) {
-	comMessage("\nerror: new: expected an argument beginning with -"); 
+	comMessage("error: new: expected an argument beginning with -\n"); 
 	ret=-1;
 	break;
       }
     } else if(clStrcmp(co.param[i].p,"name") || 
 	      clStrcmp(co.param[i].p,"n")) {
       if(co.param[i].wc<1) {
-	comMessage("\nerror: new: missing value for -name");
+	comMessage("error: new: missing value for -name\n");
 	ret=-1;
 	break;
       } else if(co.param[i].wc>1) {
-	comMessage("\nerror: new: too many values for -name");
+	comMessage("error: new: too many values for -name\n");
 	ret=-1;
 	break;
       } else {
@@ -217,11 +217,11 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
     } else if(clStrcmp(co.param[i].p,"type") ||
 	      clStrcmp(co.param[i].p,"t")) {
       if(co.param[i].wc<1) {
-	comMessage("\nerror: new: missing value for -type");
+	comMessage("error: new: missing value for -type\n");
 	ret=-1;
 	break;
       } else if(co.param[i].wc>1) {
-	comMessage("\nerror: new: too many values for -type");
+	comMessage("error: new: too many values for -type\n");
 	ret=-1;
 	break;
       } else {
@@ -238,7 +238,7 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
 	  type=SCAL_VR;
 #endif
 	} else {
-	  clStrcpy(message,"\nerror: new: unknown type ");
+	  clStrcpy(message,"error: new: unknown type \n");
 	  clStrncat(message,co.param[i].wl[0],100);
 	  comMessage(message);
 	  ret=-1;
@@ -261,7 +261,7 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
       }
       sel_flag=1;
     } else {
-      clStrcpy(message,"\nunknown paramater ");
+      clStrcpy(message,"unknown paramater \n");
       clStrncat(message,co.param[i].p,100);
       comMessage(message);
       ret=-1;
@@ -315,7 +315,7 @@ int scalComGet(dbmScalNode *node,int wc, char **wl)
   int i;
 
   if(wc==0) {
-    comMessage("\nerror: get: missing property");
+    comMessage("error: get: missing property\n");
     return -1;
   }
   for(i=0;i<wc;i++)
@@ -330,7 +330,7 @@ int scalComDel(dbmScalNode *node,int wc, char **wl)
   int i;
 
   if(wc==0) {
-    sprintf(message,"\n%s: missing parameter",node->name);
+    sprintf(message,"%s: missing parameter\n",node->name);
     comMessage(message);
     return -1;
   } else {
@@ -349,7 +349,7 @@ int scalNew(dbmScalNode *node, char *name, int type, Set *set, Select *sel)
   scalObj *obj;
 
   if((obj=scalNewObj(node,name))==NULL) {
-    sprintf(message,"\ninternal error in new");
+    sprintf(message,"internal error in new\n");
     comMessage(message);
     return -1;
   }
@@ -399,17 +399,17 @@ int scalSet(dbmScalNode *node, Set *s)
     } else if (clStrcmp(s->pov[pc].prop,"vc")) {
       s->pov[pc].id=SCAL_PROP_VC;
     } else {
-      comMessage("\nerror: set: unknown property ");
+      comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].op!=POV_OP_EQ) {
-      comMessage("\nerror: set: expected operator = for property ");
+      comMessage("error: set: expected operator = for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
     if(s->pov[pc].val_count>1) {
-      comMessage("\nerror: set: expected only one value for property ");
+      comMessage("error: set: expected only one value for property \n");
       comMessage(s->pov[pc].prop);
       return -1;
     }
@@ -420,14 +420,14 @@ int scalSet(dbmScalNode *node, Set *s)
     switch(s->pov[pc].id) {
     case SCAL_PROP_EDGE:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property edge");
+	comMessage("error: set: unexpected range in property edge\n");
 	return -1;
       }
       node->field->edge=atof(val->val1);
       break;
     case SCAL_PROP_SCALE:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property edge");
+	comMessage("error: set: unexpected range in property edge\n");
 	return -1;
       }
       node->field->scale=atof(val->val1);
@@ -435,7 +435,7 @@ int scalSet(dbmScalNode *node, Set *s)
       break;
     case SCAL_PROP_VM:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property edge");
+	comMessage("error: set: unexpected range in property edge\n");
 	return -1;
       }
       node->field->vm=atof(val->val1);
@@ -443,7 +443,7 @@ int scalSet(dbmScalNode *node, Set *s)
       break;
     case SCAL_PROP_VC:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property edge");
+	comMessage("error: set: unexpected range in property edge\n");
 	return -1;
       }
       node->field->vc=atof(val->val1);
@@ -451,7 +451,7 @@ int scalSet(dbmScalNode *node, Set *s)
       break;
     case SCAL_PROP_ROT:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property rot");
+	comMessage("error: set: unexpected range in property rot\n");
 	return -1;
       }
       if(transSetRot(&node->transform,val->val1)<0)
@@ -459,7 +459,7 @@ int scalSet(dbmScalNode *node, Set *s)
       break;
     case SCAL_PROP_TRANS:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property trans");
+	comMessage("error: set: unexpected range in property trans\n");
 	return -1;
       }
       if(transSetTra(&node->transform,val->val1)<0)
@@ -467,7 +467,7 @@ int scalSet(dbmScalNode *node, Set *s)
       break;
     case SCAL_PROP_RTC:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property trans");
+	comMessage("error: set: unexpected range in property trans\n");
 	return -1;
       }
       if(transSetAll(&node->transform,val->val1)<0)
@@ -477,11 +477,11 @@ int scalSet(dbmScalNode *node, Set *s)
 
     case SCAL_PROP_RCEN:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property trans");
+	comMessage("error: set: unexpected range in property trans\n");
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v1)!=0) {
-	comMessage("\nerror in vector: ");
+	comMessage("error in vector: \n");
 	comMessage(val->val1);
 	return -1;
       }   
@@ -562,7 +562,7 @@ int scalGet(dbmScalNode *node, char *prop)
   } else if(!strcmp(prop,"rtc")) {
     comReturn(transGetAll(&node->transform));
   } else {
-    sprintf(message,"\n%s: unknown parameter %s", node->name,prop);
+    sprintf(message,"%s: unknown parameter %s\n", node->name,prop);
     comMessage(message);
     return -1;
   }
@@ -699,7 +699,7 @@ int scalXYZtoUVW(struct SCAL_FIELD *field,double *xyz,double *uvw)
   dd=ax*(by*cz-bz*cy)-ay*(bx*cz-bz*cx)+az*(bx*cy-by*cx);
 
   if(dd==0.0) {
-    comMessage("\nscalXYZtoUVW: Error: cannot resolve singular matrix");
+    comMessage("scalXYZtoUVW: Error: cannot resolve singular matrix\n");
     uvw[0]=0.0;
     uvw[1]=0.0;
     uvw[2]=0.0;
@@ -770,7 +770,7 @@ int scalWriteField(struct SCAL_FIELD *field, int u, int v, int w, float value)
 #ifdef SCAL_DEBUG
   else
     fprintf(stderr,
-	    "\nset map write error: out of bounds retrieval(s: %d, p:%d)",
+	    "set map write error: out of bounds retrieval(s: %d, p:%d)\n",
 	    p,field->size);
 #endif
   return 0;
@@ -830,7 +830,7 @@ float scalReadField(struct SCAL_FIELD *field, int u, int v, int w)
 #ifdef SCAL_DEBUG
   else
     fprintf(stderr,
-	    "\nset map read error: out of bounds retrieval(s: %d, p:%d)",
+	    "set map read error: out of bounds retrieval(s: %d, p:%d)\n",
 	    p,field->size);
 #endif
 }
@@ -874,7 +874,7 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
   if(pov->op==POV_OP_WI) {
     prop=SCAL_SEL_WITHIN;
   } else if(pov->prop[0]=='.') {
-    comMessage("\nobject selection not implemented for scalar field dataset");
+    comMessage("object selection not implemented for scalar field dataset\n");
     return -1;
 //    prop=SCAL_SEL_OBJ;
   } else if(clStrcmp(pov->prop,"v")) {
@@ -886,7 +886,7 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
   } else if(clStrcmp(pov->prop,"z")) {
     prop=SCAL_SEL_Z;
   } else {
-    comMessage("\nerror: unknown selection property ");
+    comMessage("error: unknown selection property \n");
     comMessage(pov->prop);
     return -1;
   }
@@ -896,7 +896,7 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
     val=povGetVal(pov,i);
     if(val->range_flag) {
       if(op!=POV_OP_EQ) {
-	sprintf(message,"\nerror: expected operator = for range");
+	sprintf(message,"error: expected operator = for range\n");
 	return -1;
       }
       rf=1;
@@ -921,7 +921,7 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
       scalUVWtoXYZ(field,v1,v2);
       
       if(rf) {
-	comMessage("\nerror: range not supported for < >");
+	comMessage("error: range not supported for < >\n");
 	return -1;
       }
       if(val->wi_flag) {
@@ -968,7 +968,7 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
 	case POV_OP_LE: if(vv<=atof(val1)) return 1; break;
 	case POV_OP_GT: if(vv>atof(val1)) return 1; break;
 	case POV_OP_GE: if(vv>=atof(val1)) return 1; break;
-	default: comMessage("\nerror: invalid operator"); return -1;
+	default: comMessage("error: invalid operator\n"); return -1;
 	}
       }
       break;
@@ -1009,7 +1009,7 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
 	case POV_OP_LE: if(vv<=atof(val1)) return 1; break;
 	case POV_OP_GT: if(vv>atof(val1)) return 1; break;
 	case POV_OP_GE: if(vv>=atof(val1)) return 1; break;
-	default: comMessage("\nerror: invalid operator"); return -1;
+	default: comMessage("error: invalid operator\n"); return -1;
 	}
       }
       break;
@@ -1062,7 +1062,7 @@ int scalEvalXYZPOV(dbmScalNode *node, float x, float y, float z, POV *pov)
     val=povGetVal(pov,i);
     if(val->range_flag) {
       if(op!=POV_OP_EQ) {
-	sprintf(message,"\nerror: expected operator = for range");
+	sprintf(message,"error: expected operator = for range\n");
 	return -1;
       }
       rf=1;
@@ -1085,7 +1085,7 @@ int scalEvalXYZPOV(dbmScalNode *node, float x, float y, float z, POV *pov)
       v2[2]=z;
       
       if(rf) {
-	comMessage("\nerror: range not supported for < >");
+	comMessage("error: range not supported for < >\n");
 	return -1;
       }
       if(val->wi_flag) {
@@ -1247,7 +1247,7 @@ int scalCalcOffset(struct SCAL_FIELD *field, int u, int v,int w)
 #ifdef SCAL_DEBUG
   else
     fprintf(stderr,
-	    "\nset map read error: out of bounds retrieval(s: %d, p:%d)",
+	    "set map read error: out of bounds retrieval(s: %d, p:%d)\n",
 	    p,field->size);
 #endif
 }
@@ -1330,7 +1330,7 @@ float scalReadFieldO(struct SCAL_FIELD *field, int u, int v, int w, int off)
 #ifdef SCAL_DEBUG
   else
     fprintf(stderr,
-	    "\nset map read error: out of bounds retrieval(s: %d, p:%d)",
+	    "set map read error: out of bounds retrieval(s: %d, p:%d)\n",
 	    p,field->size);
 #endif
 
@@ -1563,12 +1563,12 @@ int scalSub(dbmScalNode *n,char *s)
   float v1,v2;
 
   if(!comIsDB(s)) {
-    sprintf(message,"\nscalSub: Unknown db: %s",s);
+    sprintf(message,"scalSub: Unknown db: %s\n",s);
     comMessage(message);
     return -1;
   }
   if((comGetDB(s))->common.type!=DBM_NODE_SCAL) {
-    sprintf(message,"\nscalSub: %s is not a scalar field db",s);
+    sprintf(message,"scalSub: %s is not a scalar field db\n",s);
     comMessage(message);
     return -1;
   }
@@ -1580,7 +1580,7 @@ int scalSub(dbmScalNode *n,char *s)
   if(f1->u_size!=f2->u_size ||
      f1->v_size!=f2->v_size ||
      f1->w_size!=f2->w_size) {
-    comMessage("\nscalSub: size missmatch");
+    comMessage("scalSub: size missmatch\n");
     return -1;
   }
      

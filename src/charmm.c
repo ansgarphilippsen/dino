@@ -25,7 +25,7 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
   if(sn->field==NULL) {
-    comMessage("\ncharmmReadB: memory allocation error");
+    comMessage("charmmReadB: memory allocation error\n");
     return -1;
   }
 
@@ -47,7 +47,7 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
     swap_double(&header.epsm);
   }
 
-  sprintf(message,"\n%d %d %d\n%g %g %g %g\n%g %g %g %g %g %g\n",
+  sprintf(message,"%d %d %d\n%g %g %g %g\n%g %g %g %g %g %g\n\n",
 	  header.nclx,header.ncly, header.nclz,
 	  header.dcel, header.xbcen, header.ybcen, header.zbcen,
 	  header.epsw, header.epsp, header.conc, header.tmemb,
@@ -160,20 +160,20 @@ int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag)
   if(swap_flag)
     swap_4b((unsigned char *)&ntype);
 
-  //  fprintf(stderr,"\nnframe: %d  ntype: %d",nframe,ntype);
+  //  fprintf(stderr,"nframe: %d  ntype: %d\n",nframe,ntype);
 
   if(nframe>1e6) {
-    comMessage("\nerror: huge framecount: invalid fileformat or byte-swapped ?");
+    comMessage("error: huge framecount: invalid fileformat or byte-swapped ?\n");
     return -1;
   }
 
   if(ntype<=0) {
-    comMessage("\nerror: ntype <=0");
+    comMessage("error: ntype <=0\n");
     return -1;
   }
 
   if(ntype>=BDTRJ_MAX_TYPES) {
-    comMessage("\nerror: ntypes exceeds maximum");
+    comMessage("error: ntypes exceeds maximum\n");
     return -1;
   }
 
@@ -242,7 +242,7 @@ int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag)
     
     /*
     for(i=0;i<nmoveion;i++) {
-      fprintf(stderr,"\n%d %d %f %f %f",
+      fprintf(stderr,"%d %d %f %f %f\n",
 	      entry[entry_count+i].frame,
 	      entry[entry_count+i].index,
 	      entry[entry_count+i].x,

@@ -48,7 +48,7 @@ int gridReadNode(int fd, char *fn, dbmGridNode *node)
   char message[256];
   t=TIFFFdOpen(fd,fn,"r");
   if(t==NULL) {
-    sprintf(message,"\nreadGrid: error opening file");
+    sprintf(message,"readGrid: error opening file\n");
     comMessage(message);
     return -1;
   }
@@ -57,13 +57,13 @@ int gridReadNode(int fd, char *fn, dbmGridNode *node)
   TIFFGetField(t,TIFFTAG_BITSPERSAMPLE,&b);
 
   if((w*h)>(4096*4096)) {
-    sprintf(message,"\nsize exceeded or invalid file format");
+    sprintf(message,"size exceeded or invalid file format\n");
     comMessage(message);
     return -1;
   }
 
   if((data=Ccalloc(w*h,sizeof(uint32)))==NULL) {
-    sprintf(message,"\nMemory allocation error #1");
+    sprintf(message,"Memory allocation error #1\n");
     comMessage(message);
     return -1;
   }
@@ -82,7 +82,7 @@ int gridReadNode(int fd, char *fn, dbmGridNode *node)
   node->field.data=Ccalloc((w+2)*(h+2),sizeof(unsigned char));
 
   if(node->field.data==NULL) {
-    sprintf(message,"\nMemory allocation error #2");
+    sprintf(message,"Memory allocation error #2\n");
     comMessage(message);
     Cfree(data);
     TIFFClose(t);
@@ -154,7 +154,7 @@ int gridCommand(dbmGridNode *node, int wc, char **wl)
 	      node->field.offset_z*node->field.scale_z);
       wl[0]=grid_return;
     } else {
-      sprintf(message,"\n%s: unknown property %s",node->name,wl[1]);
+      sprintf(message,"%s: unknown property %s\n",node->name,wl[1]);
       comMessage(message);
       return -1;
     }
@@ -166,7 +166,7 @@ int gridCommand(dbmGridNode *node, int wc, char **wl)
     }
     gridSet(node,wc-1,wl+1);
   } else {
-    sprintf(message,"\n%s:Unknown command %s",node->name,wl[0]);
+    sprintf(message,"%s:Unknown command %s\n",node->name,wl[0]);
     comMessage(message);
     return -1;
   }
@@ -192,21 +192,21 @@ int gridNew(dbmGridNode *node, int wc, char **wl)
   while(c<wc) {
     if(!strcmp(wl[c],"-name")) {
       if(c+1>=wc) {
-	sprintf(message,"\n%s: missing name",node->name);
+	sprintf(message,"%s: missing name\n",node->name);
 	comMessage(message);
 	return -1;
       }
       c++;
       strcpy(name,wl[c]);
     } else {
-      sprintf(message,"\n%s: unknown flag %s",node->name,wl[c]);
+      sprintf(message,"%s: unknown flag %s\n",node->name,wl[c]);
       comMessage(message);
       return -1;
     }
   }
 
   if((obj=gridNewObj(node,name))==NULL) {
-    sprintf(message,"\n%s: memory allocation error in NewObj()",node->name);
+    sprintf(message,"%s: memory allocation error in NewObj()\n",node->name);
     comMessage(message);
     return -1;
   }
@@ -585,13 +585,13 @@ int gridSet(dbmGridNode *node, int owc, char **owl)
 	nv=atof(val);
 	node->field.scale_z=nv;
       } else {
-	sprintf(message,"\n%s: invalid operator %s",node->name, op);
+	sprintf(message,"%s: invalid operator %s\n",node->name, op);
 	comMessage(message);
 	ret=-1;
 	break;
       }
     } else {
-      sprintf(message,"\n%s: unknown property %s",node->name, prop);
+      sprintf(message,"%s: unknown property %s\n",node->name, prop);
       comMessage(message);
       ret=-1;
       break;
