@@ -1347,7 +1347,7 @@ int scalSetDefault(scalObj *obj)
   obj->face_count=0;
 
   obj->r=0.7;
-  obj->g=0.5;
+  obj->g=0.8;
   obj->b=1.0;
   obj->a=1.0;
 

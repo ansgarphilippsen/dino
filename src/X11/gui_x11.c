@@ -84,6 +84,7 @@ static struct _OFFSCREEN_CONTEXT {
   int used;
   Pixmap pm;
   GLXPixmap glx_pm;
+  GLXContext glx_context;
 }offscreen_context_list[MAX_OFFSCREEN_CONTEXT];
 static int offscreen_context_count=0;
 
@@ -1601,7 +1602,6 @@ int guiCreateOffscreenContext(int w, int h, int af)
 {
   int i;
   XVisualInfo *visinfo;
-  GLXContext glx_context;
   struct _OFFSCREEN_CONTEXT *oc;
 
   for(i=0;i<MAX_OFFSCREEN_CONTEXT;i++)
@@ -1622,7 +1622,7 @@ int guiCreateOffscreenContext(int w, int h, int af)
   }
   
   // create new context
-  if((glx_context=glXCreateContext(gui.dpy, visinfo, 0, False))==NULL) {
+  if((oc->glx_context=glXCreateContext(gui.dpy, visinfo, 0, False))==NULL) {
     cmiMessage("error: offscreen rendering context could not be created");
     return -1;
   }
@@ -1633,7 +1633,7 @@ int guiCreateOffscreenContext(int w, int h, int af)
   // convert to glx pixmap
   oc->glx_pm=glXCreateGLXPixmap(gui.dpy, visinfo, oc->pm);
 
-  glXMakeCurrent(gui.dpy,oc->pm,glx_context);
+  glXMakeCurrent(gui.dpy,oc->glx_pm,oc->glx_context);
 
   oc->used=1;
   return i;
