@@ -140,6 +140,9 @@ int scalGrid(scalObj *obj, Select *sel);
 
 int scalSlab(scalObj *obj, Select *sel);
 int scalSlabIntersect(scalObj *obj);
+int scalSlabIsSelected(scalObj *obj, int ec, Select *sel);
+int scalSlabEvalPOV(scalObj *obj, int c, POV *poe);
+
 
 #ifdef VR
 int scalVR(scalObj *obj, Select *sel);

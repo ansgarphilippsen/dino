@@ -41,84 +41,93 @@ int structDraw(dbmStructNode *node, int f)
     first draw objects with transform
   */
 
-  for(j=0;j<node->obj_max;j++)
-    if(node->obj_flag[j]!=0)
-      if(node->obj[j].render.show)
-	if(node->obj[j].transform_flag) {
+  if(node->trj_flag && node->trj.type==STRUCT_TRJ_BD && f==0) {
+    for(j=0;j<node->obj_max;j++)
+      if(node->obj_flag[j]!=0)
+	if(node->obj[j].render.show) {
 	  obj=&node->obj[j];
-	  /*
-	    apply obj transform BEFORE dataset transform
-	  */
-
-	  glPushMatrix();
-	  glTranslated(obj->transform.cen[0],
-		       obj->transform.cen[1],
-		       obj->transform.cen[2]);
-	  
-	  glTranslated(obj->transform.tra[0],
-		       obj->transform.tra[1],
-		       obj->transform.tra[2]);
-	  
-	  glMultMatrixd(obj->transform.rot);
-	  
-	  glTranslated(-obj->transform.cen[0],
-		       -obj->transform.cen[1],
-		       -obj->transform.cen[2]);
-	  
-	  glTranslated(node->transform.cen[0],
-		       node->transform.cen[1],
-		       node->transform.cen[2]);
-	  
-	  glTranslated(node->transform.tra[0],
-		       node->transform.tra[1],
-		       node->transform.tra[2]);
-	  
-	  glMultMatrixd(node->transform.rot);
-	  
-	  glTranslated(-node->transform.cen[0],
-		       -node->transform.cen[1],
-		       -node->transform.cen[2]);
-
-	  if((f==0 && node->obj[j].render.transparency==1.0) ||
-	     (f!=0 && node->obj[j].render.transparency<1.0)) {
-	    structDrawObj(&node->obj[j]);
-	  }
-
-	  glPopMatrix();
-	  
+	  structDrawBDObj(node,obj);
 	}
-  
-  
-  glTranslated(node->transform.cen[0],
-	       node->transform.cen[1],
-	       node->transform.cen[2]);
-
-  glTranslated(node->transform.tra[0],
-	       node->transform.tra[1],
-	       node->transform.tra[2]);
-
-  glMultMatrixd(node->transform.rot);
-
-  glTranslated(-node->transform.cen[0],
-	       -node->transform.cen[1],
-	       -node->transform.cen[2]);
-
-  if(f==0) {
-    for(j=0;j<node->obj_max;j++)
-      if(node->obj_flag[j]!=0)
-	if(node->obj[j].render.show)
-	  if(!node->obj[j].transform_flag)
-	    if(node->obj[j].render.transparency==1.0)
-	      structDrawObj(&node->obj[j]);
   } else {
+    
     for(j=0;j<node->obj_max;j++)
       if(node->obj_flag[j]!=0)
 	if(node->obj[j].render.show)
-	  if(!node->obj[j].transform_flag)
-	    if(node->obj[j].render.transparency<1.0)
+	  if(node->obj[j].transform_flag) {
+	    obj=&node->obj[j];
+	    /*
+	      apply obj transform BEFORE dataset transform
+	    */
+	    
+	    glPushMatrix();
+	    glTranslated(obj->transform.cen[0],
+			 obj->transform.cen[1],
+			 obj->transform.cen[2]);
+	    
+	    glTranslated(obj->transform.tra[0],
+			 obj->transform.tra[1],
+			 obj->transform.tra[2]);
+	    
+	    glMultMatrixd(obj->transform.rot);
+	    
+	    glTranslated(-obj->transform.cen[0],
+			 -obj->transform.cen[1],
+			 -obj->transform.cen[2]);
+	    
+	    glTranslated(node->transform.cen[0],
+			 node->transform.cen[1],
+			 node->transform.cen[2]);
+	    
+	    glTranslated(node->transform.tra[0],
+			 node->transform.tra[1],
+			 node->transform.tra[2]);
+	    
+	    glMultMatrixd(node->transform.rot);
+	    
+	    glTranslated(-node->transform.cen[0],
+			 -node->transform.cen[1],
+			 -node->transform.cen[2]);
+	    
+	    if((f==0 && node->obj[j].render.transparency==1.0) ||
+	       (f!=0 && node->obj[j].render.transparency<1.0)) {
 	      structDrawObj(&node->obj[j]);
+	    }
+	    
+	    glPopMatrix();
+	    
+	  }
+    
+    
+    glTranslated(node->transform.cen[0],
+		 node->transform.cen[1],
+		 node->transform.cen[2]);
+    
+    glTranslated(node->transform.tra[0],
+		 node->transform.tra[1],
+		 node->transform.tra[2]);
+    
+    glMultMatrixd(node->transform.rot);
+    
+    glTranslated(-node->transform.cen[0],
+		 -node->transform.cen[1],
+		 -node->transform.cen[2]);
+    
+    if(f==0) {
+      for(j=0;j<node->obj_max;j++)
+	if(node->obj_flag[j]!=0)
+	  if(node->obj[j].render.show)
+	    if(!node->obj[j].transform_flag)
+	      if(node->obj[j].render.transparency==1.0)
+		structDrawObj(&node->obj[j]);
+    } else {
+      for(j=0;j<node->obj_max;j++)
+	if(node->obj_flag[j]!=0)
+	  if(node->obj[j].render.show)
+	    if(!node->obj[j].transform_flag)
+	      if(node->obj[j].render.transparency<1.0)
+		structDrawObj(&node->obj[j]);
+    }
   }
-
   glPopMatrix();
 
   return 0;
@@ -264,15 +273,17 @@ int structDrawObj(structObj *obj)
       p1[1]=(p2[1]-p0[1])*0.50+p0[1];
       p1[2]=(p2[2]-p0[2])*0.50+p0[2];
       if(cf)
-	glColor3f(obj->bond[i].prop1->r,
+	glColor4f(obj->bond[i].prop1->r,
 		  obj->bond[i].prop1->g,
-		  obj->bond[i].prop1->b);
+		  obj->bond[i].prop1->b,
+		  obj->render.transparency);
       glVertex3fv(p0);
       glVertex3fv(p1);
       if(cf)
-	glColor3f(obj->bond[i].prop2->r,
+	glColor4f(obj->bond[i].prop2->r,
 		  obj->bond[i].prop2->g,
-		  obj->bond[i].prop2->b);
+		  obj->bond[i].prop2->b,
+		  obj->render.transparency);
       glVertex3fv(p1);
       glVertex3fv(p2);
     }
@@ -281,9 +292,10 @@ int structDrawObj(structObj *obj)
       p0[1]=obj->s_bond[i].atom->p->y;
       p0[2]=obj->s_bond[i].atom->p->z;
       if(cf)
-	glColor3f(obj->s_bond[i].prop->r,
+	glColor4f(obj->s_bond[i].prop->r,
 		  obj->s_bond[i].prop->g,
-		  obj->s_bond[i].prop->b);
+		  obj->s_bond[i].prop->b,
+		  obj->render.transparency);
       glVertex3f(p0[0]-sd,p0[1],p0[2]);
       glVertex3f(p0[0]+sd,p0[1],p0[2]);
       glVertex3f(p0[0],p0[1]-sd,p0[2]);
@@ -474,4 +486,113 @@ int structDrawObj(structObj *obj)
   
   return 0;
 
+}
+
+int structDrawBDObj(dbmStructNode *node, structObj *obj)
+{
+  int i,f,a;
+  int index;
+  float x,y,z;
+  float sd=0.2;
+  int detail;
+  float bond_width,sphere_radius;
+
+  f=node->frame;
+
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, obj->render.mat.amb);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, obj->render.mat.spec);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, obj->render.mat.emm);
+  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, obj->render.mat.shin);
+
+  detail=obj->render.detail;
+  bond_width=obj->render.bond_width;
+  sphere_radius=obj->render.sphere_radius;
+  
+  if(obj->render.nice) {
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_DITHER);
+  } else {
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_DITHER);
+  }
+
+  glLineWidth(obj->render.line_width);
+  glPointSize(obj->render.point_size);
+
+  for(i=node->trj.frame[f].start;i<node->trj.frame[f].end;i++) {
+    index=node->trj.entry[i].index;
+    x=node->trj.entry[i].x;
+    y=node->trj.entry[i].y;
+    z=node->trj.entry[i].z;
+
+    // set render modes
+    switch(obj->render.mode) {
+    case RENDER_SIMPLE:
+      glDisable(GL_LIGHTING);
+      glDisable(GL_COLOR_MATERIAL);
+      glBegin(GL_LINES);
+      break;
+    case RENDER_CPK:
+    case RENDER_CUSTOM:
+      glEnable(GL_LIGHTING);
+      glEnable(GL_COLOR_MATERIAL);
+      glEnable(GL_CULL_FACE);
+      glEnable(GL_NORMALIZE);
+      break;
+    }
+    for(a=0;a<obj->atom_count;a++) {
+      if(obj->atom[a].ap->anum==index) {
+
+	switch(obj->render.mode) {
+	case RENDER_SIMPLE:
+	  glColor3f(obj->atom[a].prop.r,
+		    obj->atom[a].prop.g,
+		    obj->atom[a].prop.b);
+	  glVertex3f(x-sd,y,z); glVertex3d(x+sd,y,z);
+	  glVertex3f(x,y-sd,z); glVertex3d(x,y+sd,z);
+	  glVertex3f(x,y,z-sd); glVertex3d(x,y,z+sd);
+	  break;
+	case RENDER_CPK:
+	  glPushMatrix();
+	  glColor3f(obj->atom[a].prop.r,
+		    obj->atom[a].prop.g,
+		    obj->atom[a].prop.b);
+	  glTranslatef(x,y,z);
+	  glScalef(obj->atom[a].prop.radius,
+		   obj->atom[a].prop.radius,
+		   obj->atom[a].prop.radius);
+
+	  glCallList(obj->sphere_list);
+
+	  glPopMatrix();
+	  
+	  break;
+	case RENDER_CUSTOM:
+	  glPushMatrix();
+	  glColor3f(obj->atom[a].prop.r,
+		    obj->atom[a].prop.g,
+		    obj->atom[a].prop.b);
+	  glTranslatef(x,y,z);
+	  glScalef(sphere_radius,
+		   sphere_radius,
+		   sphere_radius);
+
+	  glCallList(obj->sphere_list);
+
+	  glPopMatrix();
+	  break;
+	}
+      }
+    }
+  }
+
+  switch(obj->render.mode) {
+  case RENDER_SIMPLE:
+    glEnd();
+    break;
+  }
+
+  return 0;
 }

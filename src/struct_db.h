@@ -19,7 +19,8 @@ enum                 {STRUCT_TRJ_NONE,
 		      STRUCT_TRJ_CHARMM,
 		      STRUCT_TRJ_XPLOR,
 		      STRUCT_TRJ_DINO,
-		      STRUCT_TRJ_CNS};
+		      STRUCT_TRJ_CNS,
+		      STRUCT_TRJ_BD};
 
 enum {STRUCT_WRITE_PDB,
       STRUCT_WRITE_XPL,
@@ -55,7 +56,9 @@ enum {STRUCT_PROP_COLOR,
       STRUCT_PROP_CELL,   // unit cell
       STRUCT_PROP_SG,     // space group  
       STRUCT_PROP_UCO,    // unit cell offset
-      STRUCT_PROP_TFAST}; // fast trj update
+      STRUCT_PROP_TFAST,  // fast trj update
+      STRUCT_PROP_FRAME   // current frame to display
+};
 
 enum {STRUCT_RTYPE_COIL,
       STRUCT_RTYPE_HELIX,
@@ -203,11 +206,28 @@ struct STRUCT_TRJ_POSITION {
   float x,y,z;
 };
 
+struct STRUCT_BDTRJ_FRAME {
+  int n;
+  int start,end;
+};
+
+struct STRUCT_BDTRJ_ENTRY {
+  int frame;
+  int index;
+  float x,y,z;
+};
+
 typedef struct STRUCT_TRJ {
+  int type;
   struct STRUCT_TRJ_POSITION *pos;
   int atom_count;  /* number of atoms in each trj */
   int size;        /* = atom_count*sizeof(struct STRUCT_TRJ_POSITION) */
   int frame_count;
+  // following is for TRJ_BD
+  struct STRUCT_BDTRJ_FRAME *frame;
+  // use above frame_count;
+  struct STRUCT_BDTRJ_ENTRY *entry;
+  int entry_count;
 }structTrj;
 
 struct TRJ_PLAY {
@@ -347,6 +367,7 @@ int structGetRangeXYZVal(dbmStructNode *node, const char *prop, float *p, float 
 
 int structDraw(dbmStructNode *node, int f);
 int structDrawObj(structObj *obj);
+int structDrawBDObj(dbmStructNode *node, structObj *obj);
 
 int structRecalcBonds(dbmStructNode *node);
 int structRecalcBondList(struct STRUCT_BOND *bond, int bond_count);

@@ -1244,6 +1244,8 @@ int comWrite(int wc,char **wl)
       n++;
     } else if(!strcmp(wl[n],"-new")) {
       pov_mode=WRITE_POV_NEW;
+    } else if(!strcmp(wl[n],"-nocolor")) {
+      pov_mode=WRITE_POV_NOCOLOR;
     } else if(!strcmp(wl[n],"-smooth")) {
       pov_mode=WRITE_POV_SMOOTH;
     } else if(!strcmp(wl[n],"-mega")) {

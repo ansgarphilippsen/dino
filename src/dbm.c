@@ -60,6 +60,7 @@ static struct EXT_DEF {
   {"cpot","charmmb"},
   {"dgrd","dgrid"},
   {"grasp","grasp"},
+  {"bdtrj","bdtrj"},
   {"",""}
 };
 
@@ -297,7 +298,26 @@ int dbmLoad(int wc, char **wl)
     sprintf(message,"%s %d bond(s)",
 	    message,node->structNode.bond_count);
     comMessage(message);
-
+  } else if(!strcmp(type,"bdtrj")) {
+    /*
+      CHARMM BDTRJ
+    */
+    node=dbmNewNode(DBM_NODE_STRUCT,name);
+    sprintf(message,"\nloading %s, type bdtrj ...",name);
+    comMessage(message);
+    if(bdtrjRead(&node->structNode, f, swap_flag)!=0) {
+      if(cmp) pclose(f); else fclose(f);
+      dbmDeleteNode(name);
+      return -1;
+    }
+    if(cmp) pclose(f); else fclose(f);
+    //structPrep(&node->structNode);
+    debmsg("structPrep: build CA");       
+    structBuildCA(&node->structNode);
+    debmsg("structPrep: prep res");       
+    structPrepRes(&node->structNode);
+    structSetMinMax(&node->structNode);
+    structRecenter(&node->structNode);
   } else if(!strcmp(type,"dgrid")) {
     /*
       DINO GRID
@@ -503,7 +523,6 @@ int dbmLoad(int wc, char **wl)
 
   } else if(!strcmp(type,"msms")) {
     /* MSMS surface format */
-    node=dbmNewNode(DBM_NODE_SURF, name);
     strcpy(file2,file);
     strcat(file2,".vert");
     if((f=fopen(file2,"r"))==NULL) {
@@ -518,6 +537,7 @@ int dbmLoad(int wc, char **wl)
       comMessage(message);
       return -1;
     }
+    node=dbmNewNode(DBM_NODE_SURF, name);
     sprintf(message,"\nloading %s, type msms ...",name);
     comMessage(message);
     if(msmsRead(f,f2,node,swap_flag)!=0) {

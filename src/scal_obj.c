@@ -74,8 +74,8 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 	obj->point[i].c[3]=obj->render.transparency;
 
     } else if(obj->type==SCAL_SLAB) {
-      for(i=0;i<obj->slab.pointc;i++)
-	obj->slab.tex[i*4+3]=(unsigned char)obj->render.transparency*255;
+      for(i=0;i<obj->slab.size;i++)
+	obj->slab.tex[i*4+3]=(unsigned char)(255.0*obj->render.transparency);
       glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
       glTexImage2D(GL_TEXTURE_2D,0,
 		   GL_RGBA,
@@ -289,6 +289,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
   double vd1[3],vd2[3];
   float fact;
   char message[256],nv[16];
+  int slab_flag=0;
 
 
   if(s->pov_count==0) {
@@ -503,10 +504,20 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		obj->slab.tex[ec*4+3]=(unsigned char)(255.0*obj->render.transparency);
 	      }
 	    } else {
-	      obj->slab.tex[ec*4+0]=(unsigned char)(r*255.0);
-	      obj->slab.tex[ec*4+1]=(unsigned char)(g*255.0);
-	      obj->slab.tex[ec*4+2]=(unsigned char)(b*255.0);
-	      obj->slab.tex[ec*4+3]=(unsigned char)(255.0*obj->render.transparency);
+	      res=0;
+	      if(s->select_flag) {
+		if(scalSlabIsSelected(obj,ec,&s->select)) {
+		  res=1;
+		}
+	      } else {
+		res=1;
+	      }
+	      if(res==1) {
+		obj->slab.tex[ec*4+0]=(unsigned char)(r*255.0);
+		obj->slab.tex[ec*4+1]=(unsigned char)(g*255.0);
+		obj->slab.tex[ec*4+2]=(unsigned char)(b*255.0);
+		obj->slab.tex[ec*4+3]=(unsigned char)(255.0*obj->render.transparency);
+	      }
 	    }
 	  }
 	  glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
@@ -519,6 +530,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       }
       break;
     case SCAL_PROP_RAD:
+    if(flag==1)
       for(ec=0;ec<obj->point_count;ec++) {
 	f=0;
 	if(s->select_flag) {
@@ -585,7 +597,8 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  comMessage("\nerror: set: expected operator = for property center");
 	  return -1;
 	}
-	scalSlabIntersect(obj);
+	slab_flag=1;
+	//scalSlabIntersect(obj);
       } else {
 	scalXYZtoUVW(obj->field,vd1,vd2);
 	if(op==POV_OP_EQ) {
@@ -613,7 +626,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	} else {
 	  obj->slab.usize=os;
 	  obj->slab.vsize=os;
-	  scalSlab(obj,NULL);
+	  //scalSlab(obj,NULL);
 	}
 
       } else {
@@ -694,7 +707,8 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	comMessage("\nerror: expected operator '='");
 	return -1;
       }
-      scalSlabIntersect(obj);
+      slab_flag=1;
+      //scalSlabIntersect(obj);
       break;
     case SCAL_PROP_LEVEL:
       strncpy(nv,val->val1,15);
@@ -761,6 +775,10 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     }
   }
 
+/*   if(slab_flag && flag) {
+    scalSlabIntersect(obj);
+  }
+ */
 /***
   fprintf(stderr,"\n%d %d %d\n%d %d %d   %d %d %d",
 	  obj->u_center,obj->v_center, obj->w_center,
@@ -998,6 +1016,8 @@ int scalSlab(scalObj *obj, Select *sel)
   int p,q,r;
   double uvw[3];
 
+//  fprintf(stderr,"\nslab");
+
   /*
     create space for the data and texture
   */
@@ -1054,6 +1074,8 @@ int scalSlabIntersect(scalObj *obj)
   int u,v;
   double fu,fv,len1,len2,xyz[3],uvw[3];
   float pos[3],res;
+
+//  fprintf(stderr,"\nslabIntersect");
 
   matNormalize(obj->slab.dir,dir);
 
@@ -1164,8 +1186,10 @@ int scalSlabIntersect(scalObj *obj)
 	maxdist[1]=dist;
     }
 
+/* 
   fprintf(stderr,"\n%f %f   %f %f",
 	  mindist[0],maxdist[0],mindist[1],maxdist[1]);
+ */
 
   len1=maxdist[1]*2;
   len2=maxdist[0]*2;
@@ -1230,3 +1254,53 @@ int scalSlabIntersect(scalObj *obj)
   return 0;
 }
 
+int scalSlabIsSelected(scalObj *obj, int c, Select *sel)
+{
+  int i,ec,res;
+
+  if(sel==NULL)
+    return 1;
+
+  ec=selectGetPOVCount(sel);
+  for(i=0;i<ec;i++) {
+    res=scalSlabEvalPOV(obj,c,selectGetPOV(sel, i));
+    if(res==-1)
+      return -1;
+    selectSetResult(sel, i, res);
+  }  
+
+  return selectResult(sel);
+
+}
+
+int scalSlabEvalPOV(scalObj *obj, int c, POV *pov)
+{
+  int i,vc,op;
+  struct POV_VALUE *val;
+
+  if(clStrcmp(pov->prop,"*"))
+    return 1;
+
+  op=pov->op;
+  vc=pov->val_count;
+
+  if(clStrcmp(pov->prop,"v")) {
+    for(i=0;i<vc;i++) {
+      val=povGetVal(pov,i);
+      if(clStrcmp(val->val1,"*")) {
+	return 1;
+      } else {
+	switch(op) {
+	case POV_OP_EQ: if(obj->slab.data[c]==atof(val->val1)) return 1; break;
+	case POV_OP_NE: if(obj->slab.data[c]!=atof(val->val1)) return 1; break;
+	case POV_OP_LT: if(obj->slab.data[c]<atof(val->val1)) return 1; break;
+	case POV_OP_LE: if(obj->slab.data[c]<=atof(val->val1)) return 1; break;
+	case POV_OP_GT: if(obj->slab.data[c]>atof(val->val1)) return 1; break;
+	case POV_OP_GE: if(obj->slab.data[c]>=atof(val->val1)) return 1; break;
+	  
+	}
+      }
+    }
+  }
+  return 0;
+}

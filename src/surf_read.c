@@ -212,6 +212,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
   char propn[64];
   int propc,propi;
   float cprop[PROP_MAX_VALUES];
+  int offset_flag,single_flag;
 
   //  propReset(&propt);
   propc=0;
@@ -222,6 +223,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
   debmsg("adsRead: reading header");
 
   while(!feof(f)) {
+    memset(line,0,256);
     fgets(line,255,f);
     b=line;
     // remove CR
@@ -268,38 +270,15 @@ int adsRead(FILE *f, union DBM_NODE *node)
 
   debmsg("adsRead: reading entries");
 
-  fgets(line,255,f);
-  ce.u=atoi(strtok(line,d));
-  ce.v=atoi(strtok(NULL,d));
-  ce.x=atof(strtok(NULL,d));
-  ce.y=atof(strtok(NULL,d));
-  ce.z=atof(strtok(NULL,d));
 
   if(propc>PROP_MAX_VALUES)
     propc=PROP_MAX_VALUES;
 
-  for(propi=0;propi<propc;propi++) {
-    p=strtok(NULL,d);
-    if(p!=NULL) {
-      prop.v[propi]=atof(p);
-    } else {
-      prop.v[propi]=0.0;
-    }
-  }
-
-  off_u=-ce.u;
-  off_v=-ce.v;
-  i=(ce.v+off_v)*usize+(ce.u+off_u);
-  entry[i].flag=1;
-  entry[i].u=ce.u; entry[i].v=ce.v;
-  entry[i].x=ce.x; entry[i].y=ce.y; entry[i].z=ce.z;
-  for(k=0;k<PROP_MAX_VALUES;k++)
-    entry[i].c[k]=prop.v[k];
-  
   vm=0;
+  offset_flag=0;
   while(!feof(f)) {
+    memset(line,0,256);
     if(fgets(line,255,f)==NULL) break;
-    //sscanf(line,"%d %d %f %f %f",&ce.u,&ce.v,&ce.x,&ce.y,&ce.z);
     ce.u=atoi(strtok(line,d));
     ce.v=atoi(strtok(NULL,d));
     ce.x=atof(strtok(NULL,d));
@@ -314,6 +293,12 @@ int adsRead(FILE *f, union DBM_NODE *node)
       }
     }
 
+    if(!offset_flag) {
+      off_u=-ce.u;
+      off_v=-ce.v;
+      offset_flag=1;
+    }
+
     i=(ce.v+off_v)*usize+(ce.u+off_u);
     if(i<0 && i>=usize*vsize) {
       sprintf(message,"\nadsRead: error: out of bounds with %d %d",ce.u,ce.v);
@@ -324,13 +309,15 @@ int adsRead(FILE *f, union DBM_NODE *node)
     entry[i].flag=1;
     entry[i].u=ce.u; entry[i].v=ce.v;
     entry[i].x=ce.x; entry[i].y=ce.y; entry[i].z=ce.z;
-    for(k=0;k<PROP_MAX_VALUES;k++)
+    for(k=0;k<propc;k++)
       entry[i].c[k]=prop.v[k];
+    for(k=propc;k<PROP_MAX_VALUES;k++)
+      entry[i].c[k]=0.0;
     vm++;
   }
 
-  vm+=10;
-  vm*=2;
+  //  vm+=10;
+  //  vm*=2;
 
   debmsg("adsRead: allocating memory for vertices");
 
@@ -348,6 +335,24 @@ int adsRead(FILE *f, union DBM_NODE *node)
       p4=(v+1)*usize+(u+1);
       p5=(v)*usize+(u-1);
       p6=(v-1)*usize+(u);
+
+      single_flag=1;
+      
+      if(p2<usize*vsize && entry[p2].flag)
+	single_flag=0;
+      else if(p3<usize*vsize && entry[p3].flag)
+	single_flag=0;
+      else if(p4<usize*vsize && entry[p4].flag)
+	single_flag=0;
+      else if(p5>=0 && entry[p5].flag)
+	single_flag=0;
+      else if(p6>=0 && entry[p6].flag)
+	single_flag=0;
+
+      if(single_flag)
+	entry[i].flag=0;
+	  
+
       if(entry[i].flag) {
 	vert[vc].num=vc;
 	vert[vc].p[0]=entry[i].x;
@@ -359,20 +364,21 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	n2[0]=0.0;
 	n2[1]=0.0;
 	n2[2]=0.0;
-	if(entry[p2].flag && entry[p3].flag) {
-	  diff1[0]=entry[i].x-entry[p2].x;
-	  diff1[1]=entry[i].y-entry[p2].y;
-	  diff1[2]=entry[i].z-entry[p2].z;
-	  diff2[0]=entry[i].x-entry[p3].x;
-	  diff2[1]=entry[i].y-entry[p3].y;
-	  diff2[2]=entry[i].z-entry[p3].z;
-	  matfCalcCross(diff1,diff2,n1);
-	  n2[0]+=n1[0];
-	  n2[1]+=n1[1];
-	  n2[2]+=n1[2];
-	  ncount++;
-	}
-	if(p5>=0) {
+	if(p2<usize*vsize && p3<usize*vsize)
+	  if(entry[p2].flag && entry[p3].flag) {
+	    diff1[0]=entry[i].x-entry[p2].x;
+	    diff1[1]=entry[i].y-entry[p2].y;
+	    diff1[2]=entry[i].z-entry[p2].z;
+	    diff2[0]=entry[i].x-entry[p3].x;
+	    diff2[1]=entry[i].y-entry[p3].y;
+	    diff2[2]=entry[i].z-entry[p3].z;
+	    matfCalcCross(diff1,diff2,n1);
+	    n2[0]+=n1[0];
+	    n2[1]+=n1[1];
+	    n2[2]+=n1[2];
+	    ncount++;
+	  }
+	if(p5>=0 && p3<usize*vsize)
 	  if(entry[p3].flag && entry[p5].flag) {
 	    diff1[0]=entry[i].x-entry[p3].x;
 	    diff1[1]=entry[i].y-entry[p3].y;
@@ -386,8 +392,8 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    n2[2]+=n1[2];
 	    ncount++;
 	  }
-	}
-	if(p5>=0 && p6>=0) {
+
+	if(p5>=0 && p6>=0)
 	  if(entry[p5].flag && entry[p6].flag) {
 	    diff1[0]=entry[i].x-entry[p5].x;
 	    diff1[1]=entry[i].y-entry[p5].y;
@@ -401,8 +407,8 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    n2[2]+=n1[2];
 	    ncount++;
 	  }
-	}
-	if(p6>=0) {
+
+	if(p6>=0 && p2<usize*vsize)
 	  if(entry[p6].flag && entry[p2].flag) {
 	    diff1[0]=entry[i].x-entry[p6].x;
 	    diff1[1]=entry[i].y-entry[p6].y;
@@ -416,17 +422,18 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    n2[2]+=n1[2];
 	    ncount++;
 	  }
-	}
-	if(ncount>0) {
+
+
+	if(ncount==0) {
+	  vert[vc].n[0]=0.0;
+	  vert[vc].n[1]=0.0;
+	  vert[vc].n[2]=0.0;
+	} else {
 	  vert[vc].n[0]=n2[0]/((float)ncount);
 	  vert[vc].n[1]=n2[1]/((float)ncount);
 	  vert[vc].n[2]=n2[2]/((float)ncount);
 	  matfNormalize(vert[vc].n,vert[vc].n);
-	} else {
-	  vert[vc].n[0]=0.0;
-	  vert[vc].n[1]=0.0;
-	  vert[vc].n[2]=0.0;
-	}
+	}	
 
 	vert[vc].attach_node=NULL;
 	vert[vc].attach_element=0;
@@ -566,7 +573,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
   debmsg("adsRead: allocating memory for faces");
 
   fc=0;
-  fm=10000;
+  fm=vc*3;
   face=Crecalloc(NULL,fm,sizeof(struct SURF_FACE));
 
   debmsg("adsRead: connecting vertices to faces");

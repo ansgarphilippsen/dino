@@ -34,4 +34,6 @@ int charmm2structDB(struct CHARMM *, struct DBM_STRUCT_NODE *node);
 
 int charmmReadB(FILE *f, dbmScalNode *node);
 
+int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag);
+
 #endif

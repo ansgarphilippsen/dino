@@ -428,6 +428,7 @@ int cnsTrjRead(FILE *f, dbmStructNode *node, int sf)
   }
 
   node->trj_flag=1;
+  node->trj.type=STRUCT_TRJ_CNS;
   node->trj.atom_count=natom;
   tsize=node->trj.size=node->trj.atom_count*sizeof(struct STRUCT_TRJ_POSITION);
   // node->frame_count not known yet

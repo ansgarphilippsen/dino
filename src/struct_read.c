@@ -646,6 +646,7 @@ int pdbRead(FILE *f,dbmNode *node)
 
   
   while(!feof(f)) {
+		memset(line,0,256);
     fgets(line,sizeof(line),f);
     for(i=0;i<6;i++) {
       if(isspace(line[i]))
@@ -1256,6 +1257,7 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf)
   }
 
   node->trj_flag=1;
+  node->trj.type=STRUCT_TRJ_CHARMM;
   node->trj.atom_count=header.atom_count;
   node->trj.size=node->trj.atom_count*sizeof(struct STRUCT_TRJ_POSITION);
   node->trj.frame_count=header.num;
@@ -1688,6 +1690,7 @@ int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
   }
 
   node->trj_flag=0;
+  node->trj.type=STRUCT_TRJ_DINO;
   node->trj.atom_count=an;
   node->trj.size=an*sizeof(struct STRUCT_TRJ_POSITION);
   node->trj.frame_count=fn;

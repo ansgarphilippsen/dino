@@ -607,6 +607,8 @@ int structSet(dbmStructNode *node, Set *s)
       s->pov[pc].id=STRUCT_PROP_CELL;
     } else if(clStrcmp(s->pov[pc].prop,"sg")) {
       s->pov[pc].id=STRUCT_PROP_SG;
+    } else if(clStrcmp(s->pov[pc].prop,"frame")) {
+      s->pov[pc].id=STRUCT_PROP_FRAME;
     } else {
       comMessage("\nerror: set: unknown property ");
       comMessage(s->pov[pc].prop);
@@ -765,6 +767,24 @@ int structSet(dbmStructNode *node, Set *s)
 	node->trj_fast=1;
       } else {
 	comMessage("\nsyntax error with property tfast");
+	return -1;
+      }
+      break;
+    case STRUCT_PROP_FRAME:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property tfast");
+	return -1;
+      }
+      if(node->trj_flag) {
+	if(atoi(val->val1)<1 || atoi(val->val1)>node->trj.frame_count) {
+	  comMessage("\nerror: frame number out of limits"); 
+	  return -1;
+	} else {
+	  structSetFrame(node,atoi(val->val1)-1);
+	  comRedraw();
+	}
+      } else {
+	comMessage("\nerror: no trajectory loaded");
 	return -1;
       }
       break;
@@ -2507,26 +2527,30 @@ int structSetFrame(struct DBM_STRUCT_NODE *node, int frame)
   if(frame<0 || frame>=node->trj.frame_count)
     return -1;
 
-  pointer=frame*node->trj.atom_count;
-  p=&node->trj.pos[pointer];
-
-  memcpy(node->apos,p,sizeof(struct STRUCT_APOS)*node->trj.atom_count);
-
-  if(!node->trj_fast) {
-    structRecalcBonds(node);
-    for(i=0;i<node->obj_max;i++) {
-      if(node->obj_flag[i]) {
-	structRecalcBondList(node->obj[i].bond,node->obj[i].bond_count);
-	if(node->obj[i].render.mode==RENDER_CUSTOM) {
-	  structObjGenVA(&node->obj[i]);
+  if(node->trj.type==STRUCT_TRJ_BD) {
+    node->frame=frame;
+  } else {
+    pointer=frame*node->trj.atom_count;
+    p=&node->trj.pos[pointer];
+    
+    memcpy(node->apos,p,sizeof(struct STRUCT_APOS)*node->trj.atom_count);
+    
+    if(!node->trj_fast) {
+      structRecalcBonds(node);
+      for(i=0;i<node->obj_max;i++) {
+	if(node->obj_flag[i]) {
+	  structRecalcBondList(node->obj[i].bond,node->obj[i].bond_count);
+	  if(node->obj[i].render.mode==RENDER_CUSTOM) {
+	    structObjGenVA(&node->obj[i]);
+	  }
 	}
       }
+      
     }
-    
   }
   sprintf(message,"frame %d of %d",frame+1,node->trj.frame_count);
   guiMessage(message);
-
+  
   return 0;
 }
 

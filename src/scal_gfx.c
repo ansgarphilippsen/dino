@@ -296,7 +296,7 @@ int scalDrawObj(scalObj *obj)
 
     glDisable(GL_TEXTURE_2D);
 
-    glBegin(GL_LINES);
+/*     glBegin(GL_LINES);
     glColor3f(1.0,0.0,1.0);
     glVertex3d(obj->slab.center[0],
 	       obj->slab.center[1],
@@ -324,7 +324,7 @@ int scalDrawObj(scalObj *obj)
     }
 
     glEnd();
-
+ */
 
 
     break;

@@ -9,6 +9,7 @@
 #include "struct_db.h"
 #include "charmm.h"
 #include "Cmalloc.h"
+#include "struct_read.h"
 
 extern int debug_mode;
 
@@ -128,3 +129,180 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
   return 0;
 }
 
+#define BDTRJ_MAX_TYPES 32
+
+int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag)
+{
+  int i;
+  int nframe, ntype;
+  char atname[BDTRJ_MAX_TYPES][5];
+  char dummy[4];
+  struct STRUCT_BDTRJ_FRAME *frame;
+  struct STRUCT_BDTRJ_ENTRY *entry;
+  int entry_count,entry_max;
+  long runtime;
+  int nmoveion,framec;
+  int ctype;
+  float cx,cy,cz;
+  struct STRUCT_FILE sf;
+  struct STRUCT_FILE_ATOM_ENTRY *ae;
+  char message[256];
+
+  fread(dummy,1,4,f);
+  fread(&nframe,sizeof(int),1,f);
+  fread(dummy,1,4,f);
+  if(swap_flag)
+    swap_4b((unsigned char *)&nframe);
+
+  fread(dummy,1,4,f);
+  fread(&ntype,sizeof(int),1,f);
+  fread(dummy,1,4,f);
+  if(swap_flag)
+    swap_4b((unsigned char *)&ntype);
+
+  //  fprintf(stderr,"\nnframe: %d  ntype: %d",nframe,ntype);
+
+  if(nframe>1e6) {
+    comMessage("\nerror: huge framecount: invalid fileformat or byte-swapped ?");
+    return -1;
+  }
+
+  if(ntype<=0) {
+    comMessage("\nerror: ntype <=0");
+    return -1;
+  }
+
+  if(ntype>=BDTRJ_MAX_TYPES) {
+    comMessage("\nerror: ntypes exceeds maximum");
+    return -1;
+  }
+
+  fread(dummy,1,4,f);
+  for(i=0;i<ntype;i++) {
+    fread(atname[i],sizeof(char),4,f);
+    atname[i][4]='\0';
+  }
+  fread(dummy,1,4,f);
+
+  frame=Ccalloc(nframe,sizeof(struct STRUCT_BDTRJ_FRAME));
+
+  entry_max=ntype*nframe*10;
+  entry=Crecalloc(NULL,entry_max,sizeof(struct STRUCT_BDTRJ_ENTRY));
+  entry_count=0;
+
+  for(framec=0;framec<nframe;framec++) {
+    fread(dummy,1,4,f);
+    fread(dummy,1,4,f);
+    fread(dummy,1,4,f);
+    fread(dummy,1,4,f);
+
+    fread(dummy,1,4,f);
+    fread(&nmoveion,sizeof(int),1,f);
+    fread(dummy,1,4,f);
+
+    if(entry_count+nmoveion>=entry_max) {
+      entry_max+=nmoveion;
+      entry=Crecalloc(entry,entry_max,sizeof(struct STRUCT_BDTRJ_ENTRY));
+    }
+
+    fread(dummy,1,4,f);
+    for(i=0;i<nmoveion;i++) {
+      fread(&ctype,sizeof(int),1,f);
+      entry[entry_count+i].frame=framec;
+      entry[entry_count+i].index=ctype;
+    }
+    fread(dummy,1,4,f);
+
+    fread(dummy,1,4,f);
+    for(i=0;i<nmoveion;i++) {
+      fread(&cx,sizeof(float),1,f);
+      entry[entry_count+i].x=cx;
+    }
+    fread(dummy,1,4,f);
+
+    fread(dummy,1,4,f);
+    for(i=0;i<nmoveion;i++) {
+      fread(&cy,sizeof(float),1,f);
+      entry[entry_count+i].y=cy;
+    }
+    fread(dummy,1,4,f);
+
+    fread(dummy,1,4,f);
+    for(i=0;i<nmoveion;i++) {
+      fread(&cz,sizeof(float),1,f);
+      entry[entry_count+i].z=cz;
+    }
+    fread(dummy,1,4,f);
+    
+    /*
+    for(i=0;i<nmoveion;i++) {
+      fprintf(stderr,"\n%d %d %f %f %f",
+	      entry[entry_count+i].frame,
+	      entry[entry_count+i].index,
+	      entry[entry_count+i].x,
+	      entry[entry_count+i].y,
+	      entry[entry_count+i].z);
+    }
+    */
+
+    frame[framec].n=framec;
+    frame[framec].start=entry_count;
+    frame[framec].end=entry_count+nmoveion-1;
+
+    entry_count+=nmoveion;
+  }
+
+  entry=Crecalloc(entry,entry_count,sizeof(struct STRUCT_BDTRJ_ENTRY));
+
+
+  /*
+    create the normal struct entries
+  */
+
+  ae=Ccalloc(ntype,sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+
+  for(i=0;i<ntype;i++) {
+    ae[i].anum=i+1;
+    strcpy(ae[i].aname,atname[i]);
+    strcpy(ae[i].element,"NN");
+    ae[i].rnum=i+1;
+    strcpy(ae[i].rname,"TRJ");
+    ae[i].cnum=-1;
+    strcpy(ae[i].cname,"");
+    ae[i].mnum=-1;
+    strcpy(ae[i].mname,"");
+    ae[i].x=0.0;
+    ae[i].y=0.0;
+    ae[i].z=0.0;
+    ae[i].c1=0.0;
+    ae[i].c2=0.0;
+    ae[i].c3=0.0;
+  }
+
+  sf.atom_entry=ae;
+  sf.atom_count=ntype;
+  sf.connect_entry=NULL;
+  sf.connect_count=0;
+
+  structFileEntry2DB(&sf,node);
+
+  /*
+    set trj params
+  */
+
+  node->trj_flag=1;
+  node->trj.type=STRUCT_TRJ_BD;
+  node->trj.pos=NULL;
+  node->trj.atom_count=0;
+  node->trj.size=0;
+  node->trj.frame=frame;
+  node->trj.frame_count=nframe;
+  node->trj.entry=entry;
+  node->trj.entry_count=entry_count;
+
+  sprintf(message," %d atomtypes, %d frames, %d entries",
+	  ntype,nframe,entry_count);
+  comMessage(message);
+
+  return 0;
+}
