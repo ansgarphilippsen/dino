@@ -1,5 +1,4 @@
 #include "help.h"
-#include "shell.h"
 #include "cl.h"
 #include "com.h"
 

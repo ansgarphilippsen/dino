@@ -6,7 +6,6 @@
 
 #include "dbm.h"
 #include "mat.h"
-#include "shell.h"
 #include "com.h"
 #include "rex.h"
 #include "render.h"

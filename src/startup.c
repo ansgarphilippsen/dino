@@ -49,17 +49,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "startup.h"
 #include "dino.h"
 #include "com.h"
 #include "gfx.h"
-#include "shell.h"
 #include "scene.h"
 #include "cl.h"
 
 extern struct GFX gfx;
-extern struct SHELL shell;
 extern struct SCENE scene;
 
 extern int debug_mode;

@@ -17,11 +17,17 @@
 
 #include "dbm.h"
 #include "com.h"
-#include "shell.h"
 #include "gfx.h"
 #include "dino.h"
 #include "scene.h"
 #include "startup.h"
+
+#ifdef NEW_SHELL
+#include "shell_raw.h"
+#include "gui_terminal.h"
+#else
+#include "shell.h"
+#endif
 
 #ifndef USE_CMI
 //#include "gui_ext.h"
@@ -138,8 +144,11 @@ int dinoMain(int argc,char **argv)
   dbmInit();
   debmsg("calling sceneInit");
   sceneInit();
+
+#ifndef NEW_SHELL
   debmsg("calling shellInit");
   shellInit((shell_callback)comWorkPrompt,logfile);
+#endif
 
   if(startup_flag) {
     load_startup();
@@ -150,6 +159,7 @@ int dinoMain(int argc,char **argv)
     comRawCommand(expr);
   }
 
+#ifndef NEW_SHELL
   if(strlen(script)>0) {
     sprintf(expr,"@%s",script);
     //    comRawCommand(expr);
@@ -157,13 +167,19 @@ int dinoMain(int argc,char **argv)
   }
 
   shellPrompt();
+#endif
 
   return 0;
 }
 
 void dinoExit(int n)
 {
+#ifdef NEW_SHELL
+  guitOutit();
+#else
   shellOutit();
+#endif
+
 #ifdef SGI
   if(gui.stereo_mode==GUI_STEREO_NORMAL)
     system("/usr/gfx/setmon -n 72HZ");

@@ -14,7 +14,6 @@
 #include "struct_obj.h"
 #include "struct_read.h"
 #include "dbm.h"
-#include "shell.h"
 #include "com.h"
 #include "rex.h"
 #include "mat.h"

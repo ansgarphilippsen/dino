@@ -9,7 +9,6 @@
 #include <GL/glu.h>
 
 #include "com.h"
-#include "shell.h"
 #include "gfx.h"
 #include "dino.h"
 #include "help.h"
@@ -35,6 +34,12 @@
 #include "joy.h"
 #include "pick.h"
 
+#ifndef NEW_SHELL
+#include "shell_raw.h"
+#else
+#include "shell.h"
+#endif
+
 #ifdef USE_CMI
 #include "input.h"
 #include "cmi.h"
@@ -53,7 +58,7 @@ extern struct GFX gfx;
 #ifndef USE_CMI
 extern struct GUI gui;
 #endif
-extern struct SHELL shell;
+
 extern struct SCENE scene;
 
 //static char com_return[256];
@@ -646,8 +651,10 @@ void comTimeProc()
   cmiToken t;
 #endif
 
+#ifndef NEW_SHELL
   /* this function is called periodically through the gui */
   shellWork();
+#endif
   /* 
      check for other periodic stuff, e.g. the SGI spin or
      playing a trajectory file
@@ -764,7 +771,9 @@ void comDBRedraw()
 
 void comMessage(const char *s)
 {
+#ifndef NEW_SHELL
   shellOut(s);
+#endif
 }
 #ifdef USE_CMI
 int comPick(int screenx, int screeny, int flag)
@@ -1192,8 +1201,10 @@ float comGetProperty(dbmNode *src,const char *prop,float *pos)
 
 int comRawCommand(const char *c)
 {
+#ifndef NEW_SHELL
   shellWriteLog(c);
   return shellWorkPrompt(c,-1,NULL);
+#endif
 }
 
 int comNewObj(const char *db, const char *name)
@@ -1733,7 +1744,9 @@ int comGetMinMaxSlab()
 
 int comWriteCharBuf(char c)
 {
+#ifndef NEW_SHELL
   shellAddChar(c);
+#endif
   return 0;
 }
 

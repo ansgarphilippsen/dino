@@ -6,7 +6,6 @@
 #include "dino.h"
 #include "ccp4.h"
 #include "dbm.h"
-#include "shell.h"
 #include "mat.h"
 #include "xtal.h"
 #include "Cmalloc.h"

@@ -55,6 +55,10 @@ user menu
 #include "spacetec.h"
 #endif
 
+#ifdef NEW_SHELL
+#include "gui_terminal.h"
+#endif
+
 struct GUI gui;
 extern struct GFX gfx;
 extern struct OBJECT_MENU om;
@@ -866,30 +870,17 @@ static int guiIOErrorHandler(Display *d)
 
 void guiTimeProc(XtPointer client_data)
 {
-  XExposeEvent expose;
-
-
   if(gui.redraw) {
     gui.redraw=0;
     gfxRedraw();
-    /****
-    expose.type=Expose;
-    expose.serial=-1;
-    expose.send_event=0;
-    expose.display=gui.dpy;
-    expose.window=gui.glxwindow;
-    expose.x=0;
-    expose.y=0;
-    expose.width=gui.win_width;
-    expose.height=gui.win_height;
-    expose.count=0;
-    XtDispatchEvent((XEvent *)&expose);
-    ****/
   }
   comTimeProc();
-#ifndef NEW_GUI_MAIN
-  XtAppAddTimeOut(gui.app,5,(XtTimerCallbackProc)guiTimeProc,NULL);
+#ifdef NEW_SHELL
+  guitTimeProc();
 #endif
+
+  XtAppAddTimeOut(gui.app,5,(XtTimerCallbackProc)guiTimeProc,NULL);
+
 }
 
 

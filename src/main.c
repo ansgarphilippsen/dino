@@ -11,6 +11,7 @@
 
 #include "dino.h"
 #include "gui_ext.h"
+#include "gui_terminal.h"
 
 #ifndef USE_CMI
 #include "com.h"
@@ -24,6 +25,7 @@ int main(int argc, char **argv)
 {
   int ret;
 
+
 #ifdef USE_CMI
   cmiInit();
 
@@ -35,6 +37,8 @@ int main(int argc, char **argv)
 
 #ifdef X11_GUI
   dinoMain(argc, argv);
+
+
   if(guiInit(comWorkGfxCommand,&argc,&argv)<0) {
     return -1;
   }
@@ -47,6 +51,9 @@ int main(int argc, char **argv)
 
 #endif
 
+#ifdef NEW_SHELL
+  guitInit();
+#endif
 
   
   guiMainLoop();

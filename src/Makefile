@@ -16,6 +16,7 @@
 # USE_CMI   use _only_ with GUI_GLUT !!
 
 OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF #-DUSE_CMI
+OPTIONS += -DNEW_SHELL
 
 # use tcl as interpreter
 #OPTIONS += -DTCL_SHELL
@@ -58,11 +59,16 @@ ifneq (,$(findstring USE_CMI,$(OPTIONS)))
 SRC += cmi.c input.c
 endif
 
+ifneq (,$(findstring NEW_SHELL,$(OPTIONS)))
+SRC += gui_terminal.c shell_raw.c shell_command.c
+LOPT += -lcurses
+else
 ifneq (,$(findstring TCL_SHELL,$(OPTIONS)))
 SRC += shell_tcl.c
 LOPT += -ltcl
 else
 SRC += shell.c
+endif
 endif
 
 # one of the three GUIs: X11, GLUT or SDL

@@ -484,6 +484,7 @@ int gfxSceneRedraw(int clear)
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
+
   for(i=0;i<8;i++)
     if(gfx.light[i].on && !gfx.light[i].local)
       glLightfv(GL_LIGHT0+i,GL_POSITION,gfx.light[i].pos);
@@ -567,6 +568,23 @@ int gfxSceneRedraw(int clear)
     glEnd();
     glEnable(GL_LIGHTING);
   }
+
+#ifdef NEW_SHELL
+  glDisable(GL_LIGHTING);
+  glBegin(GL_LINES);
+  glColor3f(1,0,0);
+  glVertex3f(0,0,0);
+  glVertex3f(10,0,0);
+  glColor3f(0,1,0);
+  glVertex3f(0,0,0);
+  glVertex3f(0,10,0);
+  glColor3f(0,0,1);
+  glVertex3f(0,0,0);
+  glVertex3f(0,0,10);
+  glEnd();
+  glEnable(GL_LIGHTING);
+#endif
+
 
   return 0;
 }

@@ -18,7 +18,6 @@
 #include "surf_read.h"
 #include "surf_write.h"
 #include "grid_db.h"
-#include "shell.h"
 #include "rex.h"
 #include "mat.h"
 #include "conn.h"
