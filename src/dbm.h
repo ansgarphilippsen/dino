@@ -165,11 +165,11 @@ struct DBM {
 #include "pick.h"
 
 int dbmInit(void);
-int dbmNew(int wc, char **wl);
-int dbmLoad(int, char **);
-dbmNode *dbmNewNode(int type, char *name);
-int dbmDeleteNode(char *name);
-int dbmGetNodeType(char *);
+int dbmNew(int wc, const char **wl);
+int dbmLoad(int, const char **);
+dbmNode *dbmNewNode(int type, const char *name);
+int dbmDeleteNode(const char *name);
+int dbmGetNodeType(const char *);
 
 int dbmStructCheckDist(structObj *, double *v, double d);
 float dbmStructGetProperty(dbmStructNode *, float *pos, const char *prop);
@@ -185,16 +185,16 @@ int dbmGridCheckDist(gridObj *, double *v, double d);
 int dbmCalcXtal(struct XTAL *xtal);
 
 int dbmSplit(char *exp, char c, int *wc, char ***wl);
-int dbmSplitPOV(char *expr, char *prop, char *op, char *val);
-int dbmGetColorHash(char *expr, double *r, double *g, double *b);
+int dbmSplitPOV(const char *expr, char *prop, char *op, char *val);
+int dbmGetColorHash(const char *expr, double *r, double *g, double *b);
 
 float dbmGetProperty(float *pos, struct DBM_RANGE *r);
 int dbmGetMinMax(dbmNode *node, char *prop, float *min, float *max);
 float dbmGetMin(dbmNode *node, char *prop);
 float dbmGetMax(dbmNode *node, char *prop);
 
-int dbmScalCommand(struct DBM_SCAL_NODE *n,int wc,char **wl);
-int dbmScalCommandNew(struct DBM_SCAL_NODE *node,int wc,char **wl);
+int dbmScalCommand(struct DBM_SCAL_NODE *n,int wc,const char **wl);
+int dbmScalCommandNew(struct DBM_SCAL_NODE *node,int wc,const char **wl);
 
 int dbmSetExtract(dbmNode *node, struct DBM_SET *set, char *expr, int type);
 int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range);

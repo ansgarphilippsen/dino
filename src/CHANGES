@@ -1,3 +1,7 @@
+tube radius is determined by object property radius, not by bw anymore
+
+rewrote shell code completely!
+
 added startup file
 
 added scene properties fogm (linear, exp exp2) and fogd (density) (not really

@@ -915,8 +915,6 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
   cgfxPoint *cp1,*cp2;
   float cylp1[3],cylp2[3],cyld[3];
   
-  int detail=render->detail;
-  int detail2=render->detail;
   int morph,sf;
   float frac,bw_save;
 
@@ -984,7 +982,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 
 	  cgfxGenCylinder(va,cylp1,cylp2,render->helix_width*2.0,
 			  1,0,
-			  render->detail,CGFX_CAP,sp[k].colp[0]);
+			  render->detail1,CGFX_CAP,sp[k].colp[0]);
 
 	  if(i>=pc)
 	    break;
@@ -1054,8 +1052,8 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       
     }
 
-    cgfxSphereVA(sp[0].rad,sp[0].v,sp[0].colp[0],va,detail);
-    cgfxSphereVA(sp[pc-1].rad,sp[pc-1].v,sp[pc-1].colp[0],va,detail);
+    cgfxSphereVA(sp[0].rad,sp[0].v,sp[0].colp[0],va,render->detail1);
+    cgfxSphereVA(sp[pc-1].rad,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
 
     if(render->mode==RENDER_HSC) {
       for(i=0;i<pc;i++) {

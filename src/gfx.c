@@ -569,23 +569,36 @@ int gfxSceneRedraw(int clear)
     glEnable(GL_LIGHTING);
   }
 
-#ifdef NEW_SHELL
-  glDisable(GL_LIGHTING);
-  glBegin(GL_LINES);
-  glColor3f(1,0,0);
-  glVertex3f(0,0,0);
-  glVertex3f(10,0,0);
-  glColor3f(0,1,0);
-  glVertex3f(0,0,0);
-  glVertex3f(0,10,0);
-  glColor3f(0,0,1);
-  glVertex3f(0,0,0);
-  glVertex3f(0,0,10);
-  glEnd();
-  glEnable(GL_LIGHTING);
-#endif
-
-
+  if(gfx.axisflag) {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-100,100,-100,100,-100,100);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslated(0,0,0);
+    
+    glMultMatrixd(gfx.transform.rot);
+    
+    glDisable(GL_LIGHTING);
+    glBegin(GL_LINES);
+    glColor3f(1,0,0);
+    glVertex3f(0,0,0);
+    glVertex3f(10,0,0);
+    glColor3f(0,1,0);
+    glVertex3f(0,0,0);
+    glVertex3f(0,10,0);
+    glColor3f(0,0,1);
+    glVertex3f(0,0,0);
+    glVertex3f(0,0,10);
+    glEnd();
+    glEnable(GL_LIGHTING);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+  }
+  
+  
   return 0;
 }
 

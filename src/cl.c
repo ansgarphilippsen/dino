@@ -148,12 +148,13 @@ int clStrlen(const char *s)
 
 int clStrncat(char *d, const char *s, int m)
 {
-  int i,j;
+  int i,j,k;
   if(d==NULL || s==NULL || m==0)
     return 0;
+  k=clStrlen(s);
   i=clStrlen(d);
   j=0;
-  while(s[j]!='\0' && j<m) d[i++]=s[j++];
+  while(s[j]!='\0' && j<m && k+j<m) d[i++]=s[j++];
   d[i]='\0';
   return j;
 }

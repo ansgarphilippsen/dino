@@ -99,7 +99,7 @@ int geomObjRegen(geomObj *obj)
 
     for(i=0;i<obj->point_count;i++) {
       cgfxSphereVA(obj->point[i].r,obj->point[i].v,obj->point[i].c,
-		   &obj->va,obj->render.detail);
+		   &obj->va,obj->render.detail1);
     }
     
     for(i=0;i<obj->line_count;i++) {
@@ -107,14 +107,14 @@ int geomObjRegen(geomObj *obj)
 	cgfxGenCylinder(&obj->va,
 			obj->line[i].v1,obj->line[i].v2,obj->line[i].r,
 			obj->render.stipplei,obj->render.stippleo,
-			obj->render.detail,
+			obj->render.detail1,
 			CGFX_CAP,
 			obj->line[i].c);
       } else {
 	cgfxGenCylinder(&obj->va,
 			obj->line[i].v1,obj->line[i].v2,obj->line[i].r,
 			0.0,0.0,
-			obj->render.detail,
+			obj->render.detail1,
 			CGFX_CAP,
 			obj->line[i].c);
       }
@@ -174,7 +174,7 @@ geomObj *geomNewObj(struct DBM_GEOM_NODE *node, char *name, int type)
 
       no->render.show=1;
       no->render.mode=RENDER_OFF;
-      no->render.detail=3;
+      no->render.detail1=3;
       no->render.detail2=3;
       no->render.tube_ratio=1.0;
       no->render.nice=1;
@@ -848,7 +848,7 @@ int geomSmooth(geomObj *obj)
 
   point_list=Ccalloc(obj->point_count,sizeof(cgfxSplinePoint));
 
-  detail=obj->render.detail;
+  detail=obj->render.detail1;
   if(detail<1)
     detail=1;
 

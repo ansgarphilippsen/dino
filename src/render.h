@@ -36,7 +36,7 @@ typedef struct RENDER_MATERIAL {
 typedef struct RENDER {
   int show;
   int mode;
-  int detail,detail2;
+  int detail,detail1,detail2;
   int nice;
   int dbl_light;
   int face_reverse;

@@ -2,7 +2,7 @@
 #include "cl.h"
 #include "com.h"
 
-int help(struct HELP_ENTRY *entry, char *pre, char *keyw)
+int help(struct HELP_ENTRY *entry, const char *pre, const char *keyw)
 {
   int i,f;
   char message[256];

@@ -184,7 +184,7 @@ int geomDrawCyl(geomObj *obj, geomLine *cyl)
   glMultMatrixf(cyl->rmat);
   
   glColor4fv(cyl->c);
-  cgfxCylinder(CGFX_CAP,cyl->length,cyl->r,obj->render.detail);
+  cgfxCylinder(CGFX_CAP,cyl->length,cyl->r,obj->render.detail1);
   glPopMatrix();
   return 0;
 }

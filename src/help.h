@@ -7,7 +7,7 @@ struct HELP_ENTRY {
   char *detail;
 };
 
-int help(struct HELP_ENTRY *, char *pre, char *keyw);
+int help(struct HELP_ENTRY *, const char *pre, const char *keyw);
 
 #endif
 

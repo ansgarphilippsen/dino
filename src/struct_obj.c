@@ -59,7 +59,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
   } else if(!strcmp(wl[0],"get")) {
     return structObjComGet(obj, wc-1,wl+1);
   } else if(!strcmp(wl[0],"render")) {
-    od=obj->render.detail;
+    od=obj->render.detail1;
     bw=obj->render.bond_width;
     if(renderSet(&obj->render,wc-1,wl+1)!=0) {
       sprintf(message,"\n%s: syntax error in render statement",node->name);
@@ -103,9 +103,9 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
 	}
       }
     }
-    if(obj->render.detail!=od) {
+    if(obj->render.detail1!=od) {
       comNewDisplayList(obj->sphere_list);
-      cgfxSphere(1.0,obj->render.detail);
+      cgfxSphere(1.0,obj->render.detail1);
       comEndDisplayList();
     }
 
@@ -839,7 +839,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
   point_list=Ccalloc(obj->bond_count+10,sizeof(cgfxSplinePoint));
   
   // detail level from render struct
-  detail=obj->render.detail;
+  detail=obj->render.detail1;
   if(detail<1)
     detail=1;
   
@@ -1543,7 +1543,7 @@ int structObjGenVA(structObj *obj)
     Cfree(obj->va.p);
   }
 
-  detail=1+(int)(obj->render.detail/2);
+  detail=1+(int)(obj->render.detail1/2);
 
   size=((detail*2-2)*detail*4*2+2*detail*2)*3*obj->atom_count;
   size+=detail*4*2*3*2;

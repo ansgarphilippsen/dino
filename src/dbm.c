@@ -76,7 +76,7 @@ int dbmInit(void)
   return 0;
 }
 
-int dbmLoad(int wc, char **wl)
+int dbmLoad(int wc, const char **wl)
 {
   char type[64];
   char file[256];
@@ -673,7 +673,7 @@ int dbmLoad(int wc, char **wl)
   return 0;
 }
 
-dbmNode *dbmNewNode(int type, char *oname)
+dbmNode *dbmNewNode(int type, const char *oname)
 {
   int i,c;
   char name[256];
@@ -741,7 +741,7 @@ dbmNode *dbmNewNode(int type, char *oname)
   return NULL;
 }
 
-int dbmGetNodeType(char *name)
+int dbmGetNodeType(const char *name)
 {
   int i;
   for(i=0;i<dbm.nodec_max;i++)
@@ -751,7 +751,7 @@ int dbmGetNodeType(char *name)
   return DBM_NODE_EMPTY;
 }
 
-int dbmDeleteNode(char *name)
+int dbmDeleteNode(const char *name)
 {
   // TODO later
   // all specific memory freeing calls
@@ -982,7 +982,7 @@ int dbmCalcXtal(struct XTAL *xtal)
   return 0;
 }
 
-int dbmSplitPOV(char *oexpr, char *prop, char *op, char *val)
+int dbmSplitPOV(const char *oexpr, char *prop, char *op, char *val)
 {
   int c,wc;
   char *cp,expr[2048];
@@ -1039,7 +1039,7 @@ int dbmSplitPOV(char *oexpr, char *prop, char *op, char *val)
 }
 
 
-int dbmGetColorHash(char *expr, double *r, double *g, double *b)
+int dbmGetColorHash(const char *expr, double *r, double *g, double *b)
 {
   char hexr[5], hexg[5], hexb[5];
   int rv,gv,bv;
@@ -1668,7 +1668,7 @@ float dbmGetMax(dbmNode *node, char *prop)
   to all!!!
 *************************************/
 
-int dbmNew(int wc, char **wl)
+int dbmNew(int wc, const char **wl)
 {
   int i;
   char message[256];

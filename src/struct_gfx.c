@@ -11,6 +11,7 @@
 #include "com.h"
 #include "transform.h"
 #include "build.h"
+#include "cl.h"
 
 extern struct GFX gfx;
 
@@ -99,7 +100,7 @@ int structDrawObj(structObj *obj)
   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, obj->render.mat.emm);
   glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, obj->render.mat.shin);
 
-  detail=obj->render.detail;
+  detail=obj->render.detail1;
   bond_width=obj->render.bond_width;
   sphere_radius=obj->render.sphere_radius;
   
@@ -417,7 +418,7 @@ int structDrawObj(structObj *obj)
 		    obj->atom[i].ap->p->y+0.1,
 		    obj->atom[i].ap->p->z+0.1);
 
-      strcpy(label,"");
+      clStrcpy(label,"");
       if(obj->node->model_flag)
 	sprintf(label,"%s%d.",label,obj->atom[i].ap->model->num);
       if(obj->node->chain_flag)
@@ -454,7 +455,7 @@ int structDrawBDObj(dbmStructNode *node, structObj *obj)
   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, obj->render.mat.emm);
   glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, obj->render.mat.shin);
 
-  detail=obj->render.detail;
+  detail=obj->render.detail1;
   bond_width=obj->render.bond_width;
   sphere_radius=obj->render.sphere_radius;
   

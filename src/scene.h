@@ -15,7 +15,6 @@ struct SCENE_LABEL {
 struct SCENE {
   struct SCENE_STACK *stack;
   int stack_p,stack_m;
-  int axis;
   float cp[3];
   int cpflag;
 #ifdef EXPO
@@ -27,7 +26,7 @@ struct SCENE {
 #endif
 
 int sceneInit(void);
-int sceneCommand(int wc, char **wl);
+int sceneCommand(int wc, const char **wl);
 void scenePush(char *s);
 char *scenePop(void);
 char *scenePeek(void);
@@ -35,13 +34,13 @@ void sceneClear(void);
 int scenePersp2Ortho(void);
 int sceneOrtho2Persp(void);
 
-int sceneSubCommand(char *sub, int wc, char **wl);
-int sceneSubLightCom(int l, int wc, char **wl);
-int sceneSubLightSet(int l, int wc, char **wl);
-int sceneSubLightGet(int l, int wc, char **wl);
+int sceneSubCommand(char *sub, int wc, const char **wl);
+int sceneSubLightCom(int l, int wc, const char **wl);
+int sceneSubLightSet(int l, int wc, const char **wl);
+int sceneSubLightGet(int l, int wc, const char **wl);
 
-int sceneSubClipCom(int c, int wc, char **wl);
-int sceneSubClipSet(int c, int wc, char **wl);
-int sceneSubClipGet(int c, int wc, char **wl);
+int sceneSubClipCom(int c, int wc, const char **wl);
+int sceneSubClipSet(int c, int wc, const char **wl);
+int sceneSubClipGet(int c, int wc, const char **wl);
 
-int sceneMorph(int wc, char **wl);
+int sceneMorph(int wc, const char **wl);

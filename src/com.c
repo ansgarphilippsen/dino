@@ -34,8 +34,9 @@
 #include "joy.h"
 #include "pick.h"
 
-#ifndef NEW_SHELL
+#ifdef NEW_SHELL
 #include "gui_terminal.h"
+#include "shell_raw.h"
 #include "shell_command.h"
 #else
 #include "shell.h"
@@ -99,6 +100,9 @@ struct HELP_ENTRY top_help[] = {
   
   {NULL,NULL,NULL}
 };
+
+static char init_command[1024];
+static int init_command_flag=0;
 
 int comInit()
 {
@@ -279,7 +283,7 @@ int comInit()
   and processes them.
   it returns 0 if everything is OK, otherwise !=0
 */
-int comWorkPrompt(int word_count, char ** word_list)
+int comWorkPrompt(int word_count, const char ** word_list)
 {
   int i;
   char message[1024];
@@ -455,7 +459,7 @@ int comWorkPrompt(int word_count, char ** word_list)
 }
 
 
-int comWorkObject(char *target, int word_count, char **word_list)
+int comWorkObject(char *target, int word_count, const char **word_list)
 {
   int i,j;
   char w0[256],*p;
@@ -614,7 +618,7 @@ int comWorkObject(char *target, int word_count, char **word_list)
   }
 }
 
-void comWorkGfxCommand(int word_count, char ** word_list)
+void comWorkGfxCommand(int word_count, const char ** word_list)
 {
 }
 
@@ -1216,7 +1220,9 @@ float comGetProperty(dbmNode *src,const char *prop,float *pos)
 
 int comRawCommand(const char *c)
 {
-#ifndef NEW_SHELL
+#ifdef NEW_SHELL
+  return shellParseRaw(c);
+#else
   shellWriteLog(c);
   return shellWorkPrompt(c,-1,NULL);
 #endif
@@ -1320,7 +1326,7 @@ int comIsDB(const char *name)
 */
 
 struct WRITE_EXT {
-  char ext[16],type[16];
+  const char *ext,*type;
 } write_def[]= {
   {"ps","ps"},
   {"rgb","rgb"},
@@ -1335,7 +1341,7 @@ struct WRITE_EXT {
 };
   
 
-int comWrite(int wc,char **wl)
+int comWrite(int wc,const char **wl)
 {
   char file[256],file2[256];
   char base[256],*bp;
@@ -1523,7 +1529,7 @@ int comWrite(int wc,char **wl)
   return 0;
 }
 
-int comSave(int wc,char **wl)
+int comSave(int wc,const char **wl)
 {
   char message[256];
   FILE *f;
@@ -1812,7 +1818,7 @@ void comReturn(const char *r)
   }
 }
 
-char *comGetReturn() {return com_return_buf;}
+const char *comGetReturn() {return com_return_buf;}
 
 int comTransform(int device, int mask, int axis, int ivalue)
 {
@@ -1954,6 +1960,14 @@ int comGenCubeLookup()
   }
   return 0;
 }
+
+
+void comSetInitCommand(const char *s)
+{
+  clStrncpy(init_command,s,sizeof(init_command));
+  init_command_flag=1;
+}
+
 
 #ifdef USE_CMI
 void comCMICallback(const cmiToken *t)

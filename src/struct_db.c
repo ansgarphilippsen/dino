@@ -2299,7 +2299,7 @@ int structSetDefault(structObj *obj)
 
   obj->render.show=1;
   obj->render.mode=RENDER_SIMPLE;
-  obj->render.detail=5;
+  obj->render.detail1=5;
   obj->render.detail2=3;
   obj->render.nice=1;
   obj->render.line_width=1.0;
@@ -2336,7 +2336,7 @@ int structSetDefault(structObj *obj)
 
   obj->sphere_list=comGenLists(1);
   comNewDisplayList(obj->sphere_list);
-  cgfxSphere(1.0,obj->render.detail);
+  cgfxSphere(1.0,obj->render.detail1);
   comEndDisplayList();
 
   obj->build=NULL;

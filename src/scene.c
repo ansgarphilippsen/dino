@@ -102,7 +102,7 @@ int sceneInit(void)
 
 }
 
-int sceneCommand(int wc, char **wl)
+int sceneCommand(int wc, const char **wl)
 {
   char message[256];
   char set[1024];
@@ -596,6 +596,34 @@ int sceneCommand(int wc, char **wl)
 	  glEnable(GL_DITHER);
 	else
 	  glDisable(GL_DITHER);
+	comRedraw();
+      } else if(!strcmp(prop,"axis")) {
+	/**********************
+	       set axis
+	**********************/
+	if(!strcmp(op,"!")) {
+	  gfx.axisflag=0;
+	} else if(strlen(val)==0 && strlen(op)==0) {
+	  gfx.axisflag=1;
+	} else if(strlen(val)==0 && strlen(op)>0) {
+	  sprintf(message,"scene: missing value\n");
+	  comMessage(message);
+	  return -1;
+	} else {
+	  if(strcmp(op,"=")) {
+	    sprintf(message,"scene: unknown operator: %s\n",op);
+	    comMessage(message);
+	    return -1;
+	  } else {
+	    if(!strcmp(val,"0") || 
+	       !strcmp(val,"false") ||
+	       !strcmp(val,"no")) {
+	      gfx.axisflag=0;
+	    } else {
+	      gfx.axisflag=1;
+	    }
+	  }
+	}
 	comRedraw();
       } else if(!strcmp(prop,"depthc")) {
 	/**********************
@@ -1272,7 +1300,7 @@ int sceneOrtho2Persp(void)
   return 0;
 }
 
-int sceneSubCommand(char *sub, int wc, char **wl)
+int sceneSubCommand(char *sub, int wc, const char **wl)
 {
   char message[256];
   int ret;
@@ -1347,7 +1375,7 @@ int sceneSubCommand(char *sub, int wc, char **wl)
   return 0;
 }
 
-int sceneSubLightCom(int l, int wc, char **wl)
+int sceneSubLightCom(int l, int wc, const char **wl)
 {
   char message[256];
   if(wc<=0) {
@@ -1400,7 +1428,7 @@ int sceneSubLightCom(int l, int wc, char **wl)
   return 0;
 }
 
-int sceneSubLightSet(int l, int wc, char **wl)
+int sceneSubLightSet(int l, int wc, const char **wl)
 {
   Set set;
   int pc,vc;
@@ -1549,7 +1577,7 @@ int sceneSubLightSet(int l, int wc, char **wl)
   return 0;
 }
 
-int sceneSubLightGet(int l, int wc, char **wl)
+int sceneSubLightGet(int l, int wc, const char **wl)
 {
   char message[256];
   if(wc!=1) {
@@ -1587,7 +1615,7 @@ int sceneSubLightGet(int l, int wc, char **wl)
   return 0;
 }
 
-int sceneSubClipCom(int c, int wc, char **wl)
+int sceneSubClipCom(int c, int wc, const char **wl)
 {
   char message[256];
   if(wc<=0) {
@@ -1618,7 +1646,7 @@ int sceneSubClipCom(int c, int wc, char **wl)
   return 0;
 }
 
-int sceneSubClipSet(int c, int wc, char **wl)
+int sceneSubClipSet(int c, int wc, const char **wl)
 {
   Set set;
   int pc,vc;
@@ -1686,13 +1714,13 @@ int sceneSubClipSet(int c, int wc, char **wl)
   return 0;
 }
 
-int sceneSubClipGet(int c, int wc, char **wl)
+int sceneSubClipGet(int c, int wc, const char **wl)
 {
   return 0;
 }
 
 #ifdef EXPO
-int sceneMorph(int wc, char **wl)
+int sceneMorph(int wc, const char **wl)
 {
   double m[16],r1[16],r2[16],t1[4],t2[4],rd[16],td[4];
   int i,j,step;

@@ -39,7 +39,7 @@ const char usage[]={"Usage: dino [-debug] [-nostereo] [-help] [-s script] [-log 
 
 char welcome[]={"\nWelcome to dino v%s    (http://www.dino3d.org)\n\n"};
 
-int debug_mode,gfx_mode,stereo_mode,video_mode;
+int debug_mode,gfx_mode,stereo_mode,video_mode, shell_mode;
 
 /***************************
 
@@ -76,6 +76,7 @@ int dinoMain(int argc,char **argv)
   stereo_mode=1;
   debug_mode=0;
   video_mode=0;
+  shell_mode=0;
 
   strcpy(logfile,"logfile.dino");
   fprintf(stderr,welcome,VERSION);
@@ -95,6 +96,9 @@ int dinoMain(int argc,char **argv)
       } else if(!strcmp(argv[i],"-d") ||
                 !strcmp(argv[i],"-debug")) {
         debug_mode=1;
+      } else if(!strcmp(argv[i],"-t") ||
+                !strcmp(argv[i],"-trace")) {
+        shell_mode=1;
         fprintf(stderr,"debug mode ON\n");
       } else if(!strcmp(argv[i],"-nostereo")) {
         stereo_mode=0;
@@ -161,13 +165,13 @@ int dinoMain(int argc,char **argv)
     comRawCommand(expr);
   }
 
-#ifndef NEW_SHELL
   if(strlen(script)>0) {
     sprintf(expr,"@%s",script);
-    //    comRawCommand(expr);
-    shellSetInitCommand(expr);
+    //    comSetInitCommand(expr);
+    comRawCommand(expr);
   }
 
+#ifndef NEW_SHELL
   shellPrompt();
 #endif
 

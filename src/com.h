@@ -51,10 +51,10 @@ enum  {COM_PLAY_ON,
        COM_PLAY_OFF};
 
 int comInit(void);
-int comWorkPrompt(int word_count, char ** word_list);
-void comWorkGfxCommand(int word_count, char ** word_list);
-int comWorkObject(char *,int, char **);
-int comSceneCommand(int wc, char **wl);
+int comWorkPrompt(int word_count, const char ** word_list);
+void comWorkGfxCommand(int word_count, const char ** word_list);
+int comWorkObject(char *,int, const char **);
+int comSceneCommand(int wc, const char **wl);
 void comTimeProc(void);
 void comRedraw(void);
 void comDBRedraw(void);
@@ -73,8 +73,8 @@ int comObjCommand(const char *db, const char *obj, char *command);
 int comRawCommand(const char *c);
 int comIsDB(const char *name);
 dbmNode * comGetDB(const char *name);
-int comWrite(int wc,char **wl);
-int comSave(int wc,char **wl);
+int comWrite(int wc,const char **wl);
+int comSave(int wc,const char **wl);
 int comGenLists(int n);
 int comNewDisplayList(int l);
 int comEndDisplayList(void);
@@ -83,7 +83,7 @@ int comWriteCharBuf(char c);
 int comPlay(dbmNode *node, int command);
 int comGrabInput(int, comInputFunc, void *ptr);
 void comReturn(const char *r);
-char *comGetReturn(void);
+const char *comGetReturn(void);
 
 int comTransform(int device, int mask, int axis, int value);
 int comGrab(transMat *tm, char *name);
@@ -99,6 +99,7 @@ int comGenCubeLookup();
 
 void comCMICallback(const cmiToken *t);
 
+void comSetInitCommand(const char *s);
 
 #endif
 

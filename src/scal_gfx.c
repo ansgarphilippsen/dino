@@ -65,7 +65,7 @@ int scalDrawObj(scalObj *obj)
     {4,5},{4,6},{6,7},{5,7}
   };
 
-  detail=obj->render.detail;
+  detail=obj->render.detail1;
 
 //  fprintf(stderr," .%s.%s\n",obj->node->name, obj->name);
 

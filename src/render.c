@@ -335,6 +335,40 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	render->detail=oldi;
 	return -1;
       }
+      render->detail1=render->detail;
+      render->detail2=render->detail;
+    } else if(!strcmp(prop,"detail1")) {
+      /********************
+	     detail1
+      ********************/
+      if(strlen(op)==0) {
+	sprintf(message,"\nmissing operator");
+	comMessage(message);
+	return -1;
+      }
+      if(strlen(val)==0) {
+	sprintf(message,"\nmissing value");
+	comMessage(message);
+	return -1;
+      }
+      oldi=render->detail1;
+      if(!strcmp(op,"=")) {
+	render->detail1=atoi(val);
+      } else if(!strcmp(op,"+=")) {
+	render->detail1+=atoi(val);
+      } else if(!strcmp(op,"-=")) {
+	render->detail1-=atoi(val);
+      } else {
+	sprintf(message,"\ninvalid operator %s",op);
+	comMessage(message);
+	return -1;
+      }
+      if(render->detail1<1 || render->detail1>90) {
+	sprintf(message,"\nvalue out of range (1-90)");
+	comMessage(message);
+	render->detail1=oldi;
+	return -1;
+      }
     } else if(!strcmp(prop,"detail2")) {
       /********************
 	     detail2
@@ -425,6 +459,10 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	*/
       if(render->sphere_radius<render->bond_width)
 	render->sphere_radius=render->bond_width;
+      // DEPRECATED FOR TUBE
+      if(render->mode==RENDER_TUBE || render->mode==RENDER_HSC) {
+	comMessage("warning: parameter bw is deprecated for tube diameter, use atom property rad instead\n");
+      }
      } else if(!strcmp(prop,"tuber")) {
       /********************
 	     tuber

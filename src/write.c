@@ -666,7 +666,7 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
 	for(j=0;j<dbm.node[i].structNode.obj_max;j++)
 	  if(dbm.node[i].structNode.obj_flag[j]!=0) {
 	    comNewDisplayList(dbm.node[i].structNode.obj[j].sphere_list);
-	    cgfxSphere(1.0,dbm.node[i].structNode.obj[j].render.detail);
+	    cgfxSphere(1.0,dbm.node[i].structNode.obj[j].render.detail1);
 	    comEndDisplayList();
 	  }
 #endif

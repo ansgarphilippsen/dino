@@ -1011,7 +1011,8 @@ int surfSetDefault(dbmSurfNode *node, surfObj *obj)
 
   obj->render.show=1;
   obj->render.mode=RENDER_SURFACE;
-  obj->render.detail=3;
+  obj->render.detail1=3;
+  obj->render.detail2=3;
   obj->render.nice=1;
   obj->render.line_width=1.0;
   obj->render.point_size=1.0;
