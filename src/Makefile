@@ -34,7 +34,7 @@ MALLOCLIB=
 
 SRC= dino.c \
      dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
-     cl.c set.c bspline.c transform.c prop.c\
+     startup.c cl.c set.c bspline.c transform.c prop.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
      scal_mc_new.c \

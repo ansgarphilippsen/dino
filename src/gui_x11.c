@@ -824,12 +824,12 @@ static void guiRegisterDnD(Widget site)
   Arg     args [4];
   int      nargs;
   Atom    COMPOUND_TEXT;
-  
+
   COMPOUND_TEXT = XmInternAtom(XtDisplay(site), 
 			       "COMPOUND_TEXT", False);
   importList[0] = COMPOUND_TEXT;
   nargs = 0;
-  
+
   XtSetArg(args [nargs], XmNimportTargets, importList); nargs++;
   XtSetArg(args [nargs], XmNnumImportTargets, 1); nargs++;
   XtSetArg(args [nargs], XmNdropSiteOperations, XmDROP_COPY); nargs++;
@@ -939,6 +939,8 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 
 #ifdef EXPO
   XtSetArg(arg[0],XmNmwmDecorations,0);
+#else
+
 #endif
 
   /*
@@ -966,7 +968,8 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
      and the status bar
   */
   debmsg("guiInit: creating main layout");
-  gui.form=XmCreateForm(gui.top, "form", NULL, 0);
+//  XtSetArg(arg[0],XmNdropSiteActivity,XmDROP_SITE_INACTIVE);
+  gui.form=XmCreateForm(gui.top, "form", arg, 1);
   XtManageChild(gui.form);
 
   /*
@@ -976,11 +979,12 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   XtSetArg(arg[0],XmNleftAttachment,XmATTACH_FORM);
   XtSetArg(arg[1],XmNbottomAttachment,XmATTACH_FORM);
   XtSetArg(arg[2],XmNrightAttachment,XmATTACH_FORM);
+//  XtSetArg(arg[3],XmNdropSiteActivity,XmDROP_SITE_INACTIVE);
   gui.mform=XtCreateManagedWidget("mform",xmFormWidgetClass,
 				  gui.form,
 				  arg,3);
 
-  guiRegisterDnD(gui.mform);
+//  guiRegisterDnD(gui.mform);
   
   /*
     Create the status bars at the bottom
@@ -1001,9 +1005,12 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   XtSetArg(arg[2],XmNtopAttachment,XmATTACH_FORM);
   XtSetArg(arg[3],XmNleftAttachment,XmATTACH_FORM);
   XtSetArg(arg[4],XmNbottomAttachment,XmATTACH_FORM);
+//  XtSetArg(arg[5],XmNdropSiteActivity,XmDROP_SITE_INACTIVE);
 
   gui.message=XtCreateManagedWidget("message",xmLabelWidgetClass,
 				    gui.mform,arg,5);
+
+//  guiRegisterDnD(gui.message);
 
   debmsg("guiInit: creating message label 2");
 #ifdef EXPO
@@ -1019,9 +1026,11 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   XtSetArg(arg[4],XmNbottomAttachment,XmATTACH_FORM);
   XtSetArg(arg[5],XmNleftAttachment,XmATTACH_WIDGET);
   XtSetArg(arg[6],XmNleftWidget,gui.message);
+//  XtSetArg(arg[7],XmNdropSiteActivity,XmDROP_SITE_INACTIVE);
 
   gui.message2=XtCreateManagedWidget("message2",xmLabelWidgetClass,
 				    gui.mform,arg,7);
+//  guiRegisterDnD(gui.message2);
 
   
   /*

@@ -7,7 +7,7 @@
 
                   Version 0.8
 
-          (c) 1998-2001 Ansgar Philippsen
+          (c) 1998-2002 Ansgar Philippsen
 
 ************************************************/
 #include <stdio.h>
@@ -84,7 +84,6 @@ int main(int argc,char **argv)
   video_mode=0;
 
 
-  strcpy(startup,"dinorc");
   strcpy(logfile,"logfile.dino");
   fprintf(stderr,welcome,VERSION);
 #ifdef EXPO
@@ -226,10 +225,7 @@ int main(int argc,char **argv)
 
 
   if(startup_flag) {
-    /* TODO
-      check if a .dinorc exists
-       in $HOME
-    */
+    load_startup();
   }
 
 #ifdef EXPO
