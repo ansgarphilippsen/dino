@@ -748,19 +748,27 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
     fprintf(f,"// object .%s.%s\n",obj->node->name, obj->name);
     fprintf(f,"#declare %s = 1;\n",obj_name);
     fprintf(f,"#declare %s = texture {\n",tex_name);
+
+#ifndef CONTOUR_COLOR
     if(obj->type==SCAL_CONTOUR) 
       fprintf(f,"  pigment {color rgbft <%.3f,%.3f,%.3f,%.3f,%.3f>}\n",
 	      obj->r,obj->g,obj->b,0.0,1.0-obj->render.transparency);
     else
+#endif
       fprintf(f,"  pigment {color rgbft <0,0,0,1,1>}\n");
+
     fprintf(f,"  normal {granite 0.0 scale 1}\n");
     writePOVFinish(f,def_amb,def_diff,def_bri,def_spec,def_rough);
     fprintf(f," }\n");
     fprintf(f,"#declare %s = material {texture {%s}}\n",mat_name,tex_name);
+#ifndef CONTOUR_COLOR
     if(obj->type!=SCAL_CONTOUR) {
+#endif
       fprintf(f,"#declare %s = %.4f;\n",tp_name,1.0-obj->render.transparency);
       fprintf(f,"#declare %s = %.4f;\n",fi_name,0.0);
+#ifndef CONTOUR_COLOR
     }
+#endif
     if(obj->type==SCAL_CONTOUR && obj->render.mode==RENDER_LINE)
       fprintf(f,"#declare %s = %.4f;\n",lw_name,lw);
     if((obj->type==SCAL_CONTOUR && obj->render.mode==RENDER_POINT) ||
@@ -782,14 +790,24 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
     switch(obj->render.mode) {
     case RENDER_POINT:
       fprintf(f,"union {\n");
+#ifndef CONTOUR_COLOR
+      n1[0]=obj->r;
+      n1[1]=obj->g;
+      n1[2]=obj->b;
+      m=WRITE_POV_NOCOLOR;
+#else
+      m=0;
+#endif
       for(i=0;i<obj->point_count;i++) {
-	n1[0]=obj->r;
-	n1[0]=obj->g;
-	n1[0]=obj->b;
-	writePOVSphere(f,&obj->node->transform,WRITE_POV_NOCOLOR,
+#ifdef CONTOUR_COLOR
+	n1[0]=obj->point[i].c[0];
+	n1[1]=obj->point[i].c[1];
+	n1[2]=obj->point[i].c[2];
+#endif
+	writePOVSphere(f,&obj->node->transform,m,
 		       obj->point[i].v,n1,ps_name,
 		       mat_name,tp_name,fi_name,lim,1.0);
-
+	
       }
       fprintf(f,"material {%s}\n",mat_name);
       fprintf(f,"}\n");
@@ -797,14 +815,26 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
 
     case RENDER_LINE:
       fprintf(f,"union {\n");
+#ifndef CONTOUR_COLOR
+      n2[0]=n1[0]=obj->r;
+      n2[1]=n1[1]=obj->g;
+      n2[2]=n1[2]=obj->b;
+      m=WRITE_POV_NOCOLOR;
+#else
+      m=0;
+#endif
       for(i=0;i<obj->line_count;i++) {
-	n1[0]=obj->r;
-	n1[1]=obj->g;
-	n1[2]=obj->b;
-
-	writePOVCylinder(f,&obj->node->transform, WRITE_POV_NOCOLOR,
+#ifdef CONTOUR_COLOR
+	n1[0]=obj->point[obj->line[i].pi1].c[0];
+	n1[1]=obj->point[obj->line[i].pi1].c[1];
+	n1[2]=obj->point[obj->line[i].pi1].c[2];
+	n2[0]=obj->point[obj->line[i].pi0].c[0];
+	n2[1]=obj->point[obj->line[i].pi0].c[1];
+	n2[2]=obj->point[obj->line[i].pi0].c[2];
+#endif
+	writePOVCylinder(f,&obj->node->transform, m,
 			 obj->point[obj->line[i].pi1].v,n1,
-			 obj->point[obj->line[i].pi0].v,n1,
+			 obj->point[obj->line[i].pi0].v,n2,
 			 lw_name, mat_name, tp_name, fi_name, lim);
 
       } 
@@ -813,16 +843,56 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
       
       break;
     case RENDER_SURFACE:
+#ifndef CONTOUR_COLOR
+      n3[0]=n2[0]=n1[0]=obj->r;
+      n3[1]=n2[1]=n1[1]=obj->g;
+      n3[2]=n2[2]=n1[2]=obj->b;
+      m=WRITE_POV_NOCOLOR;
       fprintf(f,"mesh{\n");
-      n1[0]=obj->r;
-      n1[1]=obj->g;
-      n1[2]=obj->b;
+#else
+      // copied from write_pov_va BAD BAD STYLE
+      // prepare the output
+      if(write_pov_mode==WRITE_POV_DEFAULT) {
+	if(write_pov_ver==WRITE_POV_V31) {
+	  fprintf(f,"union {\n");
+	} else if(write_pov_ver==WRITE_POV_V35) {
+	  // probably this should be mesh2
+	  fprintf(f,"mesh {\n");
+	}
+      } else if(write_pov_mode==WRITE_POV_PATCH) {
+	if(write_pov_ver==WRITE_POV_V31) {
+	  fprintf(f,"mesh {\n");
+	} else if(write_pov_ver==WRITE_POV_V35) {
+	  // TODO PATCHED v35
+	}
+      } else if(write_pov_mode==WRITE_POV_SMOOTH) {
+	// using a macro, so this doesn't matter
+	fprintf(f,"union {\n");
+	fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
+      } else {
+	// no-color version
+	fprintf(f,"mesh {\n");
+      }
+
+      m=write_pov_mode;
+#endif
       for(i=0;i<obj->face_count;i++) {
-	writePOVTriangle(f,&obj->node->transform,WRITE_POV_NOCOLOR,
-		       obj->face[i].v1,obj->face[i].n1,n1,
-		       obj->face[i].v2,obj->face[i].n2,n1,
-		       obj->face[i].v3,obj->face[i].n3,n1,
-		       obj_name,lim);
+#ifdef CONTOUR_COLOR
+	n1[0]=obj->face[i].c1[0];
+	n1[1]=obj->face[i].c1[1];
+	n1[2]=obj->face[i].c1[2];
+	n2[0]=obj->face[i].c2[0];
+	n2[1]=obj->face[i].c2[1];
+	n2[2]=obj->face[i].c2[2];
+	n3[0]=obj->face[i].c3[0];
+	n3[1]=obj->face[i].c3[1];
+	n3[2]=obj->face[i].c3[2];
+#endif
+	writePOVTriangle(f,&obj->node->transform,m,
+			 obj->face[i].v1,obj->face[i].n1,n1,
+			 obj->face[i].v2,obj->face[i].n2,n2,
+			 obj->face[i].v3,obj->face[i].n3,n3,
+			 obj_name,lim);
       }
       fprintf(f,"material {%s}\n",mat_name);
       fprintf(f,"}\n");

@@ -93,7 +93,7 @@ int scalDrawObj(scalObj *obj)
       
       for(i=0;i<obj->point_count;i++) {
 #ifdef CONTOUR_COLOR
-	// TODO
+	glColor4fv(obj->point[i].c);
 #endif
 	glVertex3fv(obj->point[i].v);
       }
