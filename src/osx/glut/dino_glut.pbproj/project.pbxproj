@@ -246,6 +246,7 @@
 				F631A8F50247F26F01FB7A35,
 				F631A8F60247F26F01FB7A35,
 				F631A8F70247F26F01FB7A35,
+				F62863CD024905BB01FB7A35,
 			);
 			isa = PBXGroup;
 			name = Source;
@@ -262,9 +263,10 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = /Users/guest/projects/dino/include;
 				LIBRARY_SEARCH_PATHS = /Users/guest/projects/dino/lib;
-				OTHER_CFLAGS = "-DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DGLUT_GUI -DOSX";
+				OTHER_CFLAGS = "-DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DGLUT_GUI -DOSX -DUSE_CMI";
 				OTHER_LDFLAGS = "-lpng -lz -ltiff -ljpeg ";
 				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
 				PRODUCT_NAME = dino_glut;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
@@ -430,6 +432,7 @@
 				F631A9970247F26F01FB7A35,
 				F631A9980247F26F01FB7A35,
 				F631A9A10248014701FB7A35,
+				F62863CF024905BB01FB7A35,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -437,9 +440,9 @@
 		08FB77A3FE84155DC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
-				F631A8460247F05301FB7A35,
 				F631A84A0247F0C701FB7A35,
-				F631A99F0248011201FB7A35,
+				F631A9AE0248E3BD01FB7A35,
+				F631A9AF0248E98D01FB7A35,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -479,24 +482,33 @@
 //F62
 //F63
 //F64
+		F62863CD024905BB01FB7A35 = {
+			indentWidth = 2;
+			isa = PBXFileReference;
+			name = main.c;
+			path = /Users/guest/projects/dino/src/main.c;
+			refType = 0;
+			tabWidth = 2;
+			usesTabs = 0;
+		};
+		F62863CF024905BB01FB7A35 = {
+			fileRef = F62863CD024905BB01FB7A35;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F631A8450247F05301FB7A35 = {
 			isa = PBXFrameworkReference;
 			name = GLUT.framework;
 			path = /System/Library/Frameworks/GLUT.framework;
 			refType = 0;
 		};
-		F631A8460247F05301FB7A35 = {
-			fileRef = F631A8450247F05301FB7A35;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F631A8480247F0C701FB7A35 = {
 			children = (
 				F631A8450247F05301FB7A35,
 				F631A8490247F0C701FB7A35,
-				F631A99B0247FEF101FB7A35,
 				F631A99D0247FF1D01FB7A35,
+				F631A9A6024834EE01FB7A35,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -1031,10 +1043,13 @@
 			refType = 2;
 		};
 		F631A8A10247F26F01FB7A35 = {
+			indentWidth = 2;
 			isa = PBXFileReference;
 			name = om_glut.c;
 			path = ../../om_glut.c;
 			refType = 2;
+			tabWidth = 2;
+			usesTabs = 0;
 		};
 		F631A8A20247F26F01FB7A35 = {
 			isa = PBXFileReference;
@@ -2392,23 +2407,11 @@
 			settings = {
 			};
 		};
-		F631A99B0247FEF101FB7A35 = {
-			isa = PBXFrameworkReference;
-			name = Foundation.framework;
-			path = ../../../../../../../System/Library/Frameworks/Foundation.framework;
-			refType = 2;
-		};
 		F631A99D0247FF1D01FB7A35 = {
 			isa = PBXFrameworkReference;
 			name = Cocoa.framework;
 			path = ../../../../../../../System/Library/Frameworks/Cocoa.framework;
 			refType = 2;
-		};
-		F631A99F0248011201FB7A35 = {
-			fileRef = F631A99D0247FF1D01FB7A35;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F631A9A00248014701FB7A35 = {
 			fileRef = F631A87A0247F26F01FB7A35;
@@ -2418,6 +2421,24 @@
 		};
 		F631A9A10248014701FB7A35 = {
 			fileRef = F631A8790247F26F01FB7A35;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F631A9A6024834EE01FB7A35 = {
+			isa = PBXFrameworkReference;
+			name = GLUT.framework;
+			path = /Users/guest/projects/dino/extras/GLUT.framework;
+			refType = 0;
+		};
+		F631A9AE0248E3BD01FB7A35 = {
+			fileRef = F631A99D0247FF1D01FB7A35;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F631A9AF0248E98D01FB7A35 = {
+			fileRef = F631A8450247F05301FB7A35;
 			isa = PBXBuildFile;
 			settings = {
 			};

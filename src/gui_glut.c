@@ -69,6 +69,7 @@ static void gui_reshape(int width, int height)
   int val[2];
 #endif
 
+  
   gui.win_width=width;
   gui.win_height=height;
 
@@ -101,6 +102,7 @@ static void gui_timer(int value)
 
   if(gui.redraw) {
     gui.redraw=0;
+    glutSetWindow(gui.glut_main);
 #ifdef USE_CMI
     t.target=CMI_TARGET_GFX;
     t.command=CMI_REDRAW;
@@ -260,7 +262,7 @@ static void gui_spaceball_motion_func(int x, int y, int z)
 
 static void gui_spaceball_rotation_func(int x, int y, int z)
 {
-  cmiToken t;
+    cmiToken t;
 }
 
 static void gui_dials_func(int d, int v)
@@ -508,26 +510,29 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   glutSpaceballRotateFunc(gui_spaceball_rotation_func);
   glutDialsFunc(gui_dials_func);
 
-  glutTimerFunc(5,gui_timer,0);
 
   debmsg("glut: setting up user menu");
   // user menu
 
+#ifndef OSX 
   gui.glut_um=glutCreateMenu(um_cb);
   for(i=0;i<um_list_count;i++)
     glutAddMenuEntry(um_list[i*2],i);
 
   glutAttachMenu(GLUT_RIGHT_BUTTON);
-
+#endif
+  
   debmsg("glut: setting up status bar");
   /* status window */
-  gui.glut_status=glutCreateSubWindow(gui.glut_main,0,500-20,500,20);
+  gui.glut_status=glutCreateSubWindow(gui.glut_main,0,sh-20,sh,20);
   glutDisplayFunc(guiStatusExpose);
 
+#ifndef OSX
   debmsg("glut: setting up object menu");
   /* object menu window */
   omInit();
   gui.om_flag=1;
+#endif
 
   debmsg("glut: setting main focus");
   /* set back to main gfx */
@@ -560,6 +565,8 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   gfxGLInit();
 #endif
 
+  glutTimerFunc(100,gui_timer,0);
+
   return 0;
 }
 
@@ -581,10 +588,6 @@ int guiMainLoop()
   return 0;
 }
 
-
-// END OF GLUT STUFF
-
-// CODE BELOW HERE NEEDS REWORK !
 
 
 /************************

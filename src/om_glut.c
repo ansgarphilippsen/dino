@@ -36,7 +36,7 @@ struct OM {
 static void draw_string(const char *s)
 {
   int i;
-  for(i=0;i<clStrlen(s);i++) 
+  for(i=0;i<clStrlen(s);i++)
     glutBitmapCharacter(GLUT_BITMAP_9_BY_15,s[i]);
 }
 
@@ -157,7 +157,7 @@ static void popup_entry(int state)
 static void popup_motion(int x, int y)
 {
   popup_hilight=y/popup_bh;
-  glutSetWindow(om.popup);
+  //  glutSetWindow(om.popup);
   glutPostRedisplay();
   glutSetWindow(gui.glut_main);
 }
@@ -170,18 +170,18 @@ static void popup_mouse(int button, int state, int x, int y)
     i=y/popup_bh;
     if(om.dh!=NULL) {
       if(om.oh!=NULL) {
-	sprintf(com2,"%s",om.popup_list[i*2+1]);
-	sprintf(com,com2,om.dh->name,om.oh->name);
+        sprintf(com2,"%s",om.popup_list[i*2+1]);
+        sprintf(com,com2,om.dh->name,om.oh->name);
       } else {
-	sprintf(com2,"%s",om.popup_list[i*2+1]);
-	sprintf(com,com2,om.dh->name);
+        sprintf(com2,"%s",om.popup_list[i*2+1]);
+        sprintf(com,com2,om.dh->name);
       }
     } else {
       sprintf(com,"%s",om.popup_list[i*2+1]);
     }
+    popup_close();
     glutSetWindow(gui.glut_main);
     comRawCommand(com);
-    popup_close();
   }
 }
 
@@ -190,8 +190,8 @@ static void popup_expose()
   int width,height;
   int theight=15;
   int i;
-  
-  glutSetWindow(om.popup);
+
+  //  glutSetWindow(om.popup);
   glClear(GL_COLOR_BUFFER_BIT);
   width=glutGet(GLUT_WINDOW_WIDTH);
   height=glutGet(GLUT_WINDOW_HEIGHT);
@@ -245,85 +245,87 @@ static void om_mouse(int button, int state, int x, int y)
 
       // scene
       if(y>0 && y< om.bheight) {
-	om.popup_list=pl_scene;
-	om.popup_list_count=plc_scene;
-	om.dh=NULL;
-	om.oh=NULL;
-	pflag=1;
+        om.popup_list=pl_scene;
+        om.popup_list_count=plc_scene;
+        om.dh=NULL;
+        om.oh=NULL;
+        pflag=1;
       } else {
-	// one of the ds labels
-	for(i=0;i<om.ds_count;i++) {
-	  de=&om.ds[i];
-	  if(y>de->y1 && y<de->y2) {
-	    // check wether obj
-	    oh=NULL;
-	    for(j=0;j<de->oc;j++) {
-	      oe=&de->obj[j];
-	      if(y>oe->y1 && y<oe->y2) {
-		oh=oe;
-		break;
-	      }
-	    }
-	    if(oh) {
-	      // popup obj menu
-	      om.dh=de;
-	      om.oh=oh;
-	      om.popup_list=obj_list;
-	      om.popup_list_count=objc_list;
-	      pflag=1;
-	    } else {
-	      // popup ds menu
-	      om.dh=de;
-	      om.oh=NULL;
-	      om.popup_list=ds_list;
-	      om.popup_list_count=dsc_list;
-	      pflag=1;
-	    }
-	    break;
-	  }
-	}
+        // one of the ds labels
+        for(i=0;i<om.ds_count;i++) {
+          de=&om.ds[i];
+          if(y>de->y1 && y<de->y2) {
+            // check wether obj
+            oh=NULL;
+            for(j=0;j<de->oc;j++) {
+              oe=&de->obj[j];
+              if(y>oe->y1 && y<oe->y2) {
+                oh=oe;
+                break;
+              }
+            }
+            if(oh) {
+              // popup obj menu
+              om.dh=de;
+              om.oh=oh;
+              om.popup_list=obj_list;
+              om.popup_list_count=objc_list;
+              pflag=1;
+            } else {
+              // popup ds menu
+              om.dh=de;
+              om.oh=NULL;
+              om.popup_list=ds_list;
+              om.popup_list_count=dsc_list;
+              pflag=1;
+            }
+            break;
+          }
+        }
       }
       if(pflag) {
-	glutSetWindow(om.popup);
-	glutPositionWindow(4,y);
-	glutReshapeWindow(om.width-4,popup_bh*om.popup_list_count);
-	glutShowWindow();
-	glutSetWindow(gui.glut_main);
+         glutSetWindow(om.popup);
+         glutPositionWindow(4,y);
+         glutReshapeWindow(om.width-4,popup_bh*om.popup_list_count);
+         glutShowWindow();
+         glutSetWindow(gui.glut_om);
       } else {
-	// in case its up hide it
-	popup_close();
+        // in case its up hide it
+//        popup_close();
       }
     }
   } else if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
     // in case popup is still up, close it
-    popup_close();
+    if(pflag)
+      popup_close();
 
     // check wether an object entry was clicked
     for(i=0;i<om.ds_count;i++) {
       de=&om.ds[i];
       for(j=0;j<de->oc;j++) {
-	oe=&de->obj[j];
-	if(x>oe->x1 && x<oe->x2 && y>oe->y1 && y<oe->y2) {
-	  dh=de;
-	  oh=oe;
-	}
+        oe=&de->obj[j];
+        if(x>oe->x1 && x<oe->x2 && y>oe->y1 && y<oe->y2) {
+          dh=de;
+          oh=oe;
+        }
       }
     }
 
     // object found ?
     if(oh!=NULL) {
       if(oh->show) {
-	oh->show=0;
-	sprintf(raw_com,".%s.%s hide",dh->name,oh->name);
-	comRawCommand(raw_com);
+        oh->show=0;
+        sprintf(raw_com,".%s.%s hide",dh->name,oh->name);
+        comRawCommand(raw_com);
       } else {
-	oh->show=1;
-	sprintf(raw_com,".%s.%s show",dh->name,oh->name);
-	comRawCommand(raw_com);
+        oh->show=1;
+        sprintf(raw_com,".%s.%s show",dh->name,oh->name);
+        comRawCommand(raw_com);
       }
       om_redisplay();
     }
   }
+  glutSetWindow(gui.glut_main);
 }
 
 static void om_regenerate()
@@ -357,7 +359,7 @@ static void om_regenerate()
 
 static void om_reshape(int w, int h)
 {
-  glutSetWindow(gui.glut_om);
+  //  glutSetWindow(gui.glut_om);
   om.width=w;
   om.height=h;
   glViewport(0,0,w,h);
@@ -372,7 +374,7 @@ static void om_expose()
   struct OM_DS_ENTRY *de;
   struct OM_OBJ_ENTRY *oe;
 
-  glutSetWindow(gui.glut_om);
+  //  glutSetWindow(gui.glut_om);
   glClear(GL_COLOR_BUFFER_BIT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -419,19 +421,22 @@ int omInit()
   glutReshapeFunc(om_reshape);
   glutMouseFunc(om_mouse);
 
-  // generate popup window 
+  om_regenerate();
+
+  // generate popup window
   om.popup_list=pl_scene;
   om.popup_list_count=3;
 
+
   om.popup=glutCreateSubWindow(gui.glut_om,0,0,om.width-2,100);
-  glutHideWindow();
+  glutSetWindow(om.popup);
   glutDisplayFunc(popup_expose);
   glutMouseFunc(popup_mouse);
   glutMotionFunc(popup_motion);
   glutPassiveMotionFunc(popup_motion);
   glutEntryFunc(popup_entry);
+  glutHideWindow();
 
-  om_regenerate();
 
   return 0;
 }
@@ -481,10 +486,10 @@ int omHideObj(const char *db, const char *name)
   for(i=0;i<om.ds_count;i++) {
     if(clStrcmp(om.ds[i].name,db)) {
       for(j=0;j<om.ds[i].oc;j++) {
-	if(clStrcmp(om.ds[i].obj[j].name,name)) {
-	  om.ds[i].obj[j].show=0;
-	  om_redisplay();
-	}
+        if(clStrcmp(om.ds[i].obj[j].name,name)) {
+          om.ds[i].obj[j].show=0;
+          om_redisplay();
+        }
       }
     }
   }
@@ -497,10 +502,10 @@ int omShowObj(const char *db, const char *name)
   for(i=0;i<om.ds_count;i++) {
     if(clStrcmp(om.ds[i].name,db)) {
       for(j=0;j<om.ds[i].oc;j++) {
-	if(clStrcmp(om.ds[i].obj[j].name,name)) {
-	  om.ds[i].obj[j].show=1;
-	  om_redisplay();
-	}
+        if(clStrcmp(om.ds[i].obj[j].name,name)) {
+          om.ds[i].obj[j].show=1;
+          om_redisplay();
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
-#ifndef DINO_H
-#define DINO_H
+#ifndef _DINO_H
+#define _DINO_H
 
 typedef char* string;
 
@@ -7,6 +7,7 @@ typedef char* string;
 
 #define VERSION "0.8.5-3"
 
+int dinoMain(int argc, char **argv);
 void dinoExit(int);
 
 #endif

@@ -25,12 +25,12 @@ enum {
 
   // TARGET_GFX
   CMI_INITGL,   // opengl can be initialized now (NULL)
-  CMI_REFRESH,  // request refresh (NULL)
   CMI_REDRAW,   // do actual redraw (NULL)
   CMI_RESIZE,   // window resize (int[2])
 
   // TARGET_GUI
   CMI_MESSAGE,  // send message (char *)
+  CMI_REFRESH,  // request refresh (NULL)
   CMI_NEW,
   CMI_DEL,
   CMI_REN,
