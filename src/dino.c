@@ -80,8 +80,10 @@ int dinoParseArgs(int argc, char **argv)
   shell_mode=0;
   gfx_flags=0;
 
+#ifndef OSX
   fprintf(stderr,welcome,VERSION);
-
+#endif
+  
   strcpy(script,"");
   strcpy(logfile,"logfile.dino");
 
