@@ -70,6 +70,8 @@ static int error_io_handler(Display *d);
 static int pad_init(void);
 static int set_stereo(int m);
 static XVisualInfo *get_offscreen_visual(int af);
+static void hide_cursor();
+static void show_cursor();
 
 #ifndef INTERNAL_COLOR
 static int init_colordb(void);
@@ -121,6 +123,8 @@ static String fallback_resources[]={
 
 static void outMessage(const char *m) {fprintf(stdout,m);}
 
+static int gui_demo_flag=0;
+
 //int guiInit(void (*func)(int, char **), int argc, char **argv)
 int guiInit(int argc, char **argv)
 {
@@ -152,9 +156,13 @@ int guiInit(int argc, char **argv)
   for(i=0;i<MAX_OFFSCREEN_CONTEXT;i++)
     offscreen_context_list[i].used=0;
 
-  for(i=0;i<argc;i++)
-    if(clStrcmp(argv[i],"-iconic"))
+  for(i=0;i<argc;i++) {
+    if(clStrcmp(argv[i],"-iconic")) {
       icf=1;
+    } else if(clStrcmp(argv[i],"-demo")) {
+      gui_demo_flag=1;
+    }
+  }
   
 #ifdef SGI
   // TODO remove duplicated stereo flags
@@ -186,7 +194,6 @@ int guiInit(int argc, char **argv)
     gui.top=XtOpenApplication(&gui.app,"dino",NULL,0,
 			      &argc,argv,
 			      fallback_resources,
-			      //topLevelShellWidgetClass,
 			      appPlusShellWidgetClass,
 			      NULL,0
 			      );
@@ -222,7 +229,8 @@ int guiInit(int argc, char **argv)
     if(init_main()<0) {
       return -1;
     }    
-    if(gfx_flags & DINO_FLAG_NOOBJMENU) {
+    if((gfx_flags & DINO_FLAG_NOOBJMENU) ||
+       gui_demo_flag) {
       gui.om_flag=0;
     } else {
       debmsg("guiInit: initializing om\n");
@@ -401,6 +409,11 @@ int guiInit(int argc, char **argv)
   // display info about OpenGL
   gl_info();
 
+  if(gui_demo_flag) {
+    guiGrab(1);
+    XWarpPointer(gui.dpy,None,XtWindow(gui.glxwin),0,0,0,0,1,1);
+    hide_cursor();
+  }
   
   /*
     as a last step, grab the error handler
@@ -452,9 +465,8 @@ static int init_main()
 {
   XmString xms;
   Arg arg[10];
+  int width,height;
 
-
-  
   /* 
      Create form, which will hold
      the menu bar, the glx window
@@ -495,7 +507,11 @@ static int init_main()
 //  register_dnd(gui.message);
 
   debmsg("guiInit: creating message label 2");
-  strcpy(gui.message_string2,VERSION);
+  if(gui_demo_flag) {
+    strcpy(gui.message_string2,"DINO (c) Ansgar Philippsen - http://www.dino3d.org");
+  } else {
+    strcpy(gui.message_string2,VERSION);
+  }
   xms= XmStringCreateLtoR(gui.message_string2, XmSTRING_DEFAULT_CHARSET);
   XtSetArg(arg[0],XmNlabelString,xms);
   XtSetArg(arg[1],XmNalignment, XmALIGNMENT_END);
@@ -514,6 +530,13 @@ static int init_main()
   // Create the frame that will contain GLX win
   debmsg("guiInit: creating glx frame");
   gui.frame=XmCreateFrame(gui.form, "frame", NULL, 0);
+  if(gui_demo_flag) {
+    width=WidthOfScreen(XtScreen(gui.frame));
+    height=HeightOfScreen(XtScreen(gui.frame));
+  } else {
+    width=HeightOfScreen(XtScreen(gui.frame))-56;
+    height=HeightOfScreen(XtScreen(gui.frame))-56;
+  }
   XtVaSetValues(gui.frame,
                 XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM,
@@ -521,8 +544,8 @@ static int init_main()
                 XmNbottomAttachment, XmATTACH_WIDGET,
 		XmNbottomWidget,gui.mform,
 #ifndef DARWIN // workaround for unexplained problem under darwin
-		XmNwidth,HeightOfScreen(XtScreen(gui.frame))-56,
-		XmNheight,HeightOfScreen(XtScreen(gui.frame))-56,
+		XmNwidth,width,
+		XmNheight,height,
 #endif
                 NULL);
   debmsg("guiInit: managing frame");
@@ -1622,7 +1645,12 @@ static int spaceball_init()
     eventList[2]=dButtonPressGrabClass;
     eventList[3]=dButtonReleaseClass;
     
-    XSelectExtensionEvent(gui.dpy,gui.glxwindow,eventList,4);
+    //XSelectExtensionEvent(gui.dpy,gui.glxwindow,eventList,4);
+    if(gui_demo_flag) {
+      XSelectExtensionEvent(gui.dpy,RootWindow(gui.dpy,0),eventList,4);
+    } else {
+      XSelectExtensionEvent(gui.dpy,XtWindow(gui.frame),eventList,4);
+    }    
     
     return 1;
 #ifdef SPACETEC
@@ -1849,4 +1877,21 @@ int guiGrab(int s)
     XtUngrabPointer(gui.glxwin,CurrentTime);
   }
   return 0;
+}
+
+static void hide_cursor()
+{
+  char bm[]={0,0,0,0,0,0,0,0};
+  Pixmap pix = XCreateBitmapFromData(gui.dpy,XtWindow(gui.glxwin),bm,8,8);
+  XColor black;
+  memset(&black,0,sizeof(XColor));
+  black.flags = DoRed | DoGreen | DoBlue;
+  Cursor pointer = XCreatePixmapCursor(gui.dpy,pix,pix,&black,&black,0,0);
+  XFreePixmap(gui.dpy,pix);
+  XDefineCursor(gui.dpy,XtWindow(gui.glxwin),pointer);
+}
+
+static void show_cursor()
+{
+
 }

@@ -61,6 +61,7 @@ struct COM_PARAMS {
   int stereo_flag;
   float trans_limit[6];
   int trans_limit_flag;
+  int demo_flag;
 };
 
 enum  {COM_PLAY_ON,

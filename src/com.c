@@ -111,6 +111,11 @@ int comInit(struct COM_PARAMS *params)
 
   comGenCubeLookup();
 
+  if(params->demo_flag) {
+    //com.demo_flag=1;
+  } else {
+    //com.demo_flag=0;
+  }
 
   return 0;
 }

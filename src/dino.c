@@ -22,7 +22,7 @@
 #include "dino.h"
 #include "scene.h"
 #include "startup.h"
-
+#include "cl.h"
 #include "shell_command.h"
 #include "gui_terminal.h"
 
@@ -30,7 +30,7 @@ const char usage[]={"Usage: dino [-debug] [-stereo] [-nostereo] [-help] [-s scri
 
 char welcome[]={"Welcome to dino v%s    (http://www.dino3d.org)\n\n"};
 
-int debug_mode,gfx_mode,stereo_mode,video_mode, shell_mode,gfx_flags;
+int debug_mode,gfx_mode,stereo_mode,video_mode, shell_mode,gfx_flags,demo_flag;
 
 /***************************
 
@@ -70,6 +70,7 @@ int dinoParseArgs(int argc, char **argv)
   video_mode=0;
   shell_mode=0;
   gfx_flags=0;
+  demo_flag=0;
 
 #ifndef OSX
   fprintf(stderr,welcome,VERSION);
@@ -85,53 +86,53 @@ int dinoParseArgs(int argc, char **argv)
   while(i<argc) {
     if(argv[i][0]=='-' ||
        argv[i][0]=='+') {
-      if(!strcmp(argv[i],"-h") ||
-         !strcmp(argv[i],"-help")) {
+      if(clStrcmp(argv[i],"-h") ||
+         clStrcmp(argv[i],"-help")) {
         fprintf(stderr,usage);
         exit(0);
-      } else if(!strcmp(argv[i],"-d") ||
-                !strcmp(argv[i],"-debug")) {
+      } else if(clStrcmp(argv[i],"-d") ||
+                clStrcmp(argv[i],"-debug")) {
         debug_mode=1;
-      } else if(!strcmp(argv[i],"-t") ||
-                !strcmp(argv[i],"-trace")) {
+      } else if(clStrcmp(argv[i],"-t") ||
+                clStrcmp(argv[i],"-trace")) {
         shell_mode=1;
         fprintf(stderr,"debug mode ON\n");
-      } else if(!strcmp(argv[i],"-nostereo")) {
+      } else if(clStrcmp(argv[i],"-nostereo")) {
         stereo_mode=0;
 	gfx_flags+=DINO_FLAG_NOSTEREO;
-      } else if(!strcmp(argv[i],"-stereo")) {
+      } else if(clStrcmp(argv[i],"-stereo")) {
         stereo_mode=1;
 	gfx_flags+=DINO_FLAG_STEREO;
-      } else if(!strcmp(argv[i],"-nostencil")) {
+      } else if(clStrcmp(argv[i],"-nostencil")) {
 	gfx_flags+=DINO_FLAG_NOSTENCIL;
-      } else if(!strcmp(argv[i],"-nogfx")) {
+      } else if(clStrcmp(argv[i],"-nogfx")) {
 	gfx_flags+=DINO_FLAG_NOGFX;
-      } else if(!strcmp(argv[i],"-noom")) {
+      } else if(clStrcmp(argv[i],"-noom")) {
 	gfx_flags+=DINO_FLAG_NOOBJMENU;
-      } else if(!strcmp(argv[i],"-cons")) {
+      } else if(clStrcmp(argv[i],"-cons")) {
 	gfx_flags+=DINO_FLAG_CONS;
-      } else if(!strcmp(argv[i],"-nodblbuff")) {
+      } else if(clStrcmp(argv[i],"-nodblbuff")) {
 	gfx_flags+=DINO_FLAG_NODBLBUFF;
-      } else if(!strcmp(argv[i],"-vidmode")) {
+      } else if(clStrcmp(argv[i],"-vidmode")) {
         if(i+1>=argc) {
           fprintf(stderr,"error: expected argument after -vidmode\n");
           exit(1);
         }
         i++;
         video_mode=atoi(argv[i]);
-      } else if(!strcmp(argv[i],"-nostartup")) {
+      } else if(clStrcmp(argv[i],"-nostartup")) {
         startup_flag=0;
-      } else if(!strcmp(argv[i],"-log")) {
+      } else if(clStrcmp(argv[i],"-log")) {
         if(i+1>=argc) {
           fprintf(stderr,"%s missing argument\n",argv[i]);
           fprintf(stderr,usage);
           exit(-1);
         }
         strncpy(logfile,argv[++i],128);
-      } else if(!strcmp(argv[i],"+log") ||
-		!strcmp(argv[i],"-nolog")) {
+      } else if(clStrcmp(argv[i],"+log") ||
+		clStrcmp(argv[i],"-nolog")) {
         strcpy(logfile,"");
-      } else if(!strcmp(argv[i],"-s")) {
+      } else if(clStrcmp(argv[i],"-s")) {
         if(i+1>=argc) {
           fprintf(stderr,"%s missing argument\n",argv[i]);
           fprintf(stderr,usage);
@@ -141,7 +142,7 @@ int dinoParseArgs(int argc, char **argv)
 	  script_fast=0;
           i++;
         }
-      } else if(!strcmp(argv[i],"-f")) {
+      } else if(clStrcmp(argv[i],"-f")) {
         if(i+1>=argc) {
           fprintf(stderr,"%s missing argument\n",argv[i]);
           fprintf(stderr,usage);
@@ -151,6 +152,8 @@ int dinoParseArgs(int argc, char **argv)
 	  script_fast=1;
           i++;
         }
+      } else if(clStrcmp(argv[i],"-demo")) {
+	demo_flag=1;
       } else {
 	/*
 	  TODO
@@ -182,6 +185,7 @@ static void reset_com_params(struct COM_PARAMS *p)
   p->dials_rot_scale=1.0;
   p->dials_tra_scale=1.0;
   p->trans_limit_flag=0;
+  p->demo_flag=0;
 }
  
 int dinoMain(int argc,char **argv)
@@ -194,6 +198,10 @@ int dinoMain(int argc,char **argv)
 
   if(startup_flag) {
     load_startup(&com_params);
+  }
+
+  if(demo_flag) {
+    com_params.demo_flag=1;
   }
 
   debmsg("calling comInit");
