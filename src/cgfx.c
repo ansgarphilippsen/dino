@@ -116,7 +116,10 @@ int cgfxSphereVA(float radius, float p[3], float c[4], cgfxVA *va, int detail)
     vs[i].n[2]=o[0];
   }
 
-  inc_size=((step2-2)*step1*2+2*step1)*3;
+  // MAXCALC IS BASED ON:
+  //         top     bottom       middle
+  inc_size=step1*3 + step1*3 + step1*(step2-2)*6;
+  //  inc_size=((step2-2)*step1*2+2*step1)*3;
 
   if(va->p==NULL) {
     va->p=Crecalloc(NULL,inc_size,sizeof(cgfxVAField));
@@ -207,6 +210,7 @@ int cgfxSphereVA2(float radius, float p[3], float c[4], cgfxVA *va, int detail)
   step=M_PI*2.0/(double)(detail);
   step2=M_PI*2.0/(double)(detail);
 
+  // MAXCALC is determined by dry-run
   inc_size=0;
   for(w=0.0;w<M_PI*2+step;w+=step) {
     inc_size+=6;
@@ -921,10 +925,19 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 
   if(render->mode==RENDER_HSC || render->mode==RENDER_TUBE) {
 
-    va->max=maxp*(detail2+1)*4*6;
+    // MAXCALC is based on dry run
+    va->max=0;
+    cgfxGenProfile(&pro1, CGFX_TUBE, render);
+    for(i=0;i<pc-1;i++)
+      for(k=0;k<=sp[i].pc;k++) {
+	va->max+=pro1.pc*6;
+      }
+    
+    
+    //    va->max=maxp*(detail2+1)*4*6;
     va->count=0;
     va->p=Crecalloc(NULL,va->max, sizeof(cgfxVAField));
-
+    
     
     for(i=0;i<pc-1;i++) {
       if(render->mode==RENDER_HSC) {
@@ -983,6 +996,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 	} else {
 	  cgfxHSCTransform(&pro1, &sp[i].p[k], &pro5);
 	}
+
 	if(cgfxConnectProfile(va,&pro_last,&pro5,0)!=0) {
 	}
 	memcpy(&pro_last,&pro5,sizeof(cgfxProfile));
@@ -1006,6 +1020,8 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
     }
 
   } else if(render->mode==RENDER_SLINE) {
+    // MAXCALC is based on
+    // point_count*2
     va->max=maxp*2;
     va->count=0;
     

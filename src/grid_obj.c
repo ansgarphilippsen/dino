@@ -199,6 +199,7 @@ int gridObjComRenew(gridObj *obj, int wc, char **wl)
       }
       set_flag=1;
     } else if(clStrcmp(co.param[i].p,"selection") ||
+	      clStrcmp(co.param[i].p,"select") ||
 	      clStrcmp(co.param[i].p,"sel")) {
       if(selectNew(&sel,co.param[i].wc,co.param[i].wl)<0) {
 	ret=-1;

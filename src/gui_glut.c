@@ -126,16 +126,16 @@ static void gui_motion_func(int x, int y)
   gui.last_y=y;
 
   if(gui.mbs[0]==GLUT_DOWN)
-    mask+=Button1Mask;
+    mask+=GUI_BUTTON1_MASK;
   if(gui.mbs[1]==GLUT_DOWN)
-    mask+=Button2Mask;
+    mask+=GUI_BUTTON2_MASK;
   if(gui.mbs[2]==GLUT_DOWN)
-    mask+=Button3Mask;
+    mask+=GUI_BUTTON3_MASK;
 
   if(mod & GLUT_ACTIVE_SHIFT)
-    mask+=ShiftMask;
+    mask+=GUI_SHIFT_MASK;
   if(mod & GLUT_ACTIVE_CTRL)
-    mask+=ControlMask;
+    mask+=GUI_CNTRL_MASK;
   //  if(mod & GLUT_ALT_SHIFT)
   //  mask+=ShiftMask;
 
@@ -340,7 +340,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   glutKeyboardFunc(gui_keyboard_func);
   glutSpecialFunc(gui_special_func);
   glutSpaceballMotionFunc(gui_spaceball_motion_func);
-  glutSpaceballRotationFunc(gui_spaceball_rotation_func);
+  glutSpaceballRotateFunc(gui_spaceball_rotation_func);
   glutDialsFunc(gui_dials_func);
 
 

@@ -435,6 +435,14 @@ int scalMCNAddFace(int v1, int v2, int v3)
   return 0;
 }
 
+/*
+  flag determines wether faces should
+  be generated or only dots and lines
+
+  flag=0 : only dots + lines
+  flag=1 : include faces also
+
+*/
 
 int scalMCN2Obj()
 {
@@ -644,7 +652,7 @@ void scalMCNFaceNormal(float *a, float *b, float *c, float *n)
   d2[2]=c[2]-a[2];
 
   ar=matCalcTriArea(a,b,c);
-  if(ar<=0)
+  if(ar<=0.0)
     ar=0.001;
   matfCalcCross(d1,d2,n);
 

@@ -241,6 +241,7 @@ int structObjComRenew(structObj *obj, int wc, char **wl)
       }
       set_flag=1;
     } else if(clStrcmp(co.param[i].p,"selection") ||
+	      clStrcmp(co.param[i].p,"select") ||
 	      clStrcmp(co.param[i].p,"sel")) {
       if(selectNew(&sel,co.param[i].wc,co.param[i].wl)<0) {
 	ret=-1;
@@ -624,6 +625,90 @@ int structObjCp(structObj *o1, structObj *o2)
   return -1;
 }
 
+static int atom_to_point(structAtom *a, struct STRUCT_ATOM_PROP *pr, cgfxSplinePoint *p, struct RENDER *r) {
+  int ret=0;
+  if(a->residue->class==STRUCT_PROTEIN) {
+    p->v[0]=a->p->x;
+    p->v[1]=a->p->y;
+    p->v[2]=a->p->z;
+#ifdef HSC_NEWCOL
+    p->colp[0]=pr->c[0];
+    p->colp[1]=pr->c[1];
+    p->colp[2]=pr->c[2];
+    p->colp[0][3]=r->transparency;
+    p->colp[1][3]=r->transparency;
+    p->colp[2][3]=r->transparency;
+#else
+    p->c[0]=pr->r;
+    p->c[1]=pr->g;
+    p->c[2]=pr->b;
+    p->c[3]=r->transparency;
+#endif
+    p->rad=pr->radius;
+    switch(a->residue->type) {
+    case STRUCT_RTYPE_COIL: p->id=CGFX_COIL; break;
+    case STRUCT_RTYPE_HELIX: p->id=CGFX_HELIX; break;
+    case STRUCT_RTYPE_STRAND: p->id=CGFX_STRAND; break;
+    default: p->id=CGFX_COIL;
+    }
+    p->v1=a->residue->v1;
+    ret=1;
+  } else if(a->residue->class==STRUCT_NA) {
+    if(r->mode==RENDER_TUBE) {
+      p->v[0]=a->p->x;
+      p->v[1]=a->p->y;
+      p->v[2]=a->p->z;
+    } else {
+      if(r->na_method==0) {
+	p->v[0]=a->residue->v0[0];
+	p->v[1]=a->residue->v0[1];
+	p->v[2]=a->residue->v0[2];
+      } else {
+	p->v[0]=a->p->x;
+	p->v[1]=a->p->y;
+	p->v[2]=a->p->z;
+      }
+    }
+    p->rad=pr->radius;
+    p->id=CGFX_NA;
+    p->v1=a->residue->v1;
+    p->v2=a->residue->v2;
+    p->v3=a->residue->v3;
+    p->v4=a->residue->v4;
+    p->v5=a->residue->v5;
+    if(r->na_method==0)
+      p->v6=a->residue->v6;
+    else
+      p->v6=a->residue->v7;
+    p->res_id=a->residue->res_id;
+#ifdef HSC_NEWCOL
+    p->colp[0]=pr->c[0];
+    p->colp[1]=pr->c[1];
+    p->colp[2]=pr->c[2];
+    p->colp[0][3]=r->transparency;
+    p->colp[1][3]=r->transparency;
+    p->colp[2][3]=r->transparency;
+#else
+    p->c[0]=pr->c[0][0];
+    p->c[1]=pr->c[0][1];
+    p->c[2]=pr->c[0][2];
+    p->c[3]=t;
+    /* add color2 and color3 */
+    p->c2[0]=pr->c[1][0];
+    p->c2[1]=pr->c[1][1];
+    p->c2[2]=pr->c[1][2];
+    p->c2[3]=r->transparency;
+    p->c3[0]=pr->c[2][0];
+    p->c3[1]=pr->c[2][1];
+    p->c3[2]=pr->c[2][2];
+    p->c3[3]=r->transparency;
+#endif
+    ret=1;
+  } else {
+    // ignore
+  }
+  return ret;
+}
 
 int structSmooth(struct STRUCT_OBJ *obj)
 {
@@ -633,127 +718,54 @@ int structSmooth(struct STRUCT_OBJ *obj)
   cgfxVA va;
   int detail,flag,h1,h2;
   float n1[4],n2[4],n3[4],n4[4];
-
+  
   // reference
   n4[0]=1.0; n4[1]=0.0; n4[2]=0.0;
-
+  
   // maximal size
   point_list=Ccalloc(obj->bond_count+10,sizeof(cgfxSplinePoint));
-
+  
   // detail level from render struct
   detail=obj->render.detail;
   if(detail<1)
     detail=1;
-
+  
   // clean obj va
   if(obj->va.max>0)
     Cfree(obj->va.p);
   obj->va.p=NULL;
   obj->va.max=0;
   obj->va.count=0;
-
+  
   // go through each segment
   bc=0;
-
+  
   while(bc<obj->bond_count) {
     
     // generate consecutive points
     pc=0;
     while(1) {
-      if(obj->bond[bc].atom1->residue->class==STRUCT_PROTEIN) {
-	point_list[pc].v[0]=obj->bond[bc].atom1->p->x;
-	point_list[pc].v[1]=obj->bond[bc].atom1->p->y;
-	point_list[pc].v[2]=obj->bond[bc].atom1->p->z;
-#ifdef HSC_NEWCOL
-	point_list[pc].colp[0]=obj->bond[bc].prop1->c[0];
-	point_list[pc].colp[1]=obj->bond[bc].prop1->c[1];
-	point_list[pc].colp[2]=obj->bond[bc].prop1->c[2];
-	point_list[pc].colp[0][3]=obj->render.transparency;
-	point_list[pc].colp[1][3]=obj->render.transparency;
-	point_list[pc].colp[2][3]=obj->render.transparency;
-#else
-	point_list[pc].c[0]=obj->bond[bc].prop1->r;
-	point_list[pc].c[1]=obj->bond[bc].prop1->g;
-	point_list[pc].c[2]=obj->bond[bc].prop1->b;
-	point_list[pc].c[3]=obj->render.transparency;
-#endif
-	point_list[pc].rad=obj->bond[bc].prop1->radius;
-	switch(obj->bond[bc].atom1->residue->type) {
-	case STRUCT_RTYPE_COIL: point_list[pc].id=CGFX_COIL; break;
-	case STRUCT_RTYPE_HELIX: point_list[pc].id=CGFX_HELIX; break;
-	case STRUCT_RTYPE_STRAND: point_list[pc].id=CGFX_STRAND; break;
-	default: point_list[pc].id=CGFX_COIL;
-	}
-	point_list[pc].v1=obj->bond[bc].atom1->residue->v1;
+      if(atom_to_point(obj->bond[bc].atom1,
+		       obj->bond[bc].prop1,
+		       &point_list[pc],
+		       &obj->render)) {
 	pc++;
-      } else if(obj->bond[bc].atom1->residue->class==STRUCT_NA) {
-	if(obj->render.mode==RENDER_TUBE) {
-	  point_list[pc].v[0]=obj->bond[bc].atom1->p->x;
-	  point_list[pc].v[1]=obj->bond[bc].atom1->p->y;
-	  point_list[pc].v[2]=obj->bond[bc].atom1->p->z;
-	} else {
-	  if(obj->render.na_method==0) {
-	    point_list[pc].v[0]=obj->bond[bc].atom1->residue->v0[0];
-	    point_list[pc].v[1]=obj->bond[bc].atom1->residue->v0[1];
-	    point_list[pc].v[2]=obj->bond[bc].atom1->residue->v0[2];
-	  } else {
-	    point_list[pc].v[0]=obj->bond[bc].atom1->p->x;
-	    point_list[pc].v[1]=obj->bond[bc].atom1->p->y;
-	    point_list[pc].v[2]=obj->bond[bc].atom1->p->z;
-	  }
-	}
-	point_list[pc].rad=obj->bond[bc].prop1->radius;
-	point_list[pc].id=CGFX_NA;
-	point_list[pc].v1=obj->bond[bc].atom1->residue->v1;
-	point_list[pc].v2=obj->bond[bc].atom1->residue->v2;
-	point_list[pc].v3=obj->bond[bc].atom1->residue->v3;
-	point_list[pc].v4=obj->bond[bc].atom1->residue->v4;
-	point_list[pc].v5=obj->bond[bc].atom1->residue->v5;
-	if(obj->render.na_method==0)
-	  point_list[pc].v6=obj->bond[bc].atom1->residue->v6;
-	else
-	  point_list[pc].v6=obj->bond[bc].atom1->residue->v7;
-	point_list[pc].res_id=obj->bond[bc].atom1->residue->res_id;
-#ifdef HSC_NEWCOL
-	point_list[pc].colp[0]=obj->bond[bc].prop1->c[0];
-	point_list[pc].colp[1]=obj->bond[bc].prop1->c[1];
-	point_list[pc].colp[2]=obj->bond[bc].prop1->c[2];
-	point_list[pc].colp[0][3]=obj->render.transparency;
-	point_list[pc].colp[1][3]=obj->render.transparency;
-	point_list[pc].colp[2][3]=obj->render.transparency;
-#else
-	point_list[pc].c[0]=obj->bond[bc].prop1->c[0][0];
-	point_list[pc].c[1]=obj->bond[bc].prop1->c[0][1];
-	point_list[pc].c[2]=obj->bond[bc].prop1->c[0][2];
-	point_list[pc].c[3]=obj->render.transparency;
-	/* add color2 and color3 */
-	point_list[pc].c2[0]=obj->bond[bc].prop1->c[1][0];
-	point_list[pc].c2[1]=obj->bond[bc].prop1->c[1][1];
-	point_list[pc].c2[2]=obj->bond[bc].prop1->c[1][2];
-	point_list[pc].c2[3]=obj->render.transparency;
-	point_list[pc].c3[0]=obj->bond[bc].prop1->c[2][0];
-	point_list[pc].c3[1]=obj->bond[bc].prop1->c[2][1];
-	point_list[pc].c3[2]=obj->bond[bc].prop1->c[2][2];
-	point_list[pc].c3[3]=obj->render.transparency;
-#endif
-	pc++;
-      } else {
-	//	point_list[pc].id=CGFX_COIL;
-	/*
-	  ignore 
-	*/
       }
-      //      pc++;
+      
       bc++;
       if(bc>=obj->bond_count)
 	break;
       if(obj->bond[bc-1].atom2->n!=obj->bond[bc].atom1->n) {
-	
-	
 	break;
       }
     }
 
+    atom_to_point(obj->bond[bc-1].atom2,
+		  obj->bond[bc-1].prop2,
+		  &point_list[pc],
+		  &obj->render);
+    pc++;
+  /***
     if(obj->bond[bc-1].atom2->residue->class==STRUCT_PROTEIN) {
       point_list[pc].v[0]=obj->bond[bc-1].atom2->p->x;
       point_list[pc].v[1]=obj->bond[bc-1].atom2->p->y;
@@ -819,7 +831,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
       point_list[pc].c[1]=obj->bond[bc-1].prop2->c[0][1];
       point_list[pc].c[2]=obj->bond[bc-1].prop2->c[0][2];
       point_list[pc].c[3]=obj->render.transparency;
-      /* add color2 and color3 */
+
       point_list[pc].c2[0]=obj->bond[bc-1].prop2->c[1][0];
       point_list[pc].c2[1]=obj->bond[bc-1].prop2->c[1][1];
       point_list[pc].c2[2]=obj->bond[bc-1].prop2->c[1][2];
@@ -832,8 +844,8 @@ int structSmooth(struct STRUCT_OBJ *obj)
     } else {
       point_list[pc].id=CGFX_COIL;
     }
+***/
 
-    pc++;
     
     // set strands correctly for arrow generation
     
@@ -1533,7 +1545,7 @@ int structObjGenVA(structObj *obj)
   }
 
   // only create explicit spheres if they are larger than the cylinders
-  if(sr>bw)
+  if(sr>bw && sr>0.0)
     for(i=0;i<obj->atom_count;i++) {
       col[0]=obj->atom[i].prop.r;
       col[1]=obj->atom[i].prop.g;
@@ -1542,47 +1554,50 @@ int structObjGenVA(structObj *obj)
       cgfxSphereVA(sr,(float *)obj->atom[i].ap->p,col,&obj->va,detail);
   }
 
-  for(i=0;i<obj->bond_count;i++) {
-    mid[0]=obj->bond[i].atom1->p->x+obj->bond[i].atom2->p->x;
-    mid[1]=obj->bond[i].atom1->p->y+obj->bond[i].atom2->p->y;
-    mid[2]=obj->bond[i].atom1->p->z+obj->bond[i].atom2->p->z;
-    mid[0]*=0.5;
-    mid[1]*=0.5;
-    mid[2]*=0.5;
-    col[0]=obj->bond[i].prop1->r;
-    col[1]=obj->bond[i].prop1->g;
-    col[2]=obj->bond[i].prop1->b;
-    col[3]=obj->render.transparency;
-    if(sr<=bw)
-      cgfxGenCylinder(&obj->va,
-		      (float *)obj->bond[i].atom1->p,mid,
-		      bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
-    else
-      cgfxGenCylinder(&obj->va,
-		      (float *)obj->bond[i].atom1->p,mid,
-		      bw,sti,sto,detail,CGFX_BLUNT,col);
-
-    col[0]=obj->bond[i].prop2->r;
-    col[1]=obj->bond[i].prop2->g;
-    col[2]=obj->bond[i].prop2->b;
-    col[3]=obj->render.transparency;
-    if(sr<=bw)
-      cgfxGenCylinder(&obj->va,
-		      mid,(float *)obj->bond[i].atom2->p,
-		      bw,sti,sto,detail,CGFX_ROUND_END,col);
-    else
-      cgfxGenCylinder(&obj->va,
-		      mid,(float *)obj->bond[i].atom2->p,
-		      bw,sti,sto,detail,CGFX_BLUNT,col);
-		    
+  if(bw>0.0) {
+    for(i=0;i<obj->bond_count;i++) {
+      mid[0]=obj->bond[i].atom1->p->x+obj->bond[i].atom2->p->x;
+      mid[1]=obj->bond[i].atom1->p->y+obj->bond[i].atom2->p->y;
+      mid[2]=obj->bond[i].atom1->p->z+obj->bond[i].atom2->p->z;
+      mid[0]*=0.5;
+      mid[1]*=0.5;
+      mid[2]*=0.5;
+      col[0]=obj->bond[i].prop1->r;
+      col[1]=obj->bond[i].prop1->g;
+      col[2]=obj->bond[i].prop1->b;
+      col[3]=obj->render.transparency;
+      if(sr<=bw)
+	cgfxGenCylinder(&obj->va,
+			(float *)obj->bond[i].atom1->p,mid,
+			bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
+      else
+	cgfxGenCylinder(&obj->va,
+			(float *)obj->bond[i].atom1->p,mid,
+			bw,sti,sto,detail,CGFX_BLUNT,col);
+      
+      col[0]=obj->bond[i].prop2->r;
+      col[1]=obj->bond[i].prop2->g;
+      col[2]=obj->bond[i].prop2->b;
+      col[3]=obj->render.transparency;
+      if(sr<=bw)
+	cgfxGenCylinder(&obj->va,
+			mid,(float *)obj->bond[i].atom2->p,
+			bw,sti,sto,detail,CGFX_ROUND_END,col);
+      else
+	cgfxGenCylinder(&obj->va,
+			mid,(float *)obj->bond[i].atom2->p,
+			bw,sti,sto,detail,CGFX_BLUNT,col);
+    }
   }
 
-  for(i=0;i<obj->s_bond_count;i++) {
-    col[0]=obj->s_bond[i].prop->r;
-    col[1]=obj->s_bond[i].prop->g;
-    col[2]=obj->s_bond[i].prop->b;
-    col[3]=obj->render.transparency;
-    cgfxSphereVA(sr,(float *)obj->s_bond[i].atom->p,col,&obj->va,detail);
+  if(sr>0.0) {
+    for(i=0;i<obj->s_bond_count;i++) {
+      col[0]=obj->s_bond[i].prop->r;
+      col[1]=obj->s_bond[i].prop->g;
+      col[2]=obj->s_bond[i].prop->b;
+      col[3]=obj->render.transparency;
+      cgfxSphereVA(sr,(float *)obj->s_bond[i].atom->p,col,&obj->va,detail);
+    }
   }
 
   obj->va.max=obj->va.count;

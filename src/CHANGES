@@ -1,3 +1,7 @@
+fixed hsc/tube crashes
+
+render sr=0 resp bw=0 will deactivate sphere, resp cyl rendering
+
 depth effect is off per default
 
 fixed !intpol crash
