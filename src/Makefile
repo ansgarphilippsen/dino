@@ -176,7 +176,7 @@ depend:
 	gcc -MM $(INCLUDE) $(OPTIONS) $(SRC) > .depend
 	cd $(GUI) && $(MAKE) depend
 
-snapshot:
+snapshot: dino
 	gzip < ../bin/dino > ../bin/dino-0.8.5-$(DATE).$(MACH).gz
 
 all: clean depend dino
