@@ -189,6 +189,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   /*
     Create form that will hold message areas
   */
+  debmsg("guiInit: creating message form");
   XtSetArg(arg[0],XmNleftAttachment,XmATTACH_FORM);
   XtSetArg(arg[1],XmNbottomAttachment,XmATTACH_FORM);
   XtSetArg(arg[2],XmNrightAttachment,XmATTACH_FORM);
@@ -201,6 +202,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   /*
     Create the status bars at the bottom
   */
+  debmsg("guiInit: creating message label 1");
 #ifdef EXPO
   strcpy(gui.message_string,expo_message);
 #else
@@ -220,6 +222,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 				    gui.mform,arg,5);
 
 
+  debmsg("guiInit: creating message label 2");
 #ifdef EXPO
   strcpy(gui.message_string2,"Powered by Linux");
 #else
@@ -242,6 +245,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
     Create the frame that will enclose
     the GLX window
   */
+  debmsg("guiInit: creating glx frame");
   gui.frame=XmCreateFrame(gui.form, "frame", NULL, 0);
   XtVaSetValues(gui.frame,
 #ifndef EXPO
