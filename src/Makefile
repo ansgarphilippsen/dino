@@ -67,10 +67,6 @@ ifneq (,$(findstring X11_GUI,$(OPTIONS)))
 SRC += extension.c gui_x11.c om_x11.c AppPlus.c
 endif
 
-ifneq (,$(findstring SGI_STEREO,$(OPTIONS)))
-SRC += sgi_stereo.c
-endif
-
 ifneq (,$(findstring EXPO,$(OPTIONS)))
 SRC += autoplay.c
 endif
