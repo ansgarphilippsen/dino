@@ -26,6 +26,9 @@ static void calc_face_normal(struct SCAL2SURF_FACE *face, struct SCAL2SURF_VERT 
 static void add_face(struct SCAL2SURF_VERT *vert,int indx);
 void check_normal(struct SCAL2SURF_FACE *face,int fi1, int fi3, struct SCAL2SURF_VERT *vert);
 static int check_face_neigh(struct SCAL2SURF_FACE *f1, struct SCAL2SURF_FACE *f2, struct SCAL2SURF_VERT *vert, float b[3]);
+static void select_clear(scalObj *obj);
+static void select_flood(scalObj *obj);
+static void select_from_point(scalObj *obj, float *p);
 
 
 extern struct GLOBAL_COM com;
@@ -35,22 +38,22 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
   char message[256];
   char *empty_com[]={"get","center"};
   int i;
-  float tmp_tr;
+  float tmp_tr,pos[3];
 
   if(wc<=0) {
     wc=2;
     wl[0]=empty_com[0];
     wl[1]=empty_com[1];
   }
-  if(!strcmp(wl[0],"help") ||
-     !strcmp(wl[0],"?")) {
-  } else if(!strcmp(wl[0],"renew")) {
+  if(clStrcmp(wl[0],"help") ||
+     clStrcmp(wl[0],"?")) {
+  } else if(clStrcmp(wl[0],"renew")) {
     return scalObjComRenew(obj, wc-1,wl+1);
-  } else if(!strcmp(wl[0],"get")) {
+  } else if(clStrcmp(wl[0],"get")) {
     return scalObjComGet(obj, wc-1, wl+1);
-  } else if(!strcmp(wl[0],"set")) {
+  } else if(clStrcmp(wl[0],"set")) {
     return scalObjComSet(obj, wc-1, wl+1);
-  } else if(!strcmp(wl[0],"render")) {
+  } else if(clStrcmp(wl[0],"render")) {
     if(wc<2) {
       sprintf(message,"%s: missing expression\n", obj->name);
       comMessage(message);
@@ -108,7 +111,7 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 		   obj->slab.tex);
     }
     comRedraw();
-  } else if(!strcmp(wl[0],"material")) {
+  } else if(clStrcmp(wl[0],"material")) {
     if(wc<2) {
       comMessage(renderGetMaterial(&obj->render.mat));
     } else {
@@ -116,22 +119,24 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 	return -1;
       comRedraw();
     }
-  } else if(!strcmp(wl[0],"show")) {
+  } else if(clStrcmp(wl[0],"show")) {
     obj->render.show=1;
     comShowObj(node->name, obj->name);
     comRedraw();
-  } else if(!strcmp(wl[0],"hide")) {
+  } else if(clStrcmp(wl[0],"hide")) {
     obj->render.show=0;
     comHideObj(node->name, obj->name);
     comRedraw();
-  } else if(!strcmp(wl[0],"reset")) {
-  } else if(!strcmp(wl[0],"grab")) {
+  } else if(clStrcmp(wl[0],"reset")) {
+    comMessage("not implemented yet\n");
+  } else if(clStrcmp(wl[0],"grab")) {
+    comMessage("not implemented yet\n");
     // TODO later
     // if scalar object is grabed should e.g. change contouring
     // level on the fly
-  } else if(!strcmp(wl[0],"test")) {
+  } else if(clStrcmp(wl[0],"test")) {
     scalObj2Surf(obj,NULL);
-  } else if(!strcmp(wl[0],"write")) {
+  } else if(clStrcmp(wl[0],"write")) {
     comMessage("not implemented yet\n");
     /*
     if(wc<2) {
@@ -141,7 +146,7 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
     }
     return scalObjWrite(obj, wc-1, wl+1);
     */
-  } else if(!strcmp(wl[0],"reverse")) {
+  } else if(clStrcmp(wl[0],"reverse")) {
     if(wc>1) {
       comMessage("superfluous words ignored\n");
     }
@@ -161,6 +166,35 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
       obj->point[i].n[1]=-obj->point[i].n[1];
       obj->point[i].n[2]=-obj->point[i].n[2];
     }
+  } else if(clStrcmp(wl[0],"select")) {
+    // either "select D<>{x,y,z}"
+    // or "select flood"
+    // or "select clear"
+    if(wc<2) {
+      comMessage("expected keyword after select\n");
+      return -1;
+    } else {
+      if(clStrcmp(wl[1],"clear")) {
+	// clear current selection
+	select_clear(obj);
+      } else if(clStrcmp(wl[1],"flood")) {
+	// flood fill from already selected
+	select_flood(obj);
+      } else if(wl[1][0]=='{') {
+	// add selection from given point
+	if(matExtract1Df(wl[1],3,pos)<0) {
+	  sprintf(message,"error in position vector %s\n",wl[1]);
+	  return -1;
+	}
+	select_from_point(obj,pos);
+      } else {
+	sprintf(message,"%s: unknown keyword %s for select - expected 'flood' or position\n",
+		obj->name,wl[1]);
+	comMessage(message);
+	return -1;
+      }
+    }
+
   } else {
     sprintf(message,"%s: unknown command %s\n",obj->name,wl[0]);
     comMessage(message);
@@ -244,6 +278,9 @@ int scalObjComRenew(scalObj *obj, int wc, char **wl)
     selectDelete(&obj->select);
     memcpy(&obj->select, &sel, sizeof(Select));
   }
+
+  // implicitly clear selection flag
+  select_clear(obj);
   
   setDelete(&set);
   clDelete(&co);
@@ -2094,3 +2131,21 @@ static int check_face_neigh(struct SCAL2SURF_FACE *f1, struct SCAL2SURF_FACE *f2
   return 0;
 }
 
+static void select_clear(scalObj *obj)
+{
+  int fc;
+  for(fc=0;fc<obj->face_count;fc++) {
+    obj->face[fc].sflag=0;
+  }
+
+}
+
+static void select_flood(scalObj *obj)
+{
+
+}
+
+static void select_from_point(scalObj *obj, float *p)
+{
+
+}

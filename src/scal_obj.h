@@ -8,33 +8,15 @@
 
 enum {SCAL_MODE_POINT,SCAL_MODE_LINE,SCAL_MODE_SURFACE};
 
-//#ifdef LINUX
-//extern struct SCAL_FIELD _SCAL_FIELD;
-//extern struct DBM_SCAL_NODE _DBM_SCAL_NODE;
-//extern struct DBM_SET _DBM_SET;
-//extern struct SCAL_OCTREE_ENTRY _SCAL_OCTREE_ENTRY;
-//#endif
-//#ifdef SGI
-//extern struct SCAL_FIELD;
-//extern struct DBM_SCAL_NODE;
-//extern struct DBM_SET;
-//extern struct SCAL_OCTREE_ENTRY;
-//#endif
-//#ifdef DEC
-//extern struct SCAL_FIELD;
-//extern struct DBM_SCAL_NODE;
-//extern struct DBM_SET;
-//extern struct SCAL_OCTREE_ENTRY;
-//#endif
-
 struct SCAL_POINT {
-  float rad;
-  float c[4];
-  float v[4];
-  float n[4];
-  float val;
-  int uvw[4];
-  int nc;
+  float rad; // radius for grid type
+  float c[4]; // color
+  float v[4]; // vertex
+  float n[4]; // normal
+  float val; // value for grid type
+  int uvw[4]; // index of nearest uvw grid point (TODO: why 4 elements?)
+  int nc;  // neighbour point count
+  int fi[4];
 };
 
 struct SCAL_VECT {
@@ -47,10 +29,7 @@ struct SCAL_VECT {
 };
 
 struct SCAL_LINE {
-  //  struct SCAL_POINT *p0,*p1;
-  //  float w;
   int pi0,pi1;
-  //  float v1[3],v2[3];
 };
 
 struct SCAL_FACE {
@@ -59,10 +38,8 @@ struct SCAL_FACE {
 #ifdef CONTOUR_COLOR
   float c1[4],c2[4],c3[4];
 #endif
-  //  float n[3];
-  //  float c[4];
-  //  struct SCAL_POINT *p0,*p1,*p2;
-  int pi0,pi1,pi2;
+  int pi0,pi1,pi2; // index pointer to vertices
+  int sflag; // selection flag
 };
 
 #ifdef VR
