@@ -211,6 +211,7 @@ static int check_element(char *ele)
     "HE","LI","BE","AR","SC","TI","GA","GE","KR"
   };
   static int l4c=9;
+  int i;
 
   // hydrogen hack
   if(ele[0]=='H') {
@@ -218,7 +219,6 @@ static int check_element(char *ele)
     return 1;
   }
   
-  int i;
   // two characters
   if(ele[1]!='\0') {
     for(i=0;i<l2c;i++) {
