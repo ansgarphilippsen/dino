@@ -6,8 +6,8 @@ CC   = cc
 GOPT = -O2 -n32 -fullwarn -mips3 
 WOPT = -woff 1552,1174,1692,1209,3201
 IOPT = -I/usr/freeware/include -I/usr/include/CC -I../extras/include
+IOPT += -I/usr/freeware/include/tcl
 SLIB = ../extras/lib/libtiff.a ../extras/lib/libpng.a ../extras/lib/libz.a ../extras/lib/libspwinput_mips3.a
-
 
 LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm # -limage
 LOPT = -n32 -mips3 $(LIBS) -L/usr/freeware/lib32

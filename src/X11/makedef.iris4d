@@ -1,0 +1,6 @@
+SRC += sgi_video.c sgi_stereo.c
+
+ifneq (,$(findstring SPACETEC,$(OPTIONS)))
+SRC += spacetec.c
+endif
+
