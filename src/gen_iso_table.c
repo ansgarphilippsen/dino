@@ -115,7 +115,7 @@ static int tetrahed_num=5;
 
 
 
-static int max_tri_entry = 12;
+static int max_tri_entry = 16;
 
 static void gen_tab(int code, int tflag);
 static void print_tentry(char *buf, int a1,int a2,int b1,int b2,int c1,int c2);

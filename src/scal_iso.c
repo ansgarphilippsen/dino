@@ -189,17 +189,18 @@ static int iso(scalObj *obj)
       for(uc=0;uc<usize;uc++) {
 	ccube = &layer[uc+vc*usize];
 	// current index pointer
-	cip = ccube[uc+vc*usize].coord_index;
+	cip = ccube->coord_index;
 	// copy neighbour coord-indices from w to w+1
-	cip[0]=cip[22]; cip[1]=cip[23]; cip[3]=cip[25]; 
+	cip[0]=cip[22]; cip[1]=cip[23]; cip[2]=cip[24]; 
 	cip[7]=cip[25]; cip[8]=cip[26]; cip[13]=cip[27]; 
 	// reset the rest
-	cip[2]=-1; cip[4]=-1; cip[5]=-1; cip[6]=-1; 
+	cip[3]=-1; cip[4]=-1; cip[5]=-1; cip[6]=-1; 
 	cip[9]=-1; cip[10]=-1; cip[11]=-1; cip[12]=-1; 
 	cip[14]=-1; cip[15]=-1; cip[16]=-1; cip[17]=-1; 
 	cip[18]=-1; cip[19]=-1; cip[20]=-1; cip[21]=-1; 
 	cip[22]=-1; cip[23]=-1; cip[24]=-1; cip[25]=-1; 
 	cip[26]=-1; cip[27]=-1;
+
 	/*
 	fprintf(stderr,"w %d\n",wc);
 	for(i=0;i<28;i++) {
@@ -230,7 +231,7 @@ static int iso(scalObj *obj)
 	}
 
 	// get the amount of triangles as found in the lookup table
-	tri_num = mc_edge_lookup_table[pcode].count;
+	tri_num = iso_edge_lookup_table[pcode].count;
 	for(tri_count=0;tri_count<tri_num;tri_count++) {
 	  /*
 	    for each of the three corner pairs calculate 
@@ -238,10 +239,11 @@ static int iso(scalObj *obj)
 	  */
 	  
 	  for(i=0;i<3;i++) {
-	    cor1=mc_edge_lookup_table[pcode].tab[tri_count][i*2+0];
-	    cor2=mc_edge_lookup_table[pcode].tab[tri_count][i*2+1];
+	    cor1=iso_edge_lookup_table[pcode].tab[tri_count][i*2+0];
+	    cor2=iso_edge_lookup_table[pcode].tab[tri_count][i*2+1];
 	    // vertex id of corners
-	    vert_id = corner2vid[cor2][cor1];
+	    vert_id = corner2vid[cor1][cor2];
+	    //fprintf(stderr,"%2d %2d -> %2d\n",cor1,cor2,vert_id);
 	    // coordinate id
 	    coord_id = ccube->coord_index[vert_id];
 	    // if not yet generated, create new
@@ -287,7 +289,6 @@ static int iso(scalObj *obj)
 	nip[4] = cip[20];
 	nip[3] = cip[21];
 	nip[22] = cip[27];
-
 	
 
       } // uc
