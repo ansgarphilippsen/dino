@@ -55,7 +55,7 @@ int guiGetImage(struct WRITE_IMAGE *wimage)
       XDestroyImage(image);
     }
   } else {
-    /* get a new visinfo */
+    
     
   }  
   return 0;

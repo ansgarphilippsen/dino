@@ -134,12 +134,16 @@ int dinoParseArgs(int argc, char **argv)
           i++;
         }
       } else {
+	/*
+	  TODO
+	  X hasn't removed its params at this point!
         fprintf(stderr,"Unknown flag %s\n",argv[i]);
         fprintf(stderr,usage);
         exit(-1);
+	*/
       }
     } else {
-      fprintf(stderr,"ignored superfluous word %s\n",argv[i]);
+      //fprintf(stderr,"ignored superfluous word %s\n",argv[i]);
     }
     i++;
   }
