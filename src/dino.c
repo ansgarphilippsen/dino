@@ -70,9 +70,6 @@ int dinoMain(int argc,char **argv)
   int startup_flag=1;
   char logfile[128];
 
-#ifdef CMALLOC_DEBUG
-  Cmalloc_init();
-#endif
   gfx_mode=1;
   stereo_mode=1;
   debug_mode=0;
@@ -140,16 +137,16 @@ int dinoMain(int argc,char **argv)
     }
     i++;
   }
-
+ 
+#ifdef USE_CMI
+  // debmsg("calling guiInit");
+  //if(guiInit(argc, argv)<0)  return -1;
+#endif
   debmsg("calling comInit");
   if(comInit()<0) return -1;
   debmsg("calling gfxInit");
   if(gfxInit()<0) return -1;
   debmsg("calling dbmInit");
-#ifdef USE_CMI
-  debmsg("calling guiInit");
-  if(guiInit(argc, argv)<0)  return -1;
-#endif
   if(dbmInit()<0) return -1;
   debmsg("calling sceneInit");
   if(sceneInit()<0) return -1;
@@ -180,7 +177,7 @@ int dinoMain(int argc,char **argv)
   }
 
 #ifdef USE_CMI
-    comMessage("\n");
+  comMessage("\n");
 #endif
 
 #ifndef NEW_SHELL

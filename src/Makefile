@@ -12,13 +12,13 @@
 # FORMAT_VRML
 # FORMAT_TIFF
 # SGI_STEREO
-# TCL_SHELL
+# USE_TCL
 # USE_DLIST
 # WIDTH_NCBONDS
-# USE_CMI   use _only_ with GUI_GLUT !!
+# USE_CMI
 
 OPTIONS= -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DCPK_NEW
-OPTIONS += -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI -DUSE_DLIST
+OPTIONS += -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI -DUSE_DLIST -DUSE_TCL
 
 # use tcl as interpreter
 #OPTIONS += -DTCL_SHELL
@@ -61,7 +61,6 @@ SRC= dino.c \
 # which shell to use
 ifneq (,$(findstring NEW_SHELL,$(OPTIONS)))
 SRC += gui_terminal.c shell_raw.c shell_command.c
-#LOPT += 
 else
 ifneq (,$(findstring TCL_SHELL,$(OPTIONS)))
 SRC += shell_tcl.c
@@ -96,11 +95,6 @@ SRC += cmi.c input.c
 endif
 
 
-# special EXPO functionality
-ifneq (,$(findstring EXPO,$(OPTIONS)))
-SRC += autoplay.c
-endif
-
 # test code for imagick image library support
 ifneq (,$(findstring IMAGICK,$(OPTIONS)))
 SRC += imagick.c
@@ -129,6 +123,10 @@ endif
 # include architecture specific settings, including additional SRC files
 # use HOSTTYPE variable
 sinclude makedef.$(HOSTTYPE)
+
+ifneq (,$(findstring USE_TCL,$(OPTIONS)))
+LOPT += -ltcl
+endif
 
 
 #sinclude makedef.java

@@ -12,9 +12,20 @@
 #include "cl.h"
 #include "com.h"
 
+#ifdef USE_TCL
+#include <tcl.h>
+#endif
+
+#ifndef USE_TCL
 static int parse(const char *raw_prompt2);
 static int add_prompt(char **prompt,int *prompt_max, int *prompt_len,char c);
+#endif
 static void add_history(const char *s);
+#ifdef USE_TCL
+static int shell_unknown_cmd(ClientData clientData,
+			     Tcl_Interp *interp,
+			     int objc, Tcl_Obj *CONST objv[]);
+#endif
 
 #define SHELL_HISTORY_MAX_ENTRIES 1024
 #define SHELL_HISTORY_BUFFER_SIZE 102400
@@ -41,35 +52,122 @@ static struct SHELL_VAR {
   int count, max;
 } shell_var;
 
+#ifdef USE_TCL
+  Tcl_DString tcl_ds;
+  Tcl_Interp *tcl_interp;
+#endif
+
 /*
   Initialization
 */
 
 
-
 int shellInterpInit()
 {
+#ifdef USE_TCL
+  int v1,v2;
+  char message[256];
+#endif
   shell_history.entry_max=SHELL_HISTORY_MAX_ENTRIES;
   shell_history.entry_count=0;
   shell_history.next=shell_history.buffer+0;
 
+#ifndef USE_TCL
   shell_var.count=0;
   shell_var.max=VAR_MAX_ENTRIES;
   shell_var.entry=Crecalloc(NULL,shell_var.max,sizeof(struct SHELL_VAR_ENTRY));
+#endif
+
+#ifdef USE_TCL
+  // new interpreter instance
+  tcl_interp=Tcl_CreateInterp();
+
+  // catch unknown commands
+  Tcl_CreateObjCommand(tcl_interp, "unknown", shell_unknown_cmd,
+		       (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+
+  // unfortunate name clashes are hacked away for now
+  Tcl_DeleteCommand(tcl_interp, "load");
+
+  Tcl_DStringInit(&tcl_ds);
+
+  Tcl_GetVersion(&v1,&v2,NULL,NULL);
+  
+  sprintf(message,"Using TCL interpreter v%d.%d (http://www.scriptics.com)\n",v1,v2);
+  shellOut(message);
+
+#endif
 
   return 0;
 }
 
+#ifdef USE_TCL
+static int shell_unknown_cmd(ClientData clientData,
+			     Tcl_Interp *interp,
+			     int objc, Tcl_Obj *CONST objv[])
+{
+  int argc,i;
+  const char *argv[1024];
+
+  argc=objc-1;
+  for(i=0;i<argc;i++)
+    argv[i]=Tcl_GetString(objv[i+1]);
+
+  shellParseCommand(argv,argc);
+
+  Tcl_SetResult(interp,comGetReturn(),TCL_STATIC);
+  return TCL_OK;
+}
+#endif
 
 /*
   parse raw string, pass result 
   to shell_command
 */
 
+
 int shellParseRaw(const char *s, int hf)
 {
+#ifdef USE_TCL
+  static char *parse_buf=NULL;
+  static int parse_buf_len=0;
+  int i;
+#endif
+  
   comReturn("");
+
+#ifdef USE_TCL
+  while(clStrlen(s)>parse_buf_len) {
+    parse_buf=Crecalloc(parse_buf,parse_buf_len+1024,sizeof(char));
+    parse_buf_len+=1024;
+  };
+  clStrcpy(parse_buf,s);
+  i=0;
+  // pre-scan buf to handle dino-tcl incompatibilities
+  while(i<clStrlen(s)-1) {
+    // morph comments
+    if(parse_buf[i]=='/' && parse_buf[i+1]=='/') {
+      parse_buf[i]='#';
+      parse_buf[i+1]='#';
+      i+=2;
+    } else {
+      i++;
+    }
+  }
+  
+  Tcl_DStringSetLength(&tcl_ds,0);
+  // pass to tcl interpreter
+  // any non-tcl stuff will end up in shell_unknown_command()
+  Tcl_EvalEx(tcl_interp,
+	     Tcl_ExternalToUtfDString(NULL,
+				      parse_buf,
+				      clStrlen(parse_buf),
+				      &tcl_ds),
+	     -1,TCL_EVAL_GLOBAL);
+#else
   parse(s);
+#endif
+
   if(hf)
     add_history(s);
   return 0;
@@ -78,6 +176,9 @@ int shellParseRaw(const char *s, int hf)
 
 int shellSetVar(const char *name2, const char *value2)
 {
+#ifdef USE_TCL
+  Tcl_SetVar(tcl_interp,name2,value2,TCL_GLOBAL_ONLY);
+#else
   int i;
   char name[VAR_MAX_NAME_SIZE];
   char value[VAR_MAX_VALUE_SIZE];
@@ -96,12 +197,15 @@ int shellSetVar(const char *name2, const char *value2)
   }
 
   if(i==shell_var.count) shell_var.count++;
-
+#endif
   return 0;
 }
 
 const char *shellGetVar(const char *name)
 {
+#ifdef USE_TCL
+  return Tcl_GetVar(tcl_interp,name,TCL_GLOBAL_ONLY);
+#else
   int i;
   for(i=0;i<shell_var.count;i++) {
     if(clStrcmp(shell_var.entry[i].name,name)) {
@@ -109,15 +213,22 @@ const char *shellGetVar(const char *name)
     }
   }
   return NULL;
+#endif
 }
 
 int shellUnsetVar(const char *name)
 {
+#ifdef USE_TCL
+  Tcl_UnsetVar(tcl_interp,name,TCL_GLOBAL_ONLY);
+#else
+  // TODO
   return 0;
+#endif
 }
 
 void shellListVars(const char *rg)
 {
+#ifndef USE_TCL
   int i;
   // TODO use regexp
   for(i=0;i<shell_var.count;i++) {
@@ -126,6 +237,7 @@ void shellListVars(const char *rg)
     shellOut(shell_var.entry[i].value);
     shellOut("\n");
   }
+#endif
 }
 
 /*
@@ -188,7 +300,11 @@ static void add_history(const char *s)
   and really a mess! the myriad of local 
   variables are really _not_ suited for
   a recursive function
+
+  for tcl this is replaced with the tcl parser
 */
+#ifndef USE_TCL
+
 enum {SHELL_NONE=0,
       SHELL_PRIME,  /* '' */
       SHELL_WBRACE, /* {} */
@@ -423,7 +539,7 @@ static int parse(const char *raw_prompt2)
 	if(c>=clStrlen(raw_prompt)) {
 	  add_char_flag=0;
 	} else if(raw_prompt[c]=='\n') {
-	  if(/* TODO shell.current->state==SHELL_SCRIPT*/ 1 ) {
+	  if(/* TODO current->state==SHELL_SCRIPT*/ 1 ) {
 	    c++;
 	    add_char_flag=0;
 	  } else {
@@ -528,3 +644,4 @@ static int add_prompt(char **prompt,int *prompt_max, int *prompt_len,char c)
   return 0;
 }
 
+#endif
