@@ -145,7 +145,7 @@ int writePOVScene(FILE *f)
     fprintf(f,"\n// depth cueing\n");
     fprintf(f,"plane {z, %.3f texture {pigment {color rgbft <0,0,0,1,1>}}\n",
 	    -gfx.transform.tra[2]-gfx.transform.slabn);
-    fprintf(f,"hollow interior {fade_power 1 fade_distance %.3f}\n}\n",
+    fprintf(f,"hollow interior {fade_power 2 fade_distance %.3f}\n}\n",
 	    (gfx.transform.slabf-gfx.transform.slabn)*0.5);
   }
 
@@ -492,35 +492,42 @@ int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
   int i,p1,p2,p3;
   float v1[4],v2[4],v3[4],n1[4],n2[4],n3[4],*c1,*c2,*c3,t;
   float def_amb,def_diff,def_spec,def_rough,def_bri;
-  char mat_name[64],tex_name[64],tp_name[64],fi_name[64];
+  char mat_name[64],tp_name[64],fi_name[64],obj_name[64];
 
-  sprintf(tex_name,"_%s_%s_tex",obj->node->name,obj->name);
-  writePOVCheckName(tex_name);
+  sprintf(mat_name,"_%s_%s_mat",obj->node->name,obj->name);
+  writePOVCheckName(mat_name);
   sprintf(tp_name,"_%s_%s_tp",obj->node->name,obj->name);
   writePOVCheckName(tp_name);
   sprintf(fi_name,"_%s_%s_fi",obj->node->name,obj->name);
   writePOVCheckName(fi_name);
+  sprintf(obj_name,"_%s_%s",obj->node->name,obj->name);
+  writePOVCheckName(obj_name);
 
   def_amb=0.10;
-  def_diff=0.78;
-  def_spec=0.02;
-  def_rough=0.01;
-  def_bri=0.7;
+  def_diff=0.70;
+  def_spec=0.00;
+  def_rough=0.01 ;
+  def_bri=1.0;
 
   if(k==0) {
+    fprintf(f,"#declare %s = 1;\n",obj_name);
     fprintf(f,"// material, transparency and filter definition for object .%s.%s\n",obj->node->name, obj->name);
     
-    fprintf(f,"#declare %s = \ntexture {\n",tex_name);
+    fprintf(f,"#declare %s = material {\ntexture {\n",mat_name);
     if(write_pov_mode==WRITE_POV_NOCOLOR)
       fprintf(f,"pigment {color rgb 1}\n");
-    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f brilliance %.2f}\n}\n",
+    else
+      fprintf(f,"pigment {color rgbft <0,0,0,1,1>}\n");
+    fprintf(f,"normal {granite 0.0 scale 1}\n");
+    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f brilliance %.2f}\n",
 	    def_amb,def_diff,def_spec,def_rough,def_bri);
+    fprintf(f,"}\ninterior{}\n}\n");
     fprintf(f,"#declare %s = %.4f;\n",tp_name,1.0-obj->render.transparency);
     fprintf(f,"#declare %s = %.4f;\n\n",fi_name,0.0);
     return 0;
   }
 
-  fprintf(f,"// .%s.%s\n",obj->node->name,obj->name);
+  fprintf(f,"#if (%s)\n",obj_name);
   if(write_pov_mode==WRITE_POV_NEW ||
      write_pov_mode==WRITE_POV_NOCOLOR ||
      write_pov_mode==WRITE_POV_MEGA) {
@@ -529,7 +536,7 @@ int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
     fprintf(f,"union {\n");
   }
   if(write_pov_mode==WRITE_POV_SMOOTH)
-    fprintf(f,"#declare triangle_base_texture = material{texture{%s}}\n",tex_name);
+    fprintf(f,"#declare triangle_base_texture = material {%s}\n",mat_name);
 
   for(i=0;i<obj->facec;i++) {
     p1=obj->face[i*3+0];
@@ -584,16 +591,16 @@ int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
 		v2[0],v2[1],v2[2],n2[0],n2[1],n2[2]);
 	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>",
 		v3[0],v3[1],v3[2],n3[0],n3[1],n3[2]);
-	fprintf(f," texture {%s}}\n", tex_name);
+	fprintf(f," texture {%s}}\n", mat_name);
       }
     } else if(write_pov_mode==WRITE_POV_MEGA) {
       // format of megapov
       fprintf(f,"#local tex1 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      tex_name,c1[0],c1[1],c1[2],fi_name,tp_name);
+	      mat_name,c1[0],c1[1],c1[2],fi_name,tp_name);
       fprintf(f,"#local tex2 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      tex_name,c2[0],c2[1],c2[2],fi_name,tp_name);
+	      mat_name,c2[0],c2[1],c2[2],fi_name,tp_name);
       fprintf(f,"#local tex3 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      tex_name,c3[0],c3[1],c3[2],fi_name,tp_name);
+	      mat_name,c3[0],c3[1],c3[2],fi_name,tp_name);
       fprintf(f,"smooth_triangle {");
       
       fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
@@ -629,12 +636,13 @@ int writePOVSurfObj(FILE *f, surfObj *obj, int k,float *lim)
   }
   if(write_pov_mode==WRITE_POV_DEFAULT ||
      write_pov_mode==WRITE_POV_NEW) {
-        fprintf(f,"material {texture {%s}}\n",tex_name);
+        fprintf(f,"material {%s}\n",mat_name);
   }
 
 
-  fprintf(f,"}");
+  fprintf(f,"}\n");
 
+  fprintf(f,"#end\n");
 
   return 0;
 }
@@ -644,11 +652,12 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
   int i,p1,p2,p3;
   float v1[4],v2[4],v3[4],n1[4],n2[4],n3[4],*c1,*c2,*c3,t;
   float def_amb,def_diff,def_spec,def_rough,def_bri;
-  char tex_name[64],tp_name[64],lw_name[64],ps_name[64],fi_name[64];
+  char mat_name[64],tp_name[64],lw_name[64],ps_name[64],fi_name[64];
+  char obj_name[64];
   float lw,ps,rad;
 
-  sprintf(tex_name,"_%s_%s_mat",obj->node->name,obj->name);
-  writePOVCheckName(tex_name);
+  sprintf(mat_name,"_%s_%s_mat",obj->node->name,obj->name);
+  writePOVCheckName(mat_name);
   sprintf(tp_name,"_%s_%s_tp",obj->node->name,obj->name);
   writePOVCheckName(tp_name);
   sprintf(fi_name,"_%s_%s_fi",obj->node->name,obj->name);
@@ -657,6 +666,8 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
   writePOVCheckName(lw_name);
   sprintf(ps_name,"_%s_%s_ps",obj->node->name,obj->name);
   writePOVCheckName(ps_name);
+  sprintf(obj_name,"_%s_%s",obj->node->name,obj->name);
+  writePOVCheckName(obj_name);
 
   def_amb=0.10;
   def_diff=0.78;
@@ -668,10 +679,14 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
   ps=obj->render.point_size*0.05;
 
   if(k==0) {
+    fprintf(f,"#declare %s = 1;\n",obj_name);
     fprintf(f,"// material, transparency, filter, linewidth and pointsize definition for object .%s.%s\n",obj->node->name, obj->name);
-    fprintf(f,"#declare %s = material {\ntexture {\n",tex_name);
-    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f brilliance %.2f}\n}\n}\n",
+    fprintf(f,"#declare %s = material {\ntexture {\n",mat_name);
+    fprintf(f,"pigment {color rgbft <0,0,0,1,1>}\n");
+    fprintf(f,"normal {granite 0.0 scale 1}\n");
+    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f brilliance %.2f}\n",
 	    def_amb,def_diff,def_spec,def_rough,def_bri);
+    fprintf(f,"}\ninterior {}\n}\n");
     fprintf(f,"#declare %s = %.4f;\n",tp_name,1.0-obj->render.transparency);
     fprintf(f,"#declare %s = %.4f;\n\n",fi_name,0.0);
 
@@ -684,7 +699,7 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
   }
 
 
-
+  fprintf(f,"#if (%s)\n",obj_name);
 
   switch(obj->type) {
   case SCAL_CONTOUR:
@@ -699,7 +714,7 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
 		v1[0],v1[1],v1[2],ps_name);
       }
       fprintf(f,"material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}\n",
-	      tex_name,obj->r,obj->g, obj->b, fi_name,tp_name);
+	      mat_name,obj->r,obj->g, obj->b, fi_name,tp_name);
 
       break;
     case RENDER_LINE:
@@ -715,7 +730,7 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
 		v1[0],v1[1],v1[2],v2[0],v2[1],v2[2],lw_name);
       }
       fprintf(f,"material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}\n",
-	      tex_name, obj->r,obj->g, obj->b, fi_name, tp_name);
+	      mat_name, obj->r,obj->g, obj->b, fi_name, tp_name);
 
       break;
     case RENDER_SURFACE:
@@ -753,7 +768,7 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
 	  
       }
       fprintf(f,"material {%s} pigment {color rgbft<%.4f,%.4f,%.4f,%s,%s>}\n",
-	      tex_name, obj->r,obj->g, obj->b, fi_name, tp_name);
+	      mat_name, obj->r,obj->g, obj->b, fi_name, tp_name);
       break;
     }
     break;
@@ -773,7 +788,7 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
 		v1[0],v1[1],v1[2], ps_name);
       }
       fprintf(f,"material { %s } pigment {color rgbft <%.3f,%.3f,%.3f,%s,%s>}}\n",
-	      tex_name,
+	      mat_name,
 	      obj->point[i].c[0],
 	      obj->point[i].c[1],
 	      obj->point[i].c[2],
@@ -786,6 +801,8 @@ int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
   
   fprintf(f,"}\n");
 
+  fprintf(f,"#end\n");
+
   return 0;
 }
 
@@ -794,33 +811,47 @@ int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
   int i;
   float v1[4],v2[4],v3[4],n1[4],n2[4],n3[4],*c1,*c2,*c3,t;
   float def_amb,def_diff,def_spec,def_rough,def_bri;
-  char tex_name[64],tp_name[64],fi_name[64];
+  char mat_name[64],tp_name[64],fi_name[64],obj_name[64],lw_name[64];
+  float lw;
 
-  sprintf(tex_name,"_%s_%s_mat",obj->node->name,obj->name);
-  writePOVCheckName(tex_name);
+  lw=obj->render.line_width*0.05;
+
+  sprintf(mat_name,"_%s_%s_mat",obj->node->name,obj->name);
+  writePOVCheckName(mat_name);
   sprintf(tp_name,"_%s_%s_tp",obj->node->name,obj->name);
   writePOVCheckName(tp_name);
+  sprintf(lw_name,"_%s_%s_lw",obj->node->name,obj->name);
+  writePOVCheckName(lw_name);
   sprintf(fi_name,"_%s_%s_fi",obj->node->name,obj->name);
   writePOVCheckName(fi_name);
+  sprintf(obj_name,"_%s_%s",obj->node->name, obj->name);
+  writePOVCheckName(obj_name);
 
-  def_amb=0.10;
-  def_diff=0.78;
-  def_spec=0.02;
-  def_rough=0.01;
-  def_bri=0.7;
+  def_amb=0.1;
+  def_diff=0.7;
+  def_spec=0.2;
+  def_rough=0.1;
+  def_bri=1.0;
 
   if(k==0) {
+    fprintf(f,"#declare %s = 1;\n",obj_name);
     fprintf(f,"// material, transparency and filter definition for object .%s.%s\n",obj->node->name, obj->name);
-    fprintf(f,"#declare %s = texture {\n",tex_name);
-    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f brilliance %.2f}\n}\n",
+    fprintf(f,"#declare %s = material {\ntexture {\n",mat_name);
+    fprintf(f,"pigment {color rgbft <0,0,0,1,1>}\n");
+    fprintf(f,"normal {granite 0.0 scale 1}\n");
+    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f brilliance %.2f}\n",
 	    def_amb,def_diff,def_spec,def_rough,def_bri);
+    fprintf(f,"}\ninterior {}\n}\n");
     fprintf(f,"#declare %s = %.4f;\n",tp_name,1.0-obj->render.transparency);
     fprintf(f,"#declare %s = %.4f;\n",fi_name,0.0);
+    if(obj->type==GRID_CONTOUR) {
+      fprintf(f,"#declare %s = %.4f;\n",lw_name,lw);
+    }
     return 0;
   }
 
 
-  fprintf(f,"// .%s.%s\n",obj->node->name,obj->name);
+  fprintf(f,"#if (%s)\n",obj_name);
 
   switch (obj->type) {
   case GRID_SURFACE:
@@ -830,7 +861,7 @@ int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
       fprintf(f,"union {\n");
     
     if(write_pov_mode==WRITE_POV_SMOOTH)
-      fprintf(f,"#declare triangle_base_texture = material{texture{%s}}\n",tex_name);
+      fprintf(f,"#declare triangle_base_texture = material{%s}\n",mat_name);
     
     
     t=obj->render.transparency;
@@ -874,11 +905,11 @@ int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
       } else if(write_pov_mode==WRITE_POV_MEGA) {
 	// format of megapov
 	fprintf(f,"#local tex1 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-		tex_name,c1[0],c1[1],c1[2],fi_name,tp_name);
+		mat_name,c1[0],c1[1],c1[2],fi_name,tp_name);
 	fprintf(f,"#local tex2 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-		tex_name,c2[0],c2[1],c2[2],fi_name,tp_name);
+		mat_name,c2[0],c2[1],c2[2],fi_name,tp_name);
 	fprintf(f,"#local tex3 = texture {%s pigment {color rgbft<%.3f,%.3f,%.3f,%s,%s>}}\n",
-		tex_name,c3[0],c3[1],c3[2],fi_name,tp_name);
+		mat_name,c3[0],c3[1],c3[2],fi_name,tp_name);
 	fprintf(f,"smooth_triangle {");
 	
 	fprintf(f,"<%f,%f,%f>,<%f,%f,%f>,",
@@ -913,14 +944,42 @@ int writePOVGridObj(FILE *f, gridObj *obj, int k,float *lim)
     }
     if(write_pov_mode==WRITE_POV_DEFAULT ||
        write_pov_mode==WRITE_POV_NEW) {
-      fprintf(f,"material {texture{%s}}\n",tex_name);
+      fprintf(f,"material {%s}\n",mat_name);
     }
     fprintf(f,"}");
     break;
   case GRID_CONTOUR:
-    fprintf(f,"// not supported yet\n");
+    fprintf(f,"// .%s.%s\n",obj->node->name,obj->name);
+    fprintf(f,"union {\n");
+    for(i=0;i<obj->vertc;i+=2) {
+      
+      if(!writePOVTransform(&obj->node->transform,obj->vert[i+0].v,v1,1)) continue;
+      if(!writePOVTransform(&obj->node->transform,obj->vert[i+1].v,v2,1)) continue;
+      writePOVCheckLim(v1,lim);
+      writePOVCheckLim(v2,lim);
+      
+      if(v1[0]==v2[0] && v1[1]==v2[1] && v1[2]==v2[2])
+	continue;
+      fprintf(f,"cylinder {");
+      fprintf(f,"<%.4f,%.4f,%.4f>,<%4f,%4f,%4f> %s ",
+	      v1[0],v1[1],v1[2],
+	      v2[0],v2[1],v2[2],
+	      lw_name);
+      fprintf(f,"material {%s texture {pigment {color rgbft <%.3f,%.3f,%.3f,%s,%s>}}}}\n",
+	      mat_name,
+	      (obj->vert[i+0].c[0]+obj->vert[i+1].c[0])*0.5,
+	      (obj->vert[i+0].c[1]+obj->vert[i+1].c[1])*0.5,
+	      (obj->vert[i+0].c[2]+obj->vert[i+1].c[2])*0.5,
+	      fi_name,tp_name);
+    }
+
+    
+    fprintf(f,"}\n");
     break;
   }
+
+  fprintf(f,"#end\n");
+
   return 0;
 }
 
@@ -936,7 +995,7 @@ int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
   def_amb=0.1;
   def_diff=0.6;
   def_spec=0.3;
-  def_rough=0.01;
+  def_rough=0.05;
 
   sprintf(tex_name,"_%s_%s_mat",obj->node->name,obj->name);
   writePOVCheckName(tex_name);
@@ -953,8 +1012,9 @@ int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
   if(k==0) {
     fprintf(f,"// material, transparency, filter, linewidth and pointsize definition for object .%s.%s\n",obj->node->name, obj->name);
     fprintf(f,"#declare %s = material {\ntexture {\n",tex_name);
-    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f}\n}\n}\n",
+    fprintf(f,"finish {ambient %.2f diffuse %.2f specular %.2f roughness %.2f}\n",
 	    def_amb,def_diff,def_spec,def_rough);
+    fprintf(f,"}\n}");
 
     fprintf(f,"#declare %s = %.4f;\n",tp_name,1.0-obj->render.transparency);
     fprintf(f,"#declare %s = %.4f;\n",fi_name,0.0);

@@ -594,5 +594,7 @@ int structDrawBDObj(dbmStructNode *node, structObj *obj)
     break;
   }
 
+  glEnable(GL_LIGHTING);
+
   return 0;
 }

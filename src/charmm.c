@@ -181,11 +181,11 @@ int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag)
   for(i=0;i<ntype;i++) {
     fread(atname[i],sizeof(char),4,f);
     if(atname[i][3]==' ')
-      atname[i][3]=='\0';
+      atname[i][3]='\0';
     if(atname[i][2]==' ')
-      atname[i][2]=='\0';
+      atname[i][2]='\0';
     if(atname[i][1]==' ')
-      atname[i][1]=='\0';
+      atname[i][1]='\0';
     atname[i][4]='\0';
   }
   fread(dummy,1,4,f);
