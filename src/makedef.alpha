@@ -1,7 +1,7 @@
 # makedef for ALPHA
 
 ARCH=DEC
-
+MACH=osf
 
 CC   = cc
 GOPT = -g2 -fullwarn

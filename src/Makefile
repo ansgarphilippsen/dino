@@ -149,6 +149,9 @@ export INCLUDE
 export OPTIONS
 export .SUFFIXES
 
+DATE = `date +"%Y%m%d"`
+MACH = `uname -m`
+
 sinclude $(GUI)/make.addon
 
 dino: $(OBJ) gui
@@ -173,6 +176,8 @@ depend:
 	gcc -MM $(INCLUDE) $(OPTIONS) $(SRC) > .depend
 	cd $(GUI) && $(MAKE) depend
 
+snapshot:
+	gzip < ../bin/dino > ../bin/dino-0.8.5-$(DATE).$(MACH).gz
 
 all: clean depend dino
 

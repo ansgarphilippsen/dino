@@ -1,6 +1,7 @@
 # makedef for IRIX
 
 ARCH=SGI
+MACH=irix
 
 CC   = cc
 GOPT = -O2 -n32 -fullwarn -mips3 

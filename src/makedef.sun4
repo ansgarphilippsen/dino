@@ -1,4 +1,5 @@
 ARCH=SUN
+MACH=sun
 
 CC   = gcc
 GOPT = -g 

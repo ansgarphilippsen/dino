@@ -1,6 +1,7 @@
 # Makedef for linux
 
 ARCH=LINUX
+MACH=i386
 
 #LIBDIR = -L../lib -L/usr/X11R6/lib
 LIBDIR = -L/usr/X11R6/lib
