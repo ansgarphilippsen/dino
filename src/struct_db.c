@@ -59,10 +59,17 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
 
   node->model_count=0;
   node->chain_count=0;
+  node->chain=NULL;
   node->residue_count=0;
+  node->residue=NULL;
   node->atom_count=0;
+  node->atom=NULL;
   node->bond_count=0;
+  node->bond_max=0;
+  node->bond=NULL;
+#ifdef WITH_NCBONDS
   node->nbond_count=0;
+#endif
   node->conn=NULL;
   node->xtal=NULL;
   node->atom_table=NULL;
@@ -81,22 +88,45 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
 
 int structPrep(dbmStructNode *node)
 {
+  char message[256];
+
   // build CubeArray
-  debmsg("structPrep: build CA");       
+  comMessage("b");
   structBuildCA(node);
 
   // determine the connectivity
-  debmsg("structPrep: reconnect");
+  comMessage("c");
   structReconnect(node);
 
   // determine min and max params
+  comMessage("m");
   structSetMinMax(node);
 
   // set the center to geometric center
+  comMessage("r");
   structRecenter(node);
 
   // calculate various res params
+  comMessage("p");
   structPrepRes(node);
+
+  comMessage("]");
+
+  sprintf(message," %d atom(s),",node->atom_count);
+  if(node->residue_flag)
+    sprintf(message,"%s %d residue(s),",
+	    message,node->residue_count);
+  if(node->chain_flag)
+    sprintf(message,"%s %d chain(s),",
+	    message,node->chain_count);
+  if(node->model_flag)
+    sprintf(message,"%s %d model(s),",
+	    message,node->model_count);
+  sprintf(message,"%s %d bond(s) (%d expl)",
+	  message,node->bond_count, node->conn_count);
+  comMessage(message);
+  comMessage("\n");
+  
 
   return 0;
 }
@@ -310,22 +340,32 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     return structComConnect(node,wl[1],wl[2]);
   } else if(!strcmp(wl[0],"reconnect")) {
     if(wc==1) {
-      sprintf(message,"missing parameter\n");
-      comMessage(message);
-      return -1;
+      i=0xff;
     } else if(wc==2) {
-      if(!strcmp(wl[1],"ncb")) {
-	structReconnectNC(node);
-      } else {
-	sprintf(message,"unknown parameter: %s\n",wl[1]);
-	comMessage(message);
-	return -1;
-      }
+      i=atoi(wl[1]);
     } else {
-      sprintf(message,"too many words\n");
+      sprintf(message,"syntax: .struct reconnect [flag]\n");
       comMessage(message);
       return -1;
     }
+    i &= (STRUCT_CONN_IMPL | STRUCT_CONN_EXPL | STRUCT_CONN_DIST);
+    node->conn_flag=i;
+    if(i) {
+      clStrcpy(message,"reconnecting with rules:");
+      if(i & STRUCT_CONN_IMPL)
+	clStrcat(message," implicit(0x1)");
+      if(i & STRUCT_CONN_EXPL)
+	clStrcat(message," explicit(0x2)");
+      if(i & STRUCT_CONN_DIST)
+	clStrcat(message," distance(0x4)");
+      clStrcat(message,"\n");
+    } else {
+      clStrcpy(message,"reconnecting without any rules, removing all bonds");
+    }
+    comMessage(message);
+    structReconnect(node);
+    sprintf(message,"created %d bonds\n",node->bond_count);
+    comMessage(message);
   } else if(!strcmp(wl[0],"cell")) {
     if(node->xtal==NULL) {
       comMessage("no crystallographic info available\n");
@@ -411,8 +451,10 @@ int structComNew(dbmStructNode *node, int wc, char **wl)
 	  type=STRUCT_CONNECT;
 	} else if(clStrcmp(co.param[i].wl[0],"trace")) { 
 	  type=STRUCT_TRACE;
+#ifdef WITH_NCBONDS
 	} else if(clStrcmp(co.param[i].wl[0],"nbond")) { 
 	  type=STRUCT_NBOND;
+#endif
 	} else {
 	  clStrcpy(message,"error: new: unknown type \n");
 	  clStrncat(message,co.param[i].wl[0],100);
@@ -937,10 +979,26 @@ int structGet(dbmStructNode *node, char *prop)
   return ret;
 }
 
+/*
+  recalculate the connectivity based on
+  the following rules
+
+  a) implicit: both residue- and atom-names are define
+     in lookup table
+
+  b) explicit: two atoms connected by CONECT statement in file
+     or on command line
+
+  c) distance: connect atoms within bonding distance 
+
+  NOTE: the way it is implemented, it will first try a), then
+  c), and apply b) afterwards
+  
+*/
 
 int structReconnect(struct DBM_STRUCT_NODE *node)
 {
-  int i,mc,cc,rc,bc,pass;
+  int i,mc,cc,rc,bc;
   register int ac1, ac2,id1,id2;
   int m1;
   struct STRUCT_MODEL *cmp;
@@ -948,20 +1006,20 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
   struct STRUCT_RESIDUE *crp;
   struct STRUCT_ATOM *ap1,*ap2,*prev;
   struct STRUCT_BOND *nb;
-  int b_max=10000;
   struct CONN_ENTRY *centry;
+  int b_max;
   int abc1[3],abc2[3];
   caPointer *ca_p;
   int ca_c;
 
-  if(node->bond_count>0)
-    Cfree(node->bond);
-  
+  b_max=10000;
   nb=Crecalloc(NULL,b_max,sizeof(struct STRUCT_BOND));
-
   bc=0;
 
-//  fprintf(stderr,"%d\n",node->model_count);
+  // reset connectivity
+  for(i=0;i<node->atom_count;i++)
+    node->atom[i].bondc=0;
+  
 
   if(node->conn_flag)
     for(mc=0;mc<node->model_count;mc++) {
@@ -969,74 +1027,78 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
     for(cc=0;cc<cmp->chain_count;cc++) {
       ccp=cmp->chain[cc];
       prev=NULL;
-//      fprintf(stderr,"%d %s %d\n",mc,ccp->name, ccp->residue_count);
       for(rc=0;rc<ccp->residue_count;rc++) {
 	crp=ccp->residue[rc];
-	centry=conGetEntry(crp->name);
-	/*
-	  no connectivity information is available
-	*/
-	if(centry==NULL) {
-	  prev=NULL;
-	  /*
-	    loop over all atoms in this RESIDUE ... 
-	  */
-	  for(ac1=0;ac1<crp->atom_count;ac1++) {
-	    ap1=crp->atom[ac1];
-	    /*
-	      ... versus all atoms in this MODEL 
-	    */
-
-	    caXYZtoABC(node->ca,(float *)ap1->p,abc1);
-	    for(abc2[0]=abc1[0]-1;abc2[0]<=abc1[0]+1;abc2[0]++)
-	      for(abc2[1]=abc1[1]-1;abc2[1]<=abc1[1]+1;abc2[1]++)
-		for(abc2[2]=abc1[2]-1;abc2[2]<=abc1[2]+1;abc2[2]++) {
-		  caGetList(node->ca,abc2,&ca_p,&ca_c);
-		  for(ac2=0;ac2<ca_c;ac2++) {
-		    ap2=ca_p[ac2];
-		    if(ap1->model==ap2->model)
-		      if(ap1->n!=ap2->n)
-			if(structIsConnected(ap1,ap2))
-			  structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
-		  }
-		}
-	  }
-	  /* 
-	     connectivity info is available for this residue
-	  */
+	// only check lookup table if requested by flag
+	if(node->conn_flag & STRUCT_CONN_IMPL) {
+	  centry=conGetEntry(crp->name);
 	} else {
+	  centry=NULL;
+	}
+	if(centry==NULL) {
+	  if(node->conn_flag & STRUCT_CONN_DIST) {
+	    /*
+	      no connectivity information is available, do 
+	      distance based search only if requested by flag
+	    */
+	    prev=NULL;
+	    for(ac1=0;ac1<crp->atom_count;ac1++) {
+	      // loop over all atoms in this RESIDUE ... 
+	      ap1=crp->atom[ac1];
+	      //... versus all atoms in this MODEL 
+	      // check distance by using the cube array
+	      caXYZtoABC(node->ca,(float *)ap1->p,abc1);
+	      for(abc2[0]=abc1[0]-1;abc2[0]<=abc1[0]+1;abc2[0]++)
+		for(abc2[1]=abc1[1]-1;abc2[1]<=abc1[1]+1;abc2[1]++)
+		  for(abc2[2]=abc1[2]-1;abc2[2]<=abc1[2]+1;abc2[2]++) {
+		    caGetList(node->ca,abc2,&ca_p,&ca_c);
+		    for(ac2=0;ac2<ca_c;ac2++) {
+		      ap2=ca_p[ac2];
+		      if(ap1->model==ap2->model)
+			if(ap1->n!=ap2->n)
+			  if(structIsConnected(ap1,ap2))
+			    structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
+		    }
+		  }
+	    }
+	  }
+	} else {
+	  /* 
+	     connectivity info is available for this residue, 
+	     do connectivity table lookup
+	  */
+
 	  for(ac1=0;ac1<crp->atom_count;ac1++) {
 	    ap1=crp->atom[ac1];
 	    id1=conGetAtomID(centry,ap1->name);
-	    /*
-	      but no info for this atom 
-	    */
 	    if(!id1) {
-	      m1=ap1->model->num;
-	      /* 
-		 check against all other atoms in residue
-		 this is questionable, maybe all other atoms ???
-	      */
-	      for(ac2=0;ac2<crp->atom_count;ac2++) {
-		ap2=crp->atom[ac2];
-		/*
-		  TODO double bonds
-		  connect if THIS NEEDS ADJUSTMENT TO AVOID
-		  DOUBLE ALLOCATED BONDS !
-		  and distance is ok
+	      // no entry for this particular atom
+	      if(node->conn_flag & STRUCT_CONN_DIST) {
+		// do distance based check only if requested by flag
+		m1=ap1->model->num;
+		/* 
+		   check against all other atoms in residue
+		   this is questionable, maybe all other atoms ???
 		*/
-		if(ac1!=ac2)
-		  if(structIsConnected(ap1,ap2))
-		    structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
+		for(ac2=0;ac2<crp->atom_count;ac2++) {
+		  ap2=crp->atom[ac2];
+		  /*
+		    TODO double bonds
+		    connect if THIS NEEDS ADJUSTMENT TO AVOID
+		    DOUBLE ALLOCATED BONDS !
+		    and distance is ok
+		  */
+		  if(ac1!=ac2)
+		    if(structIsConnected(ap1,ap2))
+		      structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
+		}
 	      }
+	    } else { /* !id1 */
 	      /* 
 		 there was info for this atom
 	      */
-	    } else { /* !id1 */
-	      /* 
-		 loop over remaining atoms in residue
-	      */
 	      for(ac2=ac1+1;ac2<crp->atom_count;ac2++) {
+		// loop over remaining atoms in residue
 		ap2=crp->atom[ac2];
 		id2=conGetAtomID(centry,ap2->name);
 		/*
@@ -1076,38 +1138,47 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
      find all bonds that have not been found,
      but that are defined by external connectivity
   */
-  pass=0;
-  for(cc=0;cc<node->conn_count;cc++) {
-    for(i=0;i<bc;i++) {
-      if(nb[i].atom1==node->conn[cc].ap1 && 
-	 nb[i].atom2==node->conn[cc].ap2) {
-	break;
-      } else if(nb[i].atom1==node->conn[cc].ap2 && 
-		nb[i].atom2==node->conn[cc].ap1) {
-	break;
-      } 
+  if(node->conn_flag && STRUCT_CONN_EXPL) {
+    for(cc=0;cc<node->conn_count;cc++) {
+      // is this one already defined ?
+      for(i=0;i<bc;i++) {
+	if(nb[i].atom1==node->conn[cc].ap1 && 
+	   nb[i].atom2==node->conn[cc].ap2) {
+	  break;
+	} else if(nb[i].atom1==node->conn[cc].ap2 && 
+		  nb[i].atom2==node->conn[cc].ap1) {
+	  break;
+	} 
+      }
+      // not yet defined
+      if(i==bc) {
+	structConnectAtoms(node,&nb,&bc,&b_max,
+			   node->conn[cc].ap1,node->conn[cc].ap2);
+      } else {
+      }
+      
     }
-    if(i==bc) {
-      pass++;
-      structConnectAtoms(node,&nb,&bc,&b_max,
-			 node->conn[cc].ap1,node->conn[cc].ap2);
-    }
-    
   }
-
-
+  
   node->bond_count=bc;
-  node->bond_max=bc+100;
-  node->bond=Ccalloc(bc+100,sizeof(struct STRUCT_BOND));
+  if(node->bond_max<bc) {
+    node->bond_max=bc;
+    node->bond=Crecalloc(node->bond,node->bond_max,sizeof(struct STRUCT_BOND));
+  }
   memcpy(node->bond,nb,bc*sizeof(struct STRUCT_BOND));
   Cfree(nb);
 
+
+#ifdef WITH_NCBONDS
   structReconnectNC(node);
+#endif
 
   structRecalcBonds(node);
 
   return 0;
 }
+
+#ifdef WITH_NCBONDS
 
 /*
   non-covalent bonds
@@ -1177,6 +1248,7 @@ int structReconnectNC(struct DBM_STRUCT_NODE *node)
 
   return 0;
 }
+#endif
 
 /*
   check if two atoms are in non covalent interaction
@@ -3433,3 +3505,174 @@ void structClearFlag(dbmStructNode *node,int mask)
     node->atom[i].flag &= (~mask);
 }
 
+// old
+
+int structReconnect2(struct DBM_STRUCT_NODE *node)
+{
+  int i,mc,cc,rc,bc,pass;
+  register int ac1, ac2,id1,id2;
+  int m1;
+  struct STRUCT_MODEL *cmp;
+  struct STRUCT_CHAIN *ccp;
+  struct STRUCT_RESIDUE *crp;
+  struct STRUCT_ATOM *ap1,*ap2,*prev;
+  struct STRUCT_BOND *nb;
+  struct CONN_ENTRY *centry;
+  int b_max;
+  int abc1[3],abc2[3];
+  caPointer *ca_p;
+  int ca_c;
+
+  if(node->bond_count>0)
+    Cfree(node->bond);
+  
+  b_max=10000;
+  nb=Crecalloc(NULL,b_max,sizeof(struct STRUCT_BOND));
+  bc=0;
+
+  // implicit connectivity based on lookup tables
+  if(node->conn_flag & STRUCT_CONN_IMPL)
+    for(mc=0;mc<node->model_count;mc++) {
+    cmp=&node->model[mc];
+    for(cc=0;cc<cmp->chain_count;cc++) {
+      ccp=cmp->chain[cc];
+      prev=NULL;
+      for(rc=0;rc<ccp->residue_count;rc++) {
+	crp=ccp->residue[rc];
+	centry=conGetEntry(crp->name);
+	/*
+	  no connectivity information is available
+	*/
+	if(centry==NULL) {
+	  prev=NULL;
+	  /*
+	    loop over all atoms in this RESIDUE ... 
+	  */
+	  for(ac1=0;ac1<crp->atom_count;ac1++) {
+	    ap1=crp->atom[ac1];
+	    /*
+	      ... versus all atoms in this MODEL 
+	    */
+
+	    caXYZtoABC(node->ca,(float *)ap1->p,abc1);
+	    for(abc2[0]=abc1[0]-1;abc2[0]<=abc1[0]+1;abc2[0]++)
+	      for(abc2[1]=abc1[1]-1;abc2[1]<=abc1[1]+1;abc2[1]++)
+		for(abc2[2]=abc1[2]-1;abc2[2]<=abc1[2]+1;abc2[2]++) {
+		  caGetList(node->ca,abc2,&ca_p,&ca_c);
+		  for(ac2=0;ac2<ca_c;ac2++) {
+		    ap2=ca_p[ac2];
+		    if(ap1->model==ap2->model)
+		      if(ap1->n!=ap2->n)
+			if(structIsConnected(ap1,ap2))
+			  structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
+		  }
+		}
+	  }
+	  /* 
+	     connectivity info is available for this residue
+	  */
+	} else {
+	  for(ac1=0;ac1<crp->atom_count;ac1++) {
+	    ap1=crp->atom[ac1];
+	    id1=conGetAtomID(centry,ap1->name);
+	    /*
+	      but no info for this atom 
+	    */
+	    if(!id1) {
+	      m1=ap1->model->num;
+	      /* 
+		 check against all other atoms in residue
+		 this is questionable, maybe all other atoms ???
+	      */
+	      for(ac2=0;ac2<crp->atom_count;ac2++) {
+		ap2=crp->atom[ac2];
+		/*
+		  TODO double bonds
+		  connect if THIS NEEDS ADJUSTMENT TO AVOID
+		  DOUBLE ALLOCATED BONDS !
+		  and distance is ok
+		*/
+		if(ac1!=ac2)
+		  if(structIsConnected(ap1,ap2))
+		    structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
+	      }
+	      /* 
+		 there was info for this atom
+	      */
+	    } else { /* !id1 */
+	      /* 
+		 loop over remaining atoms in residue
+	      */
+	      for(ac2=ac1+1;ac2<crp->atom_count;ac2++) {
+		ap2=crp->atom[ac2];
+		id2=conGetAtomID(centry,ap2->name);
+		/*
+		  if other atom was also found
+		  and is connected to first
+		*/
+		if(id2)
+		  if(conIsConnected(centry,id1,id2))
+		    structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
+	      }
+	      
+	    }
+	  }
+	  id2=conGetPrevID(centry);
+	  for(ac1=0;ac1<crp->atom_count;ac1++) {
+	      ap1=crp->atom[ac1];
+	      if(id2==conGetAtomID(centry,ap1->name))
+		if(prev!=NULL)
+		  if(prev->residue->num+1==ap1->residue->num)
+		    structConnectAtoms(node,&nb,&bc,&b_max,ap1,prev);
+	  }
+	  prev=NULL;
+	  id2=conGetNextID(centry);
+	  for(ac1=0;ac1<crp->atom_count;ac1++) {
+	      ap1=crp->atom[ac1];
+	      if(id2==conGetAtomID(centry,ap1->name)) {
+		prev=ap1;
+		break;
+	      }
+	  }
+	}
+      }
+    }
+  }
+
+  /* 
+     find all bonds that have not been found,
+     but that are defined by external connectivity
+  */
+  pass=0;
+  for(cc=0;cc<node->conn_count;cc++) {
+    for(i=0;i<bc;i++) {
+      if(nb[i].atom1==node->conn[cc].ap1 && 
+	 nb[i].atom2==node->conn[cc].ap2) {
+	break;
+      } else if(nb[i].atom1==node->conn[cc].ap2 && 
+		nb[i].atom2==node->conn[cc].ap1) {
+	break;
+      } 
+    }
+    if(i==bc) {
+      pass++;
+      structConnectAtoms(node,&nb,&bc,&b_max,
+			 node->conn[cc].ap1,node->conn[cc].ap2);
+    }
+    
+  }
+
+
+  node->bond_count=bc;
+  node->bond_max=bc+100;
+  node->bond=Ccalloc(bc+100,sizeof(struct STRUCT_BOND));
+  memcpy(node->bond,nb,bc*sizeof(struct STRUCT_BOND));
+  Cfree(nb);
+#ifdef WITH_NCBONDS
+  structReconnectNC(node);
+#endif
+
+  structRecalcBonds(node);
+
+  return 0;
+}

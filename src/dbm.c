@@ -18,6 +18,7 @@
 #include "surf_read.h"
 #include "surf_write.h"
 #include "grid_db.h"
+#include "scene.h"
 #include "rex.h"
 #include "mat.h"
 #include "conn.h"
@@ -95,7 +96,7 @@ int dbmLoad(int wc, const char **wl)
   dbmNode *node;
   struct stat st;
   char gunzip[256],gunzip2[256];
-  int cmp,ret,dbm_flag,rn_flag;
+  int cmp,ret,dbm_flag,rn_flag,conn_flag;
   
   if(wc<1) {
     comMessage("filename missing\n");
@@ -120,6 +121,8 @@ int dbmLoad(int wc, const char **wl)
 
   dbm_flag=0;
   rn_flag=0;
+  conn_flag= STRUCT_CONN_EXPL | STRUCT_CONN_IMPL | STRUCT_CONN_DIST;
+  
 
   n=1;
   clStrcpy(type,"");
@@ -142,10 +145,18 @@ int dbmLoad(int wc, const char **wl)
       }
       clStrcpy(name,wl[n+1]);
       n++;
+    } else if(!strcmp(wl[n],"-conn") ||
+	      !strcmp(wl[n],"-c")) {
+      if(n+1>=wc) {
+	sprintf(message,"missing parameter for %s\n",wl[n]);
+	comMessage(message);
+	return -1;
+      }
+      conn_flag=atoi(wl[n+1]);
+      n++;
     } else if(!strcmp(wl[n],"-swap")) {
       dbm_flag|=DBM_FLAG_SWAP;
-    } else if(!strcmp(wl[n],"-c") ||
-	      !strcmp(wl[n],"-conv")) {
+    } else if(!strcmp(wl[n],"-conv")) {
       dbm_flag|=DBM_FLAG_CONV;
     } else if(!strcmp(wl[n],"-rn")) {
       rn_flag=1;
@@ -224,7 +235,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
 
-    sprintf(message,"loading %s, type pdb",name);
+    sprintf(message,"loading %s, type pdb ...\n[",name);
     comMessage(message);
     if(pdbRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -232,22 +243,8 @@ int dbmLoad(int wc, const char **wl)
       return -1;
     }
     if(cmp) pclose(f); else fclose(f);
-    comMessage(".");
+    node->structNode.conn_flag=conn_flag;
     structPrep(&node->structNode);
-    sprintf(message," %d atom(s),",node->structNode.atom_count);
-    if(node->structNode.residue_flag)
-      sprintf(message,"%s %d residue(s),",
-	      message,node->structNode.residue_count);
-    if(node->structNode.chain_flag)
-      sprintf(message,"%s %d chain(s),",
-	      message,node->structNode.chain_count);
-    if(node->structNode.model_flag)
-      sprintf(message,"%s %d model(s),",
-	      message,node->structNode.model_count);
-    sprintf(message,"%s %d bond(s)",
-	    message,node->structNode.bond_count);
-    comMessage(message);
-    comMessage("\n");
   } else if(!strcmp(type,"xplorc") ||
 	    !strcmp(type,"cnsc")) {
     /*
@@ -255,7 +252,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"loading %s, type %s ...\n",name, type);
+    sprintf(message,"loading %s, type %s ...\n[",name, type);
     comMessage(message);
     if(xplorPDBRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -263,29 +260,15 @@ int dbmLoad(int wc, const char **wl)
       return -1;
     }
     if(cmp) pclose(f); else fclose(f);
-    comMessage(".");
+    node->structNode.conn_flag=conn_flag;
     structPrep(&node->structNode);
-    sprintf(message," %d atom(s),",node->structNode.atom_count);
-    if(node->structNode.residue_flag)
-      sprintf(message,"%s %d residue(s),",
-	      message,node->structNode.residue_count);
-    if(node->structNode.chain_flag)
-      sprintf(message,"%s %d chain(s),",
-	      message,node->structNode.chain_count);
-    if(node->structNode.model_flag)
-      sprintf(message,"%s %d model(s),",
-	      message,node->structNode.model_count);
-    sprintf(message,"%s %d bond(s)",
-	    message,node->structNode.bond_count);
-    comMessage(message);
-    comMessage("\n");
   } else if(!strcmp(type,"charmm")) {
     /*
       CHARMM coordinate format
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"loading %s, type charmm ...\n",name);
+    sprintf(message,"loading %s, type charmm ...\n[",name);
     comMessage(message);
     if(charmmRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -293,28 +276,14 @@ int dbmLoad(int wc, const char **wl)
       return -1;
     }
     if(cmp) pclose(f); else fclose(f);
-    comMessage(".");
+    node->structNode.conn_flag=conn_flag;
     structPrep(&node->structNode);
-    sprintf(message," %d atom(s),",node->structNode.atom_count);
-    if(node->structNode.residue_flag)
-      sprintf(message,"%s %d residue(s),",
-	      message,node->structNode.residue_count);
-    if(node->structNode.chain_flag)
-      sprintf(message,"%s %d chain(s),",
-	      message,node->structNode.chain_count);
-    if(node->structNode.model_flag)
-      sprintf(message,"%s %d model(s),",
-	      message,node->structNode.model_count);
-    sprintf(message,"%s %d bond(s)",
-	    message,node->structNode.bond_count);
-    comMessage(message);
-    comMessage("\n");
   } else if(!strcmp(type,"bdtrj")) {
     /*
       CHARMM BDTRJ
- */
+    */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
-    sprintf(message,"loading %s, type bdtrj ...\n",name);
+    sprintf(message,"loading %s, type bdtrj ...\n[",name);
     comMessage(message);
     if(bdtrjRead(&node->structNode, f, dbm_flag)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -322,7 +291,9 @@ int dbmLoad(int wc, const char **wl)
       return -1;
     }
     if(cmp) pclose(f); else fclose(f);
-    //structPrep(&node->structNode);
+    node->structNode.conn_flag=0;
+    structPrep(&node->structNode);
+    /***
     debmsg("structPrep: build CA");       
     structBuildCA(&node->structNode);
     debmsg("structPrep: prep res");       
@@ -330,6 +301,7 @@ int dbmLoad(int wc, const char **wl)
     structSetMinMax(&node->structNode);
     structRecenter(&node->structNode);
     comMessage("\n");
+    ***/
   } else if(!strcmp(type,"dgrid")) {
     /*
       DINO GRID
@@ -368,7 +340,7 @@ int dbmLoad(int wc, const char **wl)
     */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"loading %s, type pqr ...\n",name);
+    sprintf(message,"loading %s, type pqr ...\n[",name);
     comMessage(message);
     if(pqrRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -377,7 +349,9 @@ int dbmLoad(int wc, const char **wl)
     }
     if(cmp) pclose(f); else fclose(f);
     comMessage(".");
+    node->structNode.conn_flag=conn_flag;
     structPrep(&node->structNode);
+    /***
     sprintf(message," %d atom(s),",node->structNode.atom_count);
     if(node->structNode.residue_flag)
       sprintf(message,"%s %d residue(s),",
@@ -392,7 +366,7 @@ int dbmLoad(int wc, const char **wl)
 	    message,node->structNode.bond_count);
     comMessage(message);
     comMessage("\n");
-
+    ***/
   } else if(!strcmp(type,"xplorb")) {
     /*
       XPLOR binary map
@@ -651,7 +625,7 @@ int dbmLoad(int wc, const char **wl)
     /* uppsala bones format requested */
     node=dbmNewNode(DBM_NODE_STRUCT,name);
     
-    sprintf(message,"loading %s, type bones ...\n",name);
+    sprintf(message,"loading %s, type bones ...\n[",name);
     comMessage(message);
     if(bonesRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
@@ -660,7 +634,9 @@ int dbmLoad(int wc, const char **wl)
     }
     if(cmp) pclose(f); else fclose(f);
     comMessage(".");
+    node->structNode.conn_flag=conn_flag;
     structPrep(&node->structNode);
+    /***
     sprintf(message," %d atom(s),",node->structNode.atom_count);
     if(node->structNode.residue_flag)
       sprintf(message,"%s %d residue(s),",
@@ -675,6 +651,7 @@ int dbmLoad(int wc, const char **wl)
 	    message,node->structNode.bond_count);
     comMessage(message);
     comMessage("\n");
+    ****/
   } else {
     if(cmp) pclose(f); else fclose(f);
     comMessage("Unknown type \n");

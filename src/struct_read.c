@@ -65,7 +65,7 @@ int pdbRead(FILE *f,dbmNode *node)
   struct STRUCT_FILE_ATOM_ENTRY tmpae;
   struct STRUCT_FILE_CONNECT_ENTRY tmpce;
   struct STRUCT_FILE_SECS_ENTRY tmpse;
-  int d1,d2[4];
+  int d1,d2[5];
   char c1[6],c2[6],c3[6],c4[6],c5[6];
   
   model_count=-1;
@@ -122,17 +122,18 @@ int pdbRead(FILE *f,dbmNode *node)
       c3[5]='\0';
       c4[5]='\0';
       c5[5]='\0';
-      d1=atof(c1);
-      d2[0]=atof(c2);
-      d2[1]=atof(c3);
-      d2[2]=atof(c4);
-      d2[3]=atof(c5);
+      d1=atoi(c1);
+      d2[0]=atoi(c2);
+      d2[1]=atoi(c3);
+      d2[2]=atoi(c4);
+      d2[3]=atoi(c5);
       if(d1>0) {
-	i=0;
-	while(d2[i]>0 && i<4) {
-	  tmpce.a1=d1;
-	  tmpce.a2=d2[i++];
-	  add_connect_entry(&pdb,&tmpce);
+	for(i=0;i<4;i++) {
+	  if(d2[i]>0) {
+	    tmpce.a1=d1;
+	    tmpce.a2=d2[i];
+	    add_connect_entry(&pdb,&tmpce);
+	  }
 	  /**************
 	  pdb.connect_entry[connect_count].a1=d1;
 	  pdb.connect_entry[connect_count].a2=d2[i++];
@@ -194,14 +195,13 @@ int pdbRead(FILE *f,dbmNode *node)
     }
   }
 
-  comMessage(".");
   debmsg("structRead: file parsing done");
 
   //pdb.atom_count=atom_count;
   //pdb.connect_count=connect_count;
 
   structFileEntry2DB(&pdb,&node->structNode);
-  node->structNode.conn_flag=1;
+  //node->structNode.conn_flag=1;
 
   if(pdb_cryst_flag) {
     node->structNode.xtal=Cmalloc(sizeof(struct XTAL));
@@ -398,7 +398,7 @@ int xplorPDBRead(FILE *f,dbmNode *node)
 
   structFileEntry2DB(&pdb,&node->structNode);
 
-  node->structNode.conn_flag=1;
+  //node->structNode.conn_flag=1;
   node->structNode.xtal=NULL;
   
   Cfree(pdb.atom_entry);
@@ -545,7 +545,7 @@ int charmmRead(FILE *f,dbmNode *node)
 
   debmsg("charmmRead: converting to dataset");
   structFileEntry2DB(&charmm,&node->structNode);
-  node->structNode.conn_flag=1;
+  //node->structNode.conn_flag=1;
 
   Cfree(charmm.atom_entry);
 
@@ -908,7 +908,7 @@ int bonesRead(FILE *f, dbmNode *node)
   bones.connect_entry=conn;
   bones.connect_count=conn_count;
 
-  node->structNode.conn_flag=0;
+  //node->structNode.conn_flag=0;
 
   structFileEntry2DB(&bones,&node->structNode);
 
@@ -975,7 +975,7 @@ int pqrRead(FILE *f,dbmNode *node)
 
   structFileEntry2DB(&pdb,&node->structNode);
 
-  node->structNode.conn_flag=1;
+  //node->structNode.conn_flag=1;
   node->structNode.xtal=NULL;
   
   Cfree(pdb.atom_entry);
@@ -1426,6 +1426,8 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     arrays 
   */
 
+  comMessage("a");
+
   debmsg("structRead: allocating working memory: atom");
   atom_max=50000;
   atom_count=0;
@@ -1491,8 +1493,10 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
   re.mnum=-1e6;
   strcpy(re.mname,"_dummy");
 
-  comMessage(".");
   debmsg("structRead: central loop");
+
+  comMessage("l");
+
 
   /*
     central loop
@@ -1783,7 +1787,8 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     
   }
 
-  comMessage(".");
+  comMessage("n");
+
   debmsg("structRead: copy to dataset");
 
   /* 
@@ -1835,8 +1840,9 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     node->atom[i].p=&node->apos[i];
   }
 
-  comMessage(".");
   debmsg("structRead: index to pointer");
+
+  comMessage("i");
 
   /* 
      convert the integer cross references to pointers
@@ -1900,10 +1906,11 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     cap->model=&node->model[cap->model_num];
   }
 
+  comMessage("s");
+
   /*
     secondary structure as defined in the file
   */
-  comMessage(".");
 
   if(sf->secs_count>0) {
     for(i=0;i<node->atom_count;i++) {
@@ -1922,8 +1929,9 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       }
     }
   }
-  comMessage(".");
   debmsg("structRead: explicit connectivity");
+
+  comMessage("x");
 
   /*
      now worry about the connectivity
@@ -1951,6 +1959,9 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     if(pass==2)
       cc++;
   }
+  node->conn_count=cc;
+
+  comMessage("t");
 
   /* 
      determine the type of residue

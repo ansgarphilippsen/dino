@@ -104,6 +104,10 @@ struct STRUCT_ATOM_CHEM {
 
 #define STRUCT_MAX_BOND_PER_ATOM 8
 
+#define STRUCT_CONN_IMPL 1<<0
+#define STRUCT_CONN_EXPL 1<<1
+#define STRUCT_CONN_DIST 1<<2
+
 /* bonds */
 struct STRUCT_BOND {
   int n; /* internal counter */
@@ -243,44 +247,59 @@ struct TRJ_PLAY {
 
 typedef struct DBM_STRUCT_NODE {
   DBM_NODE_COMMON_HEADER
+
   Select *restrict;
+
   struct STRUCT_OBJ *obj;
   int *obj_flag;
   int obj_count;
   int obj_max;
+
   struct STRUCT_MODEL *model;     /* pointer to models */
   int model_count;                /* number of models in this db */
   int model_max,model_add;        /* memory management */
   int model_flag;
+
   struct STRUCT_CHAIN *chain;     /* pointer to chains */
   int chain_count;                /* number of chains in this db */
   int chain_max,chain_add;        /* memory management */
   int chain_flag;
+
   struct STRUCT_RESIDUE *residue; /* pointer to residue */
   int residue_count;              /* number of residues in this db */
   int residue_max,residue_add;    /* memory management */
   int residue_flag;
+
   struct STRUCT_ATOM *atom;       /* pointer to atoms */
   int atom_count;                 /* number of atoms in this db */
   int atom_max,atom_add;          /* memory management */
+
   struct STRUCT_APOS *apos;   /* atom positions array */
   int apos_count;
   int apos_max,apos_add;
+
   struct STRUCT_BOND *bond;       /* pointer to bonds */
   int bond_count;                 /* number of bonds in this db */
   int bond_max,bond_add;          /* memory management */
+
+#ifdef WITH_NCBONDS
   struct STRUCT_BOND *nbond;      /* pointer to nbonds */
   int nbond_count;                /* number of nbonds in this db */
   int nbond_max,nbond_add;        /* memory management */
-  int conn_flag;
-  struct STRUCT_CONNECTIVITY *conn;
+#endif
+
+  struct STRUCT_CONNECTIVITY *conn; /* explicit connectivy from file */
   int conn_count;
   int conn_max,conn_add;
+  int conn_flag;
+
   struct XTAL *xtal;              /* pointer to crystallographic info */
   int show_cell;
+
   struct STRUCT_ATOM_TABLE *atom_table;
   int atom_table_len;
   int smode;            /* selection mode */
+
   struct STRUCT_DB_MIN_MAX min_max;
   cubeArray *ca;
   int frame;

@@ -344,10 +344,12 @@ int structObjRenew(structObj *obj, Set *set, Select *sel)
     comMessage("connecting ... ");
     if(structObjConnect(obj->node, obj, sel)<0)
       return -1;
+#ifdef WITH_NCBONDS
   } else if(obj->type==STRUCT_NBOND) {
     comMessage("nbonding ... ");
     if(structObjNbond(obj->node, obj, sel)<0)
       return -1;
+#endif
   }
 
   sprintf(message,"%d atoms with %d bonds\n",obj->atom_count, obj->bond_count);
@@ -460,6 +462,8 @@ int structObjSet(structObj *obj, Set *set, int flag)
     }
   }
 
+
+#ifdef WITH_NCBONDS
   /* 
      object properties
   */
@@ -480,6 +484,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
       break;
     }
   }
+#endif
 
   for(ac=0;ac<obj->atom_count;ac++) {
     f=0;
@@ -1470,6 +1475,8 @@ int structObjIsWithin(structObj *obj, float *p, float d2)
   return 0;
 }
 
+#ifdef WITH_NCBONDS
+
 int structObjNbond(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)
 {
   int bc,ret;
@@ -1529,6 +1536,7 @@ int structObjNbond(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)
 
   return 0;
 }
+#endif
 
 /***************************
 int structObjNbond2(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)

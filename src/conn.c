@@ -306,6 +306,13 @@ int conInit()
 
   return 0;
 }
+
+/*
+
+  UNFINISHED
+
+*/
+
 enum CONN_CONTEXT {CON_TOP,
 		   CON_DEF,
 		   CON_ABBREV,
