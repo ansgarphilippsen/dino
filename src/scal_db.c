@@ -1491,7 +1491,7 @@ int scalSetDefault(scalObj *obj)
   obj->render.nice=1;
   obj->render.point_size=1.0;
   obj->render.line_width=1.0;
-  obj->render.transparency=0.3;
+  obj->render.transparency=1.0;
   obj->render.detail1=3;
   obj->render.detail2=3;
   obj->render.dbl_light=0;

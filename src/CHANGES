@@ -1,4 +1,10 @@
-set default model number to 1
+fixed: default contour transparency is 1.0
+
+fixed several small bugs occuring during errors in scalar field dataset
+
+fixed missing center in OSX obj menu
+
+fixed: set default model number to 1
 
 fixed: assert "sel->compiled" in scal_db.c
 
@@ -6,43 +12,43 @@ fixed: non-standard atom name related crashes
 
 fixed: transformation is taken into account for scalar field <> selection
 
-coord write honors transformation and symmetry settings
+fixed: coord write honors transformation and symmetry settings
 
 (added 'custom' render mode to surface)
 
-add dsurf file format
+(add dsurf file format)
 
-introduced -f flag to "@" and command line
+(introduced -f flag to "@" and command line)
 
 ----
 
-added "get center" command to geom dataset
+fixed: added "get center" command to geom dataset
 
-fixed POVray scalar field output to have correct colors
+fixed: POVray scalar field output to have correct colors
 
-added limited symmetry functionality to coord dataset
+(added limited symmetry functionality to coord dataset)
 
-added better determination of read in element
+fixed: better determination of read in element
 
-fixed accum write not honoring view setting
+fixed: accum write not honoring view setting
 
-fixed dataset transformation not reflected in $CP
+fixed: dataset transformation not reflected in $CP
 
 added gromax .gro format
 
-render is called after struct.obj renew
+fixed:render is called after struct.obj renew
 
-fixed surf reset parameters
+fixed: surf reset parameters
 
 added scene param "splitmode"
 
-scene spin working again
+fixed: scene spin working again
 
-setting CP via shell works now
+fixed: setting CP via shell works now
 
-unalias working
+fixed: unalias working
 
-unset working
+fixed: unset working
 
 fixed eyedist not allowing negative value
 
