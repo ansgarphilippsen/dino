@@ -152,7 +152,8 @@ typedef struct _AppPlusShellRec
 	AppPlusShellPart app_plus_shell;
 } AppPlusShellRec, *AppPlusShellPtr;
  
-#endif /* _AppPlusShellP_h */
+#endif
 
 
-#endif /* _AppPlusShell_h */
+#endif
+

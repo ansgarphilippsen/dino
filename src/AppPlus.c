@@ -43,9 +43,7 @@
 
 #ifdef MOTIF 
 #include <Xm/Xm.h>
-#if (XmREVISION >= 2)
 #include <Xm/Protocols.h>
-#endif
 #endif /* MOTIF */
 
 #if NeedFunctionProtoTypes
@@ -74,11 +72,11 @@ static Boolean cvtStringToVisualID();
 #define ACLASS(a) ((a)->app_plus_shell_class)
 #define VID(a) ((a)->app_plus_shell.visualID)
 
-#ifdef MOTIF & (XmREVISION >= 2)
+#ifdef MOTIF
 #define XtCharStringToAtom(_w, _string) XmInternAtom(XtDisplay(_w), _string, FALSE)
 #else
 #define XtCharStringToAtom(_w, _string) XInternAtom(XtDisplay(_w), _string, FALSE)
-#endif /* MOTIF & (XmREVISION >= 2) */
+#endif /* MOTIF */
 
 #define DEFAULT -1
 
@@ -459,11 +457,11 @@ XSetWindowAttributes *_xswa;
 	XSetWMColormapWindows(XtDisplay(_apsw), XtWindow(_apsw), &XtWindow(_apsw), 1);
 #endif /* 0 */
 
-#ifdef MOTIF & (XmREVISION >= 2)
+#ifdef MOTIF
 	XmAddWMProtocols((Widget)_apsw, APPS(_apsw).saveYourself, APPS(_apsw).numberProtos);
 #else
 	(void)XSetWMProtocols(XtDisplay(_apsw), XtWindow(_apsw), APPS(_apsw).saveYourself, APPS(_apsw).numberProtos);
-#endif /* MOTIF & (XmREVISION >= 2) */
+#endif /* MOTIF */
 }
 
 #if NeedFunctionProtoTypes
