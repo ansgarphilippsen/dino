@@ -12,6 +12,7 @@
 #include "bspline.h"
 #include "cl.h"
 
+extern int debug_mode;
 
 int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, char **wl)
 {
@@ -173,6 +174,8 @@ geomObj *geomNewObj(struct DBM_GEOM_NODE *node, char *name, int type)
       no->g=1.0;
       no->b=1.0;
 
+      renderDefault(&no->render);
+
       no->render.show=1;
       no->render.mode=RENDER_OFF;
       no->render.detail1=3;
@@ -188,6 +191,7 @@ geomObj *geomNewObj(struct DBM_GEOM_NODE *node, char *name, int type)
       no->render.point_size=1.0;
       no->render.bond_width=1.0;
       no->render.transparency=1.0;
+      no->render.cgfx_flag=0;
       /* the other render stats are unused */
 
       return node->obj[i];
@@ -887,7 +891,9 @@ int geomSmooth(geomObj *obj)
 
   point_list=Ccalloc(obj->point_count,sizeof(cgfxSplinePoint));
 
-  detail=obj->render.detail1;
+  // this is the spline interpolation detail
+  detail=obj->render.detail2;
+
   if(detail<1)
     detail=1;
 
@@ -942,7 +948,7 @@ int geomSmooth(geomObj *obj)
     }
     
     matfNormalize(n3,point_list[i].n);
-    /*
+    /*    
     fprintf(stderr," %.2f %.2f %.2f\n %.2f %.2f %.2f\n %.2f %.2f %.2f\n\n",
 	    point_list[i].v[0],point_list[i].v[1],point_list[i].v[2],
 	    point_list[i].d[0],point_list[i].d[1],point_list[i].d[2],
@@ -961,6 +967,7 @@ int geomSmooth(geomObj *obj)
   cgfxGenHSC(&va, point_list, obj->point_count, &obj->render);
   cgfxAppend(&obj->va,&va);
   Cfree(va.p);
+
   /*
   for(i=0;i<obj->va.count;i++) {
     fprintf(stderr,"%.2f %.2f %.2f  %.2f %.2f %.2f  %.2f %.2f %.2f\n",
@@ -969,5 +976,6 @@ int geomSmooth(geomObj *obj)
 	    obj->va.p[i].c[0],obj->va.p[i].c[1],obj->va.p[i].c[2]);
   }
   */
+
   return 0;
 }

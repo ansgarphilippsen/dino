@@ -14,6 +14,52 @@
 
 extern int gfx_flags;
 
+void renderDefault(struct RENDER *r)
+{
+  struct RENDER_MATERIAL render_default_mat= {
+    {0,0,0,1},
+    {1,1,1,1},
+    {0,0,0,1},
+    {0,0,0,0},
+    1
+  };
+
+  r->show=1;
+  r->mode=RENDER_SIMPLE;
+  r->detail=3;
+  r->detail1=3;
+  r->detail2=3;
+  r->nice=1;
+  r->dbl_light=0;
+  r->face_reverse=0;
+  r->line_width=1.0;
+  r->point_size=1.0;
+  r->bond_width=0.2;
+  r->sphere_radius=0.2;
+  r->helix_width=0.1;
+  r->helix_thickness=0.1;
+  r->strand_width=0.1;
+  r->strand_thickness=0.1;
+  r->arrow_thickness=1.0;
+  r->tube_ratio=1.0;
+  r->tube_width=0.2;
+  r->sugar_thickness=0.1;
+  r->base_thickness=0.1;
+  r->transparency=1.0;
+  r->cgfx_flag=0;
+  r->strand_method=0;
+  r->helix_method=0;
+  r->na_method=0;
+  r->cull=0;
+  r->stipple_flag=0;
+  r->polyf=0.0;
+  r->polyu=0.0;
+  r->solid=0;
+
+  memcpy(&r->mat,&render_default_mat,sizeof(struct RENDER_MATERIAL));
+}
+
+
 int renderSet(struct RENDER *render, int owc, char **owl)
 {
   char expr[2048];
@@ -1287,7 +1333,7 @@ static char mat_buf[1024];
 
 const char *renderGetMaterial(struct RENDER_MATERIAL *mat)
 {
-  sprintf(mat_buf,"Current material setting:\namb: {%.3f,%.3f,%.3f}\nspec: {%3f,%3f,%3f}\nshin: %d\nemm: {%.3f,%.3f,%.3f}\n",
+  sprintf(mat_buf,"Current material setting:\namb: {%.3f,%.3f,%.3f}\nspec: {%3f,%3f,%3f}\nshin: %f\nemm: {%.3f,%.3f,%.3f}\n",
 	  mat->amb[0],
 	  mat->amb[1],
 	  mat->amb[2],
@@ -1300,3 +1346,4 @@ const char *renderGetMaterial(struct RENDER_MATERIAL *mat)
 	  mat->emm[2]);
   return mat_buf;
 }
+

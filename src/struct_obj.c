@@ -288,6 +288,8 @@ int structObjComRenew(structObj *obj, int wc, char **wl)
     memcpy(&obj->select,&sel,sizeof(Select));
   }
 
+  structObjRecalcCenter(obj);
+
   com_render(obj,0,NULL);
   
   setDelete(&set);

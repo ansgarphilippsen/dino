@@ -86,7 +86,6 @@ DATE = `date +"%Y%m%d"`
 
 sinclude $(GUI)/make.addon
 
-
 devel: $(OBJ) gui
 	$(CC) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o dino_devel_$(GUI)
 

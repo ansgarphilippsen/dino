@@ -1,3 +1,8 @@
+fixed geom tube object
+
+added renderDefault function to really set all render properties to
+sensitive values
+
 added new fog keywords fogno and fogfo, modified default fog offsets
 (+10 and 0)
 
