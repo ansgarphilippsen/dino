@@ -135,24 +135,24 @@ int sceneCommand(int wc, const char **wl)
     return -1;
   }
 
-  if(!strcmp(wl[0],"help") ||
-     !strcmp(wl[0],"?")) {
+  if(clStrcmp(wl[0],"help") ||
+     clStrcmp(wl[0],"?")) {
     if(wc<2)
       help(scene_help,"scene",NULL);
     else
       help(scene_help,"scene",wl[1]);
-  } else if(!strcmp(wl[0],"write")) {
+  } else if(clStrcmp(wl[0],"write")) {
     // write
     comWrite(wc-1,wl+1);
-  } else if(!strcmp(wl[0],"show")) {
+  } else if(clStrcmp(wl[0],"show")) {
     // show
     gfx.show=1;
     comRedraw();
-  } else if(!strcmp(wl[0],"hide")) {
+  } else if(clStrcmp(wl[0],"hide")) {
     // hide
     gfx.show=0;
     comRedraw();
-  } else if(!strcmp(wl[0],"reset")) {
+  } else if(clStrcmp(wl[0],"reset")) {
     // TODO parameters center rot all, etc
     transReset(&gfx.transform);
     gfx.transform.tra[2]=-100.0;
@@ -163,7 +163,7 @@ int sceneCommand(int wc, const char **wl)
     gfxSetFog();
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"center")) {
+  } else if(clStrcmp(wl[0],"center")) {
     /**********************
             center
      **********************/
@@ -198,7 +198,7 @@ int sceneCommand(int wc, const char **wl)
     gfxSetSlab(gfx.transform.slabn, gfx.transform.slabf);
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"rotx")) {
+  } else if(clStrcmp(wl[0],"rotx")) {
     /**********************
              rotx
      **********************/
@@ -210,7 +210,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"roty")) {
+  } else if(clStrcmp(wl[0],"roty")) {
     /**********************
             roty
      **********************/
@@ -222,7 +222,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"rotz")) {
+  } else if(clStrcmp(wl[0],"rotz")) {
     /**********************
              rotz
      **********************/
@@ -234,7 +234,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"rotm")) { 
+  } else if(clStrcmp(wl[0],"rotm")) { 
     /**********************
              rotm
      **********************/
@@ -255,7 +255,7 @@ int sceneCommand(int wc, const char **wl)
     transMultM(&gfx.transform,v1);
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"transx")) {
+  } else if(clStrcmp(wl[0],"transx")) {
     /**********************
 	     transx
      **********************/
@@ -267,7 +267,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"transy")) {
+  } else if(clStrcmp(wl[0],"transy")) {
     /**********************
              transy
      **********************/
@@ -279,7 +279,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"transz")) {
+  } else if(clStrcmp(wl[0],"transz")) {
     /**********************
              transz
      **********************/
@@ -291,7 +291,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"transm")) {
+  } else if(clStrcmp(wl[0],"transm")) {
     /**********************
              transm
      **********************/
@@ -310,7 +310,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_TRAZ,-1, v1[2]);
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"set")) {
+  } else if(clStrcmp(wl[0],"set")) {
     /**********************
              set
      **********************/
@@ -327,7 +327,7 @@ int sceneCommand(int wc, const char **wl)
     for(i=0;i<swc;i++) {
       dbmSplitPOV(swl[i],prop,op,val);
 
-      if(!strcmp(prop,"near")) {
+      if(clStrcmp(prop,"near")) {
 	/**********************
               set near
 	**********************/
@@ -343,11 +343,11 @@ int sceneCommand(int wc, const char **wl)
 	}
 	oldd=gfx.transform.slabn;
 	newd=atof(val);
-	if(!strcmp(op,"=")) {
+	if(clStrcmp(op,"=")) {
 	  gfx.transform.slabn=newd;
-	} else if(!strcmp(op,"+=")) {
+	} else if(clStrcmp(op,"+=")) {
 	  gfx.transform.slabn+=newd;
-	} else if(!strcmp(op,"-=")) {
+	} else if(clStrcmp(op,"-=")) {
 	  gfx.transform.slabn-=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
@@ -357,7 +357,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"far")) {
+      } else if(clStrcmp(prop,"far")) {
 	/**********************
 	       set far
 	**********************/
@@ -373,11 +373,11 @@ int sceneCommand(int wc, const char **wl)
 	}
 	oldd=gfx.transform.slabf;
 	newd=atof(val);
-	if(!strcmp(op,"=")) {
+	if(clStrcmp(op,"=")) {
 	  gfx.transform.slabf=newd;
-	} else if(!strcmp(op,"+=")) {
+	} else if(clStrcmp(op,"+=")) {
 	  gfx.transform.slabf+=newd;
-	} else if(!strcmp(op,"-=")) {
+	} else if(clStrcmp(op,"-=")) {
 	  gfx.transform.slabf-=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
@@ -387,7 +387,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"slabw")) {
+      } else if(clStrcmp(prop,"slabw")) {
 	/**********************
 	       slabwidth
 	**********************/
@@ -408,11 +408,11 @@ int sceneCommand(int wc, const char **wl)
 	}
 	oldd=gfx.transform.slabf-gfx.transform.slabn;
 	d2=(gfx.transform.slabf+gfx.transform.slabn)*0.5;
-	if(!strcmp(op,"=")) {
+	if(clStrcmp(op,"=")) {
 	  oldd=newd;
-	} else if(!strcmp(op,"+=")) {
+	} else if(clStrcmp(op,"+=")) {
 	  oldd+=newd;
-	} else if(!strcmp(op,"-=")) {
+	} else if(clStrcmp(op,"-=")) {
 	  oldd-=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
@@ -424,7 +424,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"fogo")) {
+      } else if(clStrcmp(prop,"fogo")) {
 	/**********************
 	       set fog offset
 	**********************/
@@ -440,11 +440,11 @@ int sceneCommand(int wc, const char **wl)
 	}
 	oldd=gfx.fog_dist;
 	newd=atof(val);
-	if(!strcmp(op,"=")) {
+	if(clStrcmp(op,"=")) {
 	  gfx.fog_dist=newd;
-	} else if(!strcmp(op,"+=")) {
+	} else if(clStrcmp(op,"+=")) {
 	  gfx.fog_dist+=newd;
-	} else if(!strcmp(op,"-=")) {
+	} else if(clStrcmp(op,"-=")) {
 	  gfx.fog_dist-=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
@@ -464,7 +464,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetFog();
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"persp")) {
+      } else if(clStrcmp(prop,"persp")) {
 	if(gfx.mode==GFX_ORTHO) {
 	  sceneOrtho2Persp();
 	  gfx.mode=GFX_PERSP;
@@ -473,7 +473,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetProjection(gfx.current_view);
 	gfxSetFog();
 	comRedraw();
-      } else if(!strcmp(prop,"ortho")) {
+      } else if(clStrcmp(prop,"ortho")) {
 	comMessage("warning: orthographic projection deprecated!\n");
 	if(gfx.mode==GFX_PERSP) {
 	  scenePersp2Ortho();
@@ -484,7 +484,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetFog();
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"eyedist")) {
+      } else if(clStrcmp(prop,"eyedist")) {
 	/**********************
 	       set eyedist
 	**********************/
@@ -501,11 +501,11 @@ int sceneCommand(int wc, const char **wl)
 #ifdef USE_CMI
 	oldd=gfx.eye_dist;
 	newd=atof(val);
-	if(!strcmp(op,"=")) {
+	if(clStrcmp(op,"=")) {
 	  gfx.eye_dist=newd;
-	} else if(!strcmp(op,"+=")) {
+	} else if(clStrcmp(op,"+=")) {
 	  gfx.eye_dist+=newd;
-	} else if(!strcmp(op,"-=")) {
+	} else if(clStrcmp(op,"-=")) {
 	  gfx.eye_dist-=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
@@ -517,11 +517,11 @@ int sceneCommand(int wc, const char **wl)
 #else
 	oldd=gui.eye_dist;
 	newd=atof(val);
-	if(!strcmp(op,"=")) {
+	if(clStrcmp(op,"=")) {
 	  gui.eye_dist=newd;
-	} else if(!strcmp(op,"+=")) {
+	} else if(clStrcmp(op,"+=")) {
 	  gui.eye_dist+=newd;
-	} else if(!strcmp(op,"-=")) {
+	} else if(clStrcmp(op,"-=")) {
 	  gui.eye_dist-=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
@@ -533,7 +533,7 @@ int sceneCommand(int wc, const char **wl)
 #endif
 	gfxSetProjection(gfx.current_view);
 	comRedraw();
-      } else if(!strcmp(prop,"fov")) {
+      } else if(clStrcmp(prop,"fov")) {
 	/**********************
 	       set fovy
 	**********************/
@@ -549,11 +549,11 @@ int sceneCommand(int wc, const char **wl)
 	}
 	oldd=gfx.fovy;
 	newd=atof(val);
-	if(!strcmp(op,"=")) {
+	if(clStrcmp(op,"=")) {
 	  gfx.fovy=newd;
-	} else if(!strcmp(op,"+=")) {
+	} else if(clStrcmp(op,"+=")) {
 	  gfx.fovy=newd;
-	} else if(!strcmp(op,"-=")) {
+	} else if(clStrcmp(op,"-=")) {
 	  gfx.fovy=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
@@ -566,11 +566,11 @@ int sceneCommand(int wc, const char **wl)
 	  gfx.fovy=85.0;
 	gfxSetProjection(gfx.current_view);
 	comRedraw();
-      } else if(!strcmp(prop,"fixz")) {
+      } else if(clStrcmp(prop,"fixz")) {
 	/**********************
 	       set fixz
 	**********************/
-	if(!strcmp(op,"!")) {
+	if(clStrcmp(op,"!")) {
 	  gfx.fixz=0;
 	} else if(strlen(val)==0 && strlen(op)==0) {
 	  gfx.fixz=1;
@@ -584,9 +584,9 @@ int sceneCommand(int wc, const char **wl)
 	    comMessage(message);
 	    return -1;
 	  } else {
-	    if(!strcmp(val,"0") || 
-	       !strcmp(val,"false") ||
-	       !strcmp(val,"no")) {
+	    if(clStrcmp(val,"0") || 
+	       clStrcmp(val,"false") ||
+	       clStrcmp(val,"no")) {
 	      gfx.fixz=0;
 	    } else {
 	      gfx.fixz=1;
@@ -594,11 +594,11 @@ int sceneCommand(int wc, const char **wl)
 	  }
 	}
 	comRedraw();
-      } else if(!strcmp(prop,"dither")) {
+      } else if(clStrcmp(prop,"dither")) {
 	/**********************
 	       set dither
 	**********************/
-	if(!strcmp(op,"!")) {
+	if(clStrcmp(op,"!")) {
 	  gfx.dither=0;
 	} else if(strlen(val)==0 && strlen(op)==0) {
 	  gfx.dither=1;
@@ -612,9 +612,9 @@ int sceneCommand(int wc, const char **wl)
 	    comMessage(message);
 	    return -1;
 	  } else {
-	    if(!strcmp(val,"0") || 
-	       !strcmp(val,"false") ||
-	       !strcmp(val,"no")) {
+	    if(clStrcmp(val,"0") || 
+	       clStrcmp(val,"false") ||
+	       clStrcmp(val,"no")) {
 	      gfx.dither=0;
 	    } else {
 	      gfx.dither=1;
@@ -626,11 +626,11 @@ int sceneCommand(int wc, const char **wl)
 	else
 	  glDisable(GL_DITHER);
 	comRedraw();
-      } else if(!strcmp(prop,"axis")) {
+      } else if(clStrcmp(prop,"axis")) {
 	/**********************
 	       set axis
 	**********************/
-	if(!strcmp(op,"!")) {
+	if(clStrcmp(op,"!")) {
 	  gfx.axisflag=0;
 	} else if(strlen(val)==0 && strlen(op)==0) {
 	  gfx.axisflag=1;
@@ -644,9 +644,9 @@ int sceneCommand(int wc, const char **wl)
 	    comMessage(message);
 	    return -1;
 	  } else {
-	    if(!strcmp(val,"0") || 
-	       !strcmp(val,"false") ||
-	       !strcmp(val,"no")) {
+	    if(clStrcmp(val,"0") || 
+	       clStrcmp(val,"false") ||
+	       clStrcmp(val,"no")) {
 	      gfx.axisflag=0;
 	    } else {
 	      gfx.axisflag=1;
@@ -655,11 +655,11 @@ int sceneCommand(int wc, const char **wl)
 	}
 	comRedraw();
 #ifdef USE_DLIST
-      } else if(!strcmp(prop,"usedlist")) {
+      } else if(clStrcmp(prop,"usedlist")) {
 	/**********************
 	       set usedlist
 	**********************/
-	if(!strcmp(op,"!")) {
+	if(clStrcmp(op,"!")) {
 	  gfx.use_dlist_flag=0;
 	} else if(strlen(val)==0 && strlen(op)==0) {
 	  gfx.use_dlist_flag=1;
@@ -673,9 +673,9 @@ int sceneCommand(int wc, const char **wl)
 	    comMessage(message);
 	    return -1;
 	  } else {
-	    if(!strcmp(val,"0") || 
-	       !strcmp(val,"false") ||
-	       !strcmp(val,"no")) {
+	    if(clStrcmp(val,"0") || 
+	       clStrcmp(val,"false") ||
+	       clStrcmp(val,"no")) {
 	      gfx.use_dlist_flag=0;
 	    } else {
 	      gfx.use_dlist_flag=1;
@@ -684,11 +684,11 @@ int sceneCommand(int wc, const char **wl)
 	}
 	comRedraw();
 #endif
-      } else if(!strcmp(prop,"depthc")) {
+      } else if(clStrcmp(prop,"depthc")) {
 	/**********************
 	       set depthc
 	**********************/
-	if(!strcmp(op,"!")) {
+	if(clStrcmp(op,"!")) {
 	  glDisable(GL_FOG);
 	  gfx.fog=0;
 	} else if(strlen(val)==0 && strlen(op)==0) {
@@ -704,9 +704,9 @@ int sceneCommand(int wc, const char **wl)
 	    comMessage(message);
 	    return -1;
 	  } else {
-	    if(!strcmp(val,"0") || 
-	       !strcmp(val,"false") ||
-	       !strcmp(val,"no")) {
+	    if(clStrcmp(val,"0") || 
+	       clStrcmp(val,"false") ||
+	       clStrcmp(val,"no")) {
 	      glDisable(GL_FOG);
 	      gfx.fog=0;
 	    } else {
@@ -716,7 +716,7 @@ int sceneCommand(int wc, const char **wl)
 	  }
 	}
 	comRedraw();
-      } else if(!strcmp(prop,"bg")) {
+      } else if(clStrcmp(prop,"bg")) {
 	if(strlen(op)==0) {
 	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
@@ -746,7 +746,7 @@ int sceneCommand(int wc, const char **wl)
 	glClearColor(gfx.r,gfx.g,gfx.b,0.0);
 	glFogfv(GL_FOG_COLOR,gfx.fog_color);
 	comRedraw();
-      } else if(!strcmp(prop,"fogc")) {
+      } else if(clStrcmp(prop,"fogc")) {
 	if(strlen(op)==0) {
 	  sprintf(message,"scene: missing operator\n");
 	  comMessage(message);
@@ -817,7 +817,7 @@ int sceneCommand(int wc, const char **wl)
 	gfx.fog_density=atof(val);
 	glFogf(GL_FOG_DENSITY,gfx.fog_density);
 	
-      } else if(!strcmp(prop,"view")) {
+      } else if(clStrcmp(prop,"view")) {
 	/**********************
 	       set view
 	**********************/
@@ -836,11 +836,11 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage(message);
 	  return -1;
 	}
-	if(!strcmp(val,"center"))
+	if(clStrcmp(val,"center"))
 	  gfx.current_view=GFX_CENTER;
-	else if(!strcmp(val,"left"))
+	else if(clStrcmp(val,"left"))
 	  gfx.current_view=GFX_LEFT;
-	else if(!strcmp(val,"right"))
+	else if(clStrcmp(val,"right"))
 	  gfx.current_view=GFX_RIGHT;
 	else {
 	  sprintf(message,"invalid value for view\n");
@@ -849,8 +849,8 @@ int sceneCommand(int wc, const char **wl)
 	}
 	gfxSetProjection(gfx.current_view);
 	comRedraw();
-      } else if(!strcmp(prop,"transmat") ||
-		!strcmp(prop,"trans")) {
+      } else if(clStrcmp(prop,"transmat") ||
+		clStrcmp(prop,"trans")) {
 	/**********************
 	     set transmat
 	**********************/
@@ -879,8 +879,8 @@ int sceneCommand(int wc, const char **wl)
 	gfx.transform.tra[2]=v1[2];
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"rotmat") ||
-		!strcmp(prop,"rot")) {
+      } else if(clStrcmp(prop,"rotmat") ||
+		clStrcmp(prop,"rot")) {
 	/**********************
 	     set rotmat
 	**********************/
@@ -912,7 +912,7 @@ int sceneCommand(int wc, const char **wl)
 	  gfx.transform.rot[i]=v2[i];
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"mmat")) {
+      } else if(clStrcmp(prop,"mmat")) {
 	/**********************
 	     set modelmat
 	**********************/
@@ -947,7 +947,7 @@ int sceneCommand(int wc, const char **wl)
 	gfx.transform.tra[2]=v1[14];
 	comRedraw();
 	scene_virgin_flag=0;
-      } else if(!strcmp(prop,"rtc")) {
+      } else if(clStrcmp(prop,"rtc")) {
 	/**********************
 	     set rot trans cen
 	**********************/
@@ -969,13 +969,15 @@ int sceneCommand(int wc, const char **wl)
 	transSetAll(&gfx.transform, val);
 	comRedraw();
 	scene_virgin_flag=0;
+	//} else if(clStrcmp(prop,"center")) {
+	//} else if(clStrcmp(prop,"cp")) {
       } else {
 	sprintf(message,"unknown expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
     }
-  } else if(!strcmp(wl[0],"get")) {
+  } else if(clStrcmp(wl[0],"get")) {
     /**********************
              get
      **********************/
@@ -984,7 +986,7 @@ int sceneCommand(int wc, const char **wl)
       comMessage(message);
       return -1;
     }
-    if(!strcmp(wl[1],"center")) {
+    if(clStrcmp(wl[1],"center")) {
       /*
       v1[0]=-gfx.transform.cen[0];
       v1[1]=-gfx.transform.cen[1];
@@ -992,14 +994,14 @@ int sceneCommand(int wc, const char **wl)
       matAssemble1D(v1,3,message);
       */
       clStrcpy(message,transGetCen2(&gfx.transform));
-    } else if(!strcmp(wl[1],"near")){
+    } else if(clStrcmp(wl[1],"near")){
       sprintf(message,"%g",gfx.transform.slabn);
-    } else if(!strcmp(wl[1],"far")){
+    } else if(clStrcmp(wl[1],"far")){
       sprintf(message,"%g",gfx.transform.slabf);
-    } else if(!strcmp(wl[1],"slabw")){
+    } else if(clStrcmp(wl[1],"slabw")){
       sprintf(message,"%g",gfx.transform.slabf-gfx.transform.slabn);
-    } else if(!strcmp(wl[1],"transmat") ||
-	      !strcmp(wl[1],"trans")){
+    } else if(clStrcmp(wl[1],"transmat") ||
+	      clStrcmp(wl[1],"trans")){
       /*
       v1[0]=gfx.transform.tra[0];
       v1[1]=gfx.transform.tra[1];
@@ -1007,8 +1009,8 @@ int sceneCommand(int wc, const char **wl)
       matAssemble1D(v1,3,message);
       */
       clStrcpy(message,transGetTra(&gfx.transform));
-    } else if(!strcmp(wl[1],"rotmat") ||
-	      !strcmp(wl[1],"rot")) {
+    } else if(clStrcmp(wl[1],"rotmat") ||
+	      clStrcmp(wl[1],"rot")) {
       /*
       for(i=0;i<16;i++)
 	v1[i]=gfx.transform.rot[i];
@@ -1018,7 +1020,7 @@ int sceneCommand(int wc, const char **wl)
 	      v1[8],v1[9],v1[10]);
       */
       clStrcpy(message,transGetRot(&gfx.transform));
-    } else if(!strcmp(wl[1],"mmat")){
+    } else if(clStrcmp(wl[1],"mmat")){
       /*
       v2[0]=gfx.transform.tra[0];
       v2[1]=gfx.transform.tra[1];
@@ -1034,62 +1036,65 @@ int sceneCommand(int wc, const char **wl)
 	      v2[0],v2[1],v2[2],1.0);
       */
       clStrcpy(message,transGetMM(&gfx.transform));
-    } else if(!strcmp(wl[1],"rtc")) {
+    } else if(clStrcmp(wl[1],"rtc")) {
       sprintf(message,transGetAll(&gfx.transform));
-    } else if(!strcmp(wl[1],"eyedist")){
+    } else if(clStrcmp(wl[1],"eyedist")){
 #ifdef USE_CMI
       sprintf(message,"%g",gfx.eye_dist);
 #else
       sprintf(message,"%g",gui.eye_dist);
 #endif
-    } else if(!strcmp(wl[1],"fov")){
+    } else if(clStrcmp(wl[1],"fov")){
       sprintf(message,"%g",gfx.fovy);
-    } else if(!strcmp(wl[1],"fogo")){
+    } else if(clStrcmp(wl[1],"fogo")){
       sprintf(message,"%g",gfx.fog_dist);
-    } else if(!strcmp(wl[1],"fixz")){
+    } else if(clStrcmp(wl[1],"fixz")){
       if(gfx.fixz)
 	sprintf(message,"true");
       else
 	sprintf(message,"false");
-    } else if(!strcmp(wl[1],"dither")){
+    } else if(clStrcmp(wl[1],"dither")){
       if(gfx.dither)
 	sprintf(message,"true");
       else
 	sprintf(message,"false");
-    } else if(!strcmp(wl[1],"persp")){
+    } else if(clStrcmp(wl[1],"persp")){
       if(gfx.mode==GFX_PERSP)
 	sprintf(message,"true");
       else
 	sprintf(message,"false");
-    } else if(!strcmp(wl[1],"ortho")){
+    } else if(clStrcmp(wl[1],"ortho")){
       if(gfx.mode==GFX_ORTHO)
 	sprintf(message,"true");
       else
 	sprintf(message,"false");
-    } else if(!strcmp(wl[1],"depthc")){
+    } else if(clStrcmp(wl[1],"depthc")){
       if(gfx.fog)
 	sprintf(message,"true");
       else
 	sprintf(message,"false");
-    } else if(!strcmp(wl[1],"bg")) {
+    } else if(clStrcmp(wl[1],"bg")) {
       sprintf(message,"{%.3f,%.3f,%.3f}",gfx.r,gfx.g,gfx.b);
-    } else if(!strcmp(wl[1],"view")) {
-      if(gfx.current_view==GFX_RIGHT)
+    } else if(clStrcmp(wl[1],"view")) {
+      if(gfx.current_view==GFX_RIGHT) {
 	sprintf(message,"right");
-      else if(gfx.current_view==GFX_LEFT)
+      } else if(gfx.current_view==GFX_LEFT) {
 	sprintf(message,"left");
-      else
+      } else {
 	sprintf(message,"center");
+      }
+    } else if(clStrcmp(wl[1],"cp")) {
+      sprintf(message,"{%g,%g,%g}",scene.cp[0],scene.cp[1],scene.cp[2]);
     } else {    
       sprintf(message,"unkown property: %s\n",wl[1]);
       comMessage(message);
       return -1;
     }
     comReturn(message);
-  } else if(!strcmp(wl[0],"push")) {
+  } else if(clStrcmp(wl[0],"push")) {
     for(i=1;i<wc;i++)
       scenePush(wl[i]);
-  } else if(!strcmp(wl[0],"pop")) {
+  } else if(clStrcmp(wl[0],"pop")) {
     ret=scenePop();
     if(ret==NULL) {
       comMessage("scene stack is empty\n");
@@ -1099,7 +1104,7 @@ int sceneCommand(int wc, const char **wl)
       sprintf(message,"%s",ret);
       comReturn(message);
     }
-  } else if(!strcmp(wl[0],"peek")) {
+  } else if(clStrcmp(wl[0],"peek")) {
     ret=scenePeek();
     if(ret==NULL) {
       comMessage("scene stack is empty\n");
@@ -1111,22 +1116,22 @@ int sceneCommand(int wc, const char **wl)
     }
     sprintf(message,"%s",ret);
     comReturn(message);
-  } else if(!strcmp(wl[0],"clear")) {
+  } else if(clStrcmp(wl[0],"clear")) {
     sceneClear();
-  } else if(!strcmp(wl[0],"message")) {
+  } else if(clStrcmp(wl[0],"message")) {
     strcpy(set,"");
     for(i=1;i<wc;i++) {
       strcat(set,wl[i]);
       strcat(set," ");
     }
     guiMessage(set);
-  } else if(!strcmp(wl[0],"autoslab")) {
+  } else if(clStrcmp(wl[0],"autoslab")) {
     comGetMinMaxSlab();
     gfxSetFog();
     gfxSetProjection(gfx.current_view);
     comRedraw();
     scene_virgin_flag=0;
-  } else if(!strcmp(wl[0],"split")) {
+  } else if(clStrcmp(wl[0],"split")) {
 #ifdef USE_CMI
     if(gfx.stereo_mode==GFX_STEREO_OFF) {
       gfx.stereo_mode=GFX_STEREO_SPLIT;
@@ -1156,7 +1161,7 @@ int sceneCommand(int wc, const char **wl)
       comRedraw();
     }
 #endif
-  } else if(!strcmp(wl[0],"stereo")) {
+  } else if(clStrcmp(wl[0],"stereo")) {
 #ifdef USE_CMI
     if(guiQueryStereo()) {
       if(wc==1) {
@@ -1183,9 +1188,9 @@ int sceneCommand(int wc, const char **wl)
 	  glwStereoSwitch(1);
 	}
       } else {
-	if(!strcmp(wl[1],"off")) {
+	if(clStrcmp(wl[1],"off")) {
 	  glwStereoSwitch(0);
-	} else if(!strcmp(wl[1],"on")) {
+	} else if(clStrcmp(wl[1],"on")) {
 	  glwStereoSwitch(1);
 	} else {
 	  sprintf(message,"unknown command '%s'\n",wl[1]);
@@ -1199,7 +1204,7 @@ int sceneCommand(int wc, const char **wl)
       return -1;
     }
 #endif
-  } else if(!strcmp(wl[0],"grab")) {
+  } else if(clStrcmp(wl[0],"grab")) {
     if(wc!=2) {
       sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
@@ -1207,12 +1212,12 @@ int sceneCommand(int wc, const char **wl)
       if(comGrab(&gfx.transform,wl[1])<0)
 	return -1;
     }
-  } else if(!strcmp(wl[0],"spin")) {
+  } else if(clStrcmp(wl[0],"spin")) {
     if(gfx.spin)
       gfx.spin=0;
     else
       gfx.spin=1;
-  } else if(!strcmp(wl[0],"depthc")) {
+  } else if(clStrcmp(wl[0],"depthc")) {
     if(gfx.fog) {
       glDisable(GL_FOG);
       gfx.fog=0;
@@ -1220,26 +1225,26 @@ int sceneCommand(int wc, const char **wl)
       glEnable(GL_FOG);
       gfx.fog=1;
     }
-  } else if (!strcmp(wl[0],"showcp")) {
+  } else if (clStrcmp(wl[0],"showcp")) {
     scene.cpflag=1;
     comRedraw();
-  } else if (!strcmp(wl[0],"hidecp")) {
+  } else if (clStrcmp(wl[0],"hidecp")) {
     scene.cpflag=0;
     comRedraw();
-  } else if (!strcmp(wl[0],"flat")) {
+  } else if (clStrcmp(wl[0],"flat")) {
     gfx.smooth=0;
     glShadeModel(GL_FLAT);
-  } else if (!strcmp(wl[0],"smooth")) {
+  } else if (clStrcmp(wl[0],"smooth")) {
     gfx.smooth=1;
     glShadeModel(GL_SMOOTH);
-  } else if(!strcmp(wl[0],"nolight")) {
+  } else if(clStrcmp(wl[0],"nolight")) {
     glDisable(GL_LIGHTING);
-  } else if(!strcmp(wl[0],"light")) {
+  } else if(clStrcmp(wl[0],"light")) {
     glEnable(GL_LIGHTING);
-  } else if(!strcmp(wl[0],"bench")) {
+  } else if(clStrcmp(wl[0],"bench")) {
     comBench();
 #ifdef INTERNAL_COLOR
-  } else if(!strcmp(wl[0],"showrgb")) {
+  } else if(clStrcmp(wl[0],"showrgb")) {
     if(wc>2) {
       comMessage("error: at most one argument after showrgb\n");
     } else {

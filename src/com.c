@@ -2089,6 +2089,12 @@ void comOutit()
   com.benchmark=0;
 }
 
+const float *comGetCP()
+{
+  return scene.cp;
+}
+
+
 #ifdef USE_CMI
 void comCMICallback(const cmiToken *t)
 {

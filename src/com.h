@@ -107,6 +107,8 @@ void comBench(void);
 
 void comOutit();
 
+const float *comGetCP();
+
 void tunnelvision(structObj *o);
 
 #endif

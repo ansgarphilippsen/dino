@@ -1063,35 +1063,47 @@ int surfSetDefault(dbmSurfNode *node, surfObj *obj)
 
 int surfGetRangeVal(dbmSurfNode *node, struct SURF_VERTICE *v, const char *prop, float *rval)
 {
+  //float *cp=comGetCP();
+  float cp[3];
+  cp[0] = node->transform.cen[0];
+  cp[1] = node->transform.cen[1];
+  cp[2] = node->transform.cen[2];
+
   (*rval)=0.0;
   if(prop==NULL)
     return -1;
   if(clStrlen(prop)==0)
     return -1;
 
-  if(clStrcmp(prop,"cp0")) 
+  if(clStrcmp(prop,"cp0")) {
     (*rval)=v->cprop[0];
-  else if(clStrcmp(prop,"cp1"))
+  } else if(clStrcmp(prop,"cp1")) {
     (*rval)=v->cprop[1];
-  else if(clStrcmp(prop,"cp2"))
+  } else if(clStrcmp(prop,"cp2")) {
     (*rval)=v->cprop[2];
-  else if(clStrcmp(prop,"cp3"))
+  } else if(clStrcmp(prop,"cp3")) {
     (*rval)=v->cprop[3];
-  else if(clStrcmp(prop,"cp4"))
+  } else if(clStrcmp(prop,"cp4")) {
     (*rval)=v->cprop[4];
-  else if(clStrcmp(prop,"cp5"))
+  } else if(clStrcmp(prop,"cp5")) {
     (*rval)=v->cprop[5];
-  else if(clStrcmp(prop,"cp6"))
+  } else if(clStrcmp(prop,"cp6")) {
     (*rval)=v->cprop[6];
-  else if(clStrcmp(prop,"cp7"))
+  } else if(clStrcmp(prop,"cp7")) {
     (*rval)=v->cprop[7];
-  else if(clStrcmp(prop,"cp8"))
+  } else if(clStrcmp(prop,"cp8")) {
     (*rval)=v->cprop[8];
-  else if(clStrcmp(prop,"cp9"))
+  } else if(clStrcmp(prop,"cp9")) {
     (*rval)=v->cprop[9];
-  else
+  } else if(clStrcmp(prop,"dist")) {
+    (*rval) = sqrtf(
+		    (v->p[0]-cp[0])*(v->p[0]-cp[0])+
+		    (v->p[1]-cp[1])*(v->p[1]-cp[1])+
+		    (v->p[2]-cp[2])*(v->p[2]-cp[2])
+		    );
+  } else {
     return -1;
-
+  }
   return 1;
 }
 
@@ -1220,6 +1232,10 @@ int surfGetMinMax(dbmSurfNode *n,const char *p, float *vmin, float *vmax)
   } else if(clStrcmp(p,"cp9")) {
     (*vmin)=n->cprop_min[9];
     (*vmax)=n->cprop_max[9];
+  } else if(clStrcmp(p,"dist")) {
+    // TODO
+    (*vmin)=0.0;
+    (*vmax)=0.0;
   } else {
     // unknown property
     return -1;

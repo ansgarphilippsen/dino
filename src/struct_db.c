@@ -2523,6 +2523,10 @@ int structGetMinMax(dbmStructNode *n, const char *prop, float *vmin, float *vmax
   } else if(clStrcmp(prop,"bfac")) {
     (*vmin)=n->min_max.bfac1;
     (*vmax)=n->min_max.bfac2;
+  } else if(clStrcmp(prop,"dist")) {
+    // TODO
+    (*vmin)=0.0;
+    (*vmax)=0.0;
   } else {
     (*vmin)=0.0;
     (*vmax)=0.0;
@@ -3182,6 +3186,12 @@ int structComPlay(dbmStructNode *node, int wc, char **wl)
 
 int structGetRangeVal(dbmStructNode *node, struct STRUCT_ATOM *atom, const char *prop, float *r)
 {
+  //float *cp=comGetCP();
+  float cp[3];
+  cp[0] = node->transform.cen[0];
+  cp[1] = node->transform.cen[1];
+  cp[2] = node->transform.cen[2];
+
   if(prop==NULL) {
     comMessage("error: range: prop missing in range statement\n");
     (*r)=0.0;
@@ -3203,6 +3213,13 @@ int structGetRangeVal(dbmStructNode *node, struct STRUCT_ATOM *atom, const char 
     (*r)=atom->p->y;
   } else if(clStrcmp(prop,"z")) {
     (*r)=atom->p->z;
+  } else if(clStrcmp(prop,"dist")) {
+    (*r) = sqrtf(
+		 (atom->p->x-cp[0])*(atom->p->x-cp[0])+
+		 (atom->p->y-cp[1])*(atom->p->y-cp[1])+
+		 (atom->p->z-cp[2])*(atom->p->z-cp[2])
+		 );
+      
   } else {
     comMessage("error: range: unknown atom property \n");
     comMessage(prop);
