@@ -283,6 +283,7 @@ int comWorkPrompt(int word_count, char ** word_list)
 	    !strcmp(word_list[0],"bye") ||
 	    !strcmp(word_list[0],"adios") ||
 	    !strcmp(word_list[0],"finish") ||
+	    !strcmp(word_list[0],"shalom") ||
 	    !strcmp(word_list[0],"ciao")) {
     dinoExit(0);
   } else if(!strcmp(word_list[0],"terminate")) {

@@ -230,6 +230,8 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
 	  type=SCAL_CONTOUR;
 	} else if(clStrcmp(co.param[i].wl[0],"grid")) {
 	  type=SCAL_GRID;
+	} else if(clStrcmp(co.param[i].wl[0],"grad")) {
+	  type=SCAL_GRAD;
 	} else if(clStrcmp(co.param[i].wl[0],"slab")) {
 	  type=SCAL_SLAB;
 #ifdef VR

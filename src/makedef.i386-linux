@@ -2,7 +2,7 @@
 
 ARCH=LINUX
 
-LIBDIR = -L/usr/X11R6/lib
+LIBDIR = -L../lib -L/usr/X11R6/lib
 
 # all of these are static
 LIBSTATIC = /usr/lib/libtiff.a /usr/lib/libjpeg.a /usr/lib/libpng.a /usr/lib/libz.a
@@ -34,9 +34,10 @@ LIBGL=
 ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
 LIBGL += -lglut
 endif
-INCLUDE = -I/usr/X11R6/include
+INCLUDE = -L../include -I/usr/X11R6/include
 LIBGL += -lGLU -lGL
-LIBGLW = /usr/X11R6/lib/libGLw.a
+#LIBGLW = /usr/X11R6/lib/libGLw.a
+#LIBGLW = ../lib/libGLw.a
 LIBMOTIF = /usr/X11R6/lib/libXm.a
 endif
 
@@ -53,3 +54,6 @@ LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(MALLOCLIB) $(LIBGLW) $(LIBS
 #SRC += jci.c
 
 SRC += joy.c
+
+SRC +=  GLwDrawA.c  GLwMDrawA.c
+

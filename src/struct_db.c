@@ -1423,13 +1423,8 @@ int structDelObj(struct DBM_STRUCT_NODE *node,char *name)
       if(!strcmp(node->obj[i].name,name)) {
 	node->obj_flag[i]=0;
 	obj=&node->obj[i];
-	/*
-	Cfree(obj->model);
-	Cfree(obj->chain);
-	Cfree(obj->residue);
-	Cfree(obj->atom);
-	Cfree(obj->bond);
-	*/
+
+	structObjDelete(obj);
 	comDelObj(node->name, name);
       }
 

@@ -28,8 +28,17 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
 
   // check if swap is required
   fread(&header,sizeof(struct CCP4_MAP_HEADER),1,f);
-  if(sn->swap_flag) {
+
+  if(header.mode!=2 && header.mode!=0) {
+    // try swapping
+    sn->swap_flag=1;
     swap_4bs((unsigned char*)&header, sizeof(header)/4.0);
+    if(header.mode!=2 && header.mode!=0) {
+      comMessage("\nccp4Read: error: map not in mode 0 or 2 (even after byte-swap");
+      return -1;
+    } else {
+      comMessage(" (byte-swapping) ");
+    }
   }
 
   fseek(f,header.nsymbt,SEEK_CUR);
@@ -59,10 +68,6 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   if(header.nz==0.0)
     header.nz=header.ns;
 
-  if(header.mode!=2 && header.mode!=0) {
-    comMessage("\nccp4Read: error: map not in mode 0 or 2");
-    return -1;
-  }
 
   /*
     nx,ny and nz are only needed for the 
@@ -178,7 +183,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
 
 
   sprintf(message,
-	  "\nheader:\nnc,nr,ns: %d,%d,%d\nncstart,nrstart,nsstart: %d,%d,%d\nnx,ny,nz: %d,%d,%d\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %d,%d,%d",
+	  "\nheader:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld",
 	  header.nc, header.nr, header.ns,
 	  header.ncstart, header.nrstart, header.nsstart,
 	  header.nx, header.ny, header.nz, 

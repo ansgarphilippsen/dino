@@ -243,6 +243,7 @@ int structDrawObj(structObj *obj)
       glVertex3fv(p1);
       glVertex3fv(p2);
     }
+
     for(i=0;i<obj->s_bond_count;i++) {
       p0[0]=obj->s_bond[i].atom->p->x;
       p0[1]=obj->s_bond[i].atom->p->y;

@@ -38,9 +38,11 @@ struct SCAL_POINT {
 
 struct SCAL_VECT {
   float v1[3],v2[3]; /* line in space */
+  float grad[3]; /* gradient */
   float n[3]; /* direction */
+  float length; /* actual length */
   float c[3]; /* color */
-  float l,w;  /* length and width */
+  int uvw[4]; /* grid point */
 };
 
 struct SCAL_LINE {
@@ -53,10 +55,10 @@ struct SCAL_LINE {
 struct SCAL_FACE {
   float v1[3],v2[3],v3[3];
   float n1[3],n2[3],n3[3];
-  float n[3];
-  float c[4];
-  struct SCAL_POINT *p0,*p1,*p2;
-  int pi0,pi1,pi2;
+  //  float n[3];
+  //  float c[4];
+  //  struct SCAL_POINT *p0,*p1,*p2;
+  //  int pi0,pi1,pi2;
 };
 
 #ifdef VR

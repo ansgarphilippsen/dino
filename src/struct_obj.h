@@ -97,4 +97,6 @@ int structObjReset(structObj *obj, int wc, char **wl);
 int structObjFix(structObj *obj, int wc, char **wl);
 int structObjGrab(structObj *obj, int wc, char **wl);
 
+int structObjDel(structObj *obj);
+
 #endif

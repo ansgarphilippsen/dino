@@ -148,7 +148,7 @@ int scalMCN(scalObj *obj, Select *sel)
     for(uc=0;uc<usize;uc++)
       save2_w_v[vc*usize+uc]=save_v_w[uc];
     save2_w_u[vc*usize+uc]=scalMCNOrg.sc.p[7];
-//    save2_w_u[vc*usize+uc]=-1;
+    //    save2_w_u[vc*usize+uc]=-1;
 
     save_tmp=save_w_u;
     save_w_u=save2_w_u;
@@ -435,6 +435,7 @@ int scalMCNAddFace(int v1, int v2, int v3)
   return 0;
 }
 
+
 int scalMCN2Obj()
 {
   int i,j,k;
@@ -442,34 +443,48 @@ int scalMCN2Obj()
   float *np;
   int pi[3];
   char message[256];
+  struct MCN_NEW_TEMP_FACE {
+    float v1[3],v2[3],v3[3];
+    float n1[3],n2[3],n3[3];
+    float n[3];
+    float c[4];
+    struct SCAL_POINT *p0,*p1,*p2;
+    int pi0,pi1,pi2;
+  }*tmpface;
+  int tmpface_count;
+  
+  /*
+    face:
+    for the gfx routine, only the vertices and normals are needed!
+    everything else (temporary pointers, indices, etc) should be
+    moved to the temporary MCN struct
+  */
 
   scalObj *obj=scalMCNOrg.obj;
 
+  tmpface_count=scalMCNOrg.face_count;
+  tmpface=Ccalloc(tmpface_count,sizeof(struct MCN_NEW_TEMP_FACE));
 
-  obj->face_count=scalMCNOrg.face_count;
-  obj->face=Ccalloc(obj->face_count,sizeof(struct SCAL_FACE));
+  for(i=0;i<tmpface_count;i++) {
+    tmpface[i].pi0=scalMCNOrg.face[i].v1;
+    tmpface[i].pi1=scalMCNOrg.face[i].v2;
+    tmpface[i].pi2=scalMCNOrg.face[i].v3;
+    tmpface[i].v1[0]=scalMCNOrg.vert[tmpface[i].pi0].p[0];
+    tmpface[i].v1[1]=scalMCNOrg.vert[tmpface[i].pi0].p[1];
+    tmpface[i].v1[2]=scalMCNOrg.vert[tmpface[i].pi0].p[2];
+    tmpface[i].v2[0]=scalMCNOrg.vert[tmpface[i].pi1].p[0];
+    tmpface[i].v2[1]=scalMCNOrg.vert[tmpface[i].pi1].p[1];
+    tmpface[i].v2[2]=scalMCNOrg.vert[tmpface[i].pi1].p[2];
+    tmpface[i].v3[0]=scalMCNOrg.vert[tmpface[i].pi2].p[0];
+    tmpface[i].v3[1]=scalMCNOrg.vert[tmpface[i].pi2].p[1];
+    tmpface[i].v3[2]=scalMCNOrg.vert[tmpface[i].pi2].p[2];
 
-
-  for(i=0;i<obj->face_count;i++) {
-    obj->face[i].pi0=scalMCNOrg.face[i].v1;
-    obj->face[i].pi1=scalMCNOrg.face[i].v2;
-    obj->face[i].pi2=scalMCNOrg.face[i].v3;
-    obj->face[i].v1[0]=scalMCNOrg.vert[obj->face[i].pi0].p[0];
-    obj->face[i].v1[1]=scalMCNOrg.vert[obj->face[i].pi0].p[1];
-    obj->face[i].v1[2]=scalMCNOrg.vert[obj->face[i].pi0].p[2];
-    obj->face[i].v2[0]=scalMCNOrg.vert[obj->face[i].pi1].p[0];
-    obj->face[i].v2[1]=scalMCNOrg.vert[obj->face[i].pi1].p[1];
-    obj->face[i].v2[2]=scalMCNOrg.vert[obj->face[i].pi1].p[2];
-    obj->face[i].v3[0]=scalMCNOrg.vert[obj->face[i].pi2].p[0];
-    obj->face[i].v3[1]=scalMCNOrg.vert[obj->face[i].pi2].p[1];
-    obj->face[i].v3[2]=scalMCNOrg.vert[obj->face[i].pi2].p[2];
-
-    scalMCNFaceNormal(obj->face[i].v1,obj->face[i].v2,obj->face[i].v3,
+    scalMCNFaceNormal(tmpface[i].v1,tmpface[i].v2,tmpface[i].v3,
 		      scalMCNOrg.face[i].n);
 
   }
 
-  for(i=0;i<obj->face_count;i++) {
+  for(i=0;i<tmpface_count;i++) {
     pi[0]=scalMCNOrg.face[i].v1;
     pi[1]=scalMCNOrg.face[i].v2;
     pi[2]=scalMCNOrg.face[i].v3;
@@ -498,11 +513,11 @@ int scalMCN2Obj()
       nt[2]/=(float)k;
 
       if(j==0) 
-	matfNormalize(nt,obj->face[i].n1);
+	matfNormalize(nt,tmpface[i].n1);
       else if(j==1)
-	matfNormalize(nt,obj->face[i].n2);
+	matfNormalize(nt,tmpface[i].n2);
       else
-	matfNormalize(nt,obj->face[i].n3);
+	matfNormalize(nt,tmpface[i].n3);
     }
   }
 
@@ -520,39 +535,39 @@ int scalMCN2Obj()
 
   Cfree(scalMCNOrg.vert);
 
-  for(i=0;i<obj->face_count;i++) {
-    if(matfCalcNDot(obj->point[obj->face[i].pi0].n,obj->face[i].n1)<0) {
-      obj->point[obj->face[i].pi0].n[0]+=-obj->face[i].n1[0];
-      obj->point[obj->face[i].pi0].n[1]+=-obj->face[i].n1[1];
-      obj->point[obj->face[i].pi0].n[2]+=-obj->face[i].n1[2];
+  for(i=0;i<tmpface_count;i++) {
+    if(matfCalcNDot(obj->point[tmpface[i].pi0].n,tmpface[i].n1)<0) {
+      obj->point[tmpface[i].pi0].n[0]+=-tmpface[i].n1[0];
+      obj->point[tmpface[i].pi0].n[1]+=-tmpface[i].n1[1];
+      obj->point[tmpface[i].pi0].n[2]+=-tmpface[i].n1[2];
     } else {
-      obj->point[obj->face[i].pi0].n[0]+=obj->face[i].n1[0];
-      obj->point[obj->face[i].pi0].n[1]+=obj->face[i].n1[1];
-      obj->point[obj->face[i].pi0].n[2]+=obj->face[i].n1[2];
+      obj->point[tmpface[i].pi0].n[0]+=tmpface[i].n1[0];
+      obj->point[tmpface[i].pi0].n[1]+=tmpface[i].n1[1];
+      obj->point[tmpface[i].pi0].n[2]+=tmpface[i].n1[2];
     }
-    obj->point[obj->face[i].pi0].nc++;
+    obj->point[tmpface[i].pi0].nc++;
 
-    if(matfCalcNDot(obj->point[obj->face[i].pi1].n,obj->face[i].n2)<0) {
-      obj->point[obj->face[i].pi1].n[0]+=-obj->face[i].n2[0];
-      obj->point[obj->face[i].pi1].n[1]+=-obj->face[i].n2[1];
-      obj->point[obj->face[i].pi1].n[2]+=-obj->face[i].n2[2];
+    if(matfCalcNDot(obj->point[tmpface[i].pi1].n,tmpface[i].n2)<0) {
+      obj->point[tmpface[i].pi1].n[0]+=-tmpface[i].n2[0];
+      obj->point[tmpface[i].pi1].n[1]+=-tmpface[i].n2[1];
+      obj->point[tmpface[i].pi1].n[2]+=-tmpface[i].n2[2];
     } else {
-      obj->point[obj->face[i].pi1].n[0]+=obj->face[i].n2[0];
-      obj->point[obj->face[i].pi1].n[1]+=obj->face[i].n2[1];
-      obj->point[obj->face[i].pi1].n[2]+=obj->face[i].n2[2];
+      obj->point[tmpface[i].pi1].n[0]+=tmpface[i].n2[0];
+      obj->point[tmpface[i].pi1].n[1]+=tmpface[i].n2[1];
+      obj->point[tmpface[i].pi1].n[2]+=tmpface[i].n2[2];
     }
-    obj->point[obj->face[i].pi1].nc++;
+    obj->point[tmpface[i].pi1].nc++;
 
-    if(matfCalcNDot(obj->point[obj->face[i].pi2].n,obj->face[i].n3)<0) {
-      obj->point[obj->face[i].pi2].n[0]+=-obj->face[i].n3[0];
-      obj->point[obj->face[i].pi2].n[1]+=-obj->face[i].n3[1];
-      obj->point[obj->face[i].pi2].n[2]+=-obj->face[i].n3[2];
+    if(matfCalcNDot(obj->point[tmpface[i].pi2].n,tmpface[i].n3)<0) {
+      obj->point[tmpface[i].pi2].n[0]+=-tmpface[i].n3[0];
+      obj->point[tmpface[i].pi2].n[1]+=-tmpface[i].n3[1];
+      obj->point[tmpface[i].pi2].n[2]+=-tmpface[i].n3[2];
     } else {
-      obj->point[obj->face[i].pi2].n[0]+=obj->face[i].n3[0];
-      obj->point[obj->face[i].pi2].n[1]+=obj->face[i].n3[1];
-      obj->point[obj->face[i].pi2].n[2]+=obj->face[i].n3[2];
+      obj->point[tmpface[i].pi2].n[0]+=tmpface[i].n3[0];
+      obj->point[tmpface[i].pi2].n[1]+=tmpface[i].n3[1];
+      obj->point[tmpface[i].pi2].n[2]+=tmpface[i].n3[2];
     }
-    obj->point[obj->face[i].pi2].nc++;
+    obj->point[tmpface[i].pi2].nc++;
 
 
   }
@@ -576,6 +591,35 @@ int scalMCN2Obj()
   }
 
   Cfree(scalMCNOrg.line);
+
+  // now assign the object face
+
+  obj->face_count=tmpface_count;
+  obj->face=Ccalloc(obj->face_count,sizeof(struct SCAL_FACE));
+
+  for(i=0;i<tmpface_count;i++) {
+    obj->face[i].v1[0]=tmpface[i].v1[0];
+    obj->face[i].v1[1]=tmpface[i].v1[1];
+    obj->face[i].v1[2]=tmpface[i].v1[2];
+    obj->face[i].v2[0]=tmpface[i].v2[0];
+    obj->face[i].v2[1]=tmpface[i].v2[1];
+    obj->face[i].v2[2]=tmpface[i].v2[2];
+    obj->face[i].v3[0]=tmpface[i].v3[0];
+    obj->face[i].v3[1]=tmpface[i].v3[1];
+    obj->face[i].v3[2]=tmpface[i].v3[2];
+
+    obj->face[i].n1[0]=tmpface[i].n1[0];
+    obj->face[i].n1[1]=tmpface[i].n1[1];
+    obj->face[i].n1[2]=tmpface[i].n1[2];
+    obj->face[i].n2[0]=tmpface[i].n2[0];
+    obj->face[i].n2[1]=tmpface[i].n2[1];
+    obj->face[i].n2[2]=tmpface[i].n2[2];
+    obj->face[i].n3[0]=tmpface[i].n3[0];
+    obj->face[i].n3[1]=tmpface[i].n3[1];
+    obj->face[i].n3[2]=tmpface[i].n3[2];
+  }
+
+  Cfree(tmpface);
 
   sprintf(message," %d points  %d lines  %d faces",
 	  obj->point_count,obj->line_count, obj->face_count);

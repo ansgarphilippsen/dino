@@ -26,7 +26,9 @@ void *Cmalloc(size_t size)
     }
   return p;
 #else
-//  fprintf(stderr,"\nMALLOC %d kb",size/1024);
+#ifdef CMALLOC_VERBOSE
+  fprintf(stderr,"\nMALLOC %.2f kb",size/1024.0);
+#endif
   return malloc(size);
 #endif
 }
@@ -44,7 +46,9 @@ void *Ccalloc (size_t nelem, size_t elsize)
     }
   return p;
 #else
-//  fprintf(stderr,"\nCALLOC %d kb",nelem*elsize/1024);
+#ifdef CMALLOC_VERBOSE
+  fprintf(stderr,"\nCALLOC %.2f kb",nelem*elsize/1024.0);
+#endif
   return calloc(nelem, elsize);
 #endif
 }
@@ -78,7 +82,9 @@ void *Crecalloc(void *p, size_t nelem, size_t elsize)
   size_t size;
   size=nelem*elsize;
 
-//  fprintf(stderr,"\nRECALLOC %d kb",size/1024);
+#ifdef CMALLOC_VERBOSE
+  fprintf(stderr,"\nRECALLOC (%p) %.2f kb",p,size/1024.0);
+#endif
 
   return realloc(p,size);
 }

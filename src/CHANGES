@@ -1,3 +1,9 @@
+auto-detection of swapping for scalar field maps
+
+fixed 'degenerate cylinder error' in POVray output
+
+reduced memory usage of scalar-field object by 50%
+
 fixed atom-id picking bug
 
 fixed beginning of hsc object error bug

@@ -264,6 +264,8 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
     sprintf(message,"\nGenerating grid ...");
     comMessage(message);
     ret=scalGrid(obj,sel);
+  } else if(obj->type==SCAL_GRAD) {
+    ret=scalGrad(obj,sel);
 #ifdef VR
   } else if(obj->type==SCAL_VR) {
     ret=scalVR(obj,sel);
@@ -323,6 +325,20 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       s->pov[pc].id=SCAL_PROP_CENTER;
     } else if(clStrcmp(s->pov[pc].prop,"size")) {
       s->pov[pc].id=SCAL_PROP_SIZE;
+    } else if(clStrcmp(s->pov[pc].prop,"scale")) {
+      if(obj->type==SCAL_GRAD) {
+	s->pov[pc].id=SCAL_PROP_SCALE;
+      } else {
+	comMessage("\nerror: property scale only valid for object type grad");
+	return -1;
+      }
+    } else if(clStrcmp(s->pov[pc].prop,"length")) {
+      if(obj->type==SCAL_GRAD) {
+	s->pov[pc].id=SCAL_PROP_LENGTH;
+      } else {
+	comMessage("\nerror: property length only valid for object type grad");
+	return -1;
+      }
 #ifdef VR
     } else if(clStrcmp(s->pov[pc].prop,"start")) {
       s->pov[pc].id=SCAL_PROP_START;
@@ -347,7 +363,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       if(obj->type==SCAL_GRID) {
 	s->pov[pc].id=SCAL_PROP_RAD;
       } else {
-	comMessage("\nerror: property level only valid for object type grid");
+	comMessage("\nerror: property rad only valid for object type grid");
 	return -1;
       }
     } else if(clStrcmp(s->pov[pc].prop,"step")) {
@@ -471,6 +487,69 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	      }
 	    }
 	  }
+	} else if(obj->type==SCAL_GRAD) {
+	  if(comGetColor(val->val1,&r,&g,&b)<0) {
+	    comMessage("\nerror: set: unknown color ");
+	    comMessage(val->val1);
+	    return -1;
+	  }
+	  if(s->range_flag) {
+	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+	      comMessage("\nerror: set: unknown color ");
+	      comMessage(val->val2);
+	      return -1;
+	    }
+	  }
+	  for(ec=0;ec<obj->vect_count;ec++) {
+	    f=0;
+	    if(s->select_flag) {
+	      res=scalIsSelected(obj->node,
+				 obj->vect[ec].uvw[0],
+				 obj->vect[ec].uvw[1],
+				 obj->vect[ec].uvw[2],
+				 &s->select);
+	      if(res==-1)
+		return -1;
+	      else
+		f=res;
+	    } else {
+	      f=1;
+	    }
+	    if(f) {
+	      if(s->range_flag) {
+		if(s->range.src==NULL) {
+		  // this dataset
+		  if(scalGetRangeXYZVal(obj->node,
+					s->range.prop,
+					obj->vect[ec].v1,
+					&rval)<0)
+		    return -1;
+		} else {
+		  if(dbmGetRangeVal(&s->range,obj->vect[ec].v1,&rval)<0)
+		    return -1;
+		}
+		frac1=rval2-rval1;
+		frac2=rval-rval1;
+		if(frac1==0.0) {
+		  if(frac2==0.0)
+		    frac2=0.5;
+		  else
+		    frac2=-2.0;
+		} else {
+		  frac2/=frac1;
+		}
+		if(frac2>=0.0 && frac2<=1.0) {
+		  obj->vect[ec].c[0]=(r2-r)*frac2+r;
+		  obj->vect[ec].c[1]=(g2-g)*frac2+g;
+		  obj->vect[ec].c[2]=(b2-b)*frac2+b;
+		}
+	      } else {
+		obj->vect[ec].c[0]=r;
+		obj->vect[ec].c[1]=g;
+		obj->vect[ec].c[2]=b;
+	      }
+	    }
+	  }
 	} else if (obj->type==SCAL_SLAB) {
 	  /*
 	    go through texture data and
@@ -591,7 +670,89 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  }
 	}
       }
+    break;
+    case SCAL_PROP_SCALE:
+      if(flag==1) {
+	rad1=atof(val->val1);
+	if(rad1==0.0) {
+	  for(ec=0;ec<obj->vect_count;ec++) {
+	    obj->vect[ec].v2[0]=obj->vect[ec].v1[0]+obj->vect[ec].n[0];
+	    obj->vect[ec].v2[1]=obj->vect[ec].v1[1]+obj->vect[ec].n[1];
+	    obj->vect[ec].v2[2]=obj->vect[ec].v1[2]+obj->vect[ec].n[2];
+	  }
+	  
+	} else {
+	  for(ec=0;ec<obj->vect_count;ec++) {
+	    obj->vect[ec].v2[0]=obj->vect[ec].v1[0]+obj->vect[ec].grad[0]*rad1;
+	    obj->vect[ec].v2[1]=obj->vect[ec].v1[1]+obj->vect[ec].grad[1]*rad1;
+	    obj->vect[ec].v2[2]=obj->vect[ec].v1[2]+obj->vect[ec].grad[2]*rad1;
+	  }
+	}
+      }
       break;
+    case SCAL_PROP_LENGTH:
+      if(flag==1) {
+	for(ec=0;ec<obj->vect_count;ec++) {
+	  f=0;
+	  if(s->select_flag) {
+	    res=scalIsSelected(obj->node,
+			       obj->vect[ec].uvw[0],
+			       obj->vect[ec].uvw[1],
+			       obj->vect[ec].uvw[2],
+			       &s->select);
+	    if(res==-1)
+	      return -1;
+	    else
+	      f=res;
+	  } else {
+	    f=1;
+	  }
+	  if(f) {
+	    if(s->range_flag) {
+	      rad1=atof(val->val1);
+	      rad2=atof(val->val2);
+	      
+	      if(s->range.src==NULL) {
+		// this dataset
+		if(scalGetRangeXYZVal(obj->node,
+				      s->range.prop,
+				      obj->vect[ec].v1,
+				      &rval)<0)
+		  return -1;
+	      } else {
+		if(dbmGetRangeVal(&s->range,obj->vect[ec].v1,&rval)<0)
+		  return -1;
+	      }
+	      frac1=rval2-rval1;
+	      frac2=rval-rval1;
+	      if(frac1==0.0) {
+		if(frac2==0.0)
+		  frac2=0.5;
+		else
+		  frac2=-2.0;
+	      } else {
+		frac2/=frac1;
+	      }
+	      if(frac2>=0.0 && frac2<=1.0) {
+		obj->vect[ec].length=(rad2-rad1)*frac2+rad1;
+	      }
+	    } else {
+	      rad1=atof(val->val1);
+	      obj->vect[ec].length=rad1;
+	    }
+	  }
+	}
+      
+	for(ec=0;ec<obj->vect_count;ec++) {
+	  obj->vect[ec].v2[0]=obj->vect[ec].v1[0]+
+	    obj->vect[ec].n[0]*obj->vect[ec].length;
+	  obj->vect[ec].v2[1]=obj->vect[ec].v1[1]+
+	    obj->vect[ec].n[1]*obj->vect[ec].length;
+	  obj->vect[ec].v2[2]=obj->vect[ec].v1[2]+
+	    obj->vect[ec].n[2]*obj->vect[ec].length;
+	}
+      }
+    break;
     case SCAL_PROP_CENTER:
       if(matExtract1D(val->val1,3,vd1)!=0) {
 	comMessage("\nerror: set: syntax error in vector ");
@@ -860,7 +1021,7 @@ int scalGrid(scalObj *obj, Select *sel)
   mem_add=100000 ;
   spoint_count=0;
   spoint_max=mem_add;
-  spoint=Ccalloc(spoint_max,sizeof(struct SCAL_POINT));
+  spoint=Crecalloc(NULL,spoint_max,sizeof(struct SCAL_POINT));
 
   step=obj->step;
 
@@ -900,17 +1061,13 @@ int scalGrid(scalObj *obj, Select *sel)
 
 
 	  if(spoint_count>=spoint_max) {
-	    spoint_old=spoint;
-	    spoint=Ccalloc(spoint_max+mem_add,sizeof(struct SCAL_POINT));
-	    memcpy(spoint,spoint_old,
-		   spoint_count*sizeof(struct SCAL_POINT));
-	    Cfree(spoint_old);
 	    spoint_max+=mem_add;
+	    spoint=Crecalloc(spoint,spoint_max,sizeof(struct SCAL_POINT));
 	  }
 	}
       }
 
-  obj->point=spoint;
+  obj->point=Crecalloc(spoint,spoint_count,sizeof(struct SCAL_POINT));
   obj->point_count=spoint_count;
   obj->line=NULL;
   obj->line_count=0;
@@ -921,9 +1078,10 @@ int scalGrid(scalObj *obj, Select *sel)
 	  obj->point_count);
   comMessage(message);
 
-
   return 0;
 }
+
+
 
 int scalObjIsWithin(scalObj *obj, float *p, float d2)
 {
@@ -1313,4 +1471,131 @@ int scalSlabEvalPOV(scalObj *obj, int c, POV *pov)
     }
   }
   return 0;
+}
+
+
+/* 
+   calculate gradient based on
+
+   |gx|   | [v(x+1,y,z)-v(x-1,y,z)] / dx |
+   |gy| = | [v(x,y+1,z)-v(x,y-1,z)] / dy |
+   |gz|   | [v(x,y,z+1)-v(x,y,z-1)] / dz |
+
+   where v(x,y,z) is the value at grid coordinates xyz and
+   d is the grid spacing
+
+*/
+
+int scalGrad(scalObj *obj, Select *sel)
+{
+  struct SCAL_VECT *vect;
+  int vect_max, vect_count;
+  int u,v,w,ustart,uend,vstart,vend,wstart,wend,res;
+  int step,flag;
+  int mem_add;
+  double v0[3],v1[3],v2[3];
+  double val1,val2,dx,dy,dz,grad[3],norm[3],length;
+  char message[1024];
+
+  mem_add=100000;
+  vect_max=mem_add;
+  vect_count=0;
+  vect=Crecalloc(NULL, vect_max,sizeof(struct SCAL_VECT));
+
+  ustart=obj->u_start; uend=obj->u_end;
+  vstart=obj->v_start; vend=obj->v_end;
+  wstart=obj->w_start; wend=obj->w_end;
+
+  step=obj->step;
+
+  v0[0]=(double)0;
+  v0[1]=(double)0;
+  v0[2]=(double)0;
+  v1[0]=(double)1;
+  v1[1]=(double)1;
+  v1[2]=(double)1;
+  scalUVWtoXYZ(obj->field,v1,v2);
+  scalUVWtoXYZ(obj->field,v0,v1);
+
+  dx=v2[0]-v1[0];
+  dy=v2[1]-v1[1];
+  dz=v2[2]-v1[2];
+
+  if(dx==0.0 || dy==0.0 || dz==0.0) {
+    comMessage("\nscalGrad: internal error #1");
+    return -1;
+  }
+
+  for(u=ustart;u<uend-1;u+=step)
+    for(v=vstart;v<vend-1;v+=step)
+      for(w=wstart;w<wend-1;w+=step) {
+        flag=0;
+	
+	/* if step==1 check min/max */
+	/* else */
+	res=scalIsSelected(obj->node,u,v,w,sel);
+	if(res==-1)
+	  return -1;
+	else
+	  flag=res;
+	
+	if(flag==1) {
+	  v1[0]=(double)u;
+	  v1[1]=(double)v;
+	  v1[2]=(double)w;
+	  scalUVWtoXYZ(obj->field,v1,v2);
+	  val1=scalReadField(obj->field,u-1,v,w);
+	  val2=scalReadField(obj->field,u+1,v,w);
+	  grad[0]=(val2-val1)/(2.0*dx);
+	  val1=scalReadField(obj->field,u,v-1,w);
+	  val2=scalReadField(obj->field,u,v+1,w);
+	  grad[1]=(val2-val1)/(2.0*dy);
+	  val1=scalReadField(obj->field,u,v,w-1);
+	  val2=scalReadField(obj->field,u,v,w+1);
+	  grad[2]=(val2-val1)/(2.0*dz);
+	  matNormalize(grad,norm);
+	  length=matCalcLen(grad);
+
+	  vect[vect_count].v1[0]=v2[0];
+	  vect[vect_count].v1[1]=v2[1];
+	  vect[vect_count].v1[2]=v2[2];
+	  vect[vect_count].grad[0]=grad[0];
+	  vect[vect_count].grad[1]=grad[1];
+	  vect[vect_count].grad[2]=grad[2];
+	  vect[vect_count].n[0]=norm[0];
+	  vect[vect_count].n[1]=norm[1];
+	  vect[vect_count].n[2]=norm[2];
+	  vect[vect_count].v2[0]=vect[vect_count].v1[0]+grad[0];
+	  vect[vect_count].v2[1]=vect[vect_count].v1[1]+grad[1];
+	  vect[vect_count].v2[2]=vect[vect_count].v1[2]+grad[2];
+	  vect[vect_count].c[0]=1.0;
+	  vect[vect_count].c[1]=1.0;
+	  vect[vect_count].c[2]=1.0;
+	  vect[vect_count].c[3]=1.0;
+	  
+	  vect_count++;
+
+	  if(vect_count>=vect_max) {
+	    vect_max+=mem_add;
+	    vect=Crecalloc(vect,vect_max,sizeof(struct SCAL_VECT));
+	  }
+	}
+      }
+
+  obj->vect=Crecalloc(vect,vect_count,sizeof(struct SCAL_VECT));
+  obj->vect_count=vect_count;
+  obj->point=NULL;
+  obj->point_count=0;
+  obj->line=NULL;
+  obj->line_count=0;
+  obj->face=NULL;
+  obj->face_count=0;
+
+  sprintf(message," %d vectors",
+	  obj->vect_count);
+  comMessage(message);
+
+  return 0;
+
+
 }

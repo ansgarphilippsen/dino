@@ -70,6 +70,8 @@ float matfCalcAngle(float *, float *,float *, float *);
 double matCalcTorsion(double *, double *,double *, double *);
 
 double matCalcDistancePointToLine(double *l0, double *l1, double *p);
+
+double matCalcGrad(double xy1[2],double xy2[2], double xy3[2]);
 #endif
 
 

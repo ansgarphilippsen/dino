@@ -1571,3 +1571,4 @@ int matExtractVector(const char *s, int *count, float **result)
   return 0;
 
 }
+

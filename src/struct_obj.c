@@ -1728,3 +1728,19 @@ int structObjGrab(structObj *obj, int wc, char **wl)
 }
 
 #endif
+
+structObjDelete(structObj *obj)
+{
+  /*
+    free all pointers associated with an object
+  */
+  Cfree(obj->model);
+  Cfree(obj->chain);
+  Cfree(obj->residue);
+  Cfree(obj->atom);
+  Cfree(obj->bond);
+  Cfree(obj->atom_flag);
+  if(obj->va.max>0)
+    Cfree(obj->va.p);
+  
+}

@@ -34,9 +34,24 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
 
   fread(dummy, sizeof(dummy),1,f);
   fread(&header, sizeof(struct UHBD_GRID_HEADER), 1, f);
-  if(sn->swap_flag) {
+
+  if(abs(header.im)>1e6 || 
+     abs(header.jm)>1e6 ||
+     abs(header.km)>1e6) {
+    sn->swap_flag=1;
     swap_4bs((unsigned char*)&header, sizeof(header)/4.0);
+    if(abs(header.im)>1e6 || 
+       abs(header.jm)>1e6 ||
+       abs(header.km)>1e6) {
+      
+      comMessage("\nerror: uhbdRead: header not recognized (even after byte-swap)");
+      return -1;
+    } else {
+      comMessage(" (byte-swapping) ");
+    }
   }
+
+
   fread(dummy, sizeof(dummy),1,f);
 
   debmsg("uhbdRead:");
@@ -62,12 +77,6 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
   
   size=header.im*header.jm*header.km;
 
-  if(abs(header.im)>1e6 || 
-     abs(header.jm)>1e6 ||
-     abs(header.km)>1e6) {
-    comMessage("\nerror: uhbdRead: file not in UHBD format or byte-swapped ?");
-    return -1;
-  }
 
   sn->field->size=size;
 

@@ -7,6 +7,7 @@
 
 int scalObjWrite(scalObj *obj, int wc, char **wl)
 {
+#ifdef SCAL_OBJ_WRITE
   char n1[256],n2[256];
   FILE *f1,*f2;
   int i;
@@ -52,6 +53,6 @@ int scalObjWrite(scalObj *obj, int wc, char **wl)
 
   fclose(f1);
   fclose(f2);
-
+#endif
   return 0;
 }

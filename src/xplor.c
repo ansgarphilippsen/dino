@@ -227,12 +227,16 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   fread(dummy,sizeof(dummy),1,f);
   fread(&ntitle,sizeof(int),1,f);
   fprintf(stderr,"\n%x",ntitle);
-  if(node->swap_flag)
-    swap_4b((unsigned char *)&ntitle);
 
   if(ntitle>1024 || ntitle<0) {
-    comMessage("\nerror reading header: corrupted or byte-swapped?");
-    return -1;
+    node->swap_flag=1;
+    swap_4b((unsigned char *)&ntitle);
+    if(ntitle>1024 || ntitle<0) {
+      comMessage("\nerror reading header (even after byte-swap)");
+      return -1;
+    } else {
+      comMessage(" (byte swapping) ");
+    }
   }
   fread(title,sizeof(char),ntitle*80,f);
   fread(dummy,sizeof(dummy),1,f);

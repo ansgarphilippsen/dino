@@ -31,15 +31,21 @@ int delphiRead(FILE *f, dbmScalNode *sn)
   fread(dummy, sizeof(dummy),1,f);
 
   if(sn->swap_flag) {
-    swap_4bs((unsigned char *)&header,18);
   }
 
   if(header.nbyte!=4 || header.ivary!=0 || header.intdat!=0 ||
      header.xang!=90.0 || header.yang!=90.0 || header.zang!=90.0) {
-    comMessage("\nerror: invalid DELPHI header: corrupted or byte-swapped ?");
-    return -1;
+    sn->swap_flag=1;
+    swap_4bs((unsigned char *)&header,18);
+    if(header.nbyte!=4 || header.ivary!=0 || header.intdat!=0 ||
+       header.xang!=90.0 || header.yang!=90.0 || header.zang!=90.0) {
+      comMessage("\nerror: invalid DELPHI header (even after byte-swap)");
+      return -1;
+    } else {
+      comMessage(" byte-swapping ");
+    }
   }
-  
+    
   sprintf(message,"DELPHI HEADER:");
   debmsg(message);
   title[131]='\0';

@@ -328,9 +328,9 @@ int writeRasterScalObj(FILE *f,struct SCAL_OBJ *obj)
 
       /* make triangles */
       for(i=0;i<obj->face_count;i++) {
-	v1=obj->face[i].p0->v;
-	v2=obj->face[i].p1->v;
-	v3=obj->face[i].p2->v;
+	v1=obj->face[i].v1;
+	v2=obj->face[i].v2;
+	v3=obj->face[i].v3;
       }
 
     } else {
