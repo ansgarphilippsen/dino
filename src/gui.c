@@ -1034,7 +1034,7 @@ void guiTimeProc(XtPointer client_data)
   }
   comTimeProc();
 #ifndef NEW_GUI_MAIN
-  XtAppAddTimeOut(gui.app,10,(XtTimerCallbackProc)guiTimeProc,NULL);
+  XtAppAddTimeOut(gui.app,5,(XtTimerCallbackProc)guiTimeProc,NULL);
 #endif
 }
 
