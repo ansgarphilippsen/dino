@@ -87,7 +87,7 @@ struct SCAL_OCTREE_GLOBS {
 typedef struct DBM_SCAL_NODE {
   DBM_NODE_COMMON_HEADER
   union DBM_NODE *attach;
-  struct LEX_STACK restrict;
+  struct LEX_STACK restrict2;
   scalObj **obj;
   int obj_count;
   int obj_max;

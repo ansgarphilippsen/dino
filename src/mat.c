@@ -13,7 +13,10 @@
 #endif
 
 #ifdef DARWIN
-#define sqrtf(x) ((float)(sqrt((double)(x))))
+float sqrtf(float v)
+{
+     return (float) sqrt((double)v);
+}
 #endif
 
 #ifdef OSX

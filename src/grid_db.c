@@ -350,7 +350,7 @@ int gridComRestrict(dbmGridNode *node, int wc, char **wl)
 
   // reset restriction !!!
   for(i=0;i<node->field.point_count;i++) {
-    node->field.point[i].restrict=0;
+    node->field.point[i].restrict2=0;
   }
 
   // check each element
@@ -359,7 +359,7 @@ int gridComRestrict(dbmGridNode *node, int wc, char **wl)
     ret=gridIsSelected(node, &node->field.point[i], &sel);
     if(ret<0)
       return -1;
-    node->field.point[i].restrict=ret;
+    node->field.point[i].restrict2=ret;
     c+=ret;
   }
 
@@ -583,7 +583,7 @@ int gridIsSelected(dbmGridNode *node, gridPoint *point, Select *sel)
   if(point==NULL)
     return 1;
 
-  if(point->restrict)
+  if(point->restrict2)
     return 0;
 
   if(sel==NULL)
@@ -911,7 +911,7 @@ int gridAttach(dbmGridNode *node, dbmNode *attach, int iflag)
 		if(dz2<=dist) {
 		  ndist=dx2+dy2+dz2;
 		  if(ndist<dist) {
-		    if(!cap->restrict) {
+		    if(!cap->restrict2) {
 		      dist=ndist;
 		      ap=cap;
 		    }

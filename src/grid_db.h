@@ -54,7 +54,7 @@ typedef struct GRID_POINT
   int x,y,z;
   union DBM_NODE *attach_node;
   int attach_element;
-  unsigned char attach_flag,restrict;
+  unsigned char attach_flag,restrict2;
 }gridPoint;
 
 typedef struct GRID_FIELD
