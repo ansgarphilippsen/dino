@@ -21,7 +21,7 @@ OPTIONS += -DCONTOUR_COLOR
 
 #OPTIONS += -DNDEBUG
 
-GUI = wx
+GUI = X11
 
 # only for linux versions
 #STATIC = 1
@@ -85,6 +85,10 @@ export .SUFFIXES
 DATE = `date +"%Y%m%d"`
 
 sinclude $(GUI)/make.addon
+
+
+devel: $(OBJ) gui
+	$(CPP) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o dino_devel_$(GUI)
 
 dino: $(OBJ) gui
 	$(CPP) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o $@

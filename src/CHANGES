@@ -1,3 +1,18 @@
+added new fog keywords fogno and fogfo, modified default fog offsets
+(+10 and 0)
+
+fixed incorrect error handling during db or obj wildcard usage
+
+fixed: superflous memory allocations in contouring
+
+fixed: obj centers are precalculated
+
+fixed: surface obj center includes transformation
+
+fixed: povray export untransformed with -u flag
+
+----
+
 fixed: default contour transparency is 1.0
 
 fixed several small bugs occuring during errors in scalar field dataset
