@@ -1,6 +1,6 @@
 /* Localized versions of Info.plist keys */
 
 CFBundleName = "Dino";
-CFBundleShortVersionString = "Version 0.9";
-CFBundleGetInfoString = "Dino version 0.9, Copyright 1998-2003 Ansgar Philippsen.";
+CFBundleShortVersionString = "Version 0.9.0";
+CFBundleGetInfoString = "Dino version 0.9.0, Copyright 1998-2003 Ansgar Philippsen.";
 NSHumanReadableCopyright = "Copyright 1998-2003 Ansgar Philippsen.";
