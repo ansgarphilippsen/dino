@@ -16,6 +16,7 @@
 #define WRITE_POV_NEW   1
 #define WRITE_POV_SMOOTH 2
 #define WRITE_POV_MEGA 3
+#define WRITE_POV_NOCOLOR 4
 
 #define WRITE_POV_PLANE 0x1
 #define WRITE_POV_BOX   0x2
