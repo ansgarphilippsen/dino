@@ -221,7 +221,6 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   gui.message=XtCreateManagedWidget("message",xmLabelWidgetClass,
 				    gui.mform,arg,5);
 
-
   debmsg("guiInit: creating message label 2");
 #ifdef EXPO
   strcpy(gui.message_string2,"Powered by Linux");
