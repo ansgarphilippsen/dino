@@ -1256,10 +1256,15 @@ int sceneCommand(int wc, const char **wl)
 	return -1;
     }
   } else if(clStrcmp(wl[0],"spin")) {
-    if(gfx.spin)
-      gfx.spin=0;
+    if(gfx.anim==1)
+      gfx.anim=0;
     else
-      gfx.spin=1;
+      gfx.anim=1;
+  } else if(clStrcmp(wl[0],"rock")) {
+    if(gfx.anim==2)
+      gfx.anim=0;
+    else
+      gfx.anim=2;
   } else if(clStrcmp(wl[0],"depthc")) {
     if(gfx.fog) {
       glDisable(GL_FOG);
