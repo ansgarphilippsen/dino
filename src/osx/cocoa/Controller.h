@@ -25,6 +25,9 @@
 - (void)awakeFromNib;
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification;
 - (void)timerControl;
+// Menu Item
+- (IBAction)setWorkingDirectory:(id)sender;
+- (IBAction)runScript:(id)sender;
 // CLI Interaction
 - (void)command:(NSString *)theCommand from:(id)sender;
 - (void)commandResult:(const char *)tmp;

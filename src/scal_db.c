@@ -25,7 +25,7 @@ int scalNewNode(struct DBM_SCAL_NODE *node)
 		0.0,0.0,0.0,1.0};
 
   node->attach=NULL;
-  memcpy(&node->restrict2,
+  memcpy(&node->restriction,
 	 lexGenerate("*"),
 	 sizeof(struct LEX_STACK));
   node->obj_count=0;

@@ -551,7 +551,7 @@ int structComRestrict(dbmStructNode *node, int wc, char **wl)
 
   // reset restriction !!!
   for(i=0;i<node->atom_count;i++)
-    node->atom[i].restrict2=0;
+    node->atom[i].restriction=0;
 
   // check each atom
   c=0;
@@ -562,7 +562,7 @@ int structComRestrict(dbmStructNode *node, int wc, char **wl)
       return -1;
     }
     if(ret==0) {
-      node->atom[i].restrict2=1;
+      node->atom[i].restriction=1;
       c++;
    }
   }
@@ -1783,7 +1783,7 @@ int structIsAtomSelected(dbmStructNode *node, struct STRUCT_ATOM *atom, Select *
 {
   int i,ec,r;
 
-  if(atom->restrict2)
+  if(atom->restriction)
     return 0;
 
   if(sel==NULL)
@@ -1812,7 +1812,7 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
   float pos[3],dx,dy,dz,dist,dist2;
 
   // needed for cross-selection
-  if(atom->restrict2)
+  if(atom->restriction)
     return 0;
 
   if(clStrcmp(pov->prop,"*"))
@@ -2932,7 +2932,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
     else
       ap=obj->atom[ac].ap;
 
-    if(!(ap->restrict2)) {
+    if(!(ap->restriction)) {
       
       strcpy(record,"HETATM");
       for(i=0;i<record_atom_count;i++)

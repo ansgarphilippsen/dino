@@ -7,6 +7,7 @@
             SUPERCLASS = NSView; 
         }, 
         {
+            ACTIONS = {runScript = id; setWorkingDirectory = id; }; 
             CLASS = Controller; 
             LANGUAGE = ObjC; 
             OUTLETS = {dinoCLI = CLIView; dinoGL = DinoGLView; statusBox = NSTextField; }; 

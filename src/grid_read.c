@@ -122,7 +122,7 @@ int gridTiffRead(int fd, char *fn, dbmGridNode *node)
       node->field.point[p2].y=j;
       node->field.point[p2].n=p2;
       node->field.point[p2].attach_flag=0;
-      node->field.point[p2].restrict2=0;
+      node->field.point[p2].restriction=0;
       node->field.point[p2].attach_node=NULL;
     }
 

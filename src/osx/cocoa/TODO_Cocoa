@@ -8,13 +8,6 @@ _____________________________________________
 
 -Custom menu (right mouse click in gfx window)
 
--CLI will always accept input if in foreground, not only if you explicitely click inside
-
--"set current directory" menu item that pops up a file-selector-box to change the
-current working directory (which is "/" by default)
-
--"run script" menu item that pops up a file-selector-box so a script file can be selected (automatically changing into its directory)
-
 -Improve write function.
 
 -Implement the "Copy" function in the menu to directly copy/paste the gfx into photoshop or the like

@@ -143,7 +143,7 @@ typedef struct STRUCT_ATOM {
   struct STRUCT_MODEL *model;     /*               */
 
   struct STRUCT_ATOM_PROP def_prop;
-  int restrict2;
+  int restriction;
   int flag;    // used for a number of bit parameters
   
   int bondi[STRUCT_MAX_BOND_PER_ATOM],bondc,bondm;
@@ -250,7 +250,7 @@ struct TRJ_PLAY {
 typedef struct DBM_STRUCT_NODE {
   DBM_NODE_COMMON_HEADER
 
-  Select *restrict2;
+  Select *restriction;
 
   struct STRUCT_OBJ *obj;
   int *obj_flag;

@@ -31,6 +31,8 @@ static id dinoController;
 
     [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
 
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath: NSHomeDirectory()];
+    
     [self updateStatusBox:@"Ready"];    
 
 }
@@ -42,7 +44,42 @@ static id dinoController;
 
 
 //------------------------------------------------------
-// CLI interaction
+// Menu Item
+
+- (IBAction)setWorkingDirectory:(id)sender
+{
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    [oPanel setAllowsMultipleSelection:NO];
+    [oPanel setCanChooseFiles:NO];
+    [oPanel setCanChooseDirectories:YES];
+    [oPanel runModalForDirectory:nil file:nil types:nil];
+
+    NSString *directory = [[oPanel filenames] objectAtIndex:0];
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath: directory];
+    
+}
+
+- (IBAction)runScript:(id)sender
+{
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    [oPanel setAllowsMultipleSelection:NO];
+    [oPanel setCanChooseFiles:YES];
+    [oPanel setCanChooseDirectories:NO];
+    [oPanel runModalForDirectory:nil file:nil types:nil];
+
+    NSString *fullPath = [[oPanel filenames] objectAtIndex:0];
+    NSString *directory = [fullPath stringByDeletingLastPathComponent];
+    NSString *file = [fullPath lastPathComponent];
+
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:directory];
+    NSString *tag = @"@";
+    NSString *theScript = [tag stringByAppendingString:file];
+    [self command:theScript from:(id)sender];
+
+}
+
+//------------------------------------------------------
+// CLI Interaction
 
 - (void)command:(NSString *)theCommand from:(id)sender
 {
