@@ -1103,8 +1103,13 @@ int surfGetRangeXYZVal(dbmSurfNode *node, const char *prop, float *p, float *r)
 
 int surfFix(dbmSurfNode *node)
 {
-  int i;
+  int i,k;
   double v[4];
+  double imat[16];
+  surfObj *obj;
+
+  matInverse2(node->transform.rot,imat);
+  matTranspose(imat,imat);
 
   for(i=0;i<node->vc;i++) {
     v[0]=node->v[i].p[0];
@@ -1114,11 +1119,32 @@ int surfFix(dbmSurfNode *node)
     node->v[i].p[0]=v[0];
     node->v[i].p[1]=v[1];
     node->v[i].p[2]=v[2];
+
+    v[0]=node->v[i].n[0];
+    v[1]=node->v[i].n[1];
+    v[2]=node->v[i].n[2];
+    v[3]=1.0;
+    matMultVM(v,imat,v);
+    matNormalize(v,v);
+    node->v[i].n[0]=v[0];
+    node->v[i].n[1]=v[1];
+    node->v[i].n[2]=v[2];
   }
   transReset(&node->transform);
 
-  // TODO
-  // renew all objects based on their vp      
+  for(i=0;i<node->obj_max;i++)
+    if(node->obj_flag[i]!=0) {
+      obj=&node->obj[i];
+      for(k=0;k<obj->vertc;k++) {
+	obj->vert[k].p[0]=obj->vert[k].vp->p[0];
+	obj->vert[k].p[1]=obj->vert[k].vp->p[1];
+	obj->vert[k].p[2]=obj->vert[k].vp->p[2];
+	obj->vert[k].n[0]=obj->vert[k].vp->n[0];
+	obj->vert[k].n[1]=obj->vert[k].vp->n[1];
+	obj->vert[k].n[2]=obj->vert[k].vp->n[2];
+      }
+    }
+      
 
   return 0;
 }

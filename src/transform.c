@@ -403,3 +403,8 @@ int transApplyIf(transMat *trans, float *v)
   v[3]=v2[3];
   return 0;
 }
+
+int transCopy(transMat *src, transMat *dest)
+{
+  memcpy(src,dest,sizeof(transMat));
+}

@@ -77,4 +77,6 @@ int transMultMf(transMat *trans, float *m);
 int transApplyRot(transMat *trans, double *v);
 int transApplyRotf(transMat *trans, float *v);
 
+int transCopy(transMat *src, transMat *dest);
+
 #endif
