@@ -29,6 +29,8 @@
   into 3 or 4 corner-pairs that form an intersected edge,
   with the correct facet orientation
 
+  the first of the pair is the one with the larger level
+
      0
     /|\
    / | \
@@ -37,6 +39,8 @@
     \|/
      2
 
+  vertical line (0-2) is in front of horizontal one (1-3)
+
 */ 
                                 /* bits */
 static int tet_code[][8] = {    /* 3210 */
@@ -44,7 +48,7 @@ static int tet_code[][8] = {    /* 3210 */
   {0,1, 0,3, 0,2, -1,-1},       /* 0001 1 */
   {1,0, 1,2, 1,3, -1,-1},       /* 0010 2 */
   {0,2, 1,2, 1,3, 0,3},         /* 0011 3 */
-  {0,2, 2,3, 1,2, -1,-1},       /* 0100 4 */
+  {2,0, 2,3, 2,1, -1,-1},       /* 0100 4 */
   {0,1, 0,3, 2,3, 2,1},         /* 0101 5 */
   {1,0, 2,0, 2,3, 1,3},         /* 0110 6 */
   {0,3, 2,3, 1,3, -1,-1},       /* 0111 7 */
@@ -60,20 +64,60 @@ static int tet_code[][8] = {    /* 3210 */
 
 
 /*
-  lookup table that splits a cube into four
+  lookup table that splits a cube into n
   tetraheders, specified by cube corners, 
   with the order according to the tetr diagram
   above
 
-  this will leave parts of the interior of
-  the cube empty!
+  not working!!!
+
 */
 
-static int tetrahed[][4] = {
-  {0,1,4,3}, {5,1,4,6}, {2,3,1,6}, {7,6,4,3}
+/*
+static int tetrahed[][5] = {
+  {0,4,1,3},
+  {2,3,1,6},
+  {5,6,1,4},
+  {7,4,3,6},
+  {1,3,4,6}
+};
+static int tetrahed_num=5;
+*/
+
+/*
+  alternative tetr subdivision of cube, 
+  taken from Paul Bourke
+ */
+
+static int tetrahed[][6] = {
+  {0,2,3,7}, {0,6,2,7}, {0,4,6,7}, {0,6,1,2}, {0,1,6,4}, {5,6,1,4}
 };
 
+static int tetrahed_num=6;
 
+
+
+/*
+  alternative tetr subdivision taken from
+  www.informatik.uni-leipzig.de/ cgip/lehre/ss02/vorl10.pdf
+  uses even and odd parity (?)
+  parity = ((x^y)^z) &0x1
+*/
+/*
+static int tetrahed_even[][5] = {
+  {0,1,3,4}, {6,1,4,3},  {1,6,2,3}, {1,6,4,5}, {3,7,4,6}
+};
+
+static int tetrahed_odd[][5] = {
+  {4,5,6,0}, {2,5,0,7}, {5,2,6,7}, {5,2,0,1}, {7,3,0,2}
+};
+
+static int tetrahed_num=5;
+*/
+
+
+
+static int max_tri_entry = 12;
 
 static void gen_tab(int code, int tflag);
 static void print_tentry(char *buf, int a1,int a2,int b1,int b2,int c1,int c2);
@@ -82,7 +126,7 @@ static void print_lentry(char *buf, int a1, int a2, int b1, int b2);
 int main(int argc, char **argv)
 {
   int c;
-  fprintf(stdout,"static struct _MC_EDGE_LOOKUP_TABLE {\n  int count;\n  int tab[16][6];\n} mc_edge_lookup_table[] = {\n");
+  fprintf(stdout,"static struct _MC_EDGE_LOOKUP_TABLE {\n  int count;\n  int tab[%d][6];\n} mc_edge_lookup_table[] = {\n",max_tri_entry);
   for(c=0;c<256;c++) {
     gen_tab(c, 1);
   }
@@ -99,7 +143,7 @@ static void gen_tab(int code, int tflag)
 {
   int tetc, corc;
   int hit_code;
-  int ecount;
+  int efill,ecount;
   char buf[1024];
 
 
@@ -107,7 +151,7 @@ static void gen_tab(int code, int tflag)
 
   strcpy(buf,"");
   ecount=0;
-  for(tetc=0;tetc<4;tetc++) {
+  for(tetc=0;tetc<tetrahed_num;tetc++) {
 
     hit_code=0;
     // generate the hitcode
@@ -185,15 +229,20 @@ static void gen_tab(int code, int tflag)
       }
     }
   }
+
+  for(efill=ecount;efill<max_tri_entry;efill++) {
+    strcat(buf,"    {-1,-1,-1,-1,-1,-1},\n");
+  }
+  
   buf[strlen(buf)-2]='\0';
-
-  fprintf(stdout,"  {%d,{\n%s\n  }},\n",ecount,buf);
-
+  
+  fprintf(stdout,"  /*0x%02x*/\n  {%d,{\n%s\n  }},\n",code,ecount,buf);
+  
 }
 
 static void print_tentry(char *buf, int a1,int a2,int b1,int b2,int c1,int c2)
 {
-  char tmp[256];
+  char tmp[256]; 
   sprintf(tmp,"    {%d,%d, %d,%d, %d,%d},\n",a1,a2,b1,b2,c1,c2);
   strcat(buf,tmp);
 }

@@ -1,0 +1,262 @@
+/*
+  isocontouring algorithm
+
+  approx the fifth attempt :)
+*/
+
+#include <stdio.h>
+#include <math.h>
+#include <malloc.h>
+
+#include "mat.h"
+
+#include "scal_db.h"
+#include "scal_obj.h"
+#include "scal_iso_table.h"
+#include "scal_iso.h"
+
+static int iso(scalObj *obj);
+static void add_face(scalObj *obj, int i1, int i2, int i3);
+static int gen_coord(scalObj *obj, float l1, float l2, int u1, int v1, int w1, int u2, int v2, int w2);
+
+int scalIso(scalObj *obj, Select *sel)
+{
+  return iso(obj);
+}
+
+
+/*
+  unit cube definition:
+ 
+
+   7 __________ 6
+    /.        /|
+ 3 / .     2 / |
+  +---------+  |
+  |  .      |  |
+  |  .      |  |
+  |  .......|..|
+  | .4      | / 5
+  |.        |/
+  +---------+
+ 0           1
+
+ v  w
+ | /
+ |/
+ +---u
+*/
+
+static int cc_offsets[][3] = {
+  {0,0,0},
+  {1,0,0},
+  {1,1,0},
+  {0,1,0},
+  {0,0,1},
+  {1,0,1},
+  {1,1,1},
+  {0,1,1}
+};
+
+/*
+ each pairwise combination of corners that
+ forms a potential vertex can be encoded with
+ a unique number from 0 to 27 (vid)
+*/
+
+static int corner2vid[8][8] = {
+  //0   1   2   3   4   5   6   7  c2 / c1
+  { -1,  0,  1,  2,  3,  4,  5,  6},  // 0
+  {  0, -1,  7,  8,  9, 10, 11, 12},  // 1
+  {  1,  7, -1, 13, 14, 15, 16, 17},  // 2
+  {  2,  8, 13, -1, 18, 19, 20, 21},  // 3
+  {  3,  9, 14, 18, -1, 22, 23, 24},  // 4
+  {  4, 10, 15, 19, 22, -1, 25, 26},  // 5
+  {  5, 11, 16, 20, 23, 25, -1, 27},  // 6
+  {  6, 12, 17, 21, 24, 26, 27, -1}   // 7
+};
+
+/*
+  neighbourhood of vertices, encoded
+  with unique vid:
+
+  u+1:
+  1-2 = 0-3   7 =  2
+  1-5 = 0-4  10 =  3
+  1-6 = 0-7  11 =  6
+  2-5 = 3-4  15 = 18
+  2-6 = 3-7  16 = 21
+  5-6 = 4-7  25 = 24
+  
+  v+1:
+  2-3 = 1-0  13 =  0
+  2-6 = 1-5  16 = 10
+  2-7 = 1-4  17 =  9
+  3-6 = 0-5  20 =  4
+  3-7 = 0-4  21 =  3
+  6-7 = 5-4  27 = 22
+  
+  w+1:
+  4-5 = 0-1  22 =  0
+  4-6 = 0-2  23 =  1
+  4-7 = 0-3  24 =  3
+  5-6 = 1-2  25 =  7
+  5-7 = 1-3  26 =  8
+  6-7 = 2-3  27 = 13
+  
+*/
+
+static int vid_neigh_u[28] = {
+  -1,-1,-1,-1,-1,-1, 2,-1,-1, 3, 6,-1,-1,-1,
+  -1,18,21,-1,-1,-1,-1,-1,-1,-1,-1,24,-1,-1
+};
+
+static int vid_neigh_v[28] = {
+  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, 0,
+  -1,-1,10, 9,-1,-1, 4, 3,-1,-1,-1,-1,-1,22
+  
+};
+
+static int vid_neigh_w[28] = {
+  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+  -1,-1,-1,-1,-1,-1,-1,-1, 0, 1, 3, 7, 8,13
+};
+
+
+static int iso(scalObj *obj) 
+{
+  int i;
+  int ustart,vstart,wstart;
+  int usize,vsize,wsize;
+  int u,v,w,uc,vc,wc;
+  int *cip,*nip;
+  int pcode;
+  float cval[8],level;
+  int step;
+  int tri_num,tri_count;
+  int tri_index[3],cor1,cor2,vert_id,coord_id;
+  
+  
+  struct SCAL_ISO_CUBE *layer, *ccube, *ncube;
+
+  // allocate with +1, the size check below not necessary
+  layer = malloc((usize+1)*(vsize+1)*sizeof(struct SCAL_ISO_CUBE));
+  
+  // main loop through w-dimension
+  for(wc=0;wc<wsize;wc++) {
+    // make current uv-layer
+
+    // copy & reset
+    for(vc=0;vc<vsize;vc++) {
+      for(uc=0;uc<usize;uc++) {
+	ccube = &layer[uc+vc*usize];
+	ccube->pcode=0;
+	// current index pointer
+	cip = ccube[uc+vc*usize].coord_index;
+	// copy neighbour coord-indices
+	cip[0]=cip[22]; cip[1]=cip[23]; cip[3]=cip[25]; 
+	cip[7]=cip[25]; cip[8]=cip[26]; cip[13]=cip[27]; 
+	// reset the rest
+	cip[2]=-1; cip[4]=-1; cip[5]=-1; cip[6]=-1; 
+	cip[9]=-1; cip[10]=-1; cip[11]=-1; cip[12]=-1; 
+	cip[14]=-1; cip[15]=-1; cip[16]=-1; cip[17]=-1; 
+	cip[18]=-1; cip[19]=-1; cip[20]=-1; cip[21]=-1; 
+	cip[22]=-1; cip[23]=-1; cip[24]=-1; cip[25]=-1; 
+	cip[26]=-1; cip[27]=-1;
+      }
+    }
+
+    // generate new coordinates
+    for(vc=0;vc<vsize;vc++) {
+      for(uc=0;uc<usize;uc++) {
+	ccube = &layer[uc+vc*usize];
+
+	// calculate pcode
+	pcode=0;
+	for(i=0;i<8;i++) {
+	  // get values for corners
+	  cval[i] = scalReadField(obj->field,
+				  uc+ustart+cc_offsets[i][0]*step,
+				  vc+vstart+cc_offsets[i][1]*step,
+				  wc+wstart+cc_offsets[i][2]*step);
+	  
+	  // calculate the 8bit pattern code
+	  if(cval[i]>level) pcode += (1<<i);
+	}
+	ccube->pcode=pcode;
+
+	// get the amount of triangles as found in the lookup table
+	tri_num = mc_edge_lookup_table[pcode].count;
+	for(tri_count=0;tri_count<tri_num;tri_count++) {
+	  /*
+	    for each of the three corner pairs calculate 
+	    the intersection with the level
+	  */
+	  
+	  for(i=0;i<3;i++) {
+	    cor1=mc_edge_lookup_table[pcode].tab[tri_count][i*2+0];
+	    cor2=mc_edge_lookup_table[pcode].tab[tri_count][i*2+1];
+	    // vertex id of corners
+	    vert_id = corner2vid[cor2][cor1];
+	    // coordinate id
+	    coord_id = ccube->coord_index[vert_id];
+	    // if not yet generated, create new
+	    if(coord_id==-1) {
+	      coord_id = gen_coord(obj,
+				   cval[cor1],cval[cor2],
+				   u+cc_offsets[cor1][0]*step,
+				   v+cc_offsets[cor1][1]*step,
+				   w+cc_offsets[cor1][2]*step,
+				   u+cc_offsets[cor2][0]*step,
+				   v+cc_offsets[cor2][1]*step,
+				   w+cc_offsets[cor2][2]*step);
+
+	      ccube->coord_index[vert_id] = coord_id;
+	    }
+	    tri_index[i] = coord_id;
+	  }
+	  add_face(obj,tri_index[0],tri_index[1],tri_index[2]);
+	}
+
+	// copy coordinate indexes to u and v neighbours
+	cip = ccube->coord_index;
+
+	// u+1
+	// boundary check with +1 not necessary due to above +1 malloc
+	nip = layer[(uc+1)+vc*usize].coord_index;
+	nip[2] = cip[7];
+	nip[3] = cip[10];
+	nip[6] = cip[11];
+	nip[18] = cip[15];
+	nip[21] = cip[16];
+	nip[24] = cip[25];
+
+	// v+1
+	// boundary check with +1 not necessary due to above +1 malloc
+	nip = layer[uc+(vc+1)*usize].coord_index;
+	nip[0] = cip[13];
+	nip[10] = cip[16];
+	nip[9] = cip[17];
+	nip[4] = cip[20];
+	nip[3] = cip[21];
+	nip[22] = cip[27];
+	
+
+      } // uc
+    } // vc
+  } // wc
+  return 0;
+}
+
+
+static void add_face(scalObj *obj, int i1, int i2, int i3)
+{
+
+}
+
+
+static int gen_coord(scalObj *obj, float l1, float l2, int u1, int v1, int w1, int u2, int v2, int w2)
+{
+  float level = obj->level;
+  return -1;
+}

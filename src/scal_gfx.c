@@ -245,9 +245,9 @@ int scalDrawObj(scalObj *obj)
 #ifndef CONTOUR_COLOR
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
 #endif
-      glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
       // TEMPORARY
+      //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
       glEnable(GL_LIGHTING);

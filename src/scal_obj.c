@@ -15,7 +15,7 @@
 #include "scal_obj.h"
 #include "scal_write.h"
 #include "scal_mc_new.h"
-#include "scal_mc_tet.h"
+#include "scal_iso.h"
 #include "cl.h"
 #include "surf_obj.h"
 
@@ -287,7 +287,7 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
       return -1;
 
     if(obj->contour_method==1) {
-      ret=scalMCT(obj,sel);
+      ret=scalIso(obj,sel);
     } else {
       ret=scalMCN(obj,sel);
     }
