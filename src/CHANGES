@@ -1,3 +1,9 @@
+fixed atom-id picking bug
+
+fixed beginning of hsc object error bug
+
+---
+
 render is called for struct obj after set
 
 added round caps to HSC and tube ends

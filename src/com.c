@@ -995,9 +995,9 @@ int comPick(int screenx, int screeny, int flag)
     sprintf(pick,"%s%s",pick,atom->name);
 
     /*
-      save .ds:#anum in CS
+      save .ds:#unique-id (!) in CS
     */
-    sprintf(cs,".%s:#%d",dbm.node[f].structNode.name,atom->anum);
+    sprintf(cs,".%s:#%d",dbm.node[f].structNode.name,atom->n);
 
     if(flag) {
       for(i=0;i<dbm.node[f].structNode.obj_max;i++)
