@@ -1,3 +1,13 @@
+coord write honors transformation
+
+(added 'custom' render mode to surface)
+
+add dsurf file format
+
+introduced -f flag to "@" and command line
+
+----
+
 added "get center" command to geom dataset
 
 fixed POVray scalar field output to have correct colors

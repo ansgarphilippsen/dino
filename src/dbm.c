@@ -64,6 +64,7 @@ static struct EXT_DEF {
   {"ins","delphi"},
   {"cpot","charmmb"},
   {"dgrd","dgrid"},
+  {"dsrf","dsurf"},
   {"grasp","grasp"},
   {"bdtrj","bdtrj"},
   {"spi","spider"},
@@ -581,6 +582,29 @@ int dbmLoad(int wc, const char **wl)
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
     comMessage("\n");
+    surfPrep(&node->surfNode);
+  } else if(!strcmp(type,"dsurf")) {
+    /*
+      DINO SURFACE
+    */
+    if((f=fopen(file,"r"))==NULL) {
+      sprintf(message,"Error opening %s\n",file);
+      comMessage(message);
+      return -1;
+    }
+    sprintf(message,"loading %s, type dsurf ...\n",name);
+    comMessage(message);
+
+    node = dbmNewNode(DBM_NODE_SURF,name);
+    if(dsurfRead(f,&node->surfNode)<0) {
+      fclose(f);
+      dbmDeleteNode(name);
+      return -1;
+    }
+    fclose(f);
+    sprintf(message," %d vertices, %d faces \n",
+	    node->surfNode.vc, node->surfNode.fc);
+    comMessage(message);
     surfPrep(&node->surfNode);
   } else if(!strcmp(type,"msp")) {
     /* MSP surface format */

@@ -2904,23 +2904,87 @@ static char* record_atom[]={"ALA","CYS","ASP","GLU","PHE",
 
 static int record_atom_count=30;
 
+static void export_atom(dbmStructNode *node,struct STRUCT_ATOM *ap, int ac, float *pos, int tid, FILE *f)
+{
+  int i;
+  char record[16];
+  char *chain,spc[]="     ";
+  char aname[32];
+
+  strcpy(record,"HETATM");
+  for(i=0;i<record_atom_count;i++)
+    if(clStrcmp(record_atom[i],ap->residue->name)) {
+      strcpy(record,"ATOM  ");
+      break;
+    }
+  
+  memset(aname,0,sizeof(aname));
+  if(clStrlen(ap->chem.element)==2) {
+    sprintf(aname,"%s",ap->name);
+  } else {
+    if(clStrcmp(ap->chem.element,"H")) {
+      if(isdigit(ap->name[0])) {
+	sprintf(aname,"%s",ap->name);
+      } else if(strlen(ap->name)>3) {
+	aname[0]=ap->name[3];
+	aname[1]=ap->name[0];
+	aname[2]=ap->name[1];
+	aname[3]=ap->name[2];
+	aname[4]='\0';
+      } else {
+	sprintf(aname," %s",ap->name);
+      }
+    } else {
+      sprintf(aname," %s",ap->name);
+    }
+  }    
+  if(node->chain_flag)
+    chain=ap->chain->name;
+  else
+    chain=spc;
+  
+  
+  switch(tid) {
+  case STRUCT_WRITE_PDB:
+    fprintf(f,"%6s%5d %-4s %3s %c%4d    %8.3f%8.3f%8.3f%6.2f%6.2f        \n",
+	    record,ac+1,aname,ap->residue->name,chain[0],ap->residue->num,
+	    pos[0],pos[1],pos[2],ap->weight,ap->bfac);
+    break;
+  case STRUCT_WRITE_XPL:
+    fprintf(f,"%6s%5d %-4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f   %4s\n",
+	    record,ac+1,aname,ap->residue->name,ap->residue->num,
+	    pos[0],pos[1],pos[2],ap->weight,ap->bfac,chain);
+    break;
+  case STRUCT_WRITE_CRD:
+    fprintf(f,"%5d %4d %3s  %-4s%10.5f%10.5f%10.5f %c  %4d   %9.5f\n",
+	    ap->anum,ap->residue->num,ap->residue->name,ap->name,
+	    pos[0],pos[1],pos[2],chain[0],ap->residue->num,ap->weight);
+    break;
+  case STRUCT_WRITE_XYZR:
+    fprintf(f,"%.3f %.3f %.3f %.3f\n",
+	    pos[0],pos[1],pos[2],ap->chem.vdwr);
+    
+    break;
+  }
+}
+
 int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
 {
-  int i,ac;
   char message[256];
-  char type[64];
   char file[256];
   char name[64];
   char base[256],*bp;
   char ext[256];
-  char record[16];
+  char type[64];
   int tid;
   FILE *f;
   time_t t;
   char *c;
   struct STRUCT_ATOM *ap;
-  char *chain,spc[]="     ";
-  char aname[32];
+  struct STRUCT_ATOM tmp_atom;
+  transMat *symtransform;
+  int i,ac,tec;
+  float v[4];
 
   if(wc<=0) {
     sprintf(message,"write: missing filename\n");
@@ -3017,82 +3081,67 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
     else
       fprintf(f,"%5d\n",obj->atom_count);
   }
-  
-  ac=0;
-  while(-1) {
-    if(obj==NULL)
-      ap=&node->atom[ac];
-    else
-      ap=obj->atom[ac].ap;
 
-    if(!(ap->restriction)) {
-      
-      strcpy(record,"HETATM");
-      for(i=0;i<record_atom_count;i++)
-	if(clStrcmp(record_atom[i],ap->residue->name)) {
-	  strcpy(record,"ATOM  ");
-	  break;
-	}
-      
-      memset(aname,0,sizeof(aname));
-      if(strlen(ap->chem.element)==2) {
-	sprintf(aname,"%s",ap->name);
-      } else {
-	if(clStrcmp(ap->chem.element,"H")) {
-	  if(isdigit(ap->name[0])) {
-	    sprintf(aname,"%s",ap->name);
-	  } else if(strlen(ap->name)>3) {
-	    aname[0]=ap->name[3];
-	    aname[1]=ap->name[0];
-	    aname[2]=ap->name[1];
-	    aname[3]=ap->name[2];
-	    aname[4]='\0';
-	  } else {
-	    sprintf(aname," %s",ap->name);
-	  }
-	} else {
-	  sprintf(aname," %s",ap->name);
-	}
-      }    
-      if(node->chain_flag)
-	chain=ap->chain->name;
-      else
-	chain=spc;
-      switch(tid) {
-      case STRUCT_WRITE_PDB:
-	fprintf(f,"%6s%5d %-4s %3s %c%4d    %8.3f%8.3f%8.3f%6.2f%6.2f        \n",
-		record,ac+1,aname,ap->residue->name,chain[0],ap->residue->num,
-		ap->p->x,ap->p->y,ap->p->z,ap->weight,ap->bfac);
-	break;
-      case STRUCT_WRITE_XPL:
-	fprintf(f,"%6s%5d %-4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f   %4s\n",
-		record,ac+1,aname,ap->residue->name,ap->residue->num,
-		ap->p->x,ap->p->y,ap->p->z,ap->weight,ap->bfac,chain);
-	break;
-      case STRUCT_WRITE_CRD:
-	fprintf(f,"%5d %4d %3s  %-4s%10.5f%10.5f%10.5f %c  %4d   %9.5f\n",
-		ap->anum,ap->residue->num,ap->residue->name,ap->name,
-		ap->p->x,ap->p->y,ap->p->z,chain[0],ap->residue->num,ap->weight);
-	break;
-      case STRUCT_WRITE_XYZR:
-	fprintf(f,"%.3f %.3f %.3f %.3f\n",
-		ap->p->x,ap->p->y,ap->p->z,ap->chem.vdwr);
-	
-	break;
+  if(obj==NULL) {
+    // dump complete dataset
+    for(ac=0;ac<node->atom_count;ac++) {
+      ap = &node->atom[ac];
+
+      if(!ap->restriction) {
+	// apply dataset transformation
+	v[0]=ap->p->x;
+	v[1]=ap->p->y;
+	v[2]=ap->p->z;
+	transApplyf(&node->transform,v);
+	// to file
+	export_atom(node,ap,ac,v,tid,f);
       }
-      ac++;
-      if(obj==NULL) {
-	if(ac>=node->atom_count)
-	  break;
-      } else {
-	if(ac>=obj->atom_count)
-	  break;
+    }
+  } else {
+    tec=transListGetEntryCount(&obj->transform_list);
+    if(tec>0) {
+      // if symview is active
+      for(i=0;i<tec;i++) {
+	if(tid==STRUCT_WRITE_PDB) {
+	  fprintf(f,"MODEL %d\n",i+1);
+	}
+	symtransform=transListGetEntry(&obj->transform_list,i);
+	for(ac=0;ac<obj->atom_count;ac++) {
+	  ap=obj->atom[ac].ap;
+	  if(!ap->restriction) {
+	    // apply dataset transformation
+	    v[0]=ap->p->x;
+	    v[1]=ap->p->y;
+	    v[2]=ap->p->z;
+	    transApplyf(symtransform,v);
+	    transApplyf(&node->transform,v);
+	    export_atom(node,ap,ac,v,tid,f);
+	  }
+	  
+	}
+	if(tid==STRUCT_WRITE_PDB) {
+	  fprintf(f,"ENDMDL\n");
+	}
+
+      }
+    } else {
+      // just object
+      for(ac=0;ac<obj->atom_count;ac++) {
+	ap=obj->atom[ac].ap;
+	if(!ap->restriction) {
+	  // apply dataset transformation
+	  v[0]=ap->p->x;
+	  v[1]=ap->p->y;
+	  v[2]=ap->p->z;
+	  transApplyf(&node->transform,v);
+	  export_atom(node,ap,ac,v,tid,f);
+	}
       }
     }
   }
 
   if(tid==STRUCT_WRITE_PDB) {
-    fprintf(f,"END");
+    fprintf(f,"END\n");
   }
   
   fclose(f);

@@ -56,7 +56,8 @@ int surfObjCommand(struct DBM_SURF_NODE *node, surfObj *obj, int wc, char **wl)
 
     if(obj->render.mode!=RENDER_LINE && 
        obj->render.mode!=RENDER_POINT &&
-       obj->render.mode!=RENDER_SURFACE){
+       obj->render.mode!=RENDER_SURFACE &&
+       obj->render.mode!=RENDER_CUSTOM){
       obj->render.mode=RENDER_SURFACE;
       comMessage("invalid render mode\n");
       return -1;

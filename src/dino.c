@@ -26,7 +26,7 @@
 #include "shell_command.h"
 #include "gui_terminal.h"
 
-const char usage[]={"Usage: dino [-debug] [-stereo] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
+const char usage[]={"Usage: dino [-debug] [-stereo] [-nostereo] [-help] [-s script] [-f script] [-log filename] [+log] [X toolkit params]\n"};
 
 char welcome[]={"Welcome to dino v%s    (http://www.dino3d.org)\n\n"};
 
@@ -53,6 +53,7 @@ static int startup_flag=1;
 static char logfile[128];
 static char startup[256];
 static char script[256];
+static int script_fast;
 
 int dinoParseArgs(int argc, char **argv)
 {
@@ -137,6 +138,17 @@ int dinoParseArgs(int argc, char **argv)
           exit(-1);
         } else {
           strcpy(script,argv[i+1]);
+	  script_fast=0;
+          i++;
+        }
+      } else if(!strcmp(argv[i],"-f")) {
+        if(i+1>=argc) {
+          fprintf(stderr,"%s missing argument\n",argv[i]);
+          fprintf(stderr,usage);
+          exit(-1);
+        } else {
+          strcpy(script,argv[i+1]);
+	  script_fast=1;
           i++;
         }
       } else {
@@ -203,7 +215,11 @@ int dinoMain(int argc,char **argv)
   */
 
   if(strlen(script)>0) {
-    sprintf(expr,"@%s",script);
+    if(script_fast) {
+      sprintf(expr,"@%s -f",script);
+    } else {
+      sprintf(expr,"@%s",script);
+    }
     comRawCommand(expr);
   }
 

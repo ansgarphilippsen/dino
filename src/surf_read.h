@@ -29,6 +29,7 @@ struct GRASP_HEADER {
   char d10[4];
 };
 
+int dsurfRead(FILE *f1, dbmSurfNode* node);
 int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int);
 int mspRead(FILE *f1, union DBM_NODE *node);
 int adsRead(FILE *f, union DBM_NODE *node);

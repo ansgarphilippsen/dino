@@ -136,7 +136,6 @@ int shellParseCommand(const char **wl, int wc)
   if(wl[0][0]=='@') {
     // scriptfile
     call_script(wl[0]+1,wl+1,wc-1);
-
   } else if(wl[0][0]=='!') {
     // system subcommand (abbrev)
     clStrcpy(subexp,wl[0]+1);
@@ -324,8 +323,6 @@ void shellTimeProc(void)
 
 /*
   designate a scriptfile to be parsed
-
-  TODO: command line args
 */
 
 static int call_script(const char *filename, const char **wl, int wc)
@@ -337,8 +334,10 @@ static int call_script(const char *filename, const char **wl, int wc)
   FILE *f;
   char *b;
   int s,t;
-  int vc;
+  int i,vc;
   char vv[64];
+  int fast=0;
+  int cscrlvl;
 
   if(scrlvl>=MAXSCRIPTLEVEL) {
     shellOut("error: maximum script nesting level reached\n");
@@ -370,13 +369,24 @@ static int call_script(const char *filename, const char **wl, int wc)
   scrbuf[scrlvl].count=0;
 
   // set variables in local scope
-  for(vc=0;vc<wc;vc++) {
-    sprintf(vv,"%d",vc+1);
-    shellSetVar(vv,wl[vc],scrlvl);
+  for(i=0,vc=1;i<wc;i++) {
+    if(clStrcmp(wl[i],"-f")) {
+      fast=1;
+    } else {
+      sprintf(vv,"%d",vc++);
+      shellSetVar(vv,wl[i],scrlvl);
+    }
   }
 
   fclose(f);
 #endif
+  if(fast) {
+    cscrlvl=scrlvl-1;
+    while(scrlvl>cscrlvl && shellIsScript()) {
+      work_script();
+    }
+  }
+
   return 0;
 }
 

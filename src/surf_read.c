@@ -13,6 +13,50 @@
 
 extern int debug_mode;
 
+int dsurfRead(FILE *f, dbmSurfNode* sn)
+{
+  int i;
+  float ftmp[6];
+  int itmp[3];
+  struct _header {
+    int magic;
+    int vcount,fcount;
+    int reserved[10];
+  } header;
+
+  fread(&header, sizeof(header),1, f);
+
+  if(header.magic!=31415926) {
+    comMessage("invalid magic flag in header, aborting\n");
+    return -1;
+  }
+
+  sn->vc=header.vcount;
+  sn->v=Ccalloc(sn->vc+1,sizeof(struct SURF_VERTICE));
+  sn->fc=header.fcount;
+  sn->f=Ccalloc(sn->fc+1,sizeof(struct SURF_FACE));
+
+  for(i=0;i<sn->vc;i++) {
+    fread(ftmp, sizeof(float), 6, f);
+    sn->v[i].p[0]=ftmp[0];
+    sn->v[i].p[1]=ftmp[1];
+    sn->v[i].p[2]=ftmp[2];
+    sn->v[i].n[0]=ftmp[3];
+    sn->v[i].n[1]=ftmp[4];
+    sn->v[i].n[2]=ftmp[5];
+  }
+
+  for(i=0;i<sn->fc;i++) {
+    fread(itmp, sizeof(int), 3, f);
+    sn->f[i].v[0]=itmp[0];
+    sn->f[i].v[1]=itmp[1];
+    sn->f[i].v[2]=itmp[2];
+    sn->f[i].curv=0;
+  }
+
+  return 0;
+}
+
 int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
 {
   char line[256];

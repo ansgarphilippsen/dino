@@ -2070,41 +2070,16 @@ static void prep_symview(structObj* obj)
     } else if(obj->symview==2) {
       if(obj->node->helical) { // helical info
 	transListInit(&obj->transform_list,obj->symcount);
-	/****
-	if(obj->node->helical->axr!=1.0) {
-	  cen = obj->node->transform.cen;
-	  tra = obj->node->transform.tra;
-	  ea = sqrt((tra[0]+cen[0])*(tra[0]+cen[0])+(tra[1]+cen[1])*(tra[1]+cen[1]));
-	  eb = ea * obj->node->helical->axr;
-	}
-	****/
-	for(sc=0;sc<=obj->symcount;sc++) {
-	  angle = obj->node->helical->angle*(double)sc;
-	  tmat.custom[0]=angle;
-	  dist = obj->node->helical->dist*(double)sc;
-	  tmat.custom[1]=dist;
-	  matMakeRotMat(angle,0.0,0.0,1.0,tmat.rot);
-	  tmat.tra[2]=dist;
-	  /*
-	    for an axial ratio of != 1, there is another
-	    translational component in the direction of the
-	    vector r
-
-	    dist is the 'a' radius of an ellipse, the axial ratio
-	    d is given by b/a
-	  */
-	  /*****
-	  if(obj->node->helical->axr!=1.0) {
-	    sina=sin(M_PI*angle/180.0);
-	    cosa=cos(M_PI*angle/180.0);
-	    dr = sqrt(ea*ea*eb*eb/(eb*eb*cosa*cosa+ea*ea*sina*sina))-ea;
-	    tmat.tra[1] = dr * sina;
-	    tmat.tra[0] = dr * cosa;
-	  } else {
-	    tmat.tra[0]=tmat.tra[1]=0.0;
+	for(sc=-obj->symcount;sc<=obj->symcount;sc++) {
+	  if(sc!=0) {
+	    angle = obj->node->helical->angle*(double)sc;
+	    tmat.custom[0]=angle;
+	    dist = obj->node->helical->dist*(double)sc;
+	    tmat.custom[1]=dist;
+	    matMakeRotMat(angle,0.0,0.0,1.0,tmat.rot);
+	    tmat.tra[2]=dist;
+	    transListAddEntry(&obj->transform_list,&tmat);
 	  }
-	  ****/
-	  transListAddEntry(&obj->transform_list,&tmat);
 	}
 	structObjUpdateSymview(obj);
       } else {
