@@ -298,13 +298,16 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
   if(scalObjSet(obj,set,0)<0)
     return -1;
 
+  // compile selection
+  if(!sel->compiled) {
+    if(scalCompileSelection(obj->node,sel)<0) {
+      return -1;
+    }
+  }
+
   if(obj->type==SCAL_CONTOUR) {
     sprintf(message,"Contouring at %g ...\n",obj->level);
     comMessage(message);
-
-    /* check selection syntax */
-    if(scalIsSelected(obj->node,0,0,0,sel)<0)
-      return -1;
 
     if(obj->contour_method==1) {
       ret=scalIso(obj,sel);

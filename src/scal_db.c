@@ -3,7 +3,9 @@
 #include <sys/types.h>
 #include <math.h>
 #include <string.h>
+#include <assert.h>
 
+#include "dino.h"
 #include "scal_db.h"
 #include "dbm.h"
 #include "mat.h"
@@ -835,7 +837,95 @@ float scalReadField(struct SCAL_FIELD *field, int u, int v, int w)
 #endif
 }
 
+static int compile_pov(dbmScalNode *node, POV *pov)
+{
+  char mesg[256];
+  struct POV_VALUE *val;
+  int vc;
+  double dval;
 
+  if(clStrcmp(pov->prop,"*")) {
+    pov->wildcard=1;
+    return 0;
+  }
+
+  // assign ids and other data
+  if(pov->op==POV_OP_WI) {
+    pov->id=SCAL_SEL_WITHIN;
+    dval=atof(pov->prop);
+    pov->dvalue=dval*dval;
+
+
+  } else if(pov->prop[0]=='.') {
+    comMessage("object selection not implemented for scalar field dataset\n");
+    return -1;
+//    prop=SCAL_SEL_OBJ;
+  } else if(clStrcmp(pov->prop,"v")) {
+    pov->id=SCAL_SEL_V;
+  } else if(clStrcmp(pov->prop,"x")) {
+    pov->id=SCAL_SEL_X;
+  } else if(clStrcmp(pov->prop,"y")) {
+    pov->id=SCAL_SEL_Y;
+  } else if(clStrcmp(pov->prop,"z")) {
+    pov->id=SCAL_SEL_Z;
+  } else {
+    sprintf(mesg,"%s: unknown selection property '%s'\n",node->name,pov->prop);
+    comMessage(mesg);
+    return -1;
+  }
+
+  // check values
+  for(vc=0;vc<pov->val_count;vc++) {
+    val=povGetVal(pov,vc);
+
+    if(val->range_flag) {
+
+      if(pov->op!=POV_OP_EQ) {
+	sprintf(mesg,"error: expected operator = for range\n");
+	comMessage(mesg);
+	return -1;
+      }
+    }
+
+    if(clStrcmp(val->val1,"*") || clStrcmp(val->val2,"*")) {
+      pov->wildcard=1;
+      return 0;
+    }
+
+    if(pov->id==SCAL_SEL_WITHIN) {
+      if(val->range_flag) {
+	sprintf(mesg,"%s: range not supported for within operator\n",node->name);
+	comMessage(mesg);
+	return -1;
+      }
+      sprintf(mesg,"using %f within {%f,%f,%f}\n",
+	      dval,val->vect[0],val->vect[1],val->vect[2]);
+      debmsg(mesg);
+    }
+
+    
+  }
+
+  return 0;
+}
+
+int scalCompileSelection(dbmScalNode *node, Select *sel)
+{
+  int i,ec,res;
+  POV* pov;
+
+  if(sel==NULL)
+    return 1;
+
+  ec=selectGetPOVCount(sel);
+  for(i=0;i<ec;i++) {
+    if(compile_pov(node,selectGetPOV(sel,i))<0) return -1;
+  }
+
+  sel->compiled=1;
+
+  return 0;
+}
 
 int scalIsSelected(dbmScalNode *node, int u, int v, int w, Select *sel)
 {
@@ -843,6 +933,8 @@ int scalIsSelected(dbmScalNode *node, int u, int v, int w, Select *sel)
 
   if(sel==NULL)
     return 1;
+
+  assert(sel->compiled);
 
   ec=selectGetPOVCount(sel);
   for(i=0;i<ec;i++) {
@@ -855,6 +947,12 @@ int scalIsSelected(dbmScalNode *node, int u, int v, int w, Select *sel)
   return selectResult(sel);
 }
 
+/*
+  since this routine is evaluated for _every_ scalar field point,
+  it must have as much pre-calculated (compiled) as possible and
+  stored in POV; in addition, any type of string routines should
+  be avoided.
+*/
 int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
 {
   struct SCAL_FIELD *field=node->field;
@@ -868,37 +966,15 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
   float pos[3],vv;
   int ret;
 
-  if(clStrcmp(pov->prop,"*"))
-    return 1;
-  
-  if(pov->op==POV_OP_WI) {
-    prop=SCAL_SEL_WITHIN;
-  } else if(pov->prop[0]=='.') {
-    comMessage("object selection not implemented for scalar field dataset\n");
-    return -1;
-//    prop=SCAL_SEL_OBJ;
-  } else if(clStrcmp(pov->prop,"v")) {
-    prop=SCAL_SEL_V;
-  } else if(clStrcmp(pov->prop,"x")) {
-    prop=SCAL_SEL_X;
-  } else if(clStrcmp(pov->prop,"y")) {
-    prop=SCAL_SEL_Y;
-  } else if(clStrcmp(pov->prop,"z")) {
-    prop=SCAL_SEL_Z;
-  } else {
-    comMessage("error: unknown selection property \n");
-    comMessage(pov->prop);
-    return -1;
-  }
+  if(pov->wildcard) return 1;
+
+  prop=pov->id;
   op=pov->op;
   vc=pov->val_count;
   for(i=0;i<vc;i++) {
     val=povGetVal(pov,i);
     if(val->range_flag) {
-      if(op!=POV_OP_EQ) {
-	sprintf(message,"error: expected operator = for range\n");
-	return -1;
-      }
+      // already check if op is equality op
       rf=1;
       val1=val->val1;
       val2=val->val2;
@@ -907,24 +983,20 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
       val1=val->val1;
       val2=val->val1;
     }
-    if(clStrcmp(val1,"*") || clStrcmp(val2,"*"))
-      return 1;
-    
+
     switch(prop) {
     case SCAL_SEL_WITHIN:
-      dist=atof(pov->prop);
-      dist2=dist*dist;
+      dist2=pov->dvalue;
       
       v1[0]=(double)u;
       v1[1]=(double)v;
       v1[2]=(double)w;
       scalUVWtoXYZ(field,v1,v2);
+
+      transApply(&node->transform,v2);
+      // range flag check already
       
-      if(rf) {
-	comMessage("error: range not supported for < >\n");
-	return -1;
-      }
-      if(val->wi_flag) {
+      if(val->wi_flag) { // value is object
 	pos[0]=v2[0];
 	pos[1]=v2[1];
 	pos[2]=v2[2];

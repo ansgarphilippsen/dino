@@ -29,6 +29,8 @@ typedef struct _POV {
   struct POV_VALUE *val;
   int val_offset, val_count;
   int id;
+  int wildcard;
+  double dvalue;
 }POV;
 
 typedef struct RANGE {
@@ -45,6 +47,8 @@ typedef struct SELECT {
   int pov_count,pov_max;
 
   struct POV_VALUE* vlist;
+
+  int compiled;
 
   char *rbuf;
   int rbuf_len,rbuf_max;

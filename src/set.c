@@ -155,6 +155,8 @@ int selectNew(Select *s, int argc, char **oargv)
   s->eval_count=0;
   s->result=Ccalloc(s->stack_max, sizeof(int));
   s->result_count=0;
+
+  s->compiled=0;
   
   return 0;
 }
@@ -587,6 +589,7 @@ int povNew(POV *pov, char *s, int *vc, int *vm, struct POV_VALUE **vl)
   pov->val=NULL;
   pov->val_offset=(*vc);
   pov->val_count=0;
+  pov->id=-1;
 
   l=clStrlen(s);
   val=NULL;

@@ -1,4 +1,6 @@
-coord write honors transformation
+fixed: transformation is taken into account for scalar field <> selection
+
+coord write honors transformation and symmetry settings
 
 (added 'custom' render mode to surface)
 

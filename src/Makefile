@@ -19,6 +19,8 @@ OPTIONS += -DINTERNAL_COLOR
 OPTIONS += -DCONTOUR_COLOR
 #OPTIONS += -DVRML
 
+#OPTIONS += -DNDEBUG
+
 GUI = X11
 
 # only for linux versions
