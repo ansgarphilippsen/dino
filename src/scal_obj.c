@@ -141,6 +141,26 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
     }
     return scalObjWrite(obj, wc-1, wl+1);
     */
+  } else if(!strcmp(wl[0],"reverse")) {
+    if(wc>1) {
+      comMessage("superfluous words ignored\n");
+    }
+    for(i=0;i<obj->face_count;i++) {
+      obj->face[i].n1[0]=-obj->face[i].n1[0];
+      obj->face[i].n1[1]=-obj->face[i].n1[1];
+      obj->face[i].n1[2]=-obj->face[i].n1[2];
+      obj->face[i].n2[0]=-obj->face[i].n2[0];
+      obj->face[i].n2[1]=-obj->face[i].n2[1];
+      obj->face[i].n2[2]=-obj->face[i].n2[2];
+      obj->face[i].n3[0]=-obj->face[i].n3[0];
+      obj->face[i].n3[1]=-obj->face[i].n3[1];
+      obj->face[i].n3[2]=-obj->face[i].n3[2];
+    }
+    for(i=0;i<obj->point_count;i++) {
+      obj->point[i].n[0]=-obj->point[i].n[0];
+      obj->point[i].n[1]=-obj->point[i].n[1];
+      obj->point[i].n[2]=-obj->point[i].n[2];
+    }
   } else {
     sprintf(message,"%s: unknown command %s\n",obj->name,wl[0]);
     comMessage(message);

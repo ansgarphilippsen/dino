@@ -1379,7 +1379,13 @@ int scalSetDefault(scalObj *obj)
   obj->render.transparency=0.3;
   obj->render.detail1=3;
   obj->render.detail2=3;
-  obj->render.dbl_light=1;
+  obj->render.dbl_light=0;
+  obj->render.face_reverse=0;
+  obj->render.cull=0;
+  obj->render.solid=0;
+  obj->render.solidc[0]=1.0;
+  obj->render.solidc[1]=1.0;
+  obj->render.solidc[2]=1.0;
 
   comSetDefMat(&obj->render.mat);
 

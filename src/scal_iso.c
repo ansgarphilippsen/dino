@@ -185,8 +185,9 @@ static int iso(scalObj *obj)
     
     // make current uv-layer
     // copy & reset
-    for(vc=0;vc<vsize;vc++) {
-      for(uc=0;uc<usize;uc++) {
+    // +1 ok here
+    for(vc=0;vc<vsize+1;vc++) {
+      for(uc=0;uc<usize+1;uc++) {
 	ccube = &layer[uc+vc*usize];
 	// current index pointer
 	cip = ccube->coord_index;
@@ -270,7 +271,16 @@ static int iso(scalObj *obj)
 	// copy coordinate indexes to u and v neighbours
 	cip = ccube->coord_index;
 
-	// u+1
+	/*
+	  u+1:
+	  1-2 = 0-3   7 =  2
+	  1-5 = 0-4  10 =  3
+	  1-6 = 0-7  11 =  6
+	  2-5 = 3-4  15 = 18
+	  2-6 = 3-7  16 = 21
+	  5-6 = 4-7  25 = 24
+	*/  
+
 	// boundary check with +1 not necessary due to above +1 malloc
 	nip = layer[(uc+1)+vc*usize].coord_index;
 	nip[2] = cip[7];
@@ -280,7 +290,15 @@ static int iso(scalObj *obj)
 	nip[21] = cip[16];
 	nip[24] = cip[25];
 
-	// v+1
+	/*
+	  v+1:
+	  2-3 = 1-0  13 =  0
+	  2-6 = 1-5  16 = 10
+	  2-7 = 1-4  17 =  9
+	  3-6 = 0-5  20 =  4
+	  3-7 = 0-4  21 =  3
+	  6-7 = 5-4  27 = 22
+	*/
 	// boundary check with +1 not necessary due to above +1 malloc
 	nip = layer[uc+(vc+1)*usize].coord_index;
 	nip[0] = cip[13];
@@ -371,8 +389,8 @@ static void add_face(scalObj *obj, int i1, int i2, int i3)
     fprintf(stderr,"negative coord index!\n");
   } else {
     obj->face[obj->face_count].pi0 = i1;
-    obj->face[obj->face_count].pi1 = i2;
-    obj->face[obj->face_count].pi2 = i3;
+    obj->face[obj->face_count].pi1 = i3;
+    obj->face[obj->face_count].pi2 = i2;
     obj->face_count++;
   }
 }
@@ -382,6 +400,7 @@ static void gen_faces(scalObj *obj)
   int i,k;
   struct SCAL_FACE *f;
   float v1[3],v2[3],n1[3];
+  float area, inv_area;
 
   for(i=0;i<obj->face_count;i++) {
     f=&obj->face[i];
@@ -393,11 +412,19 @@ static void gen_faces(scalObj *obj)
       f->v3[k] = obj->point[f->pi2].v[k];
     }
     // color
-    for(k=0;k<4;k++) {
-      f->c1[k]=1.0;
-      f->c2[k]=1.0;
-      f->c3[k]=1.0;
-    }
+
+    f->c1[0]=obj->r;
+    f->c1[1]=obj->g;
+    f->c1[2]=obj->b;
+    f->c1[3]=obj->render.transparency;
+    f->c2[0]=obj->r;
+    f->c2[1]=obj->g;
+    f->c2[2]=obj->b;
+    f->c2[3]=obj->render.transparency;
+    f->c3[0]=obj->r;
+    f->c3[1]=obj->g;
+    f->c3[2]=obj->b;
+    f->c3[3]=obj->render.transparency;
   }
 
   // reset point normals
@@ -420,12 +447,23 @@ static void gen_faces(scalObj *obj)
     v2[2]=f->v3[2] - f->v1[2];
     matfCalcCross(v1,v2,n1);
     matfNormalize(n1,n1);
+
+    // weigh by face area!
+    area = matCalcTriArea(f->v1,f->v2,f->v3);
+    if(area==0.0) {
+      inv_area=1.0;
+    } else {
+      inv_area = 1000.0/area;
+    }
+
+    // not working ??
+    //inv_area=1.0;
     
     // add to points
     for(k=0;k<3;k++) {
-      obj->point[f->pi0].n[k]+=n1[k];
-      obj->point[f->pi1].n[k]+=n1[k];
-      obj->point[f->pi2].n[k]+=n1[k];
+      obj->point[f->pi0].n[k]+=(n1[k]*area);
+      obj->point[f->pi1].n[k]+=(n1[k]*area);
+      obj->point[f->pi2].n[k]+=(n1[k]*area);
     }
   }
 

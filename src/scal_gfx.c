@@ -56,29 +56,21 @@ int scalDraw(dbmScalNode *node, int f)
 
 int scalDrawObj(scalObj *obj)
 {
-  int i,detail;
-  int corner[][3]={
-    {0,0,0},{1,0,0},{0,1,0},{1,1,0},
-    {0,0,1},{1,0,1},{0,1,1},{1,1,1}
-  };
-  int edge[][2]={
-    {0,1},{0,2},{2,3},{1,3},
-    {0,4},{2,6},{3,7},{1,5},
-    {4,5},{4,6},{6,7},{5,7}
-  };
+  int i,detail=obj->render.detail1;
+#ifdef RENDER_SOLID
+  float rw,rh,rz;
+#endif
 
-  detail=obj->render.detail1;
-
-//  fprintf(stderr," .%s.%s\n",obj->node->name, obj->name);
+  // save the state
+  glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_LIGHTING_BIT);
 
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, obj->render.mat.amb);
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, obj->render.mat.spec);
   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, obj->render.mat.emm);
   glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, obj->render.mat.shin);
-
+  
   glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
   
-  glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
 
   if(obj->render.nice) {
     glEnable(GL_LINE_SMOOTH);
@@ -247,13 +239,25 @@ int scalDrawObj(scalObj *obj)
 #endif
 
       if(obj->contour_method==1) {
+	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+
 	if(obj->render.dbl_light) {
 	  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	} else {
 	  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 	}
+	if(obj->render.face_reverse) {
+	  //glFrontFace(GL_CW);
+	}
+	if(obj->render.cull) {
+	  glEnable(GL_CULL_FACE);
+	} else {
+	  glDisable(GL_CULL_FACE);
+	}
+
       } else {
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glDisable(GL_CULL_FACE);
       }
 
       // TEMPORARY
@@ -261,7 +265,6 @@ int scalDrawObj(scalObj *obj)
 
       glEnable(GL_LIGHTING);
       glEnable(GL_COLOR_MATERIAL);
-      glDisable(GL_CULL_FACE);
 
       if(obj->render.transparency<1.0) {
 	glPushMatrix();
@@ -296,6 +299,18 @@ int scalDrawObj(scalObj *obj)
 	glPopMatrix();
       }
 
+
+#ifdef RENDER_SOLID
+      if(obj->render.solid && obj->render.transparency==1.0) {
+	glClearStencil(0x0);
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS,0x0,0x1);
+	glStencilOp(GL_INVERT,GL_INVERT,GL_INVERT);
+      }
+#endif
+      
+
       glBegin(GL_TRIANGLES);
       for(i=0;i<obj->face_count;i++) {
 	glNormal3fv(obj->face[i].n1);
@@ -316,6 +331,71 @@ int scalDrawObj(scalObj *obj)
       }
       glEnd();
 
+
+#ifdef RENDER_SOLID
+      if(obj->render.solid && obj->render.transparency==1.0) {
+	glStencilFunc(GL_NOTEQUAL,0x0,0x1);
+	glPushMatrix();
+	glLoadIdentity();
+	
+	rh=2.0*fabs(tan(gfx.fovy)*gfx.transform.slabn);
+	rw=rh*gfx.aspect;
+	rz=-gfx.transform.slabn-0.1;
+	
+	glDisable(GL_LIGHTING);
+
+	glBegin(GL_TRIANGLE_STRIP);
+	glColor3fv(obj->render.solidc);
+	glNormal3f(0,0,-1);
+	glVertex3f(-rw,-rh,rz);
+	glVertex3f(rw,-rh,rz);
+	glVertex3f(-rw,rh,rz);
+	glVertex3f(rw,rh,rz);
+	glEnd();
+	
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	
+	glPopMatrix();
+	glDisable(GL_STENCIL_TEST);
+      }
+#endif
+
+
+
+      // draw all face normals
+      /***
+      if(obj->contour_method==1) {
+	glDisable(GL_LIGHTING);
+	glColor4f(1,1,1,1);
+	glBegin(GL_LINES);
+	for(i=0;i<obj->face_count;i++) {
+	  glVertex3f(obj->face[i].v1[0],
+		     obj->face[i].v1[1],
+		     obj->face[i].v1[2]);
+	  glVertex3f(obj->face[i].v1[0]+obj->face[i].n1[0],
+		     obj->face[i].v1[1]+obj->face[i].n1[1],
+		     obj->face[i].v1[2]+obj->face[i].n1[2]);
+	  
+	  glVertex3f(obj->face[i].v2[0],
+		     obj->face[i].v2[1],
+		     obj->face[i].v2[2]);
+	  glVertex3f(obj->face[i].v2[0]+obj->face[i].n2[0],
+		     obj->face[i].v2[1]+obj->face[i].n2[1],
+		     obj->face[i].v2[2]+obj->face[i].n2[2]);
+	  
+	  glVertex3f(obj->face[i].v3[0],
+		     obj->face[i].v3[1],
+		     obj->face[i].v3[2]);
+	  glVertex3f(obj->face[i].v3[0]+obj->face[i].n3[0],
+		     obj->face[i].v3[1]+obj->face[i].n3[1],
+		     obj->face[i].v3[2]+obj->face[i].n3[2]);
+	  
+	}
+	glEnd();
+      }
+      ***/
 
       glEnable(GL_CULL_FACE);
       glEnable(GL_LIGHTING);
