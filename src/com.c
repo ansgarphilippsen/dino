@@ -1688,3 +1688,11 @@ int comTestTex3D(int u, int v, int w)
   return 0;
 #endif
 }
+
+int comWriteModelview(FILE *f)
+{
+  fprintf(f,"scene set rtc=%s\n",
+	  transGetAll(&gfx.transform));
+
+  return 0;
+}

@@ -253,6 +253,8 @@ void shellPrompt(void)
 int shellOutit(void)
 {
   shellOut("\n");
+  // write scene rtc
+  comWriteModelview(shell.logfile);
   if(tcsetattr(0,TCSAFLUSH,&shell.savemodes)<0){
     perror("tcsetattr");
   }

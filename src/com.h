@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -85,6 +86,8 @@ char *comGetReturn(void);
 int comTransform(int device, int mask, int axis, int value);
 int comGrab(transMat *tm, char *name);
 int comGetCurrentCenter(double *);
+
+int comWriteModelview(FILE *f);
 
 int comSetDefMat(struct RENDER_MATERIAL *mat);
 
