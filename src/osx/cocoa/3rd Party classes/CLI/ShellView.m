@@ -77,7 +77,7 @@ static BOOL useMaxSize;
 
     [self setFont:[NSFont userFixedPitchFontOfSize:12]];
     [self setSelectedRange:NSMakeRange([[self string] length],0)];
-    [super insertText:prompt];
+//    [super insertText:prompt];
     start = [[self string] length];
     [self setDelegate:self];   // A CLIView is its own delegate! (see the section implementing delegate methods)
     maxSize = 100000;
@@ -91,19 +91,18 @@ static BOOL useMaxSize;
    [super insertText:aString];
 }
 
-- (void) notifyUser:(NSString *)notification
+- (void)notifyUser:(NSString *)notification
 {
-  NSString *command = [[self string] substringFromIndex:start];
-  NSRange selectedRange = [self selectedRange];
-  int delta = [prompt length] + [notification length] + 2;
+    NSString *command = [[self string] substringFromIndex:start];
+    NSRange selectedRange = [self selectedRange];
+    int delta = [prompt length] + [notification length] + 2;
   
-  [self setSelectedRange:NSMakeRange(start,[[self string] length])];
-  [self insertText:[NSString stringWithFormat:@"\n%@\n%@%@",notification,prompt,command]];
-  [self setFont:[NSFont boldSystemFontOfSize:10] range:NSMakeRange(start,[notification length]+1)];
-  start += delta;
-  [self setSelectedRange:NSMakeRange(selectedRange.location+delta,selectedRange.length)]; 
+    [self setSelectedRange:NSMakeRange(start,[[self string] length])];
+    [self insertText:[NSString stringWithFormat:@"\n%@\n%@%@",notification,prompt,command]];
+    [self setFont:[NSFont boldSystemFontOfSize:10] range:NSMakeRange(start,[notification length]+1)];
+    start += delta;
+    [self setSelectedRange:NSMakeRange(selectedRange.location+delta,selectedRange.length)];
 }
-
 
 - (void)keyDown:(NSEvent *)theEvent  // Called by the AppKit when the user press a key.
 {

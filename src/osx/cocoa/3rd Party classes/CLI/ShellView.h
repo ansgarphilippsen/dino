@@ -39,7 +39,7 @@ typedef enum {DECOMPOSE,NO_DECOMPOSE} T_parser_mode;
 - (id)initWithFrame:(NSRect)frameRect;
 - (id)initWithFrame:(NSRect)frameRect prompt:(NSString *)thePrompt historySize:(int)theHistorySize commandHandler:(id)theCommandHandler;
 - (void)keyDown:(NSEvent *)theEvent;
-- (void) notifyUser:(NSString *)notification;
+- (void)notifyUser:(NSString *)notification;
 - (void)paste:(id)sender;
 - (void)putCommand:(NSString *)command;
 - (void)putText:(NSString *)text;

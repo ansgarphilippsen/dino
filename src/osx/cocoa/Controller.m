@@ -20,9 +20,11 @@ static id dinoController;
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
-{
+{    
     [dinoCLI setCommandHandler:dinoController];
 
+    [self notifyUser:[NSString stringWithFormat:@"Welcome to dino v%s (http://www.dino3d.org)\n",VERSION]];
+    
     guiInit(0,0);
     cmiInitGL();
     cmiResize([dinoGL frame].size.width,[dinoGL frame].size.height);
@@ -33,49 +35,12 @@ static id dinoController;
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath: NSHomeDirectory()];
     
-    [self updateStatusBox:@"Ready"];    
-
+    [self updateStatusBox:@"Ready"];
 }
 
 - (void)timerControl
 {
     guiTimeProc(NULL);
-}
-
-
-//------------------------------------------------------
-// Menu Item
-
-- (IBAction)setWorkingDirectory:(id)sender
-{
-    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
-    [oPanel setAllowsMultipleSelection:NO];
-    [oPanel setCanChooseFiles:NO];
-    [oPanel setCanChooseDirectories:YES];
-    [oPanel runModalForDirectory:nil file:nil types:nil];
-
-    NSString *directory = [[oPanel filenames] objectAtIndex:0];
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath: directory];
-    
-}
-
-- (IBAction)runScript:(id)sender
-{
-    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
-    [oPanel setAllowsMultipleSelection:NO];
-    [oPanel setCanChooseFiles:YES];
-    [oPanel setCanChooseDirectories:NO];
-    [oPanel runModalForDirectory:nil file:nil types:nil];
-
-    NSString *fullPath = [[oPanel filenames] objectAtIndex:0];
-    NSString *directory = [fullPath stringByDeletingLastPathComponent];
-    NSString *file = [fullPath lastPathComponent];
-
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:directory];
-    NSString *tag = @"@";
-    NSString *theScript = [tag stringByAppendingString:file];
-    [self command:theScript from:(id)sender];
-
 }
 
 //------------------------------------------------------
@@ -86,14 +51,14 @@ static id dinoController;
     shellParseRaw([theCommand cString],0);
 }
 
-- (void)commandResult:(const char *)tmp
+- (void)showCommandResult:(const char *)tmp
 {
-    [dinoCLI putText:[NSString stringWithCString:tmp]];  
+    [dinoCLI putText:[NSString stringWithCString:tmp]];
 }
 
-- (void)notifyUser:(const char *)message
+- (void)notifyUser:(NSString *)message
 {
-    [dinoCLI notifyUser:[NSString stringWithCString:message]]; 
+    [dinoCLI notifyUser:message];
 }
 
 //------------------------------------------------------
@@ -113,6 +78,73 @@ static id dinoController;
 {
     [[dinoGL openGLContext] makeCurrentContext];
 }
+
+//------------------------------------------------------
+// Main Menu Item
+
+- (IBAction)setWorkingDirectory:(id)sender
+{
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    [oPanel setAllowsMultipleSelection:NO];
+    [oPanel setCanChooseFiles:NO];
+    [oPanel setCanChooseDirectories:YES];
+    [oPanel runModalForDirectory:nil file:nil types:nil];
+
+    NSString *directory = [[oPanel filenames] objectAtIndex:0];
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath: directory];    
+}
+
+- (IBAction)runScript:(id)sender
+{
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    [oPanel setAllowsMultipleSelection:NO];
+    [oPanel setCanChooseFiles:YES];
+    [oPanel setCanChooseDirectories:NO];
+    [oPanel runModalForDirectory:nil file:nil types:nil];
+
+    NSString *fullPath = [[oPanel filenames] objectAtIndex:0];
+    NSString *directory = [fullPath stringByDeletingLastPathComponent];
+    NSString *file = [fullPath lastPathComponent];
+
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:directory];
+    NSString *tag = @"@";
+    NSString *theScript = [tag stringByAppendingString:file];
+    [self command:theScript from:(id)sender];
+}
+
+//------------------------------------------------------
+// Custom Menu Item
+
+- (IBAction)autoslab:(id)sender
+{
+   [self command:@"scene autoslab" from:(id)sender]; 
+}
+
+- (IBAction)centerCP:(id)sender
+{
+   [self command:@"scene center [$CP]" from:(id)sender]; 
+}
+
+- (IBAction)centerCS:(id)sender
+{
+    [self command:@"scene center [$CS]" from:(id)sender]; 
+}
+
+- (IBAction)calcDist:(id)sender
+{
+    [self command:@"push [[scene pop]] [[scene pop]]; opr dist; scene message Distance: [pop]" from:(id)sender]; 
+}
+
+- (IBAction)calcAngle:(id)sender
+{
+    [self command:@"push [[scene pop]] [[scene pop]] [[scene pop]]; opr angle; scene message Angle:[pop]" from:(id)sender]; 
+}
+
+- (IBAction)calcTorsion:(id)sender
+{
+    [self command:@"push [[scene pop]] [[scene pop]] [[scene pop]] [[scene pop]]; opr torsion; scene message Torsion: [pop]" from:(id)sender]; 
+}
+
 
 //------------------------------------------------------
 // OffScreen OpenGL Context

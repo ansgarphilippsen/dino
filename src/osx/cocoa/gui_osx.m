@@ -44,7 +44,8 @@ int guiQueryStereo(void)
 int guiInit(int argc, char **argv)
 {
     char major[8],minor[8];
-    
+    NSString *graphCard,*openGLVersion;
+
   // register cmi callbacks for GUI
     cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback);
 
@@ -53,20 +54,22 @@ int guiInit(int argc, char **argv)
 
   //print info about graphics subsystem
     debmsg("guiInit: info");
-    fprintf(stderr,"Graphics Subsystem ID: %s %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER));
+    graphCard = [NSString stringWithFormat:@"Graphics Subsystem ID: %s %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER)];
+
     sprintf(major,"%c",glGetString(GL_VERSION)[0]);
     major[1]='\0';
     sprintf(minor,"%c",glGetString(GL_VERSION)[2]);
     minor[1]='\0';
 
     if(atoi(major)<1 || (atoi(major)==1 && atoi(minor)<1)) {
-	fprintf(stderr,"OpenGL version %d.%d or above required, found %s.%s instead\n",
-	 1,1,major,minor);
+	openGLVersion = [NSString stringWithFormat:@"OpenGL version %d.%d or above required, found %s.%s instead",1,1,major,minor];
 	return -1;
     } else {
-	fprintf(stderr,"OpenGL Version %s.%s\n",major,minor);
+	openGLVersion = [NSString stringWithFormat:@"OpenGL Version %s.%s\n",major,minor];
     }
 
+    [[Controller dinoController] notifyUser:[graphCard stringByAppendingString:openGLVersion]];
+    
   //initialization completed
     return 0;
 }
@@ -156,7 +159,7 @@ int guiMessage(char *m)
 
 void guitWrite(const char *s)
 {
-    [[Controller dinoController] commandResult:s];
+    [[Controller dinoController] showCommandResult:s];
 }
 
 

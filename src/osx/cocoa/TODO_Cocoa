@@ -12,4 +12,4 @@ _____________________________________________
 
 -Implement the "Copy" function in the menu to directly copy/paste the gfx into photoshop or the like
 
--remove fprintf, use CLI instead.
+-Show output of system command in the CLI
