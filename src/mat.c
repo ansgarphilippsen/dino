@@ -26,7 +26,7 @@ float sqrtf(float v)
 }
 #endif
 
-#define MAT_NEW_EXTRACTION
+#define MAT_NEW_EXTRACTION 1
 
 /**************************************************
 
