@@ -6,18 +6,18 @@
 
 enum {GRID_DOTS, GRID_LINES, GRID_FACES};
 
-#ifdef LINUX
-extern struct DBM_GRID_NODE _DBM_GRID_NODE;
-extern struct DBM_SET _DBM_SET;
-#endif
-#ifdef SGI
+//#ifdef LINUX
+//extern struct DBM_GRID_NODE _DBM_GRID_NODE;
+//extern struct DBM_SET _DBM_SET;
+//#endif
+//#ifdef SGI
 //extern struct DBM_GRID_NODE;
 //extern struct DBM_SET;
-#endif
-#ifdef DEC
-extern struct DBM_GRID_NODE;
-extern struct DBM_SET;
-#endif
+//#endif
+//#ifdef DEC
+//extern struct DBM_GRID_NODE;
+//extern struct DBM_SET;
+//#endif
 
 extern struct GRID_POINT _GRID_POINT;
 

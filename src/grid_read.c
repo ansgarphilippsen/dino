@@ -1,26 +1,5 @@
-#ifdef LINUX
 #include <tiff.h>
 #include <tiffio.h>
-#endif
-
-#ifdef OSX
-#include <tiff.h>
-#include <tiffio.h>
-#endif
-
-#ifdef SGI
-#include "tiff/tiff.h"
-#include "tiff/tiffio.h"
-#endif
-#ifdef DEC
-#include "tiff/tiff.h"
-#include "tiff/tiffio.h"
-#endif
-
-#ifdef SUN
-#include "tiff/tiff.h"
-#include "tiff/tiffio.h"
-#endif
 
 #include "com.h"
 #include "grid_db.h"

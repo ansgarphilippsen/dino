@@ -12,15 +12,15 @@
 #include "transform.h"
 #include "prop.h"
 
-#ifdef LINUX
-extern union DBM_NODE _DBM_NODE;
-#endif
-#ifdef SGI
+//#ifdef LINUX
+//extern union DBM_NODE _DBM_NODE;
+//#endif
+//#ifdef SGI
 //extern union DBM_NODE;
-#endif
-#ifdef DEC
-extern union DBM_NODE;
-#endif
+//#endif
+//#ifdef DEC
+//extern union DBM_NODE;
+//#endif
 
 enum {SURF_SMODE_ALL, SURF_SMODE_ANY};
 

@@ -8,15 +8,15 @@
 #include "set.h"
 #include "transform.h"
 
-#ifdef LINUX
-extern struct DBM_SET _DBM_SET;
-#endif
-#ifdef SGI
+//#ifdef LINUX
+//extern struct DBM_SET _DBM_SET;
+//#endif
+//#ifdef SGI
 //extern struct DBM_SET;
-#endif
-#ifdef DEC
-extern struct DBM_SET;
-#endif
+//#endif
+//#ifdef DEC
+//extern struct DBM_SET;
+//#endif
 
 typedef float structVect[3];
 

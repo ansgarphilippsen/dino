@@ -4,16 +4,15 @@
 #include "render.h"
 #include "cgfx.h"
 
-#ifdef LINUX
-extern struct DBM_GEOM_NODE _DBM_GEOM_NODE;
-struct DBM_SET;
-
-#else
+//#ifdef LINUX
+//extern struct DBM_GEOM_NODE _DBM_GEOM_NODE;
+//struct DBM_SET;
+//#else
 
 struct DBM_GEOM_NODE;
 struct DBM_SET;
 
-#endif
+//#endif
 
 /* geometric primitives */
 

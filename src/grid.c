@@ -2,19 +2,8 @@
 
 #include <GL/gl.h>
 
-#ifdef LINUX
 #include <tiff.h>
 #include <tiffio.h>
-#endif
-#ifdef SGI
-#include "tiff/tiff.h"
-#include "tiff/tiffio.h"
-#endif
-#ifdef DEC
-#include "tiff/tiff.h"
-#include "tiff/tiffio.h"
-#endif
-
 
 #include "Cmalloc.h"
 #include "com.h"
@@ -481,7 +470,6 @@ int gridObjDraw(gridObj *obj)
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   
 
-#ifdef LINUX
   glEnable(GL_VERTEX_ARRAY);
   glEnable(GL_COLOR_ARRAY);
   glEnable(GL_NORMAL_ARRAY);
@@ -501,49 +489,6 @@ int gridObjDraw(gridObj *obj)
   glDisable(GL_VERTEX_ARRAY);
   glDisable(GL_COLOR_ARRAY);
   glDisable(GL_NORMAL_ARRAY);
-#endif
-#ifdef SGI
-  glEnable(GL_VERTEX_ARRAY_EXT);
-  glEnable(GL_COLOR_ARRAY_EXT);
-  glEnable(GL_NORMAL_ARRAY_EXT);
-
-  glVertexPointerEXT(3,GL_FLOAT,
-		     sizeof(struct GRID_TRI)/3,
-		     obj->tri_count*3,obj->tri[0].v1);
-  glNormalPointerEXT(GL_FLOAT,
-		     sizeof(struct GRID_TRI)/3,
-		     obj->tri_count*3,obj->tri[0].n1);
-  glColorPointerEXT(3,GL_FLOAT,
-		     sizeof(struct GRID_TRI)/3,
-		     obj->tri_count*3,obj->tri[0].c1);
-
-  glDrawArraysEXT(GL_TRIANGLES,0,obj->tri_count*3);
-
-  glDisable(GL_VERTEX_ARRAY_EXT);
-  glDisable(GL_COLOR_ARRAY_EXT);
-  glDisable(GL_NORMAL_ARRAY_EXT);
-#endif
-#ifdef DEC
-  glEnable(GL_VERTEX_ARRAY);
-  glEnable(GL_COLOR_ARRAY);
-  glEnable(GL_NORMAL_ARRAY);
-
-  glVertexPointer(3,GL_FLOAT,
-		     sizeof(struct GRID_TRI)/3,
-		     obj->tri_count*3,obj->tri[0].v1);
-  glNormalPointer(GL_FLOAT,
-		     sizeof(struct GRID_TRI)/3,
-		     obj->tri_count*3,obj->tri[0].n1);
-  glColorPointer(3,GL_FLOAT,
-		     sizeof(struct GRID_TRI)/3,
-		     obj->tri_count*3,obj->tri[0].c1);
-
-  glDrawArrays(GL_TRIANGLES,0,obj->tri_count*3);
-
-  glDisable(GL_VERTEX_ARRAY);
-  glDisable(GL_COLOR_ARRAY);
-  glDisable(GL_NORMAL_ARRAY);
-#endif
 
   return 0;
 }

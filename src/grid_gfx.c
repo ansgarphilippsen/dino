@@ -77,6 +77,7 @@ int gridDrawObj(gridObj *obj)
       glDisable(GL_STENCIL_TEST);
       glDepthMask(GL_TRUE);
 #ifdef LINUX
+      // bug in NVIDIA driver
       glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 #else
       glDrawBuffer(GL_NONE);
@@ -106,6 +107,7 @@ int gridDrawObj(gridObj *obj)
       }
       glEnd();
 #ifdef LINUX
+      // bug in NVIDIA driver
       glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 #endif      
       

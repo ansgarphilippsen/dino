@@ -419,21 +419,8 @@ static int parse(const char *raw_prompt2)
   int wordi[2048];
   int wc;
   char var[256];
-#ifdef LINUX
   int var_c;
-#endif
-#ifdef OSX
-  int var_c;
-#endif
-#ifdef SGI
-  char var_c,*cp;
-#endif
-#ifdef DEC
-  char var_c,*cp;
-#endif
-#ifdef SUN
-  char var_c,*cp;
-#endif
+
   char message[256];
   int varcheck=0;
   int error_code=SHELL_OK;

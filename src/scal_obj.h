@@ -8,24 +8,24 @@
 
 enum {SCAL_MODE_POINT,SCAL_MODE_LINE,SCAL_MODE_SURFACE};
 
-#ifdef LINUX
-extern struct SCAL_FIELD _SCAL_FIELD;
-extern struct DBM_SCAL_NODE _DBM_SCAL_NODE;
-extern struct DBM_SET _DBM_SET;
-extern struct SCAL_OCTREE_ENTRY _SCAL_OCTREE_ENTRY;
-#endif
-#ifdef SGI
+//#ifdef LINUX
+//extern struct SCAL_FIELD _SCAL_FIELD;
+//extern struct DBM_SCAL_NODE _DBM_SCAL_NODE;
+//extern struct DBM_SET _DBM_SET;
+//extern struct SCAL_OCTREE_ENTRY _SCAL_OCTREE_ENTRY;
+//#endif
+//#ifdef SGI
 //extern struct SCAL_FIELD;
 //extern struct DBM_SCAL_NODE;
 //extern struct DBM_SET;
 //extern struct SCAL_OCTREE_ENTRY;
-#endif
-#ifdef DEC
-extern struct SCAL_FIELD;
-extern struct DBM_SCAL_NODE;
-extern struct DBM_SET;
-extern struct SCAL_OCTREE_ENTRY;
-#endif
+//#endif
+//#ifdef DEC
+//extern struct SCAL_FIELD;
+//extern struct DBM_SCAL_NODE;
+//extern struct DBM_SET;
+//extern struct SCAL_OCTREE_ENTRY;
+//#endif
 
 struct SCAL_POINT {
   float rad;

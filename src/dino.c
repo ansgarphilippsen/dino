@@ -219,6 +219,7 @@ void dinoExit(int n)
 #ifdef SGI
   cmiStereo(0);
 #endif
+
 #ifdef LINUX
 #ifndef USE_CMI
 #ifndef INTERNAL_COLOR
@@ -227,5 +228,6 @@ void dinoExit(int n)
 #endif
 #endif
 #endif
+
   exit(n);
 }
