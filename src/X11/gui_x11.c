@@ -1631,12 +1631,13 @@ int guiCreateOffscreenContext(int w, int h, int af)
 int guiDestroyOffscreenContext(int c)
 {
   struct _OFFSCREEN_CONTEXT *oc;
-  if(c<offscreen_context_count) {
+  if(c<MAX_OFFSCREEN_CONTEXT) {
     if(offscreen_context_list[c].used) {
       oc=&offscreen_context_list[c];
       glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
       glXDestroyGLXPixmap(gui.dpy,oc->glx_pm);
       XFreePixmap(gui.dpy,oc->pm);
+      oc->used=0;
     }
   }
   return 0;

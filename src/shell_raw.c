@@ -68,6 +68,8 @@ static struct SHELL_VAR {
 
 extern int interrupt_flag; // in shell_command.c
 
+static int script_flag;
+
 /*
   Initialization
 */
@@ -109,7 +111,7 @@ int shellInterpInit()
   
   sprintf(message,"Using TCL interpreter v%d.%d (http://www.scriptics.com)\n",v1,v2);
   shellOut(message);
-
+  script_flag=0;
 #endif
 
   return 0;
@@ -170,8 +172,15 @@ int shellCallScript(const char *filename, int argc, const char **argv)
   }
 
   // TODO command line args
-
-  Tcl_EvalFile(tcl_interp,filename);
+  script_flag++;
+  if(Tcl_EvalFile(tcl_interp,filename)!=TCL_OK) {
+    shellOut(Tcl_GetStringResult(tcl_interp));
+    shellOut("\n");
+    comReturn("");
+  } else {
+    comReturn(Tcl_GetStringResult(tcl_interp));
+  }
+  script_flag--;
 }
 
 
@@ -216,12 +225,19 @@ int shellParseRaw(const char *s, int hf)
   Tcl_DStringSetLength(&tcl_ds,0);
   // pass to tcl interpreter
   // any non-tcl stuff will end up in shell_unknown_command()
-  Tcl_EvalEx(tcl_interp,
+
+  if(Tcl_EvalEx(tcl_interp,
 	     Tcl_ExternalToUtfDString(NULL,
 				      parse_buf,
 				      clStrlen(parse_buf),
 				      &tcl_ds),
-	     -1,TCL_EVAL_GLOBAL);
+		-1,TCL_EVAL_GLOBAL)!=TCL_OK) {
+    shellOut(Tcl_GetStringResult(tcl_interp));
+    shellOut("\n");
+    comReturn("");
+  } else {
+    comReturn(Tcl_GetStringResult(tcl_interp));
+  }
 
 #else
   parse(s);
