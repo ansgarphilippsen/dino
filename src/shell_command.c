@@ -290,10 +290,13 @@ void shellTimeProc(void)
 
 static int call_script(const char *filename, const char **wl, int wc)
 {
+#ifdef USE_TCL
+  shellCallScript(filename,wc,wl);
+#else
+  struct stat st;
   FILE *f;
   char *b;
   int s,t;
-  struct stat st;
 
   if(scrlvl>=MAXSCRIPTLEVEL) {
     shellOut("error: maximum script nesting level reached\n");
@@ -323,6 +326,7 @@ static int call_script(const char *filename, const char **wl, int wc)
   scrbuf[scrlvl].count=0;
 
   fclose(f);
+#endif
   return 0;
 }
 

@@ -59,6 +59,7 @@ static void glx_init(Widget ww, XtPointer clientData, XtPointer call);
 static void glx_expose(Widget ww, XtPointer clientData, XtPointer call);
 static void glx_resize(Widget ww, XtPointer clientData, XtPointer call);
 static void glx_input(Widget ww, XtPointer clientData, XtPointer call);
+static void check_redraw(void);
 static int xinput_ext_init(void);
 static int dialbox_init(void);
 static int spaceball_init(void);
@@ -414,11 +415,8 @@ static int init_main(int argc, char **argv)
 
 void guiTimeProc(XtPointer client_data)
 {
-  if(gui.redraw) {
-    gui.redraw=0;
-    //    gfxRedraw();
-    cmiRedraw();
-  }
+  check_redraw();
+
   //comTimeProc();
   cmiTimer();
 
@@ -427,6 +425,15 @@ void guiTimeProc(XtPointer client_data)
 #endif
 
   XtAppAddTimeOut(gui.app,10,(XtTimerCallbackProc)guiTimeProc,NULL);
+}
+
+static void check_redraw(void)
+{
+  if(gui.redraw) {
+    gui.redraw=0;
+    //    gfxRedraw();
+    cmiRedraw();
+  }
 }
 
 
@@ -636,6 +643,7 @@ void guiCMICallback(const cmiToken *t)
     switch(t->command) {
     case CMI_REFRESH: gui.redraw++; break;
     case CMI_MESSAGE: guiMessage((char *)t->value); break;
+    case CMI_CHECKR: check_redraw(); break;
     case CMI_DS_NEW: omAddDB(cp[0]); break;
     case CMI_DS_DEL: omDelDB(cp[0]); break;
     case CMI_DS_REN: /*TODO*/ break;

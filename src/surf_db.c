@@ -397,6 +397,7 @@ int surfSet(dbmSurfNode *node, Set *s)
   int i,rt,op;
   Select *sel;
   float r,g,b,v1[6];
+  char message[256];
 
   if(s->pov_count==0) {
     return 0;
@@ -422,6 +423,8 @@ int surfSet(dbmSurfNode *node, Set *s)
     } else if ( clStrcmp(s->pov[pc].prop,"center") ||
 		clStrcmp(s->pov[pc].prop,"rcen")) {
       s->pov[pc].id=SURF_PROP_RCEN;
+    } else if (clStrcmp(s->pov[pc].prop,"smode")) {
+      s->pov[pc].id=SURF_PROP_SMODE;
     } else {
       comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
@@ -443,6 +446,21 @@ int surfSet(dbmSurfNode *node, Set *s)
   for(pc=0;pc<s->pov_count;pc++) {
     val=povGetVal(&s->pov[pc],0);
     switch(s->pov[pc].id) {
+    case SURF_PROP_SMODE:
+      if(val->range_flag) {
+	comMessage("error: set: unexpected range in property smode\n");
+	return -1;
+      }
+      if(clStrcmp(val->val1,"all")) {
+	node->smode=SURF_SMODE_ALL;
+      } else if(clStrcmp(val->val1,"any")) {
+	node->smode=SURF_SMODE_ANY;
+      } else {
+	sprintf(message,"error: smode must be one of 'any' 'all'\n");
+	comMessage(message);
+	return -1;
+      }
+      break;
     case SURF_PROP_ROT:
       if(val->range_flag) {
 	comMessage("error: set: unexpected range in property rot\n");

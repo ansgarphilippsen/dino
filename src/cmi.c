@@ -146,3 +146,9 @@ void cmiStereo(int m)
   cmiSubmit(&t_stereo);
 }
 
+static cmiToken t_checkr={CMI_TARGET_GUI, CMI_CHECKR, NULL};
+void cmiCheckRedraw()
+{
+  cmiSubmit(&t_checkr);
+}
+

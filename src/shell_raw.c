@@ -144,8 +144,26 @@ static void trace_proc(ClientData clientData,
 		      int argc,
 		      char *argv[])
 {
-  
+  if(clStrcmp(argv[0],"unknown")) {
+    cmiCheckRedraw();
+  }
 }
+
+int shellCallScript(const char *filename, int argc, const char **argv)
+{
+  struct stat st;
+  char message[256];
+
+  if(stat(filename,&st)<0) {
+    sprintf(message,"error reading %s\n",filename);
+    return -1;
+  }
+
+  // TODO command line args
+
+  Tcl_EvalFile(tcl_interp,filename);
+}
+
 
 #endif
 

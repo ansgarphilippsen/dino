@@ -528,6 +528,8 @@ int surfGenerate(surfObj *obj, Select *sel)
       vert[vertc].c[3]=1.0;
       vert[vertc].vp=&node->v[i];
       vertc++;
+    } else {
+      obj->vert_flag[i]=0;
     }
   }
 
@@ -541,8 +543,12 @@ int surfGenerate(surfObj *obj, Select *sel)
       if(obj->vert_flag[vi1] && obj->vert_flag[vi2] && obj->vert_flag[vi3])
 	flag=1;
     } else {
-      if(obj->vert_flag[vi1] || obj->vert_flag[vi2] || obj->vert_flag[vi3])
-	flag=1;
+      if(obj->vert_flag[vi1] || obj->vert_flag[vi2] || obj->vert_flag[vi3]) {
+	// obscure fix, vert_id[] should be allows zero ??
+	if(vert_id[vi1]>0 && vert_id[vi2]>0 && vert_id[vi3]>0) {
+	  flag=1;
+	}
+      }
     }
     if(flag) {
       face[facec++]=vert_id[vi1];

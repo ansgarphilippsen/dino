@@ -7,6 +7,10 @@
 int shellInterpInit(void);
 int shellParseRaw(const char *s, int hf);
 
+#ifdef USE_TCL
+int shellCallScript(const char *f, int argc, const char **argv);
+#endif
+
 int shellSetVar(const char *name, const char *value);
 const char *shellGetVar(const char *name);
 int shellUnsetVar(const char *name);

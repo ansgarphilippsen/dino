@@ -2,6 +2,12 @@
 
  shell_tcl.c
 
+ OLD DEPRECATED FILE
+ REPLACED BY 
+ shell_raw
+ shell_command
+ gui_terminal
+
 ************************************/
 
 #include <stdio.h>
