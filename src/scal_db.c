@@ -270,6 +270,7 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
       break;
     }
   }
+
   if(ret<0) {
     if(sel_flag)
       selectDelete(&sel);
@@ -280,20 +281,34 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
   }
 
   if(!sel_flag) {
-    selectNew(&sel,0,NULL);
+    if(selectNew(&sel,0,NULL)<0) {
+      selectDelete(&sel);
+      if(set_flag) {
+	setDelete(&set);
+      }
+      return -1;
+    }
   }
 
   if(!set_flag) {
-    setNew(&set,0,NULL);
+    if(setNew(&set,0,NULL)<0) {
+      setDelete(&set);
+      if(sel_flag) {
+	selectDelete(&sel);
+      }
+      return -1;
+    }
   }
 
-  
   ret=scalNew(node, name, type,&set,&sel);
 
-  setDelete(&set);
+  if(sel_flag)
+    selectDelete(&sel);
+  if(set_flag)
+    setDelete(&set);
   clDelete(&co);
 
-  return ret;
+  return -1;
 }
 
 int scalComSet(dbmScalNode *node,int wc, char **wl)
@@ -349,6 +364,7 @@ int scalNew(dbmScalNode *node, char *name, int type, Set *set, Select *sel)
 {
   char message[256];
   scalObj *obj;
+  int ret;
 
   if((obj=scalNewObj(node,name))==NULL) {
     sprintf(message,"internal error in new\n");
@@ -364,7 +380,12 @@ int scalNew(dbmScalNode *node, char *name, int type, Set *set, Select *sel)
 
   memcpy(&obj->select, sel, sizeof(Select));
 
-  return scalObjRenew(obj, set,sel);
+  ret=scalObjRenew(obj, set,sel);
+
+  if(ret<0) {
+    scalDelObj(node,name);
+  }
+  return ret;
 }
 
 int scalSet(dbmScalNode *node, Set *s)

@@ -1691,7 +1691,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
 	 struct_atom_table_len*sizeof(struct STRUCT_ATOM_TABLE));
 
 
-  if(sf->atom_entry[0].mnum==-1) {
+  if(sf->atom_entry[0].mnum<2) {
     model_flag=0;
   } else {
     model_flag=1;

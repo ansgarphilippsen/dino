@@ -1,3 +1,5 @@
+set default model number to 1
+
 fixed: assert "sel->compiled" in scal_db.c
 
 fixed: non-standard atom name related crashes

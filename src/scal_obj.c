@@ -399,8 +399,8 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     } else if(clStrcmp(s->pov[pc].prop,"center") ||
 	      clStrcmp(s->pov[pc].prop,"cen")) {
       if(s->pov[pc].op!=POV_OP_EQ) {
-	comMessage("error: set: expected operator = for property \n");
-	comMessage(s->pov[pc].prop);
+	sprintf(message,"error: set: expected operator = for property %s\n",s->pov[pc].prop);
+	comMessage(message);
 	return -1;
       }
       s->pov[pc].id=SCAL_PROP_CENTER;
@@ -451,14 +451,14 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       s->pov[pc].id=SCAL_PROP_STEP;
     } else if(clStrcmp(s->pov[pc].prop,"method")) {
       if(s->pov[pc].op!=POV_OP_EQ) {
-	comMessage("error: set: expected operator = for property \n");
-	comMessage(s->pov[pc].prop);
+	sprintf(message,"error: set: expected operator = for property %s\n",s->pov[pc].prop);
+	comMessage(message);
 	return -1;
       }
       s->pov[pc].id=SCAL_PROP_METHOD;
     } else {
-      comMessage("error: set: unknown property \n");
-      comMessage(s->pov[pc].prop);
+      sprintf(message,"error: set: unknown property %s\n",s->pov[pc].prop);
+      comMessage(message);
       return -1;
     }
 
@@ -471,8 +471,8 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     }
     
     if(s->pov[pc].val_count>1) {
-      comMessage("error: set: expected only one value for property \n");
-      comMessage(s->pov[pc].prop);
+      sprintf(message,"error: set: expected only one value for property %s\n",s->pov[pc].prop);
+      comMessage(message);
       return -1;
     }
   }
@@ -907,8 +907,8 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
     break;
     case SCAL_PROP_CENTER:
       if(matExtract1D(val->val1,3,vd1)!=0) {
-	comMessage("error: set: syntax error in vector \n");
-	comMessage(val->val1);
+	sprintf(message,"error: set: syntax error in vector %s\n",val->val1);
+	comMessage(message);
 	return -1;
       }
       if(obj->type==SCAL_SLAB) {
@@ -1342,7 +1342,7 @@ int scalSlab(scalObj *obj, Select *sel)
   int p,q,r;
   double uvw[3];
 
-//  fprintf(stderr,"slab\n");
+  fprintf(stderr,"slab\n");
 
   /*
     create space for the data and texture
