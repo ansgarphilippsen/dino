@@ -292,12 +292,12 @@ int structDrawObj(structObj *obj)
     glEnable(GL_LIGHTING);
     glEnable(GL_CULL_FACE);
 
-    glEnable(GL_VERTEX_ARRAY);
-    glEnable(GL_NORMAL_ARRAY);
-    glEnable(GL_COLOR_ARRAY);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    //glEnable(GL_VERTEX_ARRAY);
+    //glEnable(GL_NORMAL_ARRAY);
+    //glEnable(GL_COLOR_ARRAY);
+    //glEnableClientState(GL_VERTEX_ARRAY);
+    //glEnableClientState(GL_NORMAL_ARRAY);
+    //glEnableClientState(GL_COLOR_ARRAY);
 
     glVertexPointer(3,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].v[0]);
     glNormalPointer(GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].n[0]);
@@ -313,12 +313,12 @@ int structDrawObj(structObj *obj)
     glDrawArrays(GL_TRIANGLES,0,obj->va.count);
 #endif
 
-    glDisable(GL_VERTEX_ARRAY);
-    glDisable(GL_NORMAL_ARRAY);
-    glDisable(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    //glDisable(GL_VERTEX_ARRAY);
+    //glDisable(GL_NORMAL_ARRAY);
+    //glDisable(GL_COLOR_ARRAY);
+    //glDisableClientState(GL_VERTEX_ARRAY);
+    //glDisableClientState(GL_NORMAL_ARRAY);
+    //glDisableClientState(GL_COLOR_ARRAY);
 
     glDisable(GL_CULL_FACE);
 #ifdef USE_DLIST
