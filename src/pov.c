@@ -1305,19 +1305,41 @@ static int writePOVScene(FILE *f)
 	  -gfx.transform.tra[2]);
   fprintf(f,"light_source {<0,0,0> color rgb 0.1 shadowless}\n");
 
+  /*
+    improved depth effect
+    fog { fog_type 2 distance 1.5 color rgb <1,1,1> fog_offset 1 fog_alt 0.01 rotate x*90 turbulence 0.8 }
+
+fog {
+  fog_type 2
+  distance 30
+  color rgb <0,0,0>
+  fog_offset 31.4
+  fog_alt 0.01
+  rotate x*90
+  //turbulence 0.8 
+}
+
+  */
+
   if(gfx.fog) {
     fprintf(f,"// depth effect\n\n");
+    fprintf(f,"fog {\n fog_type 2\n distance %.2f\n color rgb <%.3f,%.3f,%.3f>\n fog_offset %.2f\n fog_alt 0.01\n rotate x*90\n //turbulence 0.8\n}\n",
+	    -gfx.transform.tra[2]-gfx.transform.slabn,
+	    gfx.r,gfx.g,gfx.b,	    
+	    (gfx.transform.slabf-gfx.transform.slabn)*0.5);
+
+    /*
     fprintf(f,"plane {z, %.3f texture {pigment {color rgbft <0,0,0,1,1>}}\n",
 	    -gfx.transform.tra[2]-gfx.transform.slabn);
     fprintf(f,"hollow interior {fade_power 2 fade_distance %.3f}\n}\n",
 	    (gfx.transform.slabf-gfx.transform.slabn)*0.5);
+    */
   } else {
     fprintf(f,"// uncomment for depth effect \n\n");
-    fprintf(f,"//plane {z, %.3f texture {pigment {color rgbft <0,0,0,1,1>}}\n",
-	    -gfx.transform.tra[2]-gfx.transform.slabn);
-    fprintf(f,"//hollow interior {fade_power 2 fade_distance %.3f}\n//}\n",
+    fprintf(f,"/*\nfog {\n fog_type 2\n distance %.2f\n color rgb <%.3f,%.3f,%.3f>\n fog_offset %.2f\n fog_alt 0.01\n rotate x*90\n //turbulence 0.8\n}\n*/\n",
+	    -gfx.transform.tra[2]-gfx.transform.slabn,
+	    gfx.r,gfx.g,gfx.b,	    
 	    (gfx.transform.slabf-gfx.transform.slabn)*0.5);
-
   }
 
 

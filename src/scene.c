@@ -617,10 +617,13 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage(message);
 	  return -1;
 	}
-	if(gfx.fovy<5.0)
+	if(gfx.fovy<5.0) {
 	  gfx.fovy=5.0;
-	if(gfx.fovy>85.0)
+	  comMessage("fov too small, reset to 5.0\n");
+	} else if(gfx.fovy>85.0) {
 	  gfx.fovy=85.0;
+	  comMessage("fov too large, reset to 85.0\n");
+	}
 	gfxSetProjection(gfx.current_view);
 	comRedraw();
       } else if(clStrcmp(prop,"fixz")) {
@@ -1213,7 +1216,13 @@ int sceneCommand(int wc, const char **wl)
     }
     guiMessage(set);
   } else if(clStrcmp(wl[0],"autoslab")) {
-    comGetMinMaxSlab();
+    comAutoFit(0,1);
+    gfxSetFog();
+    gfxSetProjection(gfx.current_view);
+    comRedraw();
+    scene_virgin_flag=0;
+  } else if(clStrcmp(wl[0],"autofit")) {
+    comAutoFit(1,1);
     gfxSetFog();
     gfxSetProjection(gfx.current_view);
     comRedraw();

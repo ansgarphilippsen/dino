@@ -1688,7 +1688,7 @@ static void check_limits(double x,double y, double z, double limx[2], double lim
   }
 }
 
-int comGetMinMaxSlab()
+int comAutoFit(int xy_flag, int z_flag)
 {
   int i,j,k,f;
   GLdouble mm[16],pm[16],im[]={1.0,0.0,0.0,0.0,
@@ -1811,25 +1811,47 @@ int comGetMinMaxSlab()
   gluUnProject(limz[3],limz[4],limz[5],im,pm,vp,&vx,&vy,&vz);
   far=-vz;
 
-  // use limx and limy to implement autofit
 
   near-=3.0;
   if(near<0.0)
     near=1.0;
 
-  if(f) {
-    gfx.transform.slabn=near;
-    gfx.transform.slabf=far;
-    gfxSetSlab(near,far);
-    gfxSetFog();
-  } else {
-    gfx.transform.slabn=10;
-    gfx.transform.slabf=400;
-    gfxSetSlab(10,400);
-    gfxSetFog();    
-  }  
+  if(z_flag) {
+    if(f) {
+      gfx.transform.slabn=near;
+      gfx.transform.slabf=far;
+      gfxSetSlab(near,far);
+      gfxSetFog();
+    } else {
+      gfx.transform.slabn=10;
+      gfx.transform.slabf=400;
+      gfxSetSlab(10,400);
+      gfxSetFog();    
+    }  
+  }
+
+  if(xy_flag) {
+    fprintf(stderr,"limx %f %f %f %f %f %f\n",
+	    limx[0],limx[1],limx[2],limx[3],limx[4],limx[5]);
+    
+    fprintf(stderr,"limy %f %f %f %f %f %f\n",
+	    limy[0],limy[1],limy[2],limy[3],limy[4],limy[5]);
+    
+    // use limx and limy to implement autofit
+    gluUnProject(limx[0],limx[1],limx[2],im,pm,vp,&vx,&vy,&vz);
+    fprintf(stderr,"limx1 %f %f %f\n",vx,vy,vz);
+    gluUnProject(limx[3],limx[4],limx[5],im,pm,vp,&vx,&vy,&vz);
+    fprintf(stderr,"limx2 %f %f %f\n",vx,vy,vz);
+    
+    gluUnProject(limy[0],limy[1],limy[2],im,pm,vp,&vx,&vy,&vz);
+    fprintf(stderr,"limy1 %f %f %f\n",vx,vy,vz);
+    gluUnProject(limy[3],limy[4],limy[5],im,pm,vp,&vx,&vy,&vz);
+    fprintf(stderr,"limy2 %f %f %f\n",vx,vy,vz);
+  }
+
   return 0;
 }
+
 
 int comWriteCharBuf(char c)
 {

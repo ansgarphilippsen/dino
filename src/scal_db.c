@@ -927,8 +927,6 @@ static int compile_pov(dbmScalNode *node, POV *pov)
 	      dval,val->vect[0],val->vect[1],val->vect[2]);
       debmsg(mesg);
     }
-
-    
   }
 
   return 0;

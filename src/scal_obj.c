@@ -351,7 +351,10 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
     return -1;
 
   if(obj->type==SCAL_CONTOUR) {
-    sprintf(message,"Contouring at %g ...\n",obj->level);
+    sprintf(message,"Contouring at %g from {%d,%d,%d} to {%d,%d,%d} ...\n",
+	    obj->level,
+	    obj->u_start,obj->v_start,obj->w_start,
+	    obj->u_end,obj->v_end,obj->w_end);
     comMessage(message);
 
     if(obj->contour_method==1) {
@@ -394,7 +397,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
   struct POV_VALUE *val;
   float r,g,b,r2,g2,b2,r3,g3,b3,v1[4],rad1,rad2;
   float rval,p[3],frac1,frac2,rval1,rval2;
-  double vd1[3],vd2[3];
+  double vd1[3],vd2[6];
   float fact;
   char message[256],nv[16];
   int slab_flag=0;
@@ -443,6 +446,9 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       s->pov[pc].id=SCAL_PROP_CENTER;
     } else if(clStrcmp(s->pov[pc].prop,"size")) {
       s->pov[pc].id=SCAL_PROP_SIZE;
+    } else if(clStrcmp(s->pov[pc].prop,"ext") ||
+	      clStrcmp(s->pov[pc].prop,"extent")) {
+      s->pov[pc].id=SCAL_PROP_EXTENT;
     } else if(clStrcmp(s->pov[pc].prop,"scale")) {
       if(obj->type==SCAL_GRAD) {
 	s->pov[pc].id=SCAL_PROP_SCALE;
@@ -942,6 +948,21 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	}
       }
     break;
+    case SCAL_PROP_EXTENT:
+      if(matExtract2D(val->val1,2,3,vd2)!=0) {
+	sprintf(message,"error: set: syntax error in extent %s\n",val->val1);
+	comMessage(message);
+	return -1;
+      }
+
+      obj->u_start=(int)vd2[0];
+      obj->v_start=(int)vd2[1];
+      obj->w_start=(int)vd2[2];
+      obj->u_end=(int)vd2[3];
+      obj->v_end=(int)vd2[4];
+      obj->w_end=(int)vd2[5];
+
+      break;
     case SCAL_PROP_CENTER:
       if(matExtract1D(val->val1,3,vd1)!=0) {
 	sprintf(message,"error: set: syntax error in vector %s\n",val->val1);

@@ -104,7 +104,7 @@ int comSave(int wc,const char **wl);
 int comGenLists(int n);
 int comNewDisplayList(int l);
 int comEndDisplayList(void);
-int comGetMinMaxSlab(void);
+int comAutoFit(int xy_flag, int z_flag);
 int comWriteCharBuf(char c);
 int comPlay(dbmNode *node, int command);
 int comGrabInput(int, comInputFunc, void *ptr);

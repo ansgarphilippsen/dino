@@ -11,6 +11,7 @@
 #include "com.h"
 #include "cgfx.h"
 #include "mat.h"
+#include "cl.h"
 
 extern int gfx_flags;
 
@@ -85,77 +86,77 @@ int renderSet(struct RENDER *render, int owc, char **owl)
   for(c=0;c<wc;c++) {
     dbmSplitPOV(wl[c],prop,op,val);
 
-    if(!strcmp(prop,"simple")) {
+    if(clStrcmp(prop,"simple")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_SIMPLE;
-    } else  if(!strcmp(prop,"cpk")) {
+    } else  if(clStrcmp(prop,"cpk")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_CPK;
-    } else if(!strcmp(prop,"custom")) {
+    } else if(clStrcmp(prop,"custom")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_CUSTOM;
-    } else if(!strcmp(prop,"helix")) {
+    } else if(clStrcmp(prop,"helix")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_HELIX;
-    } else if(!strcmp(prop,"strand")) {
+    } else if(clStrcmp(prop,"strand")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_STRAND;
-    } else if(!strcmp(prop,"strand2")) {
+    } else if(clStrcmp(prop,"strand2")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_STRAND2;
-    } else if(!strcmp(prop,"tube")) {
+    } else if(clStrcmp(prop,"tube")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_TUBE;
-    } else if(!strcmp(prop,"hsc")) {
+    } else if(clStrcmp(prop,"hsc")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_HSC;
-    } else if(!strcmp(prop,"sline")) {
+    } else if(clStrcmp(prop,"sline")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_SLINE;
-    } else if(!strcmp(prop,"cyl")) {
+    } else if(clStrcmp(prop,"cyl")) {
       if(strlen(op)!=0) {
 	sprintf(message,"render:: error in expression %s%s%s\n",prop,op,val);
 	comMessage(message);
 	return -1;
       }
       render->mode=RENDER_CYLINDER;
-    } else if(!strcmp(prop,"fill")){
+    } else if(clStrcmp(prop,"fill")){
       /********************
           render fill
        ********************/
@@ -171,8 +172,8 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       }
       render->mode=RENDER_SURFACE;
       comRedraw();
-    } else if(!strcmp(prop,"lines") ||
-	      !strcmp(prop,"line")){
+    } else if(clStrcmp(prop,"lines") ||
+	      clStrcmp(prop,"line")){
       /********************
           render lines
        ********************/
@@ -188,7 +189,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       }
       render->mode=RENDER_LINE;
       comRedraw();
-    } else if(!strcmp(prop,"dots")){
+    } else if(clStrcmp(prop,"dots")){
       /********************
           render dots
        ********************/
@@ -203,7 +204,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
       render->mode=RENDER_POINT;
-    } else if(!strcmp(prop,"off")){
+    } else if(clStrcmp(prop,"off")){
       if(strlen(op)>0) {
       	sprintf(message,"expression syntax error\n");
 	comMessage(message);
@@ -215,7 +216,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
       render->mode=RENDER_OFF;
-    } else if(!strcmp(prop,"on")){
+    } else if(clStrcmp(prop,"on")){
       if(strlen(op)>0) {
       	sprintf(message,"expression syntax error\n");
 	comMessage(message);
@@ -227,18 +228,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
       render->mode=RENDER_ON;
-    } else if(!strcmp(prop,"nice")) {
+    } else if(clStrcmp(prop,"nice")) {
       /********************
 	      nice
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->nice=0;
       } else if(strlen(op)==0) {
 	render->nice=1;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->nice=0;
 	} else {
 	  render->nice=1;
@@ -248,18 +249,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"fast")) {
+    } else if(clStrcmp(prop,"fast")) {
       /********************
 	      fast
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->nice=1;
       } else if(strlen(op)==0) {
 	render->nice=0;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->nice=1;
 	} else {
 	  render->nice=0;
@@ -269,18 +270,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"light2")) {
+    } else if(clStrcmp(prop,"light2")) {
       /********************
 	      light2
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->dbl_light=0;
       } else if(strlen(op)==0) {
 	render->dbl_light=1;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->dbl_light=0;
 	} else {
 	  render->dbl_light=1;
@@ -290,18 +291,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"light1")) {
+    } else if(clStrcmp(prop,"light1")) {
       /********************
 	      light1
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->dbl_light=1;
       } else if(strlen(op)==0) {
 	render->dbl_light=0;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->dbl_light=1;
 	} else {
 	  render->dbl_light=0;
@@ -311,18 +312,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"rev")) {
+    } else if(clStrcmp(prop,"rev")) {
       /********************
 	      rev
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->face_reverse=0;
       } else if(strlen(op)==0) {
 	render->face_reverse=1;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->face_reverse=0;
 	} else {
 	  render->face_reverse=1;
@@ -332,18 +333,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"cull")) {
+    } else if(clStrcmp(prop,"cull")) {
       /*******************
 	      cull
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->cull=0;
       } else if(strlen(op)==0) {
 	render->cull=1;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->cull=0;
 	} else {
 	  render->cull=1;
@@ -353,7 +354,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"detail")) {
+    } else if(clStrcmp(prop,"detail")) {
       /********************
 	     detail
       ********************/
@@ -368,11 +369,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
       oldi=render->detail;
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->detail=atoi(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->detail+=atoi(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->detail-=atoi(val);
       } else {
 	sprintf(message,"invalid operator %s\n",op);
@@ -388,7 +389,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       render->detail1=render->detail;
       // DEPRECATED
       //render->detail2=render->detail;
-    } else if(!strcmp(prop,"detail1")) {
+    } else if(clStrcmp(prop,"detail1")) {
       /********************
 	     detail1
       ********************/
@@ -403,11 +404,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
       oldi=render->detail1;
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->detail1=atoi(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->detail1+=atoi(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->detail1-=atoi(val);
       } else {
 	sprintf(message,"invalid operator %s\n",op);
@@ -420,7 +421,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	render->detail1=oldi;
 	return -1;
       }
-    } else if(!strcmp(prop,"detail2")) {
+    } else if(clStrcmp(prop,"detail2") || clStrcmp(prop,"splines")) {
       /********************
 	     detail2
       ********************/
@@ -435,11 +436,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	return -1;
       }
       oldi=render->detail2;
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->detail2=atoi(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->detail2+=atoi(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->detail2-=atoi(val);
       } else {
 	sprintf(message,"invalid operator %s\n",op);
@@ -452,7 +453,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	render->detail2=oldi;
 	return -1;
       }
-    } else if(!strcmp(prop,"lw")) {
+    } else if(clStrcmp(prop,"lw")) {
       /********************
 	     lw
       ********************/
@@ -466,11 +467,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->line_width=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->line_width=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->line_width=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -479,7 +480,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       }
       if(render->line_width<0.0)
 	render->line_width=0.0;
-     } else if(!strcmp(prop,"bw")) {
+     } else if(clStrcmp(prop,"bw")) {
       /********************
 	     bw
       ********************/
@@ -493,11 +494,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->bond_width=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->bond_width=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->bond_width=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -511,7 +512,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       if(render->sphere_radius<render->bond_width)
 	render->sphere_radius=render->bond_width;
 
-     } else if(!strcmp(prop,"tuber")) {
+     } else if(clStrcmp(prop,"tuber")) {
       /********************
 	     tuber
       ********************/
@@ -525,18 +526,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->tube_ratio=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->tube_ratio=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->tube_ratio=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-     } else if(!strcmp(prop,"tubew")) {
+     } else if(clStrcmp(prop,"tubew")) {
       /********************
 	     tubew
       ********************/
@@ -550,18 +551,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->tube_width=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->tube_width=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->tube_width=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"sr")) {
+    } else if(clStrcmp(prop,"sr")) {
       /********************
 	     sr
       ********************/
@@ -575,11 +576,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->sphere_radius=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->sphere_radius=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->sphere_radius=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -590,7 +591,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       if(render->sphere_radius<0.1)
 	render->sphere_radius=0.1;
 	*/
-    } else if(!strcmp(prop,"ps")) {
+    } else if(clStrcmp(prop,"ps")) {
       /********************
 	       ps
       ********************/
@@ -604,11 +605,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->point_size=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->point_size=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->point_size=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -617,7 +618,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       }
       if(render->point_size<0.1)
 	render->point_size=0.1;
-    } else if(!strcmp(prop,"helixw")) {
+    } else if(clStrcmp(prop,"helixw")) {
       /********************
 	   helixwidth
       ********************/
@@ -631,18 +632,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->helix_width=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->helix_width+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->helix_width-=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"helixt")) {
+    } else if(clStrcmp(prop,"helixt")) {
       /********************
          helixthickness
       ********************/
@@ -656,18 +657,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->helix_thickness=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->helix_thickness+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->helix_thickness-=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"strandw")) {
+    } else if(clStrcmp(prop,"strandw")) {
       /********************
 	  strandwidth
       ********************/
@@ -681,18 +682,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->strand_width=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->strand_width+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->strand_width-=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"strandt")) {
+    } else if(clStrcmp(prop,"strandt")) {
       /********************
 	  strandthickness
       ********************/
@@ -706,11 +707,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->strand_thickness=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->strand_thickness+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->strand_thickness-=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -720,7 +721,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       if(render->strand_thickness<0.01) {
 	render->strand_thickness=0.01;
       }
-    } else if(!strcmp(prop,"arrowt")) {
+    } else if(clStrcmp(prop,"arrowt")) {
       /********************
 	  arrowthickness
       ********************/
@@ -734,11 +735,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->arrow_thickness=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->arrow_thickness+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->arrow_thickness-=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -748,7 +749,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       if(render->arrow_thickness<0.01) {
 	render->arrow_thickness=0.01;
       }
-    } else if(!strcmp(prop,"baset")) {
+    } else if(clStrcmp(prop,"baset")) {
       /********************
 	  base thickness
       ********************/
@@ -762,11 +763,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->base_thickness=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->base_thickness+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->base_thickness-=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -776,7 +777,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       if(render->base_thickness<0.01) {
 	render->base_thickness=0.01;
       }
-    } else if(!strcmp(prop,"sugart")) {
+    } else if(clStrcmp(prop,"sugart")) {
       /********************
 	  sugar thickness
       ********************/
@@ -790,11 +791,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->sugar_thickness=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->sugar_thickness+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->sugar_thickness-=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -804,7 +805,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       if(render->sugar_thickness<0.01) {
 	render->sugar_thickness=0.01;
       }
-    } else if(!strcmp(prop,"t")){
+    } else if(clStrcmp(prop,"t")){
       /********************
 	      render t
       ********************/
@@ -818,11 +819,11 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->transparency=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->transparency+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->transparency-=atof(val);
       } else {
 	sprintf(message,"invalid operator: %s\n",op);
@@ -833,7 +834,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	render->transparency=0.0;
       if(render->transparency>1.0)
 	render->transparency=1.0;
-    } else if(!strcmp(prop,"polyf")){
+    } else if(clStrcmp(prop,"polyf")){
       /********************
 	      polygon offset f
       ********************/
@@ -847,18 +848,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->polyf=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->polyf+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->polyf-=atof(val);
       } else {
 	sprintf(message,"invalid operator: %s\n",op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"polyu")){
+    } else if(clStrcmp(prop,"polyu")){
       /********************
 	      polygon offset units
       ********************/
@@ -872,29 +873,29 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->polyu=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->polyu+=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->polyu-=atof(val);
       } else {
 	sprintf(message,"invalid operator: %s\n",op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"intpol")) {
+    } else if(clStrcmp(prop,"intpol")) {
       /********************
 	      intpol
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->cgfx_flag&=(~CGFX_INTPOL_COL);
       } else if(strlen(op)==0) {
 	render->cgfx_flag|=CGFX_INTPOL_COL;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->cgfx_flag&=(~CGFX_INTPOL_COL);
 	} else {
 	  render->cgfx_flag|=CGFX_INTPOL_COL;
@@ -904,18 +905,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"cap")) {
+    } else if(clStrcmp(prop,"cap")) {
       /********************
 	      hsc cap
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->cgfx_flag&=(~CGFX_HSC_CAP);
       } else if(strlen(op)==0) {
 	render->cgfx_flag|=CGFX_HSC_CAP;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->cgfx_flag&=(~CGFX_HSC_CAP);
 	} else {
 	  render->cgfx_flag|=CGFX_HSC_CAP;
@@ -925,18 +926,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"userad")) {
+    } else if(clStrcmp(prop,"userad")) {
       /********************
 	      userad
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->cgfx_flag&=(~CGFX_USE_RAD);
       } else if(strlen(op)==0) {
 	render->cgfx_flag|=CGFX_USE_RAD;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->cgfx_flag&=(~CGFX_USE_RAD);
 	} else {
 	  render->cgfx_flag|=CGFX_USE_RAD;
@@ -946,7 +947,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"strandm")) {
+    } else if(clStrcmp(prop,"strandm")) {
       /********************
 	  strand method
       ********************/
@@ -960,7 +961,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	if(atoi(val)==0 || atoi(val)==1) {
 	  render->strand_method=atoi(val);
 	} else {
@@ -973,7 +974,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"nam")) {
+    } else if(clStrcmp(prop,"nam")) {
       /********************
 	  NA method
       ********************/
@@ -987,7 +988,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	if(atoi(val)==0 || atoi(val)==1) {
 	  render->na_method=atoi(val);
 	} else {
@@ -1000,7 +1001,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"helixm")) {
+    } else if(clStrcmp(prop,"helixm")) {
       /********************
 	  helix method
       ********************/
@@ -1014,7 +1015,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	if(atoi(val)==0 || atoi(val)==1) {
 	  render->helix_method=atoi(val);
 	} else {
@@ -1027,21 +1028,21 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"solid")) {
+    } else if(clStrcmp(prop,"solid")) {
       if(gfx_flags & DINO_FLAG_NOSTENCIL) {
 	comMessage("Solid rendering not possible on this display: missing stencil buffer\n");
       } else {
 	/********************
 			     solid
 	********************/
-	if(!strcmp(op,"!")) {
+	if(clStrcmp(op,"!")) {
 	  render->solid=0;
 	} else if(strlen(op)==0) {
 	  render->solid=1;
-	} else if(!strcmp(op,"=")) {
-	  if(!strcmp(val,"0") ||
-	     !strcmp(val,"false") ||
-	     !strcmp(val,"off")) {
+	} else if(clStrcmp(op,"=")) {
+	  if(clStrcmp(val,"0") ||
+	     clStrcmp(val,"false") ||
+	     clStrcmp(val,"off")) {
 	    render->solid=0;
 	  } else {
 	    render->solid=1;
@@ -1052,7 +1053,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  return -1;
 	}
       }
-    } else if(!strcmp(prop,"solidc")) {
+    } else if(clStrcmp(prop,"solidc")) {
       if(strlen(op)==0) {
 	sprintf(message,"missing operator\n");
 	comMessage(message);
@@ -1076,18 +1077,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       render->solidc[0]=col[0];
       render->solidc[1]=col[1];
       render->solidc[2]=col[2];
-    } else if(!strcmp(prop,"stipple")) {
+    } else if(clStrcmp(prop,"stipple")) {
       /********************
 	      stipple
       ********************/
-      if(!strcmp(op,"!")) {
+      if(clStrcmp(op,"!")) {
 	render->stipple_flag=0;
       } else if(strlen(op)==0) {
 	render->stipple_flag=1;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
+      } else if(clStrcmp(op,"=")) {
+	if(clStrcmp(val,"0") ||
+	   clStrcmp(val,"false") ||
+	   clStrcmp(val,"off")) {
 	  render->stipple_flag=0;
 	} else {
 	  render->stipple_flag=1;
@@ -1097,7 +1098,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"stipplei")) {
+    } else if(clStrcmp(prop,"stipplei")) {
       /********************
 	       stipplei
       ********************/
@@ -1111,18 +1112,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->stipplei=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->stipplei=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->stipplei=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"stippleo")) {
+    } else if(clStrcmp(prop,"stippleo")) {
       /********************
 	       stipplei
       ********************/
@@ -1136,18 +1137,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->stippleo=atof(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->stippleo=atof(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->stippleo=atof(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"stipplef")) {
+    } else if(clStrcmp(prop,"stipplef")) {
       /********************
 	       stipplef
       ********************/
@@ -1161,18 +1162,18 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->stipple_factor=atoi(val);
-      } else if(!strcmp(op,"+=")) {
+      } else if(clStrcmp(op,"+=")) {
 	render->stipple_factor=atoi(val);
-      } else if(!strcmp(op,"-=")) {
+      } else if(clStrcmp(op,"-=")) {
 	render->stipple_factor=atoi(val);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
 	comMessage(message);
 	return -1;
       }
-    } else if(!strcmp(prop,"stipplep")) {
+    } else if(clStrcmp(prop,"stipplep")) {
       /********************
 	       stipplep
       ********************/
@@ -1186,7 +1187,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-      if(!strcmp(op,"=")) {
+      if(clStrcmp(op,"=")) {
 	render->stipple_pattern=strtol(val,NULL,0);
       } else {
 	sprintf(message,"invalid operator %s\n", op);
@@ -1236,7 +1237,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
       return -1;
     }
 
-    if(!strcmp(prop,"amb")) {
+    if(clStrcmp(prop,"amb")) {
       if(val[0]!='{') {
 	mat->amb[0]=atof(val);
 	mat->amb[1]=atof(val);
@@ -1251,7 +1252,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->amb[1]=v[1];
 	mat->amb[2]=v[2];
       }
-    } else if(!strcmp(prop,"diff")) {
+    } else if(clStrcmp(prop,"diff")) {
       if(val[0]!='{') {
 	mat->diff[0]=atof(val);
 	mat->diff[1]=atof(val);
@@ -1266,7 +1267,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->diff[1]=v[1];
 	mat->diff[2]=v[2];
       }
-    } else if(!strcmp(prop,"amb_diff")) {
+    } else if(clStrcmp(prop,"amb_diff")) {
       if(val[0]!='{') {
 	mat->amb[0]=atof(val);
 	mat->amb[1]=atof(val);
@@ -1288,7 +1289,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->diff[2]=v[2];
 	fprintf(stderr,"%f %f %f\n",v[0],v[1],v[2]);
       }
-    } else if(!strcmp(prop,"spec")) {
+    } else if(clStrcmp(prop,"spec")) {
       if(val[0]!='{') {
 	mat->spec[0]=atof(val);
 	mat->spec[1]=atof(val);
@@ -1303,7 +1304,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->spec[1]=v[1];
 	mat->spec[2]=v[2];
       }
-    } else if(!strcmp(prop,"emm")) {
+    } else if(clStrcmp(prop,"emm")) {
       if(val[0]!='{') {
 	mat->emm[0]=atof(val);
 	mat->emm[1]=atof(val);
@@ -1318,7 +1319,7 @@ int renderMaterialSet(struct RENDER_MATERIAL *mat, int owc, char **owl)
 	mat->emm[1]=v[1];
 	mat->emm[2]=v[2];
       }
-    } else if(!strcmp(prop,"shin")) {
+    } else if(clStrcmp(prop,"shin")) {
       mat->shin=atof(val);
     } else {
       comMessage("error: material: unknown property \n");

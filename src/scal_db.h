@@ -48,7 +48,8 @@ enum {SCAL_PROP_COLOR,
       SCAL_PROP_VM,
       SCAL_PROP_VC,
       SCAL_PROP_START,
-      SCAL_PROP_END};
+      SCAL_PROP_END,
+      SCAL_PROP_EXTENT};
 
 struct SCAL_PROP_MIN_MAX {
   float v1,v2;

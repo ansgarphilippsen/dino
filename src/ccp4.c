@@ -23,7 +23,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   void *raw_data;
   float *raw_data_float;
   unsigned char *raw_data_byte;
-  char message[256];
+  char message[512];
 
   // check if swap is required
   fread(&header,sizeof(struct CCP4_MAP_HEADER),1,f);
@@ -70,12 +70,22 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
     header.nz=header.ns;
 
   sprintf(message,
-	  "header:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld\n",
+	  "header:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld\nmode: %ld\na, b, c=%.3f %.3f %.3f\n",
 	  header.nc, header.nr, header.ns,
 	  header.ncstart, header.nrstart, header.nsstart,
 	  header.nx, header.ny, header.nz, 
 	  header.x, header.y, header.z,
-	  header.mapc, header.mapr, header.maps);
+	  header.mapc, header.mapr, header.maps,
+	  header.mode,
+	  header.alpha, header.beta, header.gamma);
+  debmsg(message);
+
+  sprintf(message,"skw:\n%f %f %f\n%f %f %f\n%f %f %f\n%f %f %f\n",
+	  header.skwmat[0], header.skwmat[1], header.skwmat[2],
+	  header.skwmat[3], header.skwmat[4], header.skwmat[5],
+	  header.skwmat[6], header.skwmat[7], header.skwmat[8],
+	  header.skwtrn[0], header.skwtrn[1], header.skwtrn[2]);
+
   debmsg(message);
 
   /*
