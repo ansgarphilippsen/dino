@@ -1,0 +1,603 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 218
+\textclass dino
+\language english
+\inputencoding auto
+\fontscheme times
+\graphics default
+\float_placement !bp
+\paperfontsize default
+\spacing single 
+\papersize a4paper
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 4
+\tocdepth 5
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\bullet 2
+	0
+	10
+	-1
+\end_bullet
+
+\layout Standard
+
+
+\latex latex 
+
+\backslash 
+renewcommand
+\backslash 
+arraystretch{1.3}
+\newline 
+
+\backslash 
+setlength
+\backslash 
+arrayrulewidth{0.4pt}
+\layout Chapter
+
+Introduction
+\layout Standard
+
+problems:
+\layout Standard
+
+large and diverse amount of data produced by various experimental and theoretica
+l structural biology methods
+\layout Standard
+
+exploring relationship between data
+\layout Chapter
+
+Results
+\layout Standard
+
+The structural data is compacted/classed/grouped into 5 distinct datasets.
+ Each consists of a set of basic data units containing a set of attributes.
+ Represented by 3-dimensional objects (table 
+\begin_inset LatexCommand \ref{datasets}
+
+\end_inset 
+
+).
+ 
+\layout Standard
+
+Objects are the visual interface to a dataset.
+ 
+\layout Standard
+
+As an object is build from a dataset, a conversion from the data units into
+ 3D elements is performed, retaining a link between the 3D elements and
+ the data units.
+ 
+\layout Standard
+
+Once an object is created, its graphical appearance, such as color or shape,
+ can be modified.
+\layout Standard
+
+The procedures to load, create, modify and explore a multitude of datasets
+ and object has been implemented in a realtime interactive 3D visualization
+ program named DINO.
+\layout Standard
+
+\begin_float wide-tab 
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="2" rows="6" columns="4">
+<features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="top" leftline="true" rightline="false" width="20mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="false" width="35mm" special="">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="40mm" special="">
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Dataset
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Data Unit
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Object Types
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Example Data
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+structure
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+atom
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="minipage" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+Chemical connectivity 
+\newline 
+Backbone trace
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+Atomic Coordinates
+\newline 
+Trajectory
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+scalar field
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+grid point
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="minipage" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+Isosurface
+\newline 
+3D grid
+\newline 
+Textured 2D slab
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+Electron density
+\newline 
+Electrostatic potential
+\newline 
+Reconstructed densities
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+surface
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+surface point
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+Molecular surface
+\newline 
+Solvent accessible surface
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+topograph
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+grid point
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="minipage" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+3D surface 
+\newline 
+3D contour lines
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+AFM surface scan
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\series bold 
+geom
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+vertex
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="false" rotate="false" usebox="minipage" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+Points 
+\newline 
+Lines 
+\newline 
+Triangles 
+\newline 
+Rectangles
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+\added_space_top medskip \added_space_bottom medskip 
+n.a.
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Caption
+
+
+\begin_inset LatexCommand \label{datasets}
+
+\end_inset 
+
+Datasets
+\layout Standard
+
+The five datasets implemented in DINO.
+\end_float 
+\layout Standard
+
+-----
+\layout Standard
+
+- Compacting of structural data into one of four/five datasets
+\layout Standard
+
+- Convert/Interpret structural data into 3D objects
+\layout Standard
+
+- Modify objects based on data properties
+\layout Standard
+
+- Rigid body transformation of datasets
+\layout Standard
+
+- Output of resulting visual representation into several forms
+\layout Standard
+
+- No size limitations
+\layout Standard
+
+DINO can load a wide array of structural data files, storing them as one
+ of four different datasets in its database.
+ 
+\layout Standard
+
+dataset, object and element properties
+\layout Standard
+
+object is a 3D representation of dataset
+\layout Standard
+
+The data is visualized through objects, which are a conversion / interpretation
+ of the dataset into a 3D object.
+\layout Standard
+
+The objects are the visual interface to the datasets.
+ Their appearance can be heavily modified based on properties of their or
+ another dataset.
+\layout Section
+
+Datasets and Objects
+\layout Subsection
+
+Structure
+\layout Subsubsection
+
+Overview
+\layout Standard
+
+This dataset contains individual atoms as its basic data unit.
+ In addition, it contains their organization in the molecular architecture
+ and optionally several conformations.
+\layout Standard
+
+Each atom is described by several attributes, grouped into:
+\layout Standard
+
+
+\series bold 
+Chemical:
+\layout clist
+
+atomic number from Periodic System of Elements (?)
+\layout clist
+
+element symbol from Periodic System of Elements (ele)
+\layout clist
+
+partial charge (charge)
+\layout clist
+
+van der Waals radius (vdwr)
+\layout clist
+
+crystallographic temperature factor (bfac)
+\layout clist
+
+weight or occupancy (weight)
+\layout Standard
+
+
+\series bold 
+Hierarchical:
+\layout clist
+
+unique atom number (anum)
+\layout clist
+
+atom name (IUPAC standard ?) (aname)
+\layout clist
+
+residue
+\begin_deeper 
+\layout clist
+
+number in chain (rnum)
+\layout clist
+
+name (usually an abbreviation) (rname)
+\layout clist
+
+class of macromolecule it belongs to (protein, nucleic acid , other) (class)
+\layout clist
+
+type of secondary structure element (helix, strand, coil) (rtype)
+\end_deeper 
+\layout clist
+
+chain id (chain)
+\layout clist
+
+model number (model)
+\layout Standard
+
+
+\series bold 
+Positional:
+\layout clist
+
+one or several X, Y and Z coordinates
+\layout Subsubsection
+
+Objects
+\layout Standard
+
+A structure dataset can be represented in two different ways.
+ The first, based on the chemical connectivity, connects bonds with atoms
+ and is implemented as object type 
+\family typewriter 
+connect
+\family default 
+.
+ The second, based on the poly-residual buildup of biological macromolecules,
+ connects central atoms of consecutive residues and is implemented as object
+ type 
+\family typewriter 
+trace
+\family default 
+.
+\layout Subsection
+
+Scalar Field Dataset
+\layout Standard
+
+This dataset contains a 3 dimensional grid with a scalar value at each grid
+ point.
+ The grid itself is described by its elementary unit cube with axis of length
+ 
+\begin_inset Formula \( a \)
+\end_inset 
+
+, 
+\begin_inset Formula \( b \)
+\end_inset 
+
+ and 
+\begin_inset Formula \( c \)
+\end_inset 
+
+, angles 
+\begin_inset Formula \( \alpha  \)
+\end_inset 
+
+, 
+\begin_inset Formula \( \beta  \)
+\end_inset 
+
+ and 
+\begin_inset Formula \( \gamma  \)
+\end_inset 
+
+, and an offset from the origin 
+\begin_inset Formula \( (o_{x},o_{y},o_{z}) \)
+\end_inset 
+
+.
+ Each grid point is located at a defined point in space 
+\begin_inset Formula \( (x,y,z) \)
+\end_inset 
+
+ given by its internal coordinates 
+\begin_inset Formula \( (u,v,w) \)
+\end_inset 
+
+ in combination with the grid unit cube.
+ 
+\layout Standard
+
+Three graphical representations of the scalar field dataset are provided:
+ The first is a so-called isosurface, defined as the surface made by points
+ of equal value.
+ In the second each grid point is present.
+ The third is a planar slab cutting in arbitrary orientation through the
+ grid, with the grid values mapped onto it.
+ 
+\layout Subsection
+
+Surface Dataset
+\layout Standard
+
+This dataset has a surface point as its basic element, each characterized
+ by a vertex, a normal and optionally some attributes.
+ It also contains a list of point triplets which together form a triangle
+ face.
+\layout Standard
+
+The surface dataset can be 'attached' to one or more structure datasets.
+ Each surface point is assigned the atom it is closest to, extending the
+ attributes of the surface point to include all atom properties described
+ above.
+\layout Standard
+
+There is only one graphical representation: The vertices of each point are
+ assembled according to the point triplets into an ensemble of triangles,
+ approximating a continuous surface.
+\layout Subsection
+
+Topograph Dataset
+\layout Standard
+
+This dataset consists of a 2 dimensional grid with a height value at each
+ point.
+ The location of each grid point is given by its internal coordinates 
+\begin_inset Formula \( (u,v) \)
+\end_inset 
+
+, its height value, and the elementary unit cube defined by axis 
+\begin_inset Formula \( (a,b) \)
+\end_inset 
+
+, angle 
+\begin_inset Formula \( \alpha  \)
+\end_inset 
+
+ and offset from the origin 
+\begin_inset Formula \( (o_{x},o_{y},o_{z}) \)
+\end_inset 
+
+.
+\layout Standard
+
+There are two graphical representations: A continuous surface or contour
+ lines.
+\the_end
