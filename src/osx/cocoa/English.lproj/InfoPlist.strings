@@ -2,5 +2,5 @@
 
 CFBundleName = "Dino";
 CFBundleShortVersionString = "Version 0.9";
-CFBundleGetInfoString = "Dino version 0.9, Copyright © 1998-2003 Ansgar Philippsen.";
-NSHumanReadableCopyright = "Copyright © 1998-2003 Ansgar Philippsen.";
+CFBundleGetInfoString = "Dino version 0.9, Copyright 1998-2003 Ansgar Philippsen.";
+NSHumanReadableCopyright = "Copyright 1998-2003 Ansgar Philippsen.";
