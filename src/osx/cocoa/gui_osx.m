@@ -19,17 +19,12 @@ struct GUI gui;
 static void check_redraw(void);
 extern int debug_mode,gfx_flags;
 
-#ifndef INTERNAL_COLOR
-static int init_colordb(void);
-#endif
 
+/**********************************
 
-/***********************************************
+  GUI Initialization
 
-  gui Initialization
-  ------------------
-
-*************************************************/
+************************************/
 
 int guiMainLoop()
 {
@@ -87,11 +82,11 @@ int guiInit(int argc, char **argv)
 }
 
 
-/*****************************
+/**********************************
 
   CMI Callback function
 
-*****************************/
+***********************************/
 
 void guiCMICallback(const cmiToken *t)
 {
@@ -115,12 +110,11 @@ void guiCMICallback(const cmiToken *t)
 }
 
 
-/***************************************
+/*************************************
 
-  guiTimeProc: the periodic scheduler
-  -----------
+  The periodic scheduler
 
-****************************************/
+**************************************/
 
 void guiTimeProc(void)
 {
@@ -138,15 +132,19 @@ static void check_redraw(void)
 }
 
 
+/***************************************
+
+  Update DinoGFX display and terminal
+
+****************************************/
+
 void guiSwapBuffers(void)
 {
-    glFlush(); // probably a bug in FlushBuffer...
     [[Controller dinoController] swapBuffers];
 }
 
 int guiMessage(char *m)
 {
-    //  clStrncpy(gui.message_string,m,256);
     [[Controller dinoController] updateStatusBox:[NSString stringWithCString:m]];
 
     return 0;
@@ -157,6 +155,52 @@ void guitWrite(const char *s)
     [[Controller dinoController] commandResult:s];
 }
 
+
+/***************************************
+
+  Input Events
+
+****************************************/
+
+void gui_mouse_down(int s, int x, int y)
+{
+    cmiToken t;
+    int val[5];
+
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+
+    val[0]=CMI_INPUT_MOUSE;
+    val[1]=CMI_BUTTON_PRESS;
+    val[2]=CMI_BUTTON1_MASK;
+
+    val[3]=x;
+    val[4]=y;
+
+    cmiSubmit(&t);
+//    fprintf(stderr,"down %d %d\n",val[3],val[4]);
+}
+
+void gui_mouse_up(int s, int x, int y)
+{
+    cmiToken t;
+    int val[5];
+
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+
+    val[0]=CMI_INPUT_MOUSE;
+    val[1]=CMI_BUTTON_RELEASE;
+    val[2]=CMI_BUTTON1_MASK;
+
+    val[3]=x;
+    val[4]=y;
+
+    cmiSubmit(&t);
+//    fprintf(stderr,"up %d %d\n",val[3],val[4]);
+}
 
 void gui_mouse_drag(int s, int x, int y)
 {
@@ -172,11 +216,21 @@ void gui_mouse_drag(int s, int x, int y)
     val[2]=CMI_BUTTON1_MASK;
 
     val[3]=x;
-    val[4]=-y;
+    val[4]=y;
 
     cmiSubmit(&t);
-
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -8,17 +8,15 @@
 #include <OpenGL/CGLRenderers.h>
 
 #include "cmi.h"
+#include "gui_osx.h"
 
 @interface DinoGLView : NSOpenGLView
 {
-    NSOpenGLPixelFormatAttribute	pfAttribs[32];
-    NSOpenGLPixelFormat			*nsglFormat;
-    NSOpenGLContext			*glContext;
 
 }
 
 // Overrides
-- (id)initWithFrame:(NSRect) frameRect;
+- (id)initWithFrame:(NSRect)frameRect;
 - (void)drawRect:(NSRect)rect;
 
 // These are standard methods in NSView.

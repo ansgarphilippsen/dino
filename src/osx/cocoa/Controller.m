@@ -49,18 +49,18 @@ static id dinoController;
     shellParseRaw([theCommand cString],0);
 }
 
-- (void) commandResult:(const char *)tmp
+- (void)commandResult:(const char *)tmp
 {
     [dinoCLI putText:[NSString stringWithCString:tmp]];  
 }
 
+- (void)notifyUser:(const char *)message
+{
+    [dinoCLI notifyUser:[NSString stringWithCString:message]]; 
+}
+
 //------------------------------------------------------
 // Update Display
-
-- (void)updateDisplay
-{
-    [dinoGL setNeedsDisplay:YES];
-}
 
 - (void)swapBuffers
 {
@@ -71,10 +71,5 @@ static id dinoController;
 {
     [statusBox setObjectValue:text];
 }
-
-
-//------------------------------------------------------
-// Mouse Events
-
 
 @end

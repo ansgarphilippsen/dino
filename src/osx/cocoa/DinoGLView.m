@@ -2,14 +2,26 @@
 
 @implementation DinoGLView
 
-- (id)initWithFrame:(NSRect) frame
+- (id)initWithFrame:(NSRect)frameRect
 {
+    NSOpenGLPixelFormatAttribute attrs[] = {
+        NSOpenGLPFADoubleBuffer,
+	NSOpenGLPFAAccelerated,
+	NSOpenGLPFAColorSize, 16,
+	NSOpenGLPFADepthSize, 1,
+        nil };
+    NSOpenGLPixelFormat *pixFmt;
+
+    pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+    self = [super initWithFrame:frameRect pixelFormat:pixFmt];
+
+    [[self openGLContext] makeCurrentContext];
+    
     return self;
 }
 
 - (void)drawRect:(NSRect)rect
 {
-//    fprintf(stderr,"drawRect (%p) (%fx%f)\n",[NSOpenGLContext currentContext],rect.size.width,rect.size.height);
     cmiResize((int)rect.size.width,(int)rect.size.height);
     cmiRedraw();
 }
@@ -18,27 +30,43 @@
 // mouse control
 
 - (void)mouseDown:(NSEvent *)theEvent
-{
+{ 
+    float px, py;
     NSPoint pt = [theEvent locationInWindow];
     NSRect frame = [self frame];
-    float nx, ny, ctrx, ctry;
-    nx = frame.size.width;
-    ny = frame.size.height;
     
-    // Figure the center of the view.
-    ctrx = frame.origin.x + frame.size.width * 0.5;
-    ctry = frame.origin.y + frame.size.height * 0.5;    
+    pt = [self convertPoint:pt fromView:nil];
+    px = pt.x;
+    py = frame.size.height - pt.y;
+
+    gui_mouse_down(1,(int)px,(int)py);  
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
+    float px, py;
+    NSPoint pt = [theEvent locationInWindow];
+    NSRect frame = [self frame];
 
+    pt = [self convertPoint:pt fromView:nil];
+    px = pt.x;
+    py = frame.size.height - pt.y;
+
+    gui_mouse_up(1,(int)px,(int)py);  
+ 
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
 {
-  NSPoint pt = [theEvent locationInWindow];
-  gui_mouse_drag(1,(int)pt.x,(int)pt.y);
+    float px, py;
+    NSPoint pt = [theEvent locationInWindow];
+    NSRect frame = [self frame];
+
+    pt = [self convertPoint:pt fromView:nil];
+    px = pt.x;
+    py = frame.size.height - pt.y;
+
+    gui_mouse_drag(1,(int)px,(int)py);
 }
 
 

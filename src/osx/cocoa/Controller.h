@@ -24,11 +24,10 @@
 - (void)timerControl;
 // CLI Interaction
 - (void)command:(NSString *)theCommand from:(id)sender;
-- (void)commandResult:(const char *)text;
+- (void)commandResult:(const char *)tmp;
+- (void)notifyUser:(const char *)message;
 // Update Display
-- (void)updateDisplay;
 - (void)swapBuffers;
 - (void)updateStatusBox:(NSString *)text;
-// Mouse Control 
 
 @end
