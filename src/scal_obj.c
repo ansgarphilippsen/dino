@@ -75,12 +75,12 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 
     } else if(obj->type==SCAL_SLAB) {
       for(i=0;i<obj->slab.size;i++)
-	obj->slab.tex[i*4+3]=(unsigned char)(255.0*obj->render.transparency);
+	obj->slab.tex[i*4+3]=(char)(127.0*obj->render.transparency);
       glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
       glTexImage2D(GL_TEXTURE_2D,0,
 		   GL_RGBA,
 		   obj->slab.usize,obj->slab.vsize,0,
-		   GL_RGBA,GL_UNSIGNED_BYTE,
+		   GL_RGBA,GL_BYTE,
 		   obj->slab.tex);
     }
     comRedraw();
@@ -498,10 +498,10 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		frac2/=frac1;
 	      }
 	      if(frac2>=0.0 && frac2<=1.0) {
-		obj->slab.tex[ec*4+0]=(unsigned char)(255.0*((r2-r)*frac2+r));
-		obj->slab.tex[ec*4+1]=(unsigned char)(255.0*((g2-g)*frac2+g));
-		obj->slab.tex[ec*4+2]=(unsigned char)(255.0*((b2-b)*frac2+b));
-		obj->slab.tex[ec*4+3]=(unsigned char)(255.0*obj->render.transparency);
+		obj->slab.tex[ec*4+0]=(char)(127.0*((r2-r)*frac2+r));
+		obj->slab.tex[ec*4+1]=(char)(127.0*((g2-g)*frac2+g));
+		obj->slab.tex[ec*4+2]=(char)(127.0*((b2-b)*frac2+b));
+		obj->slab.tex[ec*4+3]=(char)(127.0*obj->render.transparency);
 	      }
 	    } else {
 	      res=0;
@@ -513,10 +513,10 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		res=1;
 	      }
 	      if(res==1) {
-		obj->slab.tex[ec*4+0]=(unsigned char)(r*255.0);
-		obj->slab.tex[ec*4+1]=(unsigned char)(g*255.0);
-		obj->slab.tex[ec*4+2]=(unsigned char)(b*255.0);
-		obj->slab.tex[ec*4+3]=(unsigned char)(255.0*obj->render.transparency);
+		obj->slab.tex[ec*4+0]=(char)(r*127.0);
+		obj->slab.tex[ec*4+1]=(char)(g*127.0);
+		obj->slab.tex[ec*4+2]=(char)(b*127.0);
+		obj->slab.tex[ec*4+3]=(char)(127.0*obj->render.transparency);
 	      }
 	    }
 	  }
@@ -524,7 +524,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  glTexImage2D(GL_TEXTURE_2D,0,
 		       GL_RGBA,
 		       obj->slab.usize,obj->slab.vsize,0,
-		       GL_RGBA,GL_UNSIGNED_BYTE,
+		       GL_RGBA,GL_BYTE,
 		       obj->slab.tex);
 	}
       }
@@ -1248,7 +1248,7 @@ int scalSlabIntersect(scalObj *obj)
   glTexImage2D(GL_TEXTURE_2D,0,
 	       GL_RGBA,
 	       obj->slab.usize,obj->slab.vsize,0,
-	       GL_RGBA,GL_UNSIGNED_BYTE,
+	       GL_RGBA,GL_BYTE,
 	       obj->slab.tex);
 
   return 0;

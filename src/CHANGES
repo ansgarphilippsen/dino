@@ -1,3 +1,9 @@
+added experimental feature render solid
+
+fixed null pointer bug in dbmGetMinMax
+
+circumvent bug in texture handling for slab + grid
+
 added empty dropsite to use labels and shared LessTif lib
 
 rtc added to struct ds

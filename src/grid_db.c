@@ -387,6 +387,7 @@ int gridNew(dbmGridNode *node, char *name, int type, Set *set, Select *sel,int v
   }
   obj->type=type;
   obj->node=node;
+  obj->texname=-1;
 
   memcpy(&obj->select,sel,sizeof(Select));
 

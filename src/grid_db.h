@@ -65,12 +65,15 @@ typedef struct GRID_FIELD
   int point_count;  // =width*height
 }gridField;
 
+// do not change as TIFFGet* expects this type
+typedef unsigned char grid_t;
+
 typedef struct GRID_TEXTURE
 {
   int flag;
   char name[64];
   int width,height;
-  unsigned char *data;
+  grid_t *data;
 }gridTexture;
 
 typedef struct DBM_GRID_NODE {

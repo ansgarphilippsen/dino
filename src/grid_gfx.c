@@ -145,12 +145,15 @@ int gridDrawObj(gridObj *obj)
     } else {
       tex=&obj->node->texture[obj->map];
 
-      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       glEnable(GL_TEXTURE_2D);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-		   tex->width,tex->height, 0,
-		   GL_RGBA, GL_UNSIGNED_BYTE, tex->data);
 
+      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+      /*
+      glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB,
+		   tex->width,tex->height, 0,
+		   GL_RGBA, GL_BYTE, tex->data);
+      */      
+      glBindTexture(GL_TEXTURE_2D, obj->texname);
       glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
       glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);

@@ -111,7 +111,7 @@ int tiffReadTex(char *fn, gridTexture *tex)
   uint32 *data;
   int i,j,p1,p2;
   char message[256];
-  unsigned char *dp;
+  grid_t *dp;
 
   t=TIFFOpen(fn,"r");
 
@@ -140,15 +140,15 @@ int tiffReadTex(char *fn, gridTexture *tex)
 
   tex->width=(int)w; 
   tex->height=(int)h;
-  tex->data=Ccalloc(w*h*4,sizeof(unsigned char));
+  tex->data=Ccalloc(w*h*4,sizeof(grid_t));
   dp=tex->data;
-    for(j=0;j<h;j++) {
-  for(i=0;i<w;i++) {
+  for(j=0;j<h;j++) {
+    for(i=0;i<w;i++) {
       p1=j*(int)w+i;
-      dp[0]=(unsigned char)TIFFGetR(data[p1]);
-      dp[1]=(unsigned char)TIFFGetG(data[p1]);
-      dp[2]=(unsigned char)TIFFGetB(data[p1]);
-      dp[3]=0xff; // alpha calue set to 1
+      dp[0]=TIFFGetR(data[p1])>>1;
+      dp[1]=TIFFGetG(data[p1])>>1;
+      dp[2]=TIFFGetB(data[p1])>>1;
+      dp[3]=TIFFGetA(data[p1])>>1;
       dp+=4;
     }
   }

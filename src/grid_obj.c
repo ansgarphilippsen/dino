@@ -117,6 +117,7 @@ int gridObjComMap(gridObj *obj, int wc, char **wl)
 {
   int i,m;
   char message[256],texname[256];
+  gridTexture *tex;
   
 
   if(wc<1) {
@@ -140,6 +141,20 @@ int gridObjComMap(gridObj *obj, int wc, char **wl)
   }
 
   obj->map=m;
+
+  tex=&obj->node->texture[obj->map];
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glBindTexture(GL_TEXTURE_2D,obj->texname);
+ 
+      glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB,
+		   tex->width,tex->height, 0,
+		   GL_RGBA, GL_BYTE, tex->data);
+
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
   return 0;
 }
@@ -488,6 +503,10 @@ int gridObjRenew(gridObj *obj, Set *set, Select *sel, int vflag)
     comMessage(message);
   }
   
+  if(obj->texname>-1) {
+    glDeleteTextures(1,&obj->texname);
+  }
+  glGenTextures(1,&obj->texname);
 
   comRedraw();
 

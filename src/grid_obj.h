@@ -54,6 +54,7 @@ typedef struct GRID_OBJ {
   int step;
 
   int map;
+  unsigned int texname;
 
   float level_start,level_end, level_step;
 }gridObj;
