@@ -28,6 +28,7 @@
 #include "tiff/tiffio.h"
 #endif
 
+#include "dino.h"
 #include "gui.h"
 #include "com.h"
 #include "dbm.h"
@@ -48,6 +49,7 @@ extern struct DBM dbm;
 extern struct GFX gfx;
 extern struct GUI gui;
 extern struct GLF glf;
+extern int debug_mode;
 
 static int write_buf1[]={GLX_RGBA, 
 			 GLX_DEPTH_SIZE,12,
@@ -156,6 +158,8 @@ int writeFile(char *name, int type, int accum)
 #ifdef WRITE_FORK
   pid_t child_id;
 #endif
+  char message[256];
+
   /* get a new visinfo */
 
   visinfo=writeGetVis();
@@ -167,20 +171,27 @@ int writeFile(char *name, int type, int accum)
 //  visinfo=gui.visinfo;
 
   /* Create second GLX context */
+  debmsg("writeFile: creating second rendering context");
   if((glx_context=glXCreateContext(gui.dpy, visinfo,0, False))==NULL) {
     comMessage("\nerror while creating offline rendering context");
     return -1;
   }
  
   /* Create X pixmap */
+  sprintf(message,"writeFile: creating %dx%dx%d Pixmap",
+	  gui.win_width, gui.win_height,visinfo->depth);
+  debmsg(message);
+
   pixmap=XCreatePixmap(gui.dpy,gui.glxwindow,
 		       gui.win_width,gui.win_height,
 		       visinfo->depth);
 
   /* create GLXPixmap */
+  debmsg("writeFile: creating GLX Pixmap");
   glx_pixmap=glXCreateGLXPixmap(gui.dpy, visinfo, pixmap);
 
   /* attach to second (indirect) rendering context */
+  debmsg("writeFile: attaching GLX Pixmap to second rendering context");
   glXMakeCurrent(gui.dpy,glx_pixmap,glx_context);
 
   /* Initialize the rendering context */
@@ -257,6 +268,7 @@ int writeFile(char *name, int type, int accum)
   }
 
   /* convert pixmap to XImage */
+  debmsg("writeFile: converting Pixmap to XImage");
   image=XGetImage(gui.dpy,pixmap,
 		  0,0,gui.win_width,gui.win_height,
 		  AllPlanes,ZPixmap);
@@ -286,16 +298,20 @@ int writeFile(char *name, int type, int accum)
       break;
     }
     /* Destry XImage */
+    debmsg("writeFile: Destroying XImage");
     XDestroyImage(image);
   }
 #ifndef WRITE_FORK
   /* re-attach to direct rendering context */
+  debmsg("writeFile: re-atttaching to to direct rendering context");
   glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
 #endif
   /* destroy GLXPixmap */
+  debmsg("writeFile: destroying GLX Pixmap");
   glXDestroyGLXPixmap(gui.dpy,glx_pixmap);
 
   /* Destroy X pixmap */
+  debmsg("writeFile: destroying Pixmap");
   XFreePixmap(gui.dpy,pixmap);
 
 #ifdef WRITE_FORK
@@ -341,7 +357,7 @@ XVisualInfo * writeGetVis()
     for(i=0;i<sizeof(d);i++) {
       for(j=0;j<sizeof(c);j++) {
       	buf[depthi]=d[i];
-	      buf[rgbai+0]=c[j];
+	buf[rgbai+0]=c[j];
       	buf[rgbai+2]=c[j];
       	buf[rgbai+4]=c[j];
 	      buf[rgbai+6]=c[j];
@@ -350,6 +366,9 @@ XVisualInfo * writeGetVis()
 	      buf[accumi+4]=a[k];
 	      vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
 	      if(vis!=NULL) {
+		sprintf(message,"found visual with rgba %d, depth %d and accum %d",
+			buf[rgbai],buf[depthi],buf[accumi]);
+		debmsg(message);
 	        return vis;
 	      }
       }
