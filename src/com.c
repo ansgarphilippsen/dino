@@ -484,6 +484,7 @@ int comWorkObject(char *target, int word_count, const char **word_list)
   char obj[256];
   char message[256];
   int flag=0;
+  int errflag=0;
 
   /* 
      search word_list[0] (the name of the object) for
@@ -507,7 +508,7 @@ int comWorkObject(char *target, int word_count, const char **word_list)
 	    flag++;
 	    if(structSubCommand(&dbm.node[i].structNode,sub,
 				word_count,word_list)!=0)
-	      return -1;
+	      errflag++;
 	    break;
 	  case DBM_NODE_SCAL:
 	    break;
@@ -531,8 +532,9 @@ int comWorkObject(char *target, int word_count, const char **word_list)
 		if(rex(obj,dbm.node[i].structNode.obj[j].name)) {
 		  if(structObjCommand(&dbm.node[i].structNode,
 				      &dbm.node[i].structNode.obj[j],
-				      word_count,word_list)!=0)
-		    return -1;
+				      word_count,word_list)!=0) {
+		    errflag++;
+		  }
 		  flag++;
 		}
 	    break;
@@ -542,8 +544,9 @@ int comWorkObject(char *target, int word_count, const char **word_list)
 		if(rex(obj,dbm.node[i].scalNode.obj[j]->name)) {
 		  if(scalObjCommand(&dbm.node[i].scalNode,
 				    dbm.node[i].scalNode.obj[j],
-				    word_count,word_list)!=0)
-		    return -1;
+				    word_count,word_list)!=0) {
+		    errflag++;
+		  }
 		  flag++;
 		}
 	    break;
@@ -553,8 +556,9 @@ int comWorkObject(char *target, int word_count, const char **word_list)
 		if(rex(obj,dbm.node[i].surfNode.obj[j].name)) {
  		  if(surfObjCommand(&dbm.node[i].surfNode,
 				    &dbm.node[i].surfNode.obj[j],
-				    word_count,word_list)!=0)
-		    return -1;
+				    word_count,word_list)!=0) {
+		    errflag++;
+		  }
 		  flag++;
 		}
 	    break;
@@ -564,8 +568,9 @@ int comWorkObject(char *target, int word_count, const char **word_list)
 		if(rex(obj,dbm.node[i].gridNode.obj[j].name)) {
  		  if(gridObjCommand(&dbm.node[i].gridNode,
 				    &dbm.node[i].gridNode.obj[j],
-				    word_count,word_list)!=0)
-		    return -1;
+				    word_count,word_list)!=0) {
+		    errflag++;
+		  }
 		  flag++;
 		}
 	    break;
@@ -575,8 +580,9 @@ int comWorkObject(char *target, int word_count, const char **word_list)
 		if(rex(obj,dbm.node[i].geomNode.obj[j]->name)) {
  		  if(geomObjCommand(&dbm.node[i].geomNode,
 				    dbm.node[i].geomNode.obj[j],
-				    word_count,word_list)!=0)
-		    return -1;
+				    word_count,word_list)!=0) {
+		    errflag++;
+		  }
 		  flag++;
 		}
 	    break;
@@ -593,39 +599,47 @@ int comWorkObject(char *target, int word_count, const char **word_list)
 	  switch(dbm.node[i].common.type) {
 	  case DBM_NODE_STRUCT:
 	    if(structCommand(&dbm.node[i].structNode,
-			     word_count,word_list)!=0)
-	      return -1;
+			     word_count,word_list)!=0) {
+	      errflag++;
+	    }
 	    flag++;
 	    break;
 	  case DBM_NODE_SCAL:
 	    if(scalCommand(&dbm.node[i].scalNode,
-			   word_count,word_list)!=0)
-	      return -1;
+			   word_count,word_list)!=0) {
+	      errflag++;
+	    }
 	    flag++;
 	    break;
 	  case DBM_NODE_SURF:
 	    if(surfCommand(&dbm.node[i].surfNode,
-			   word_count,word_list)!=0)
-	      return -1;
+			   word_count,word_list)!=0) {
+	      errflag++;
+	    }
 	    flag++;
 	    break;
 	  case DBM_NODE_GRID:
 	    if(gridCommand(&dbm.node[i].gridNode,
-			   word_count,word_list)!=0)
-	      return -1;
+			   word_count,word_list)!=0) {
+	      errflag++;
+	    }
 	    flag++;
 	    break;
 	  case DBM_NODE_GEOM:
 	    if(geomCommand(&dbm.node[i].geomNode,
-			   word_count,word_list)!=0)
-	      return -1;
+			   word_count,word_list)!=0) {
+	      errflag++;
+	    }
 	    flag++;
 	    break;
 	  }
 	}
       }
   }
-  if(flag>0) {
+  if(errflag) {
+    comMessage("an error occured\n");
+    return -1;
+  } else if (flag>0) {
     return 0;
   } else {
     sprintf(message,"unknown db or object: %s\n",target);
@@ -1358,7 +1372,6 @@ int comWrite(int wc,const char **wl)
   int pov_flag=0;
   int pov_mode=WRITE_POV_DEFAULT;
   int pov_ver=WRITE_POV_V31;
-  char pov_def[256];
   struct WRITE_PARAM wparam;
 
   wparam.dump=1;
@@ -1463,16 +1476,10 @@ int comWrite(int wc,const char **wl)
       pov_ver=WRITE_POV_V35;
     } else if(!strcmp(wl[n],"-plane")) {
       pov_flag+=WRITE_POV_PLANE;
-    } else if(!strcmp(wl[n],"-def")) {
-      if(n+1>=wc) {
-	comMessage("missing parameters for -def");
-	return -1;
-      }
-      pov_flag+=WRITE_POV_DEF;
-      clStrcpy(pov_def,wl[n+1]);
-      n++;
     } else if(!strcmp(wl[n],"-box")) {
       pov_flag+=WRITE_POV_BOX;
+    } else if(!strcmp(wl[n],"-u")) {
+      pov_flag+=WRITE_POV_RAW;
     } else {
     }
     n++;
