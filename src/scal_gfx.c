@@ -276,21 +276,27 @@ int scalDrawObj(scalObj *obj)
     glEnd();
     break;
   case SCAL_SLAB:
-    glDisable(GL_LIGHTING);
-    glDisable(GL_COLOR_MATERIAL);
+    glEnable(GL_BLEND);
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glBindTexture(GL_TEXTURE_2D, obj->slab.texname);
+
+    glBegin(GL_QUADS);
+    glColor4f(1,1,1,1);
+    glTexCoord2f(0.0,0.0);
+    glVertex3dv(obj->slab.bound[0]);
+    glTexCoord2f(1.0,0.0);
+    glVertex3dv(obj->slab.bound[1]);
+    glTexCoord2f(1.0,1.0);
+    glVertex3dv(obj->slab.bound[2]);
+    glTexCoord2f(0.0,1.0);
+    glVertex3dv(obj->slab.bound[3]);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 
     glBegin(GL_LINES);
-
-    glColor3f(0.0,1.0,1.0);
-    glVertex3dv(obj->slab.bound[0]);
-    glVertex3dv(obj->slab.bound[1]);
-    glVertex3dv(obj->slab.bound[1]);
-    glVertex3dv(obj->slab.bound[2]);
-    glVertex3dv(obj->slab.bound[2]);
-    glVertex3dv(obj->slab.bound[3]);
-    glVertex3dv(obj->slab.bound[3]);
-    glVertex3dv(obj->slab.bound[0]);
-
     glColor3f(1.0,0.0,1.0);
     glVertex3d(obj->slab.center[0],
 	       obj->slab.center[1],

@@ -1362,11 +1362,11 @@ int scalSetDefault(scalObj *obj)
   obj->vr.end=1.0;
 #endif
 
-  obj->slab.usize=32;
-  obj->slab.vsize=32;
+  obj->slab.usize=128;
+  obj->slab.vsize=128;
   obj->slab.size=obj->slab.usize*obj->slab.vsize;
-  obj->slab.data=Ccalloc(obj->slab.size,sizeof(float));
-  obj->slab.tex=Ccalloc(obj->slab.size,3*sizeof(unsigned char));
+  obj->slab.data=NULL;
+  obj->slab.tex=NULL;
   obj->slab.dir[0]=0.0;
   obj->slab.dir[1]=0.0;
   obj->slab.dir[2]=1.0;

@@ -386,6 +386,18 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  obj->g=g;
 	  obj->b=b;
 	} else if(obj->type==SCAL_GRID) {
+	  if(comGetColor(val->val1,&r,&g,&b)<0) {
+	    comMessage("\nerror: set: unknown color ");
+	    comMessage(val->val1);
+	    return -1;
+	  }
+	  if(s->range_flag) {
+	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+	      comMessage("\nerror: set: unknown color ");
+	      comMessage(val->val2);
+	      return -1;
+	    }
+	  }
 	  for(ec=0;ec<obj->point_count;ec++) {
 	    f=0;
 	    if(s->select_flag) {
@@ -403,16 +415,6 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	    }
 	    if(f) {
 	      if(s->range_flag) {
-		if(comGetColor(val->val1,&r,&g,&b)<0) {
-		  comMessage("\nerror: set: unknown color ");
-		  comMessage(val->val1);
-		  return -1;
-		}
-		if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-		  comMessage("\nerror: set: unknown color ");
-		  comMessage(val->val2);
-		  return -1;
-		}
 		if(s->range.src==NULL) {
 		  // this dataset
 		  if(scalGetRangeXYZVal(obj->node,
@@ -440,11 +442,6 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		  obj->point[ec].c[2]=(b2-b)*frac2+b;
 		}
 	      } else {
-		if(comGetColor(val->val1,&r,&g,&b)<0) {
-		  comMessage("\nerror: set: unknown color ");
-		  comMessage(val->val1);
-		  return -1;
-		}
 		obj->point[ec].c[0]=r;
 		obj->point[ec].c[1]=g;
 		obj->point[ec].c[2]=b;
@@ -456,44 +453,54 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	    go through texture data and
 	    assign colors accordingly
 	  */
-	  for(ec=0;ec<obj->slab.size*obj->slab.size;ec++)
-	      if(s->range_flag) {
-		if(comGetColor(val->val1,&r,&g,&b)<0) {
-		  comMessage("\nerror: set: unknown color ");
-		  comMessage(val->val1);
-		  return -1;
-		}
-		if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-		  comMessage("\nerror: set: unknown color ");
-		  comMessage(val->val2);
-		  return -1;
-		}
-		rval=obj->slab.data[ec];
-		frac1=rval2-rval1;
-		frac2=rval-rval1;
-		if(frac1==0.0) {
-		  if(frac2==0.0)
-		    frac2=0.5;
-		  else
-		    frac2=-2.0;
-		} else {
-		  frac2/=frac1;
-		}
-		if(frac2>=0.0 && frac2<=1.0) {
-		  obj->slab.tex[ec*3+0]=(r2-r)*frac2+r;
-		  obj->slab.tex[ec*3+1]=(g2-g)*frac2+g;
-		  obj->slab.tex[ec*3+2]=(b2-b)*frac2+b;
-		}
+	  if(s->range_flag) {
+	    if(comGetColor(val->val1,&r,&g,&b)<0) {
+	      comMessage("\nerror: set: unknown color ");
+	      comMessage(val->val1);
+	      return -1;
+	    }
+	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+	      comMessage("\nerror: set: unknown color ");
+	      comMessage(val->val2);
+	      return -1;
+	    }	    
+	  } else {
+	    if(comGetColor(val->val1,&r,&g,&b)<0) {
+	      comMessage("\nerror: set: unknown color ");
+	      comMessage(val->val1);
+	      return -1;
+	    }
+	  }
+	  for(ec=0;ec<obj->slab.size;ec++) {
+	    if(s->range_flag) {
+	      rval=obj->slab.data[ec];
+	      frac1=rval2-rval1;
+	      frac2=rval-rval1;
+	      if(frac1==0.0) {
+		if(frac2==0.0)
+		  frac2=0.5;
+		else
+		  frac2=-2.0;
 	      } else {
-		if(comGetColor(val->val1,&r,&g,&b)<0) {
-		  comMessage("\nerror: set: unknown color ");
-		  comMessage(val->val1);
-		  return -1;
-		}
-		obj->slab.tex[ec*3+0]=r;
-		obj->slab.tex[ec*3+1]=g;
-		obj->slab.tex[ec*3+2]=b;
+		frac2/=frac1;
 	      }
+	      if(frac2>=0.0 && frac2<=1.0) {
+		obj->slab.tex[ec*4+0]=(unsigned char)(255.0*((r2-r)*frac2+r));
+		obj->slab.tex[ec*4+1]=(unsigned char)(255.0*((g2-g)*frac2+g));
+		obj->slab.tex[ec*4+2]=(unsigned char)(255.0*((b2-b)*frac2+b));
+	      }
+	    } else {
+	      obj->slab.tex[ec*4+0]=(unsigned char)(r*255.0);
+	      obj->slab.tex[ec*4+1]=(unsigned char)(g*255.0);
+	      obj->slab.tex[ec*4+2]=(unsigned char)(b*255.0);
+	    }
+	  }
+	  glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
+	  glTexImage2D(GL_TEXTURE_2D,0,
+		       GL_RGBA,
+		       obj->slab.usize,obj->slab.vsize,0,
+		       GL_RGBA,GL_UNSIGNED_BYTE,
+		       obj->slab.tex);
 	}
       }
       break;
@@ -584,62 +591,75 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       }
       break;
     case SCAL_PROP_SIZE:
-      if(val->val1[0]=='{') {
-	if(matExtract1Df(val->val1,3,v1)!=0) {
-	  comMessage("\nerror: set: expected {u,v,w} for size");
-	  return -1;
+      if(obj->type==SCAL_SLAB) {
+	os=atoi(val->val1);
+	if(os!=1 && os!=2 && os!=4 && os!=8 && os!=16 &&
+	   os!=32 && os!=64 && os!=128 && os!=256 && os!=512) {
+	  comMessage("\ninvalid size ignored");
+	} else {
+	  obj->slab.usize=os;
+	  obj->slab.vsize=os;
+	  scalSlab(obj,NULL);
 	}
-      } else {
-	v1[0]=atof(val->val1);
-	v1[1]=atof(val->val1);
-	v1[2]=atof(val->val1);
-      }
 
-      switch(op) {
-      case POV_OP_EQ:
-	obj->u_size=(int)v1[0];
-	obj->v_size=(int)v1[1];
-	obj->w_size=(int)v1[2]; 
-	break;
-      case POV_OP_PE:
-	obj->u_size+=(int)v1[0];
-	obj->v_size+=(int)v1[1];
-	obj->w_size+=(int)v1[2];
-	break;
-      case POV_OP_ME:
-	obj->u_size-=(int)v1[0];
-	obj->v_size-=(int)v1[1];
-	obj->w_size-=(int)v1[2]; 
-	break;
-      case POV_OP_SE:
-	obj->u_size=(int)((float)obj->u_size*v1[0]);
-	obj->v_size=(int)((float)obj->v_size*v1[1]);
-	obj->w_size=(int)((float)obj->w_size*v1[2]);
-	break;
-      case POV_OP_DE:
-	obj->u_size=(int)((float)obj->u_size/v1[0]);
-	obj->v_size=(int)((float)obj->v_size/v1[1]);
-	obj->w_size=(int)((float)obj->w_size/v1[2]);
-	break;
+      } else {
+	if(val->val1[0]=='{') {
+	  if(matExtract1Df(val->val1,3,v1)!=0) {
+	    comMessage("\nerror: set: expected {u,v,w} for size");
+	    return -1;
+	  }
+	} else {
+	  v1[0]=atof(val->val1);
+	  v1[1]=atof(val->val1);
+	  v1[2]=atof(val->val1);
+	}
+	
+	switch(op) {
+	case POV_OP_EQ:
+	  obj->u_size=(int)v1[0];
+	  obj->v_size=(int)v1[1];
+	  obj->w_size=(int)v1[2]; 
+	  break;
+	case POV_OP_PE:
+	  obj->u_size+=(int)v1[0];
+	  obj->v_size+=(int)v1[1];
+	  obj->w_size+=(int)v1[2];
+	  break;
+	case POV_OP_ME:
+	  obj->u_size-=(int)v1[0];
+	  obj->v_size-=(int)v1[1];
+	  obj->w_size-=(int)v1[2]; 
+	  break;
+	case POV_OP_SE:
+	  obj->u_size=(int)((float)obj->u_size*v1[0]);
+	  obj->v_size=(int)((float)obj->v_size*v1[1]);
+	  obj->w_size=(int)((float)obj->w_size*v1[2]);
+	  break;
+	case POV_OP_DE:
+	  obj->u_size=(int)((float)obj->u_size/v1[0]);
+	  obj->v_size=(int)((float)obj->v_size/v1[1]);
+	  obj->w_size=(int)((float)obj->w_size/v1[2]);
+	  break;
+	}
+	if(obj->u_size<2) {
+	  comMessage("\nwarning: set: u size smaller than 2, reset to 2");
+	  obj->u_size=2.0;
+	}
+	if(obj->v_size<2) {
+	  comMessage("\nwarning: set: v size smaller than 2, reset to 2");
+	  obj->v_size=2.0;
+	}
+	if(obj->w_size<2) {
+	  comMessage("\nwarning: set: w size smaller than 2, reset to 2");
+	  obj->w_size=2.0;
+	}
+	obj->u_start=obj->u_center-obj->u_size/2;
+	obj->v_start=obj->v_center-obj->v_size/2;
+	obj->w_start=obj->w_center-obj->w_size/2;
+	obj->u_end=obj->u_center+obj->u_size/2;
+	obj->v_end=obj->v_center+obj->v_size/2;
+	obj->w_end=obj->w_center+obj->w_size/2;
       }
-      if(obj->u_size<2) {
-	comMessage("\nwarning: set: u size smaller than 2, reset to 2");
-	obj->u_size=2.0;
-      }
-      if(obj->v_size<2) {
-	comMessage("\nwarning: set: v size smaller than 2, reset to 2");
-	obj->v_size=2.0;
-      }
-      if(obj->w_size<2) {
-	comMessage("\nwarning: set: w size smaller than 2, reset to 2");
-	obj->w_size=2.0;
-      }
-      obj->u_start=obj->u_center-obj->u_size/2;
-      obj->v_start=obj->v_center-obj->v_size/2;
-      obj->w_start=obj->w_center-obj->w_size/2;
-      obj->u_end=obj->u_center+obj->u_size/2;
-      obj->v_end=obj->v_center+obj->v_size/2;
-      obj->w_end=obj->w_center+obj->w_size/2;
       break;
     case SCAL_PROP_DIR:
       if(val->val1[0]=='{') {
@@ -967,15 +987,23 @@ int scalSlab(scalObj *obj, Select *sel)
   /*
     create space for the data and texture
   */
-  /*
-    obj->slab.size=obj->slab.usize*obj->slab.vsize;
 
-    obj->slab.data=Ccalloc(obj->slab.size,sizeof(float));
-    obj->slab.tex=Ccalloc(obj->slab.size,3*sizeof(unsigned char));
-  */
-  /*
-    fill data with values from the scalar dataset
-  */
+  obj->slab.size=obj->slab.usize*obj->slab.vsize;
+
+  if(obj->slab.data!=NULL) {
+    Cfree(obj->slab.data);
+    Cfree(obj->slab.tex);
+    glDeleteTextures(1,&obj->slab.texname);
+  }  
+
+  obj->slab.data=Ccalloc(obj->slab.size,sizeof(float));
+  obj->slab.tex=Ccalloc(obj->slab.size,4*sizeof(unsigned char));
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+  glGenTextures(1,&obj->slab.texname);
+
+
+  // minimal and maximal corners of cube
 
   uvw[0]=(float)obj->field->u1;
   uvw[1]=(float)obj->field->v1;
@@ -986,6 +1014,8 @@ int scalSlab(scalObj *obj, Select *sel)
   uvw[2]=(float)obj->field->w2;
   scalUVWtoXYZ(obj->field,uvw,obj->slab.corner[1]);
 
+  // calculate intersect
+
   scalSlabIntersect(obj);
 
   return 0;
@@ -993,6 +1023,7 @@ int scalSlab(scalObj *obj, Select *sel)
 
 int scalSlabIntersect(scalObj *obj)
 {
+
   int corner[][3]={
     {0,0,0},{1,0,0},{0,1,0},{1,1,0},
     {0,0,1},{1,0,1},{0,1,1},{1,1,1}
@@ -1006,6 +1037,8 @@ int scalSlabIntersect(scalObj *obj)
   double r[12],point[12][3];
   double a,b,c,d,x0,y0,z0,x1,y1,z1,x2,y2,z2,q1,q2;
   double dir[3],dist,axis1[3],axis2[3],mindist[2],maxdist[2],diff[3];
+  int u,v;
+  double fu,fv,len1,len2,xyz[3],uvw[3];
 
   matNormalize(obj->slab.dir,dir);
 
@@ -1118,17 +1151,59 @@ int scalSlabIntersect(scalObj *obj)
 
   fprintf(stderr,"\n%f %f   %f %f",
 	  mindist[0],maxdist[0],mindist[1],maxdist[1]);
+
+  len1=maxdist[1]*2;
+  len2=maxdist[0]*2;
   
   matNormalize(axis1,axis1);
   matNormalize(axis2,axis2);
 
+  // use limits to create boundary rectangle
 
   for(i=0;i<3;i++) {
-    obj->slab.bound[0][i]=obj->slab.center[i]-maxdist[0]*axis2[i]-maxdist[1]*axis1[i];
-    obj->slab.bound[1][i]=obj->slab.center[i]-maxdist[0]*axis2[i]+maxdist[1]*axis1[i];
-    obj->slab.bound[2][i]=obj->slab.center[i]+maxdist[0]*axis2[i]+maxdist[1]*axis1[i];
-    obj->slab.bound[3][i]=obj->slab.center[i]+maxdist[0]*axis2[i]-maxdist[1]*axis1[i];
+    obj->slab.bound[0][i]=obj->slab.center[i]-
+      maxdist[0]*axis2[i]-maxdist[1]*axis1[i];
+    obj->slab.bound[1][i]=obj->slab.center[i]-
+      maxdist[0]*axis2[i]+maxdist[1]*axis1[i];
+    obj->slab.bound[2][i]=obj->slab.center[i]+
+      maxdist[0]*axis2[i]+maxdist[1]*axis1[i];
+    obj->slab.bound[3][i]=obj->slab.center[i]+
+      maxdist[0]*axis2[i]-maxdist[1]*axis1[i];
   }
+
+  // fill in values from the scalar field dataset
+  for(u=0;u<obj->slab.usize;u++) {
+    fu=(double)u/(double)(obj->slab.usize-1);
+    for(v=0;v<obj->slab.vsize;v++) {
+      fv=(double)v/(double)(obj->slab.vsize-1);
+      xyz[0]=obj->slab.bound[0][0]+axis1[0]*fu*len1+axis2[0]*fv*len2;
+      xyz[1]=obj->slab.bound[0][1]+axis1[1]*fu*len1+axis2[1]*fv*len2;
+      xyz[2]=obj->slab.bound[0][2]+axis1[2]*fu*len1+axis2[2]*fv*len2;
+      scalXYZtoUVW(obj->field,xyz,uvw);
+      obj->slab.data[v*obj->slab.usize+u]=scalReadField(obj->field,
+							(int)uvw[0],
+							(int)uvw[1],
+							(int)uvw[2]);
+    }
+  }
+
+  for(i=0;i<obj->slab.size;i++) {
+    obj->slab.tex[i*4+0]=255;
+    obj->slab.tex[i*4+1]=255;
+    obj->slab.tex[i*4+2]=255;
+    obj->slab.tex[i*4+3]=255;
+  }
+
+  glBindTexture(GL_TEXTURE_2D,obj->slab.texname);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D,0,
+	       GL_RGBA,
+	       obj->slab.usize,obj->slab.vsize,0,
+	       GL_RGBA,GL_UNSIGNED_BYTE,
+	       obj->slab.tex);
 
   return 0;
 }

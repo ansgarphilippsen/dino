@@ -81,6 +81,7 @@ struct SCAL_SLAB {
   int line[144][2];
   int linec;
   double bound[4][3];
+  unsigned int texname;
 };
 
 typedef struct SCAL_OBJ {
