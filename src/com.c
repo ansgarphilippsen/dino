@@ -27,7 +27,7 @@
 #include "geom_db.h"
 #include "mat.h"
 #include "gui.h"
-#include "om.h"
+//#include "om.h"
 #include "write.h"
 #include "writePS.h"
 #include "Cmalloc.h"

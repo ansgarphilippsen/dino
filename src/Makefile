@@ -30,7 +30,7 @@ SRC= dino.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
      write.c render.c mat.c rex.c extension.c Cmalloc.c cgfx.c raster.c pov.c \
-     cubearray.c menu.c input.c writePS.c \
+     cubearray.c input.c writePS.c \
      sglib.c symm.c GLwStereo.c \
      AppPlus.c
 
@@ -44,8 +44,12 @@ endif
 
 ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
 SRC += gui_glut.c om_glut.c
-else
-SRC += gui.c om.c
+endif
+ifneq (,$(findstring SDL_GUI,$(OPTIONS)))
+SRC += gui_sdl.c om_sdl.c
+endif
+ifneq (,$(findstring X11_GUI,$(OPTIONS)))
+SRC += gui_x11.c om_x11.c
 endif
 
 ifneq (,$(findstring EXPO,$(OPTIONS)))

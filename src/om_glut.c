@@ -27,7 +27,8 @@ struct OM {
   int popup;
   char **popup_list;
   int popup_list_count;
-
+  struct OM_DS_ENTRY *dh;
+  struct OM_OBJ_ENTRY *oh;
 }om;
 
 
@@ -126,6 +127,12 @@ static char *ds_list[]={
 
 static int dsc_list=3;
 
+static char *obj_list[]={
+  "center","scene center [.%s.%s]"
+};
+
+static int objc_list=1;
+
 static void popup_redisplay()
 {
   glutSetWindow(om.popup);
@@ -158,10 +165,20 @@ static void popup_motion(int x, int y)
 static void popup_mouse(int button, int state, int x, int y)
 {
   int i;
-  char com[256];
+  char com[256],com2[256];
   if(state==GLUT_UP) {
     i=y/popup_bh;
-    sprintf(com,"%s",om.popup_list[i*2+1]);
+    if(om.dh!=NULL) {
+      if(om.oh!=NULL) {
+	sprintf(com2,"%s",om.popup_list[i*2+1]);
+	sprintf(com,com2,om.dh->name,om.oh->name);
+      } else {
+	sprintf(com2,"%s",om.popup_list[i*2+1]);
+	sprintf(com,com2,om.dh->name);
+      }
+    } else {
+      sprintf(com,"%s",om.popup_list[i*2+1]);
+    }
     glutSetWindow(gui.glut_main);
     comRawCommand(com);
     popup_close();
@@ -187,11 +204,11 @@ static void popup_expose()
   // background
   glColor3f(0.3,0.3,0.3);
   glRectd(0,0,width,height);
-  glColor3f(0.9,0.9,1.0);
+  glColor3f(0.85,0.90,0.90);
   glRectd(1,1,width-2,height-2);
 
   // hilight
-  glColor3f(0.8,0.8,0.9);
+  glColor3f(0.95,0.99,0.99);
   glRectd(1,popup_hilight*popup_bh+1,width-2,(popup_hilight+1)*popup_bh-2);
 
   // text entries
@@ -216,7 +233,7 @@ static void om_redisplay()
 
 static void om_mouse(int button, int state, int x, int y)
 {
-  int i,j;
+  int i,j,pflag=0;
   struct OM_DS_ENTRY *de,*dh;
   struct OM_OBJ_ENTRY *oe,*oh=NULL;
   char raw_com[256];
@@ -230,11 +247,51 @@ static void om_mouse(int button, int state, int x, int y)
       if(y>0 && y< om.bheight) {
 	om.popup_list=pl_scene;
 	om.popup_list_count=plc_scene;
+	om.dh=NULL;
+	om.oh=NULL;
+	pflag=1;
+      } else {
+	// one of the ds labels
+	for(i=0;i<om.ds_count;i++) {
+	  de=&om.ds[i];
+	  if(y>de->y1 && y<de->y2) {
+	    // check wether obj
+	    oh=NULL;
+	    for(j=0;j<de->oc;j++) {
+	      oe=&de->obj[j];
+	      if(y>oe->y1 && y<oe->y2) {
+		oh=oe;
+		break;
+	      }
+	    }
+	    if(oh) {
+	      // popup obj menu
+	      om.dh=de;
+	      om.oh=oh;
+	      om.popup_list=obj_list;
+	      om.popup_list_count=objc_list;
+	      pflag=1;
+	    } else {
+	      // popup ds menu
+	      om.dh=de;
+	      om.oh=NULL;
+	      om.popup_list=ds_list;
+	      om.popup_list_count=dsc_list;
+	      pflag=1;
+	    }
+	    break;
+	  }
+	}
+      }
+      if(pflag) {
 	glutSetWindow(om.popup);
-	glutPositionWindow(2,y);
-	glutReshapeWindow(om.width-2,popup_bh*om.popup_list_count);
+	glutPositionWindow(4,y);
+	glutReshapeWindow(om.width-4,popup_bh*om.popup_list_count);
 	glutShowWindow();
 	glutSetWindow(gui.glut_main);
+      } else {
+	// in case its up hide it
+	popup_close();
       }
     }
   } else if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
@@ -271,10 +328,11 @@ static void om_mouse(int button, int state, int x, int y)
 
 static void om_regenerate()
 {
-  int i,j,offset=om.bheight+1;
+  int i,j,offset=om.bheight;
   struct OM_DS_ENTRY *de;
   struct OM_OBJ_ENTRY *oe;
   for(i=0;i<om.ds_count;i++) {
+    offset+=2;
     de=&om.ds[i];
     de->x1=1;
     de->y1=offset;
@@ -373,6 +431,7 @@ int omInit()
   glutMotionFunc(popup_motion);
   glutPassiveMotionFunc(popup_motion);
   glutEntryFunc(popup_entry);
+  glutSetWindow(gui.glut_main);
   return 0;
 }
 
@@ -417,10 +476,32 @@ int omDelObj(const char *db, const char *name)
 
 int omHideObj(const char *db, const char *name)
 {
+  int i,j;
+  for(i=0;i<om.ds_count;i++) {
+    if(clStrcmp(om.ds[i].name,db)) {
+      for(j=0;j<om.ds[i].oc;j++) {
+	if(clStrcmp(om.ds[i].obj[j].name,name)) {
+	  om.ds[i].obj[j].show=0;
+	  om_redisplay();
+	}
+      }
+    }
+  }
   return 0;
 }
 
 int omShowObj(const char *db, const char *name)
 {
+  int i,j;
+  for(i=0;i<om.ds_count;i++) {
+    if(clStrcmp(om.ds[i].name,db)) {
+      for(j=0;j<om.ds[i].oc;j++) {
+	if(clStrcmp(om.ds[i].obj[j].name,name)) {
+	  om.ds[i].obj[j].show=1;
+	  om_redisplay();
+	}
+      }
+    }
+  }
   return 0;
 }

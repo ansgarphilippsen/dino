@@ -22,38 +22,18 @@ Uses GLUT
 #include <ndbm.h>
 #endif
 
-#include <X11/Xlib.h>
-#include <Xm/XmAll.h>
-#include <X11/Xmu/StdCmap.h>
-#include <X11/Intrinsic.h>
-
-#include <X11/keysym.h>
-#include <X11/extensions/XInput.h>
-#include <Xm/DragDrop.h>
-
-#ifdef EXPO
-#include <Xm/MwmUtil.h>
-#endif
-
-#ifdef SGI
-#include <X11/extensions/SGIStereo.h>
-#endif
-
 #include "dino.h"
 #include "com.h"
 #include "gui.h"
 #include "gfx.h"
 #include "extension.h"
 #include "GLwStereo.h"
-#include "om.h"
+#include "om_glut.h"
 #include "input.h"
 #include "transform.h"
 #include "cl.h"
 #include "AppPlus.h"
 
-#ifdef EXPO
-#include "autoplay.h"
-#endif
 #ifdef SPACETEC
 #include "spacetec.h"
 #endif
@@ -67,11 +47,6 @@ extern int debug_mode,gfx_mode,stereo_mode;
 #ifdef CORE_DEBUG
 extern FILE *core_debug;
 #endif
-
-static struct GUI_KEY_EVENT gui_default_key_event[]={
-    {XK_F1,"scene stereo"},
-    {0,""}
-};
 
 static void guiReshape(int width, int height)
 {
