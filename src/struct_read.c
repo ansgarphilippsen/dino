@@ -1649,6 +1649,17 @@ int pqrLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
   return 0;
 }
 
+/*
+  very simple trajectory format
+
+  header: 
+  1 int: atomcount
+  1 int: framecount
+
+  atomcount*framecount*3 data
+  (3 consecutive floats for x,y,z)
+*/
+
 int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
 {
   int an,fn,ret;
