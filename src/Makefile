@@ -36,7 +36,8 @@ SRC= dino.c \
      cubearray.c writePS.c \
      sglib.c symm.c \
      gui_terminal.c shell_raw.c shell_command.c \
-     cmi.c input.c
+     cmi.c input.c \
+     io_gromacs.c
 
 
 # add more stuff depending on OPTIONS

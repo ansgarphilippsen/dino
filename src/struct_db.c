@@ -25,6 +25,7 @@
 #include "cl.h"
 #include "xplor.h"
 #include "gui_ext.h"
+#include "io_gromacs.h"
 
 extern struct GFX gfx;
 
@@ -2680,6 +2681,8 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
       id=STRUCT_TRJ_DINO;
     } else if(!strcmp(ext,"binpos")) {
       id=STRUCT_TRJ_BINPOS;
+    } else if(!strcmp(ext,"xtc")) {
+      id=STRUCT_TRJ_XTC;
     } else {
       sprintf(message,"unknown extension %s, please specify type\n",ext);
       comMessage(message);
@@ -2694,6 +2697,8 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     id=STRUCT_TRJ_CNS;
   } else if(!strcmp(type,"dino")) {
     id=STRUCT_TRJ_DINO;
+  } else if(!strcmp(type,"xtc")) {
+    id=STRUCT_TRJ_XTC;
   } else if(!strcmp(type,"binpos")) {
     id=STRUCT_TRJ_BINPOS;
   } else {
@@ -2719,6 +2724,14 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     ret=dinoTrjRead(f,node, swap_flag);
   } else if(id==STRUCT_TRJ_BINPOS) {
     ret=binposTrjRead(f,node, swap_flag);
+  } else if(id==STRUCT_TRJ_XTC) {
+    if(cmp) {
+      comMessage("gzipped xtc files not supported\n");
+      ret=-1;
+    } else {
+      fclose(f);
+      return xtcTrjRead(filename, node, swap_flag);
+    }
   } else {
     sprintf(message,"this type is not yet supported\n");
     comMessage(message);
