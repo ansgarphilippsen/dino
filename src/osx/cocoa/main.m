@@ -20,7 +20,9 @@ int main(int argc, const char *argv[])
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath: NSHomeDirectory()];
+    if([[[NSFileManager defaultManager] currentDirectoryPath] isEqual:@"/"]){
+	[[NSFileManager defaultManager] changeCurrentDirectoryPath: NSHomeDirectory()];
+    }
        
     dinoParseArgs(argc,argv);
     cmiInit();

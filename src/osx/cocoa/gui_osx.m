@@ -14,6 +14,7 @@ Connects the Aqua user interface to Dino via CMI
 
 #import  "Controller.h"
 #include "dino.h"
+#include "gui_ext.h"
 
 struct GUI gui;
 static void check_redraw(void);
@@ -65,7 +66,7 @@ int guiInit(int argc, char **argv)
 	openGLVersion = [NSString stringWithFormat:@"OpenGL version %d.%d or above required, found %s.%s instead",1,1,major,minor];
 	return -1;
     } else {
-	openGLVersion = [NSString stringWithFormat:@"OpenGL Version %s.%s\n",major,minor];
+	openGLVersion = [NSString stringWithFormat:@"OpenGL Version %s.%s",major,minor];
     }
 
     [[Controller dinoController] notifyUser:[graphCard stringByAppendingString:openGLVersion]];
