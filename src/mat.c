@@ -567,9 +567,21 @@ int matExtractMatrix(const char *s, int *d1, int *d2, double *res)
     (*d2)=1;
     ret=0;
   } 
+  // for geom dataset
+  if(matExtract2D(s,2,3,res)==0) {
+    (*d1)=3;
+    (*d2)=2;
+    ret=0;
+  }
   if(matExtract2D(s,3,3,res)==0) {
     (*d1)=3;
     (*d2)=3;
+    ret=0;
+  }
+  // for geom dataset
+  if(matExtract2D(s,4,3,res)==0) {
+    (*d1)=3;
+    (*d2)=4;
     ret=0;
   }
   if(matExtract2D(s,4,4,res)==0) {
@@ -577,6 +589,7 @@ int matExtractMatrix(const char *s, int *d1, int *d2, double *res)
     (*d2)=4;
     ret=0;
   }
+
   return ret;
 }
 
@@ -617,7 +630,7 @@ int matExtract1D(const char *string2, int dim, double *res)
   }
   clStrcat(expr,"[\\}]?(.*)");
 
-//  fprintf(stderr,"%s\n%s\n",string,expr);
+  //  fprintf(stderr,"%s\n%s\n",string,expr);
  
   ret=regcomp(&preg,expr,REG_EXTENDED);
   if(ret>0) {
@@ -674,7 +687,7 @@ int matExtract2D(const char *string2, int dim2, int dim1, double *res)
   }
   clStrcat(expr,"[\\}]?(.*)");
 
-//  fprintf(stderr,"%s\n%s\n",string,expr);
+  //fprintf(stderr,"%s\n%s\n",string,expr);
  
   ret=regcomp(&preg,expr,REG_EXTENDED);
   if(ret>0) {

@@ -1,6 +1,6 @@
 # called from toplevel Makefile
 
-SRC =  gui_wx.cpp
+SRC =  gui_wx.cpp Shell.cpp
 MEMBERS := $(SRC:.cpp=.o)
 
 CADD = -I/usr/lib/wx/include/gtk-2.2 -I../

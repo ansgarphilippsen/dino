@@ -66,11 +66,12 @@ int shellInterpInit()
   to shell_command
 */
 
-int shellParseRaw(const char *s)
+int shellParseRaw(const char *s, int hf)
 {
   comReturn("");
   parse(s);
-  add_history(s);
+  if(hf)
+    add_history(s);
   return 0;
 }
 

@@ -1,3 +1,5 @@
+new matrix/vector extraction code for tcl support
+
 added gz support to msms files (FINALLY)
 
 automatic assignement of secondary structure present in PDB file

@@ -239,7 +239,7 @@ int geomDelObj(struct DBM_GEOM_NODE *node,char *name)
 
 int geomObjAdd(geomObj *obj,int wc, char **wl)
 {
-  int i,ele;
+  int i,k,ele;
   char message[256];
   char param[2048];
   int pc,d1,d2,pflag;
@@ -306,9 +306,8 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
 
     if(!strcmp(prop,"p")) {
       pflag=1;
-      matGetDim(val,&d1,&d2);
-      if(d1!=3) {
-	sprintf(message,"coordinates must be {x,y,z}\n");
+      if(matExtractMatrix(val,&d1,&d2,mat)<0) {
+	sprintf(message,"error in coordinates: %s (%d %d)\n",val,d1,d2);
 	comMessage(message);
 	return -1;
       }
@@ -316,30 +315,26 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
 	if(d2!=1) {
 	  comMessage("Point requires one coordinate\n");
 	  return -1;
-	} else {
-	  matExtract1Df(val,3,p);
 	}
+	for(k=0;k<3;k++) p[k]=(float)mat[k];
       } else if(ele==GEOM_ELE_LINE) {
 	if(d2!=2) {
 	  comMessage("Line requires two coordinates\n");
 	  return -1;
-	} else {
-	  matExtract2Df(val,2,3,p);
 	}
+	for(k=0;k<6;k++) p[k]=(float)mat[k];
       } else if(ele==GEOM_ELE_TRI) {
 	if(d2!=3) {
 	  comMessage("Triangle requires three coordinates\n");
 	  return -1;
-	} else {
-	  matExtract2Df(val,3,3,p);
 	}
+	for(k=0;k<9;k++) p[k]=(float)mat[k];
       } else if(ele==GEOM_ELE_RECT) {
 	if(d2!=4) {
 	  comMessage("Rectangle requires four coordinates\n");
 	  return -1;
-	} else {
-	  matExtract2Df(val,4,3,p);
 	}
+	for(k=0;k<12;k++) p[k]=(float)mat[k];
       }
     } else if(!strcmp(prop,"c")) {
       if((comGetColor(val,c+0,c+1,c+2)!=0)) {

@@ -41,7 +41,7 @@ MALLOCLIB=
 # only for linux versions
 #STATIC = 1
 
-SRC= dino.c main.c \
+SRC= dino.c \
      dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
      startup.c cl.c set.c bspline.c transform.c prop.c colors.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
@@ -151,9 +151,10 @@ export INCLUDE
 export OPTIONS
 export .SUFFIXES
 
+sinclude $(GUI)/make.addon
 
 dino: $(OBJ) gui
-	$(CC) $(OBJ) $(GUI)/gui.a $(LOPT) -o $@
+	$(CC) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT) -o $@
 	cp $@ ../bin
 	strip ../bin/$@
 

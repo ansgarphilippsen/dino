@@ -603,20 +603,28 @@ void guiRegisterUserMenu(Window w)
 
 static int set_stereo(int m) 
 {
+#ifdef SGI_STEREO
   if(m) {
     SGISwitchStereo(SGI_STEREO_ON);
   } else {
     SGISwitchStereo(SGI_STEREO_OFF);
   }
   return SGIStereoIsActive();
+#else
+  return 0;
+#endif
 }
 
 int guiQueryStereo(void)
 {
+#ifdef SGI_STEREO
   if(gui.stereo_available==SGI_STEREO_NONE)
     return 0;
   else
     return 1;
+#else
+  return 0;
+#endif
 }
 
 void guiCMICallback(const cmiToken *t)

@@ -5,7 +5,7 @@
 #define SHELL_OK 0
 
 int shellInterpInit(void);
-int shellParseRaw(const char *s);
+int shellParseRaw(const char *s, int hf);
 
 int shellSetVar(const char *name, const char *value);
 const char *shellGetVar(const char *name);

@@ -866,12 +866,12 @@ int surfAttach(dbmSurfNode *node, dbmNode *attach, int iflag)
 
 
   if(attach==NULL) {
-    comMessage("de-attaching ...\n");
+    comMessage("de-attaching ...");
     node->attach_flag=0;
     node->last_attach=NULL;
     for(i=0;i<node->vc;i++)
       node->v[i].attach_node=NULL;
-    comMessage(" done");
+    comMessage(" done\n");
     return 0;
   } else {
     node->attach_flag=1;
@@ -884,7 +884,7 @@ int surfAttach(dbmSurfNode *node, dbmNode *attach, int iflag)
 
   max_dist=node->attach_cutoff*node->attach_cutoff;
 
-  comMessage("attaching ...\n");
+  comMessage("attaching ...");
   //  restrict=&attach->structNode.restrict;
 
   node->last_attach=attach;
@@ -948,7 +948,7 @@ int surfAttach(dbmSurfNode *node, dbmNode *attach, int iflag)
     }
   }
   
-  comMessage(" done");
+  comMessage(" done\n");
   return 0;
 }
 

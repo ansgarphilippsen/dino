@@ -368,7 +368,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
 {
   int ac,f,pc;
   struct POV_VALUE *val;
-  float r,g,b,r2,g2,b2;
+  float r,g,b,r2,g2,b2,r3,g3,b3;
   float rval,p[3],frac1,frac2,rval1,rval2;
   float vmin,vmax;
   char message[256];
@@ -463,28 +463,46 @@ int structObjSet(structObj *obj, Set *set, int flag)
   }
 
 
-#ifdef WITH_NCBONDS
   /* 
-     object properties
+     pre-evaluation and object properties
   */
   for(pc=0;pc<set->pov_count;pc++) {
     val=povGetVal(&set->pov[pc],0);
     switch(set->pov[pc].id) {
+
     case STRUCT_PROP_COLOR:
-      if(obj->type==STRUCT_NBOND) {
+    case STRUCT_PROP_COLOR1:
+    case STRUCT_PROP_COLOR2:
+    case STRUCT_PROP_COLOR3:
+      if(comGetColor(val->val1,&r3,&g3,&b3)<0) {
+	sprintf(message,"error: set: unknown color %s\n",val->val1);
+	comMessage(message);
+	return -1;
+      }
+      if(set->range_flag) {
+	if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+	  sprintf(message,"error: set: unknown color %s\n",val->val2);
+	  comMessage(message);
+	  return -1;
+	}
+      }
+#ifdef WITH_NCBONDS
+      if(obj->type==STRUCT_NBOND && set->pov[pc].id==STRUCT_PROP_COLOR) {
+	/*
 	if(comGetColor(val->val1,&r,&g,&b)<0) {
 	  comMessage("error: set: unknown color \n");
 	  comMessage(val->val1);
 	  return -1;
 	}
+	*/
 	obj->nbond_prop.r=r;
 	obj->nbond_prop.g=g;
 	obj->nbond_prop.b=b;
       }
+#endif
       break;
     }
   }
-#endif
 
   for(ac=0;ac<obj->atom_count;ac++) {
     f=0;
@@ -539,7 +557,9 @@ int structObjSet(structObj *obj, Set *set, int flag)
  	case STRUCT_PROP_COLOR1:
  	case STRUCT_PROP_COLOR2:
  	case STRUCT_PROP_COLOR3:
+	  r=r3; g=g3; b=b3;
 	  if(set->range_flag) {
+	    /********
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
 	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
@@ -550,6 +570,7 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      comMessage(val->val2);
 	      return -1;
 	    }
+	    *******/
 	    if(set->range.src==NULL) {
 	      // this dataset
 	      if(structGetRangeVal(obj->node,obj->atom[ac].ap,set->range.prop,&rval)<0)
@@ -558,7 +579,6 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      if(dbmGetRangeVal(&set->range,(float*)obj->atom[ac].ap->p,&rval)<0)
 		return -1;
 	    }
-	    //	    fprintf(stderr,"%f %f %f\n",rval1,rval2,rval);
 	    frac1=rval2-rval1;
 	    frac2=rval-rval1;
 	    if(frac1==0.0) {
@@ -608,11 +628,13 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      }
 	    }
 	  } else {
+	    /**********
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
 	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
+	    ********/
 	    if(set->pov[pc].id==STRUCT_PROP_COLOR) {
 	      obj->atom[ac].prop.r=r;
 	      obj->atom[ac].prop.g=g;

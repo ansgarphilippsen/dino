@@ -227,7 +227,7 @@ static void line_submit()
 {
   write(fileno(stdout),"\n",1);
   inbuf.buf[inbuf.count]='\0';
-  shellParseRaw(inbuf.buf);
+  shellParseRaw(inbuf.buf,1);
   line_reset();
   if(!suspend)
     guitWrite(prompt);

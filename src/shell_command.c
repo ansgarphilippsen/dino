@@ -210,8 +210,9 @@ int shellParseCommand(const char **wl, int wc)
 
   } else if(clStrcmp(wl[0],"opr")) {
     // apply opr to stack
-    for(i=1;i<wc;i++)
+    for(i=1;i<wc;i++) {
       rpn_opr(wl[i]);
+    }
 
   } else if(clStrcmp(wl[0],"cd")) {
     // change directory
@@ -312,11 +313,13 @@ static int call_script(const char *filename, const char **wl, int wc)
   fstat(fileno(f),&st);
 
   s=st.st_size;
-  b=Cmalloc(s);
-  fread(b,sizeof(char),s,f);
+  b=Cmalloc(s+10);
+  t=fread(b,sizeof(char),s,f);
+  b[t]='\0';
 
   scrbuf[scrlvl].buf=b;
   scrbuf[scrlvl].max=s;
+  scrbuf[scrlvl].count=0;
 
   fclose(f);
   return 0;
@@ -367,7 +370,7 @@ static int work_script(void)
     shellOut(script_line);
   }
 
-  shellParseRaw(script_line);
+  shellParseRaw(script_line,0);
 
   if(scrbuf[scrlvl].count>=scrbuf[scrlvl].max) {
     Cfree(scrbuf[scrlvl].buf);
@@ -516,7 +519,7 @@ static void rpn_show(void)
   if(rpn_stack.count==0) {
     shellOut("stack is empty\n");
   } else {
-    for(i=0;i<rpn_stack.count-1;i++) {
+    for(i=0;i<rpn_stack.count;i++) {
       sprintf(mess,"%3d: ",i);
       shellOut(mess);
       shellOut(rpn_stack.entry[i]);
@@ -553,9 +556,8 @@ static int rpn_get_value(const char *v,double *res)
       } else if(d1==4 && d2==4) {
 	return RPN_TYPE_MATRIX4;
       } else {
-	// this should not happen
-	sprintf(message,"internal error in rpn_get_value (%d %d)\n",d1,d2);
-	comMessage(message);
+	sprintf(message,"unsupported matrix dimensions %d %d\n",d1,d2);
+	shellOut(message);
 	res[0]=0.0;
 	return RPN_TYPE_NULL;
       }
@@ -582,26 +584,51 @@ static char op_unary[][8]={
 
 static char op_result[1024];
 
-#define RPN_ERROR_S(s) \
+#define RPN_ERROR_S(s) {\
   sprintf(message,"error: operator %s not valid for scalar\n",s);\
-  comMessage(message);
+  shellOut(message);}
 
-#define RPN_ERROR_V(s) \
+#define RPN_ERROR_V(s) {\
   sprintf(message,"error: operator %s not valid for vector\n",s);\
-  comMessage(message);
+  shellOut(message);}
 
-#define RPN_ERROR_M(s) \
+#define RPN_ERROR_M(s) {\
   sprintf(message,"error: operator %s not valid for matrix\n",s);\
-  comMessage(message);
+  shellOut(message);}
+
+#define RPN_ERROR_SS(s) {\
+  sprintf(message,"error: operator %s not valid for scalar&scalar\n",s);\
+  shellOut(message);}
+
+#define RPN_ERROR_SV(s) {\
+  sprintf(message,"error: operator %s not valid for scalar&vector\n",s);\
+  shellOut(message);}
+
+#define RPN_ERROR_SM(s) {\
+  sprintf(message,"error: operator %s not valid for scalar&matrix\n",s);\
+  shellOut(message);}
+
+#define RPN_ERROR_VV(s) {\
+  sprintf(message,"error: operator %s not valid for vector&vector\n",s);\
+  shellOut(message);}
+
+#define RPN_ERROR_VM(s) {\
+  sprintf(message,"error: operator %s not valid for vector&matrix\n",s);\
+  shellOut(message);}
+
+#define RPN_ERROR_MM(s) {\
+  sprintf(message,"error: operator %s not valid for matrix&matrix\n",s);\
+  shellOut(message);}
 
 static void rpn_opr(const char *op)
 {
-  int i,op_type;
+  int i,k,op_type;
   char message[256];
   const char *val1, *val2;
-  int type1,type1s,type2,type2s,tresult;
+  int type1,type1s,type2,type2s,tresult,type3,type4;
   double fval1, fval2, fresult;
-  double res1[16],res2[16],res3[16],res4[16];
+  double res1[16],res2[16],res3[16],res4[16],res5[16];
+  int indx[16];
   
   if(clStrlen(op)==0) {
     return;
@@ -633,12 +660,17 @@ static void rpn_opr(const char *op)
   }
 
   clStrcpy(op_result,"");
+  tresult=-1;
 
   if(!op_type) {
     sprintf(message,"error: unkown stack op %s\n",op);
     shellOut(message);
   } else if(op_type==1) {
-    // unary op
+    /********* 
+     UNARY OP
+    **********/
+
+    // get value
     val1=rpn_pop();
     type1=rpn_get_value(val1,res2);
     type1s=type1;
@@ -668,136 +700,450 @@ static void rpn_opr(const char *op)
       the original values remain in res2, the result
       will be in res3
     */
-
+    // evaluate the op
     if(clStrcmp(op,"+-")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=-fval1;
-      if(type1==RPN_TYPE_VECTOR) ;
-      if(type1==RPN_TYPE_MATRIX) ;
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=-fval1; tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_VECTOR) {
+	for(k=0;k<4;k++) res3[k]=-res1[k];
+	tresult=RPN_TYPE_VECTOR;
+      }
+      if(type1==RPN_TYPE_MATRIX) {
+	for(k=0;k<16;k++) res3[k]=-res1[k];
+	tresult=RPN_TYPE_MATRIX;
+      }
     } else if(clStrcmp(op,"inc")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=fval1+1.0;
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=fval1+1.0; tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_VECTOR) {
+	for(k=0;k<4;k++) res3[k]=res1[k]+1.0;
+	tresult=RPN_TYPE_VECTOR;
+      }
+      if(type1==RPN_TYPE_MATRIX) {
+	for(k=0;k<16;k++) res3[k]=res1[k]+1.0;
+	tresult=RPN_TYPE_MATRIX;
+      }
     } else if(clStrcmp(op,"dec")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=fval1-1.0;
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=fval1-1.0; tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_VECTOR) {
+	for(k=0;k<4;k++) res3[k]=res1[k]-1.0;
+	tresult=RPN_TYPE_VECTOR;
+      }
+      if(type1==RPN_TYPE_MATRIX) {
+	for(k=0;k<16;k++) res3[k]=res1[k]-1.0;
+	tresult=RPN_TYPE_MATRIX;
+      }
     } else if(clStrcmp(op,"abs")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=fabs(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=fabs(fval1); tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_VECTOR) {
+	fresult=matCalcLen(res1); tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"log")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=log10(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=log10(fval1);  tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"ln")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=log(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=log(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"exp")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=exp(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=exp(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"sqrt")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=sqrt(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=sqrt(fval1);  tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"inv")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=1.0/fval1;
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=1.0/fval1; tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) {
+	matInverse2(res1,res3);
+	tresult=RPN_TYPE_MATRIX;
+      }
     } else if(clStrcmp(op,"sin")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=sin(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=sin(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"cos")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=cos(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=cos(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"tan")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=tan(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=tan(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"asin")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=asin(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=asin(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"acos")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=acos(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=acos(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"atan")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=atan(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=atan(fval1); tresult=RPN_TYPE_SCALAR;
+      }
       if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
       if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"int")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=floor(fval1);
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=floor(fval1); tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"float")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=fval1;
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=fval1; tresult=RPN_TYPE_SCALAR;
+      }
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) RPN_ERROR_M(op);
     } else if(clStrcmp(op,"det")) {
-      if(type1==RPN_TYPE_SCALAR) fresult=fval1;
-    }
-    if(type1==RPN_TYPE_SCALAR) {
-      sprintf(op_result,"%f",fresult);
-    }
-  } else if(op_type==2) {
-    // binary op
-    val2=rpn_pop();
-    val1=rpn_pop();
-    type1=rpn_get_value(val1,res1);
-    type2=rpn_get_value(val2,res2);
-    if(type1==RPN_TYPE_SCALAR) fval1=atof(val1);
-    if(type2==RPN_TYPE_SCALAR) fval2=atof(val1);
-
-    if(clStrcmp(op,"+")) {
-      if(type1==RPN_TYPE_SCALAR &&
-	 type2==RPN_TYPE_SCALAR) {
-	fresult=fval1+fval2;
-	tresult=RPN_TYPE_SCALAR;
+      if(type1==RPN_TYPE_SCALAR) {
+	fresult=fval1;  tresult=RPN_TYPE_SCALAR;
       }
-    } else if(clStrcmp(op,"-")) {
-      if(type1==RPN_TYPE_SCALAR &&
-	 type2==RPN_TYPE_SCALAR) {
-	fresult=fval1-fval2;
-	tresult=RPN_TYPE_SCALAR;
-      }
-    } else if(clStrcmp(op,"*")) {
-      if(type1==RPN_TYPE_SCALAR &&
-	 type2==RPN_TYPE_SCALAR) {
-	fresult=fval1*fval2;
-	tresult=RPN_TYPE_SCALAR;
-      }
-    } else if(clStrcmp(op,"/")) {
-      if(type1==RPN_TYPE_SCALAR &&
-	 type2==RPN_TYPE_SCALAR) {
-	fresult=fval1/fval2;
-	tresult=RPN_TYPE_SCALAR;
-      }
-    } else if(clStrcmp(op,"pow")) {
-      if(type1==RPN_TYPE_SCALAR &&
-	 type2==RPN_TYPE_SCALAR) {
-	fresult=pow(fval1,fval2);
-	tresult=RPN_TYPE_SCALAR;
-      }
-    } else if(clStrcmp(op,"x")) {
-      if(type1==RPN_TYPE_SCALAR &&
-	 type2==RPN_TYPE_SCALAR) {
-	fresult=0.0;
-	tresult=RPN_TYPE_SCALAR;
-      }
-    } else if(clStrcmp(op,"rmat")) {
-      if(type1==RPN_TYPE_SCALAR &&
-	 type2==RPN_TYPE_SCALAR) {
-	fresult=0.0;
+      if(type1==RPN_TYPE_VECTOR) RPN_ERROR_V(op);
+      if(type1==RPN_TYPE_MATRIX) {
+	for(i=0;i<4;i++) {
+	  for(k=0;k<4;k++) {
+	    res3[i*4+k]=res1[i*4+k];
+	  }
+	}
+	matLUdcmp(res3,indx,&fresult,res3);
+	for(i=0;i<4;i++) {
+	  fresult*=res3[i*4+i];
+	}
 	tresult=RPN_TYPE_SCALAR;
       }
     }
+    
+    // copy result in string from into op_result
     if(tresult==RPN_TYPE_SCALAR) {
       sprintf(op_result,"%f",fresult);
+    } else if(tresult==RPN_TYPE_VECTOR) {
+      if(type1s==RPN_TYPE_VECTOR3) {
+	sprintf(op_result,"{%f,%f,%f}",res3[0],res3[1],res3[2]);
+      } else if(type1s==RPN_TYPE_VECTOR4) {
+	sprintf(op_result,"{%f,%f,%f,%f}",res3[0],res3[1],res3[2],res3[3]);
+      }
+    } else if(tresult==RPN_TYPE_MATRIX) {
+      if(type1s==RPN_TYPE_MATRIX3) {
+	// convert 4x4 to 3x3
+	sprintf(op_result,"{{%f,%f,%f},{%f,%f,%f},{%f,%f,%f}}",
+		res3[0],res3[1],res3[2],
+		res3[4],res3[5],res3[6],
+		res3[8],res3[9],res3[10]);
+      } else if(type1s==RPN_TYPE_MATRIX4) {
+	sprintf(op_result,"{{%f,%f,%f,%f},{%f,%f,%f,%f},{%f,%f,%f,%f},{%f,%f,%f,%f}}",
+		res3[0],res3[1],res3[2],res3[3],
+		res3[4],res3[5],res3[6],res3[7],
+		res3[8],res3[9],res3[10],res3[11],
+		res3[12],res3[13],res3[14],res3[15]);
+      }
+      
+    }
+
+  } else if(op_type==2) {
+    /********* 
+     BINARY OP
+    **********/
+    // first value
+    val1=rpn_pop();
+    type1=rpn_get_value(val1,res3);
+    type1s=type1;
+    if(type1==RPN_TYPE_SCALAR) { 
+      fval1=res3[0];
+    } else if(type1==RPN_TYPE_VECTOR3) {
+      // store a v4 representation in res1
+      matV3toV4(res3,res1);
+      type1=RPN_TYPE_VECTOR;
+    } else if(type1==RPN_TYPE_VECTOR4) {
+      // copy the representation to res1
+      matCopyVV(res3,res1);
+      type1=RPN_TYPE_VECTOR;
+    } else if(type1==RPN_TYPE_MATRIX3) {
+      // store a m4 representation 
+      matM3toM4(res3,res1);
+      type1=RPN_TYPE_MATRIX;
+    } else if(type1==RPN_TYPE_MATRIX4) {
+      matCopyMM(res3,res1);
+      type1=RPN_TYPE_MATRIX;
+    }
+
+    // get second value
+    val2=rpn_pop();
+    type2=rpn_get_value(val2,res4);
+    type2s=type2;
+    if(type2==RPN_TYPE_SCALAR) { 
+      fval2=res4[0];
+    } else if(type2==RPN_TYPE_VECTOR3) {
+      // store a v4 representation in res2
+      matV3toV4(res4,res2);
+      type2=RPN_TYPE_VECTOR;
+    } else if(type2==RPN_TYPE_VECTOR4) {
+      // copy the representation to res2
+      matCopyVV(res4,res2);
+      type2=RPN_TYPE_VECTOR;
+    } else if(type2==RPN_TYPE_MATRIX3) {
+      // store a m4 representation 
+      matM3toM4(res4,res2);
+      type2=RPN_TYPE_MATRIX;
+    } else if(type2==RPN_TYPE_MATRIX4) {
+      matCopyMM(res4,res2);
+      type2=RPN_TYPE_MATRIX;
+    }
+
+    if(clStrcmp(op,"+")) {
+      if(type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_SCALAR) {
+	fresult=fval1+fval2;
+	tresult=RPN_TYPE_SCALAR;
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_VECTOR) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_VECTOR)) {
+	RPN_ERROR_SV(op);
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_SM(op);
+      } else if(type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_VECTOR) {
+	for(k=0;k<4;k++) res5[k]=res1[k]+res2[k];
+	tresult=RPN_TYPE_VECTOR;
+      } else if((type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_VECTOR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_VM(op);
+      } else if(type1==RPN_TYPE_MATRIX && type2==RPN_TYPE_MATRIX) {
+	for(k=0;k<16;k++) res5[k]=res1[k]+res2[k];
+	tresult=RPN_TYPE_MATRIX;
+      }
+
+    } else if(clStrcmp(op,"-")) {
+      if(type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_SCALAR) {
+	fresult=fval1-fval2;
+	tresult=RPN_TYPE_SCALAR;
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_VECTOR) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_VECTOR)) {
+	RPN_ERROR_SV(op);
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_SM(op);
+      } else if(type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_VECTOR) {
+	for(k=0;k<4;k++) res5[k]=res1[k]-res2[k];
+	tresult=RPN_TYPE_VECTOR;
+      } else if((type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_VECTOR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_VM(op);
+      } else if(type1==RPN_TYPE_MATRIX && type2==RPN_TYPE_MATRIX) {
+	for(k=0;k<16;k++) res5[k]=res1[k]-res2[k];
+	tresult=RPN_TYPE_MATRIX;
+      }
+
+    } else if(clStrcmp(op,"*")) {
+      if(type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_SCALAR) {
+	fresult=fval1*fval2;
+	tresult=RPN_TYPE_SCALAR;
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_VECTOR) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_VECTOR)) {
+	if(type1==RPN_TYPE_SCALAR)
+	  for(k=0;k<4;k++) res5[k]=fval1*res2[k];
+	else 
+	  for(k=0;k<4;k++) res5[k]=fval2*res1[k];
+	tresult=RPN_TYPE_VECTOR;
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_MATRIX)) {
+	if(type1==RPN_TYPE_SCALAR)
+	  for(k=0;k<16;k++) res5[k]=fval1*res2[k];
+	else 
+	  for(k=0;k<16;k++) res5[k]=fval2*res1[k];
+	tresult=RPN_TYPE_MATRIX;
+      } else if(type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_VECTOR) {
+	fresult=matCalcDot(res1,res2);
+	tresult=RPN_TYPE_SCALAR;
+      } else if((type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_VECTOR && type1==RPN_TYPE_MATRIX)) {
+	if(type1==RPN_TYPE_VECTOR)
+	  matMultVM(res1,res2,res5);
+	else
+	  matMultMV(res1,res2,res5);
+	tresult=RPN_TYPE_VECTOR;
+      } else if(type1==RPN_TYPE_MATRIX && type2==RPN_TYPE_MATRIX) {
+	matMultMM(res1,res2,res5);
+	tresult=RPN_TYPE_MATRIX;
+      }
+
+    } else if(clStrcmp(op,"/")) {
+      if(type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_SCALAR) {
+	fresult=fval1/fval2;
+	tresult=RPN_TYPE_SCALAR;
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_VECTOR) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_VECTOR)) {
+	RPN_ERROR_SV(op);
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_SM(op);
+      } else if(type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_VECTOR) {
+	RPN_ERROR_VV(op);
+      } else if((type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_VECTOR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_VM(op);
+      } else if(type1==RPN_TYPE_MATRIX && type2==RPN_TYPE_MATRIX) {
+	RPN_ERROR_MM(op);
+      }
+
+    } else if(clStrcmp(op,"pow")) {
+      if(type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_SCALAR) {
+	fresult=pow(fval1,fval2);
+	tresult=RPN_TYPE_SCALAR;
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_VECTOR) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_VECTOR)) {
+	RPN_ERROR_SV(op);
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_SM(op);
+      } else if(type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_VECTOR) {
+	RPN_ERROR_VV(op);
+      } else if((type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_VECTOR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_VM(op);
+      } else if(type1==RPN_TYPE_MATRIX && type2==RPN_TYPE_MATRIX) {
+	RPN_ERROR_MM(op);
+      }
+
+    } else if(clStrcmp(op,"x")) {
+      if(type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_SCALAR) {
+	RPN_ERROR_SS(op);
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_VECTOR) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_VECTOR)) {
+	RPN_ERROR_SV(op);
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_SM(op);
+      } else if(type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_VECTOR) {
+	matCalcCross(res1,res2,res5);
+	tresult=RPN_TYPE_VECTOR;
+      } else if((type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_VECTOR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_VM(op);
+      } else if(type1==RPN_TYPE_MATRIX && type2==RPN_TYPE_MATRIX) {
+	RPN_ERROR_MM(op);
+      }
+
+    } else if(clStrcmp(op,"rmat")) {
+      if(type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_SCALAR) {
+	RPN_ERROR_SS(op);
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_VECTOR) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_VECTOR)) {
+	if(type1==RPN_TYPE_SCALAR)
+	  matMakeRotMat(fval1,res2[0],res2[1],res2[2],res5);
+	else
+	  matMakeRotMat(fval2,res1[0],res1[1],res1[2],res5);
+	tresult=RPN_TYPE_MATRIX;
+      } else if((type1==RPN_TYPE_SCALAR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_SCALAR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_SM(op);
+      } else if(type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_VECTOR) {
+	RPN_ERROR_VV(op);
+      } else if((type1==RPN_TYPE_VECTOR && type2==RPN_TYPE_MATRIX) ||
+		(type2==RPN_TYPE_VECTOR && type1==RPN_TYPE_MATRIX)) {
+	RPN_ERROR_VM(op);
+      } else if(type1==RPN_TYPE_MATRIX && type2==RPN_TYPE_MATRIX) {
+	RPN_ERROR_MM(op);
+      }
+    }
+
+    // copy result in string from into op_result
+    if(tresult==RPN_TYPE_SCALAR) {
+      sprintf(op_result,"%f",fresult);
+    } else if(tresult==RPN_TYPE_VECTOR) {
+      if(type1s==RPN_TYPE_VECTOR4 || type2s==RPN_TYPE_VECTOR4) {
+	sprintf(op_result,"{%f,%f,%f,%f}",res5[0],res5[1],res5[2],res5[3]);
+      } else {
+	sprintf(op_result,"{%f,%f,%f}",res5[0],res5[1],res5[2]);
+      }
+    } else if(tresult==RPN_TYPE_MATRIX) {
+      if(type1s==RPN_TYPE_MATRIX4 || type2s==RPN_TYPE_MATRIX4) {
+	sprintf(op_result,"{{%f,%f,%f,%f},{%f,%f,%f,%f},{%f,%f,%f,%f},{%f,%f,%f,%f}}",
+		res5[0],res5[1],res5[2],res5[3],
+		res5[4],res5[5],res5[6],res5[7],
+		res5[8],res5[9],res5[10],res5[11],
+		res5[12],res5[13],res5[14],res5[15]);
+      } else {
+	// convert 4x4 to 3x3
+	sprintf(op_result,"{{%f,%f,%f},{%f,%f,%f},{%f,%f,%f}}",
+		res5[0],res5[1],res5[2],
+		res5[4],res5[5],res5[6],
+		res5[8],res5[9],res5[10]);
+      }
     }
   } else {
     // special op
     if(clStrcmp(op,"dist")) {
+      type1=rpn_get_value(rpn_pop(),res1);
+      type2=rpn_get_value(rpn_pop(),res2);
+      if(type1!=RPN_TYPE_VECTOR3 || 
+	 type2!=RPN_TYPE_VECTOR3) {
+	shellOut("error: expected 2 vectors for op dist\n");
+      } else {
+	sprintf(op_result,"%f",matCalcDistance(res1,res2));
+      }
     } else if(clStrcmp(op,"angle")) {
+      type1=rpn_get_value(rpn_pop(),res1);
+      type2=rpn_get_value(rpn_pop(),res2);
+      type3=rpn_get_value(rpn_pop(),res3);
+      if(type1!=RPN_TYPE_VECTOR3 || 	
+	 type2!=RPN_TYPE_VECTOR3 ||
+	 type3!=RPN_TYPE_VECTOR3) {
+	shellOut("error: expected 3 vectors for op angle\n");
+      } else {
+	sprintf(op_result,"%f",matCalcAngle(res1,res2,res3,res2));
+      }
     } else if(clStrcmp(op,"torsion")) {
+      type1=rpn_get_value(rpn_pop(),res1);
+      type2=rpn_get_value(rpn_pop(),res2);
+      type3=rpn_get_value(rpn_pop(),res3);
+      type4=rpn_get_value(rpn_pop(),res4);
+      if(type1!=RPN_TYPE_VECTOR3 || 
+	 type2!=RPN_TYPE_VECTOR3 ||
+	 type3!=RPN_TYPE_VECTOR3 ||
+	 type4!=RPN_TYPE_VECTOR3) {
+	shellOut("error: expected 4 vectors for op torsion\n");
+      } else {
+	sprintf(op_result,"%f",matCalcTorsion(res1,res2,res3,res4));
+      }
     }
   }
 
-  
-  
-  // place result back on stack
-  rpn_push(op_result);
+  if(tresult==-1) {
+    return;
+  } else {
+    // place result back on stack
+    rpn_push(op_result);
+  }
 }
 
 

@@ -1279,7 +1279,7 @@ float comGetProperty(dbmNode *src,const char *prop,float *pos)
 int comRawCommand(const char *c)
 {
 #ifdef NEW_SHELL
-  return shellParseRaw(c);
+  return shellParseRaw(c,0);
 #else
   shellWriteLog(c);
   return shellWorkPrompt(c,-1,NULL);

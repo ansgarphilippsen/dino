@@ -214,7 +214,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 {
   int vc,f,pc,ret;
   struct POV_VALUE *val;
-  float r,g,b,r2,g2,b2;
+  float r,g,b,r2,g2,b2,r3,g3,b3;
   float rval,p[3],frac1,frac2,rval1,rval2;
   float vmin,vmax;
   char message[256];
@@ -274,6 +274,20 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
        clStrcmp(s->pov[pc].prop,"colour") ||
        clStrcmp(s->pov[pc].prop,"col")) {
       s->pov[pc].id=SURF_PROP_COLOR;
+      val=povGetVal(&s->pov[pc],0);
+      // speed up by pre-evaluating color 
+      if(comGetColor(val->val1,&r3,&g3,&b3)<0) {
+	sprintf(message,"error: set: unknown color %s\n",val->val1);
+	comMessage(message);
+	return -1;
+      }
+      if(s->range_flag) {
+	if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+	  sprintf(message,"error: set: unknown color %s\n",val->val2);
+	  comMessage(message);
+	  return -1;
+	}
+      }
     } else {
       comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
@@ -308,7 +322,11 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	val=povGetVal(&s->pov[pc],0);
 	switch(s->pov[pc].id) {
 	case SURF_PROP_COLOR:
+	  r=r3;
+	  g=g3;
+	  b=b3;
 	  if(s->range_flag) {
+	    /***
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
 	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
@@ -319,6 +337,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	      comMessage(val->val2);
 	      return -1;
 	    }
+	    ***/
 	    if(s->range.src==NULL) {
 	      // this dataset
 	      if(!obj->node->attach_flag) {
@@ -365,11 +384,13 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	      }
 	    }
 	  } else {
+	    /***
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
 	      comMessage("error: set: unknown color \n");
 	      comMessage(val->val1);
 	      return -1;
 	    }
+	    ***/
 	    if(s->blend) {
 	      obj->vert[vc].c[0]+=r;
 	      obj->vert[vc].c[1]+=g;
@@ -544,7 +565,7 @@ int surfGenerate(surfObj *obj, Select *sel)
 
 //  surfPrepObj(obj);
 
-  sprintf(message,"%d faces",facec/3);
+  sprintf(message,"surface object has %d faces\n",facec/3);
   comMessage(message);
   
   return 0;
