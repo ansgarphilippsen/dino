@@ -1436,10 +1436,11 @@ static void extension_event(Widget w, XtPointer client_data, XEvent *event)
 {
   int i;
   XDeviceMotionEvent *device_motion;
+  static int dial_state[] = {0,0,0,0,0,0,0,0};
 
   // use CMI to transmit event!
   cmiToken t;
-  int val[5];
+  int val[5],num,diff;
 
   if(event->type == deviceMotionNotify){
     device_motion=(XDeviceMotionEvent *)event;
@@ -1484,6 +1485,18 @@ static void extension_event(Widget w, XtPointer client_data, XEvent *event)
 	    //fprintf(stderr,"\n");
 	  }
 	}
+      }
+    }
+
+    if(gui.dialsDevice!=NULL) {
+      if(device_motion->deviceid==gui.dialsDevice->device_id) {
+	num = device_motion->first_axis;
+	diff=(int)device_motion->axis_data[0]-dial_state[num];
+	dial_state[num]=(int)device_motion->axis_data[0];
+	val[0]=CMI_INPUT_DIALBOX;
+	val[3]=num;
+	val[4]=diff;
+	cmiSubmit(&t);
       }
     }
   }

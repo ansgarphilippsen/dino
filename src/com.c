@@ -111,13 +111,47 @@ static int init_command_flag=0;
 //static int tunnelvision_flag=0;
 //static int tunnelvision2(structObj *obj2,int f);
 
-int comInit()
+static void init_transform(struct COM_PARAMS *params);
+
+int comInit(struct COM_PARAMS *params)
 {
   int i,j,tc;
 #ifdef LINUX
   char joyname[128];
 #endif
 
+
+#ifdef USE_CMI
+  // register cmi callbacks
+  cmiRegisterCallback(CMI_TARGET_COM,comCMICallback);
+  cmiRegisterTimer(comTimeProc);
+#endif
+
+  com.play_count=0;
+
+  init_transform(params);
+
+  com.benchmark=0;
+
+#ifdef LINUX
+  if(jInit(joyname)==0) {
+    com.joyflag=1;
+    fprintf(stdout,"%s detected\n",joyname);
+  } else {
+    com.joyflag=0;
+  }
+#else
+  com.joyflag=0;     
+#endif  
+
+  comGenCubeLookup();
+
+
+  return 0;
+}
+
+static void init_transform(struct COM_PARAMS *params)
+{
 #ifdef USE_CMI
   struct TRANSFORM_LIST_COMMAND mouse[]={
     {0, CMI_BUTTON1_MASK, TRANS_ROTY, -0.5},
@@ -180,13 +214,7 @@ int comInit()
     {-1,0,0,0}
   };
 
-#ifdef USE_CMI
-  // register cmi callbacks
-  cmiRegisterCallback(CMI_TARGET_COM,comCMICallback);
-  cmiRegisterTimer(comTimeProc);
-#endif
-
-  com.play_count=0;
+  int i,j,tc;
 
   com.tlist_max=8;
   com.tlist=Ccalloc(com.tlist_max,sizeof(transList));
@@ -207,9 +235,22 @@ int comInit()
   com.tlist[tc].device=TRANS_MOUSE;
   com.tlist[tc].mask=0;
   strcpy(com.tlist[tc].name,"mouse");
-  for(i=0;mouse[i].axis!=-1;i++)
+  for(i=0;mouse[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&mouse[i],
 	   sizeof(struct TRANSFORM_LIST_COMMAND));
+    if(com.tlist[tc].command[i].command==TRANS_ROTX ||
+       com.tlist[tc].command[i].command==TRANS_ROTY ||
+       com.tlist[tc].command[i].command==TRANS_ROTZ) {
+      com.tlist[tc].command[i].factor*=params->mouse_rot_scale;
+    } else if(com.tlist[tc].command[i].command==TRANS_TRAX ||
+	      com.tlist[tc].command[i].command==TRANS_TRAY ||
+	      com.tlist[tc].command[i].command==TRANS_TRAZ ||
+	      com.tlist[tc].command[i].command==TRANS_SLABN ||
+	      com.tlist[tc].command[i].command==TRANS_SLABF) {
+      com.tlist[tc].command[i].factor*=params->mouse_tra_scale;
+    }
+       
+  }
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_MOUSE;
@@ -219,18 +260,43 @@ int comInit()
   com.tlist[tc].mask=GUI_CNTRL_MASK;
 #endif
   strcpy(com.tlist[tc].name,"mouse2");
-  for(i=0;mouse[i].axis!=-1;i++)
+  for(i=0;mouse[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&mouse[i],
 	   sizeof(struct TRANSFORM_LIST_COMMAND));
+    if(com.tlist[tc].command[i].command==TRANS_ROTX ||
+       com.tlist[tc].command[i].command==TRANS_ROTY ||
+       com.tlist[tc].command[i].command==TRANS_ROTZ) {
+      com.tlist[tc].command[i].factor*=params->mouse_rot_scale;
+    } else if(com.tlist[tc].command[i].command==TRANS_TRAX ||
+	      com.tlist[tc].command[i].command==TRANS_TRAY ||
+	      com.tlist[tc].command[i].command==TRANS_TRAZ ||
+	      com.tlist[tc].command[i].command==TRANS_SLABN ||
+	      com.tlist[tc].command[i].command==TRANS_SLABF) {
+      com.tlist[tc].command[i].factor*=params->mouse_tra_scale;
+    }
+  }
+
   com.tlist[tc].command[i].axis=-1;
   tc++;
   // DIALS
   com.tlist[tc].device=TRANS_DIALS;
   com.tlist[tc].mask=0;
   strcpy(com.tlist[tc].name,"dials");
-  for(i=0;dials[i].axis!=-1;i++)
+  for(i=0;dials[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&dials[i],
 	   sizeof(struct TRANSFORM_LIST_COMMAND));
+    if(com.tlist[tc].command[i].command==TRANS_ROTX ||
+       com.tlist[tc].command[i].command==TRANS_ROTY ||
+       com.tlist[tc].command[i].command==TRANS_ROTZ) {
+      com.tlist[tc].command[i].factor*=params->dials_rot_scale;
+    } else if(com.tlist[tc].command[i].command==TRANS_TRAX ||
+	      com.tlist[tc].command[i].command==TRANS_TRAY ||
+	      com.tlist[tc].command[i].command==TRANS_TRAZ ||
+	      com.tlist[tc].command[i].command==TRANS_SLABN ||
+	      com.tlist[tc].command[i].command==TRANS_SLABF) {
+      com.tlist[tc].command[i].factor*=params->dials_tra_scale;
+    }
+  }
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_DIALS;
@@ -240,18 +306,42 @@ int comInit()
   com.tlist[tc].mask=GUI_CNTRL_MASK;
 #endif
   strcpy(com.tlist[tc].name,"dials2");
-  for(i=0;dials[i].axis!=-1;i++)
+  for(i=0;dials[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&dials[i],
 	   sizeof(struct TRANSFORM_LIST_COMMAND));
+    if(com.tlist[tc].command[i].command==TRANS_ROTX ||
+       com.tlist[tc].command[i].command==TRANS_ROTY ||
+       com.tlist[tc].command[i].command==TRANS_ROTZ) {
+      com.tlist[tc].command[i].factor*=params->dials_rot_scale;
+    } else if(com.tlist[tc].command[i].command==TRANS_TRAX ||
+	      com.tlist[tc].command[i].command==TRANS_TRAY ||
+	      com.tlist[tc].command[i].command==TRANS_TRAZ ||
+	      com.tlist[tc].command[i].command==TRANS_SLABN ||
+	      com.tlist[tc].command[i].command==TRANS_SLABF) {
+      com.tlist[tc].command[i].factor*=params->dials_tra_scale;
+    }
+  }
   com.tlist[tc].command[tc].axis=-1;
   tc++;
   // SPACEBALL
   com.tlist[tc].device=TRANS_SPACEBALL;
   com.tlist[tc].mask=0;
   strcpy(com.tlist[tc].name,"spaceball");
-  for(i=0;spaceball[i].axis!=-1;i++)
+  for(i=0;spaceball[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&spaceball[i],
 	   sizeof(struct TRANSFORM_LIST_COMMAND));
+    if(com.tlist[tc].command[i].command==TRANS_ROTX ||
+       com.tlist[tc].command[i].command==TRANS_ROTY ||
+       com.tlist[tc].command[i].command==TRANS_ROTZ) {
+      com.tlist[tc].command[i].factor*=params->sb_rot_scale;
+    } else if(com.tlist[tc].command[i].command==TRANS_TRAX ||
+	      com.tlist[tc].command[i].command==TRANS_TRAY ||
+	      com.tlist[tc].command[i].command==TRANS_TRAZ ||
+	      com.tlist[tc].command[i].command==TRANS_SLABN ||
+	      com.tlist[tc].command[i].command==TRANS_SLABF) {
+      com.tlist[tc].command[i].factor*=params->sb_tra_scale;
+    }
+  }
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist[tc].device=TRANS_SPACEBALL;
@@ -261,31 +351,26 @@ int comInit()
   com.tlist[tc].mask=GUI_CNTRL_MASK;
 #endif
   strcpy(com.tlist[tc].name,"spaceball2");
-  for(i=0;spaceball[i].axis!=-1;i++)
+  for(i=0;spaceball[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&spaceball[i],
 	   sizeof(struct TRANSFORM_LIST_COMMAND));
+    if(com.tlist[tc].command[i].command==TRANS_ROTX ||
+       com.tlist[tc].command[i].command==TRANS_ROTY ||
+       com.tlist[tc].command[i].command==TRANS_ROTZ) {
+      com.tlist[tc].command[i].factor*=params->sb_rot_scale;
+    } else if(com.tlist[tc].command[i].command==TRANS_TRAX ||
+	      com.tlist[tc].command[i].command==TRANS_TRAY ||
+	      com.tlist[tc].command[i].command==TRANS_TRAZ ||
+	      com.tlist[tc].command[i].command==TRANS_SLABN ||
+	      com.tlist[tc].command[i].command==TRANS_SLABF) {
+      com.tlist[tc].command[i].factor*=params->sb_tra_scale;
+    }
+  }
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist_count=tc;
-
-  com.benchmark=0;
-
-#ifdef LINUX
-  if(jInit(joyname)==0) {
-    com.joyflag=1;
-    fprintf(stdout,"%s detected\n",joyname);
-  } else {
-    com.joyflag=0;
-  }
-#else
-  com.joyflag=0;     
-#endif  
-
-  comGenCubeLookup();
-
-
-  return 0;
 }
+
 
 /*
   comWorkPrompt gets a list of words from the shell

@@ -50,10 +50,17 @@ struct GLOBAL_COM {
   
 };
 
+struct COM_PARAMS {
+  float mouse_rot_scale,mouse_tra_scale;
+  float sb_rot_scale, sb_tra_scale;
+  float dials_rot_scale,dials_tra_scale;
+  int stereo_flag;
+};
+
 enum  {COM_PLAY_ON,
        COM_PLAY_OFF};
 
-int comInit(void);
+int comInit(struct COM_PARAMS* cp);
 int comWorkPrompt(int word_count, const char ** word_list);
 void comWorkGfxCommand(int word_count, const char ** word_list);
 int comWorkObject(char *,int, const char **);

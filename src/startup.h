@@ -1,6 +1,8 @@
 #ifndef _STARTUP_H
 #define _STARTUP_H
 
-int load_startup();
+#include "com.h"
+
+int load_startup(struct COM_PARAMS *p);
 
 #endif

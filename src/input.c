@@ -75,6 +75,11 @@ static void spcb_func(int state, int axis, int value)
   comTransform(TRANS_SPACEBALL, state, axis, value);
 }
 
+static void dials_func(int state, int axis, int value)
+{
+  comTransform(TRANS_DIALS, state, axis, value);
+}
+
 static void keyb_func(int state, int key)
 {
   unsigned char k;
@@ -132,5 +137,9 @@ void inputProcess(cmiToken *t)
     break;
   case CMI_INPUT_SPACEBALL:
     spcb_func(ip[2],ip[3],ip[4]);
+    break;
+  case CMI_INPUT_DIALBOX:
+    dials_func(ip[2],ip[3],ip[4]);
+    break;
   }
 }

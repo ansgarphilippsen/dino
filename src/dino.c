@@ -163,14 +163,36 @@ int dinoParseArgs(int argc, char **argv)
   }
   return 0;
 }
+
+static void reset_com_params(struct COM_PARAMS *p)
+{
+#ifdef SGI
+  p->stereo_flag=1;
+#else
+  p->stereo_flag=0;
+#endif
+  p->mouse_rot_scale=1.0;
+  p->mouse_tra_scale=1.0;
+  p->sb_rot_scale=1.0;
+  p->sb_tra_scale=1.0;
+  p->dials_rot_scale=1.0;
+  p->dials_tra_scale=1.0;
+}
  
 int dinoMain(int argc,char **argv)
 {
   int i;
   char expr[256];
+  struct COM_PARAMS com_params;
+
+  reset_com_params(&com_params);
+
+  if(startup_flag) {
+    load_startup(&com_params);
+  }
 
   debmsg("calling comInit");
-  if(comInit()<0) return -1;
+  if(comInit(&com_params)<0) return -1;
   //debmsg("calling gfxInit");
   //if(gfxInit()<0) return -1;
   debmsg("calling dbmInit");
@@ -185,9 +207,6 @@ int dinoMain(int argc,char **argv)
   shellInit((shell_callback)comWorkPrompt,logfile);
 #endif
 
-  if(startup_flag) {
-    load_startup();
-  }
 
   /*
   for(i=0;i<filec;i++) {

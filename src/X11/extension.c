@@ -115,7 +115,7 @@ XDevice *extDialBoxInit(Display *dpy)
     for(i=0;i<numDev;i++){
       device=&deviceInfo[i];
       any=(XAnyClassPtr)device->inputclassinfo;
-      if(!strncmp(device->name,"dial+buttons",strlen("dial+buttons"))){
+      if(!strncmp(device->name,"dial",strlen("dial"))){
 	v=NULL;
 	b=NULL;
 	for(j=0;j<device->num_classes;j++){
@@ -139,7 +139,7 @@ XDevice *extDialBoxInit(Display *dpy)
 	retdev=XOpenDevice(dpy,device->id);
 	
 	if(retdev!=NULL){
-	  XFreeDeviceList(deviceInfo);
+	  //XFreeDeviceList(deviceInfo);
 	  gui.xiEventBase=eventBase;
 	  break;
 	}	      

@@ -3,6 +3,8 @@
 
   all global structs can be modified
   by a resource file upon startup
+
+  TODO!!!
   
   > keywords:
 
@@ -65,7 +67,7 @@ extern int debug_mode;
 
 static int exec_flag;
 
-static int eval_line(int argc, char **argv)
+static int eval_line(int argc, char **argv, struct COM_PARAMS *params)
 {
   int i;
   static char message[256];
@@ -99,25 +101,35 @@ static int eval_line(int argc, char **argv)
       return -1;
     }
   } else {
-    /*
-      stereo-mode 
-      dials-device
-      gfx-geometry
-      menu-geometry
-    */
-
-    // unknown keyword
-    /* ignore for now
-      sprintf(message,"startup: unknown keyword %s\n",argv[0]);
-      comMessage(message);
-      return -1;
-    */
+    if(clStrcmp(argv[0],"stereo")) {
+      if(clStrcmp(argv[1],"1") ||
+	 clStrcmp(argv[1],"on")) {
+	params->stereo_flag=1;
+      } else {
+	params->stereo_flag=1;
+      }
+    } else if(clStrcmp(argv[0],"mouse_rot_scale")) {
+      params->mouse_rot_scale = atof(argv[1]);
+    } else if(clStrcmp(argv[0],"mouse_tra_scale")) {
+      params->mouse_tra_scale = atof(argv[1]);
+    } else if(clStrcmp(argv[0],"sb_rot_scale")) {
+      params->sb_rot_scale = atof(argv[1]);
+    } else if(clStrcmp(argv[0],"sb_tra_scale")) {
+      params->sb_tra_scale = atof(argv[1]);
+    } else if(clStrcmp(argv[0],"dials_rot_scale")) {
+      params->dials_rot_scale = atof(argv[1]);
+    } else if(clStrcmp(argv[0],"dials_tra_scale")) {
+      params->dials_tra_scale = atof(argv[1]);
+    } else {
+      // unknown keyword
+      //fprintf(stderr,"startup: unknown keyword ignored: %s\n",argv[0]);
+    }
   }
   
   return 0;
 }
 
-static int parse_line(char *s)
+static int parse_line(char *s, struct COM_PARAMS *params)
 {
   char delim[]=" \t\n";
   int argc=0;
@@ -135,8 +147,9 @@ static int parse_line(char *s)
     argv[argc++]=strtok(s,delim);
     while((p=strtok(NULL,delim))!=NULL)
       argv[argc++]=p;
-    
-    return eval_line(argc,argv);
+    if(clStrlen(argv[0])>0) {
+      return eval_line(argc,argv, params);
+    }
   }
   
   
@@ -148,7 +161,7 @@ static int parse_line(char *s)
   called from main()
 */
 
-int load_startup()
+int load_startup(struct COM_PARAMS *params)
 {
   FILE *f;
   char path[256],*line;
@@ -178,7 +191,7 @@ int load_startup()
   // read in lines and parse them
   exec_flag=0;
   while (fgets(line,511,f)!=NULL) {
-    if(parse_line(line)<0) {
+    if(parse_line(line, params)<0) {
       ret=-1;
       break;
     }
