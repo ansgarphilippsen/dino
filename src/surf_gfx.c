@@ -12,6 +12,12 @@
 
 #include "surf_db.h"
 
+#ifdef RENDER_SOLID
+#include <math.h>
+#include "gfx.h"
+extern struct GFX gfx;
+#endif
+
 int surfDraw(dbmSurfNode *node, int f)
 {
   int j;
@@ -64,6 +70,9 @@ int surfDrawObj(surfObj *obj)
   float t=obj->render.transparency;
   float dummy;
   int tfc;
+#ifdef RENDER_SOLID
+  float rw,rh,rz;
+#endif
 
   /*
     determined by color
@@ -173,18 +182,44 @@ int surfDrawObj(surfObj *obj)
     glStencilFunc(GL_NOTEQUAL,0x0,0x1);
     glPushMatrix();
     glLoadIdentity();
+
+    rh=2.0*fabs(tan(gfx.fovy)*gfx.transform.slabn);
+    rw=rh*gfx.aspect;
+    rz=-gfx.transform.slabn-0.1;
+
+    /*
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
     gluOrtho2D(0,1,0,1);
-    glDisable(GL_DEPTH_TEST);
+    */
+
+    //    glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
+
+    glBegin(GL_TRIANGLE_STRIP);
     glColor3fv(obj->render.solidc);
+    glNormal3f(0,0,-1);
+    glVertex3f(-rw,-rh,rz);
+    glVertex3f(rw,-rh,rz);
+    glVertex3f(-rw,rh,rz);
+    glVertex3f(rw,rh,rz);
+    glEnd();
+
+    /*
+    glTranslated(0.0,0.0,rz);
+    glRectf(-rw,-rh,rw,rh);
+    */
+
+    /*
     glRectd(0,0,1,1);
-    glEnable(GL_DEPTH_TEST);
+    */
+
+    //    glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
+
     glPopMatrix();
     glDisable(GL_STENCIL_TEST);
   }
