@@ -63,7 +63,7 @@ typedef struct DBM_SURF_NODE {
   cubeArray *ca;
   int smode;
 
-  PropTable pt;
+  PropxTable pt;
   
   float cprop_min[PROP_MAX_VALUES],cprop_max[PROP_MAX_VALUES];
 

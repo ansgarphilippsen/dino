@@ -209,8 +209,8 @@ int adsRead(FILE *f, union DBM_NODE *node)
   int middlec;
   float n1[3],n2[3],diff1[3],diff2[3];
   int ncount;
-  PropTable propt;
-  Prop prop;
+  PropxTable propt;
+  Propx prop;
   char propn[64];
   int propc,propi;
   float cprop[PROP_MAX_VALUES];

@@ -1,7 +1,7 @@
 #include "prop.h"
 #include "cl.h"
 
-int propReset(PropTable *t)
+int propReset(PropxTable *t)
 {
   int i;
   for(i=0;i<PROP_MAX_VALUES;i++) {
@@ -11,7 +11,7 @@ int propReset(PropTable *t)
   return 0;
 }
 
-int propAddName(PropTable *t, char *s)
+int propAddName(PropxTable *t, char *s)
 {
   int i;
   for(i=0;i<PROP_MAX_VALUES;i++) {
@@ -28,7 +28,7 @@ int propAddName(PropTable *t, char *s)
 }
 
 
-int propGetIndex(PropTable *t, char *s)
+int propGetIndex(PropxTable *t, char *s)
 {
   int i;
   for(i=0;i<PROP_MAX_VALUES;i++) {
@@ -38,7 +38,7 @@ int propGetIndex(PropTable *t, char *s)
   return -1;
 }
 
-float propGetValue(Prop *p, int n)
+float propGetValue(Propx *p, int n)
 {
   if(n<0 && n>PROP_MAX_VALUES)
     return 0.0;

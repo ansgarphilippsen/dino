@@ -6,17 +6,17 @@
 typedef struct PROP_TABLE {
   char s[PROP_MAX_VALUES][64];
   int n[PROP_MAX_VALUES];
-}PropTable;
+}PropxTable;
 
 typedef struct PROP {
   float v[PROP_MAX_VALUES];
-}Prop;
+}Propx;
 
-int propReset(PropTable *);
+int propReset(PropxTable *);
 
-int propAddName(PropTable *, char *);
+int propAddName(PropxTable *, char *);
 
-int propGetIndex(PropTable *, char *);
-float propGetValue(Prop *, int n);
+int propGetIndex(PropxTable *, char *);
+float propGetValue(Propx *, int n);
 
 #endif
