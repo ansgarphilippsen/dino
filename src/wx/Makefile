@@ -1,6 +1,6 @@
 # called from toplevel Makefile
 
-SRC =  gui_wx.cpp 
+SRC =  gui_wx.cpp om_wx.cpp
 MEMBERS := $(SRC:.cpp=.o)
 
 CADD = $(shell wx-config --cppflags) -I../ -I$(HOME)/sft/include

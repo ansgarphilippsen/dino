@@ -75,7 +75,7 @@ public:
     }    
   }
 
-  virtual void OnChar(const wxKeyEvent& e);
+  virtual void OnKeyPress(wxKeyEvent& e);
 
   virtual void OnTimer() {
     cmiTimer();
