@@ -38,7 +38,9 @@
 #endif
 
 extern struct SCENE scene;
-//extern struct GUI gui;
+#ifndef USE_CMI
+extern struct GUI gui;
+#endif
 struct GFX gfx;
 
 extern int debug_mode,gfx_mode;
@@ -714,6 +716,7 @@ int gfxResizeEvent(void)
   return 0;
 }
 
+#ifdef XXX_DEPTH_BUFFER
 int gfxSaveDepthBuffer(void)
 {
   //  fprintf(stderr,"r[");
@@ -753,6 +756,7 @@ int gfxRestoreDepthBuffer(void)
 //  fprintf(stderr,"]\n");
   return 0;
 }
+#endif
 
 // under development TODO later
 

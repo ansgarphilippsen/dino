@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef OSX
 #include <malloc.h>
+#endif
 #include <string.h>
 
 #include "render.h"

@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include <GL/gl.h>
-#include <GL/glx.h>
+//#include <GL/glx.h>
 
 #include "cgfx.h"
 #include "Cmalloc.h"

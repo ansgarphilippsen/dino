@@ -133,7 +133,7 @@ clean:
 	rm -f *.o dino *~ core #* .depend
 
 depend:
-	gcc -MM $(INCLUDE) $(SRC) > .depend
+	$(CC) -MM $(INCLUDE) $(SRC) > .depend
 
 all: clean depend dino
 

@@ -1374,7 +1374,11 @@ int comWrite(int wc,char **wl)
       } else if(clStrchr(scal,'x')) {
 	comMessage("\nnot implemented yet");
       } else {
+#ifdef USE_CMI
 	scale=atof(scal)/(float)gfx.win_width;
+#else
+	scale=atof(scal)/(float)gui.win_width;
+#endif
 	/*
 	sprintf(message,"\nwrite: specify %% for scale value (e.g. 200%%)");
 	comMessage(message);

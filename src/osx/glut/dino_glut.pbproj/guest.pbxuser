@@ -1,0 +1,40 @@
+// !$*UTF8*$!
+{
+	08FB7793FE84155DC02AAC07 = {
+		activeBuildStyle = 014CEA520018CE5811CA2923;
+		activeTarget = 08FB779FFE84155DC02AAC07;
+		addToTargets = (
+			08FB779FFE84155DC02AAC07,
+		);
+		wantsIndex = 1;
+		wantsSCM = -1;
+	};
+	08FB779FFE84155DC02AAC07 = {
+		activeExec = 0;
+		targetExecs = {
+			macosx = (
+				F631A8470247F05301FB7A35,
+			);
+		};
+	};
+	F631A8470247F05301FB7A35 = {
+		activeArgIndex = 2147483647;
+		argumentStrings = (
+		);
+		debuggerPlugin = GDBDebugging;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		isa = PBXExecutable;
+		shlibInfoDictList = (
+		);
+		sourceDirectories = (
+		);
+	};
+	F631A8790247F26F01FB7A35 = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{61, 197}, {750, 502}}";
+		};
+	};
+}

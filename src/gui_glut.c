@@ -15,6 +15,9 @@ Uses GLUT
 #ifdef LINUX
 #include <gdbm.h>
 #endif
+#ifdef OSX
+#include <ndbm.h>
+#endif
 #ifdef SGI
 #include <ndbm.h>
 #endif
@@ -452,77 +455,11 @@ static void guiStatusExpose()
   glutSetWindow(gui.glut_main);
 }
 
+
+// needs to be implemented for GLUT! previously required X11
 static int guiInitRGB()
 {
-#ifdef LINUX
-  char *rgbfile1;
-  FILE *rgbfile2;
-  char rgb_line[256],*rgb_sep,*rgb_nam;
-  unsigned short usp[6];
-  datum key,content;
-  GDBM_FILE gdbm_f;
-#endif
-
-  debmsg("guiInit: loading rgb database");
-#ifdef LINUX
-  strcpy(gui.gdbm_tmpfile,"");
-  rgbfile1=tmpnam(NULL);
-  rgbfile2=fopen("/usr/lib/X11/rgb.txt","r");
-  if(rgbfile2==NULL) {
-    fprintf(stderr,"cannot find rgb.txt\n");
-    return -1;
-  } else {
-    strcpy(gui.gdbm_tmpfile,rgbfile1);
-    gdbm_f=gdbm_open(rgbfile1,0,GDBM_NEWDB,0600,0);
-    if(gdbm_f==NULL) {
-      fprintf(stderr,"cannot open rgb tmp file %s\n",rgbfile1);
-      return -1;
-    }
-    fgets(rgb_line,256,rgbfile2); /* first line is comment */
-    do {
-      fgets(rgb_line,256,rgbfile2);
-      if (rgb_line[0]!='!' && rgb_line[0]!='\n') {
-	rgb_sep=strchr(rgb_line,'\t');
-	if(rgb_sep!=NULL) {
-	  rgb_sep[0]='\0';
-	  rgb_nam=strrchr(rgb_sep+1,'\t')+1;
-	  if(rgb_nam!=NULL) {
-	    rgb_nam[strlen(rgb_nam)-1]='\0';
-	    rgb_line[3]='\0';
-	    rgb_line[7]='\0';
-	    rgb_line[11]='\0';
-	    usp[0]=(unsigned short)atoi(rgb_line+0)*256;
-	    usp[1]=(unsigned short)atoi(rgb_line+4)*256;
-	    usp[2]=(unsigned short)atoi(rgb_line+8)*256;
-	    key.dptr=rgb_nam;
-	    key.dsize=strlen(rgb_nam);
-	    content.dptr=(char *)usp;
-	    content.dsize=sizeof(usp);
-	    gdbm_store(gdbm_f,key,content,GDBM_REPLACE);
-	  }
-	}
-      }
-    } while(!feof(rgbfile2));
-    gdbm_close(gdbm_f);
-  }
-  gui.cdbm=gdbm_open(rgbfile1,0,GDBM_READER,0,0);
-  
-#endif
-#ifdef SGI
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef DEC
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef SUN
-  gui.cdbm=dbm_open("/usr/openwin/lib/rgb",0,0);
-#endif
-
-  if(gui.cdbm==NULL) {
-    fprintf(stderr,"rgb color database not found\n");
-    return -1;
-  }
-  return 0;
+  return -1;
 }
 
 #ifdef USE_CMI
@@ -660,52 +597,14 @@ int guiMainLoop()
 
 ************************/
 
+// ALSO needs to be rewritten to work with GLUT
+
 int guiResolveColor(const char *oname, float *r, float *g, float *b)
 {
-  int i;
-  datum key, content;
-  unsigned short rr,gg,bb;
-  unsigned short usp[6];
-  char name[256];
-
-  strncpy(name,oname,255);
-
-  for(i=0;i<strlen(name);i++)
-    if(name[i]=='_') name[i]=' ';
-
-  key.dptr=name;
-  key.dsize=strlen(name);
- 
-  if(gui.cdbm==NULL)
+    (*r)=0.0;
+    (*g)=0.0;
+    (*b)=0.0;
     return -1;
-
-#ifdef LINUX
-  content=gdbm_fetch(gui.cdbm,key);
-#endif
-#ifdef SGI
-  content=dbm_fetch(gui.cdbm,key);
-#endif
-#ifdef DEC
-  content=dbm_fetch(gui.cdbm,key);
-#endif
-#ifdef SUN
-  content=dbm_fetch(gui.cdbm,key);
-#endif
-
-  if(content.dptr==NULL)
-    return -1;
-
-  memcpy(usp,content.dptr,6);
-
-  rr=usp[0];
-  gg=usp[1];
-  bb=usp[2];
-
-  (*r)=(float)rr/65535.0;
-  (*g)=(float)gg/65535.0;
-  (*b)=(float)bb/65535.0;
-
-  return 0;
 }
 
 /***********************************

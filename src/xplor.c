@@ -3,7 +3,6 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-#include <malloc.h>
 
 #include "dino.h"
 #include "scal_db.h"

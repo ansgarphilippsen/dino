@@ -2,6 +2,12 @@
 #include <tiff.h>
 #include <tiffio.h>
 #endif
+
+#ifdef OSX
+#include <tiff.h>
+#include <tiffio.h>
+#endif
+
 #ifdef SGI
 #include "tiff/tiff.h"
 #include "tiff/tiffio.h"

@@ -12,6 +12,11 @@
 #define sqrtf(x) ((float)(sqrt((double)(x))))
 #endif
 
+#ifdef OSX
+#define sqrtf(x) ((float)(sqrt((double)(x))))
+#endif
+
+
 /**************************************************
 
   the linear array double[16] defines a matrix:

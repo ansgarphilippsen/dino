@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <signal.h>
-#include <poll.h>
+//#include <poll.h> OSX
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/stat.h>
@@ -2010,6 +2010,9 @@ int shellWorkPrompt(const char *raw_prompt2, int pos, char **result)
   int wc;
   char var[256];
 #ifdef LINUX
+  int var_c;
+#endif
+#ifdef OSX
   int var_c;
 #endif
 #ifdef SGI

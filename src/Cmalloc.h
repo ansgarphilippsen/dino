@@ -1,15 +1,11 @@
-#ifdef STDMALLOC
-
-#include <malloc.h>
-
-#else
+#ifndef CMALLOC_H
+#define CMALLOC_H
 
 #include <stdlib.h>
 
+#ifndef OSX
+#include <malloc.h>
 #endif
-
-#ifndef CMALLOC_H
-#define CMALLOC_H
 
 void *Cmalloc(size_t size);
 void *Ccalloc(size_t nelem, size_t elsize);
