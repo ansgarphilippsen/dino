@@ -7,6 +7,7 @@ using namespace std;
 
 #include "dino.h"
 #include "gfx.h"
+#include "gui_terminal.h"
 
 #include "glix/app.h"
 #include "glix/glcanvas.h"
@@ -23,7 +24,9 @@ IMPLEMENT_APP(App);
 class DinoGLView: public GLView {
 public:
   DinoGLView(wxWindow* p, wxWindowID id, GLCanvas* c):
-    GLView(p,id,c) {}
+    GLView(p,id,c) {
+    SetTimer(10);
+  }
 
   virtual void InitGL() {
     cmiInitGL();
@@ -48,7 +51,21 @@ public:
   }
 };
 
-Shell* dino_shell=0;
+class DinoShell: public Shell {
+public:
+  DinoShell(): Shell("DINO Shell", "dino> ", 0, wxPoint(10,100),wxSize(500,300)) {
+    SetInfoAttr(wxColour(63,0,191),wxNullColour, GetFont(), "dino> ");
+  }
+
+  virtual void OnInput(const string& in) {
+    AddToHistory(in);
+    PrintInfo(in);
+    cmiCommand(in.c_str());
+  }
+
+};
+
+DinoShell* dino_shell=0;
 DinoGLView* dino_glview=0;
 
 bool App::OnInit()
@@ -67,8 +84,7 @@ bool App::OnInit()
 
   debmsg("opening shell window");
   // create the shell window
-  dino_shell=new Shell("DINO Shell", "dino> ", 0, 
-		       wxPoint(10,100),wxSize(500,300));
+  dino_shell=new DinoShell();
   
   dino_shell->Show(True);
 
@@ -116,11 +132,13 @@ int guiMainLoop(void)
 
 int guiMessage(char *m)
 {
+  // update status bar
   return 0;
 }
 
 void guiSwapBuffers(void)
 {
+  // handled automatically
 }
 
 void guiCMICallback(const cmiToken *t)
@@ -128,7 +146,7 @@ void guiCMICallback(const cmiToken *t)
   if(t->target==CMI_TARGET_GUI) {
     switch(t->command) {
     case CMI_REFRESH: dino_glview->Refresh(false); break;
-      //case CMI_MESSAGE: guiMessage((char *)t->value); break;
+    case CMI_MESSAGE: guiMessage((char *)t->value); break;
     }
   }
 }
@@ -157,5 +175,31 @@ int guiQueryStereo(void)
 int guiSetStereo(int m)
 {
   return 0;
+}
+
+int guitInit(void)
+{
+  return 0;
+}
+
+void guitOutit(void)
+{
+}
+
+void guitTimeProc(void)
+{
+}
+
+void guitWrite(const char *s)
+{
+  dino_shell->PrintMessage2(s);
+}
+
+void guitAddChar(unsigned char c)
+{
+}
+
+void guitSuspend(int f)
+{
 }
 

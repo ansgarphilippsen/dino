@@ -39,7 +39,7 @@ SRC= dino.c \
      write.c render.c mat.c rex.c Cmalloc.c cgfx.c pov.c \
      cubearray.c writePS.c \
      sglib.c symm.c \
-     gui_terminal.c shell_raw.c shell_command.c \
+     shell_raw.c shell_command.c \
      cmi.c input.c \
      io_gromacs.c
 

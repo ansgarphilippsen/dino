@@ -41,7 +41,6 @@ int guiSetStereo(int m);
 // interface for CMI functionality
 void guiCMICallback(const cmiToken *t);
 
-
 #ifndef INTERNAL_COLOR
 int guiResolveColor(const char *name, float *r, float *g, float *b);
 #endif
