@@ -25,6 +25,14 @@ static void add_history(const char *s);
 static int shell_unknown_cmd(ClientData clientData,
 			     Tcl_Interp *interp,
 			     int objc, Tcl_Obj *CONST objv[]);
+static void trace_proc(ClientData clientData,
+		       Tcl_Interp *interp,
+		       int level,
+		       char *command,
+		       Tcl_CmdProc *cmdProc,
+		       ClientData cmdClientData,
+		       int argc,
+		       char *argv[]);
 #endif
 
 #define SHELL_HISTORY_MAX_ENTRIES 1024
@@ -82,6 +90,9 @@ int shellInterpInit()
   // new interpreter instance
   tcl_interp=Tcl_CreateInterp();
 
+  // install trace
+  Tcl_CreateTrace(tcl_interp,999,trace_proc,0);
+
   // catch unknown commands
   Tcl_CreateObjCommand(tcl_interp, "unknown", shell_unknown_cmd,
 		       (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
@@ -102,22 +113,40 @@ int shellInterpInit()
 }
 
 #ifdef USE_TCL
+
 static int shell_unknown_cmd(ClientData clientData,
 			     Tcl_Interp *interp,
 			     int objc, Tcl_Obj *CONST objv[])
 {
   int argc,i;
   const char *argv[1024];
+  const char *aliasvalue;
+
+  // TODO aliases must be handled here!
 
   argc=objc-1;
   for(i=0;i<argc;i++)
     argv[i]=Tcl_GetString(objv[i+1]);
-
+  
   shellParseCommand(argv,argc);
-
+  
   Tcl_SetResult(interp,comGetReturn(),TCL_STATIC);
+  
   return TCL_OK;
 }
+
+static void trace_proc(ClientData clientData,
+		      Tcl_Interp *interp,
+		      int level,
+		      char *command,
+		      Tcl_CmdProc *cmdProc,
+		      ClientData cmdClientData,
+		      int argc,
+		      char *argv[])
+{
+  
+}
+
 #endif
 
 /*
@@ -131,7 +160,8 @@ int shellParseRaw(const char *s, int hf)
 #ifdef USE_TCL
   static char *parse_buf=NULL;
   static int parse_buf_len=0;
-  int i;
+  Tcl_Parse tparse;
+  int i,ret;
 #endif
   
   comReturn("");
@@ -164,6 +194,7 @@ int shellParseRaw(const char *s, int hf)
 				      clStrlen(parse_buf),
 				      &tcl_ds),
 	     -1,TCL_EVAL_GLOBAL);
+
 #else
   parse(s);
 #endif

@@ -301,14 +301,8 @@ int comWorkPrompt(int word_count, const char ** word_list)
   char *s_menu="menu.";
   struct SYMM_INFO s;
   int errflag=0;
-  long tt;
-  struct timeval tv;
-  struct timezone tz;
 #ifdef USE_CMI
   cmiToken t;
-#endif
-#ifdef INTERNAL_COLOR
-  struct COLOR_ENTRY *coltab;
 #endif
   int d1,d2;
   double res[16];
@@ -363,10 +357,9 @@ int comWorkPrompt(int word_count, const char ** word_list)
     if(dbmLoad(word_count-1,word_list+1)!=0) {
       errflag=1;
     }
-    /*** now an alias with scene
   } else if(!strcmp(word_list[0],"write")) {
+    // DEPRECATED, NOW AN ALIAS WITH SCENE
     comWrite(word_count-1,word_list+1);
-    ***/
   } else if(!strcmp(word_list[0],"delete")) {
     if(word_count<2) {
       comMessage("no dataset given\n");
@@ -443,50 +436,9 @@ int comWorkPrompt(int word_count, const char ** word_list)
 	}
       }
     }
-    //  } else if(!strcmp(word_list[0],"t")) {
   } else if(!strcmp(word_list[0],"bench")) {
-    if(com.benchmark==0) {
-      gettimeofday(&tv,&tz);
-      tt=tv.tv_sec*1000000L+tv.tv_usec;
-      com.t=tt;
-      com.t2=1;
-      com.benchmark=1;
-    } else {
-
-      guiMessage(" ");
-
-      com.benchmark=0;
-    }
-  } else if(!strcmp(word_list[0],"showrgb")) {
-    if(word_count>2) {
-      comMessage("error: at most one argument after showrgb\n");
-    } else {
-      i=0;
-      coltab=colorGetTab();
-      if(word_count==2) {
-	sprintf(obj,"*%s*",word_list[1]);
-      } else {
-	clStrcpy(obj,"*");
-      }
-
-      while(clStrlen(coltab[i].name)>0) {
-	if(rex(obj,coltab[i].name)) {
-	  sprintf(message,"%s:\t%3d %3d %3d\n",
-		  coltab[i].name,coltab[i].r,coltab[i].g,coltab[i].b); 
-	  comMessage(message);
-	}
-	i++;
-      }
-    }
-  } else if(clStrcmp(word_list[0],"test")) {
-    if(matExtractMatrix(word_list[1],&d1,&d2,res)==0) {
-      fprintf(stderr,"%dx%d: ",d1,d2);
-      for(i=0;i<d1*d2;i++) 
-	fprintf(stderr,"%.3f ",res[i]);
-      fprintf(stderr,"\n");
-    } else {
-      fprintf(stderr,"error\n");
-    }
+    // DEPCRECATED, NOW AN ALIAS WITH SCENE
+    comBench();
   } else {
     sprintf(message,"unknown command: %s\n",word_list[0]);
     comMessage(message);
@@ -2081,6 +2033,24 @@ void comSetInitCommand(const char *s)
   init_command_flag=1;
 }
 
+void comBench(void)
+{
+  long tt;
+  struct timeval tv;
+  struct timezone tz;
+  if(com.benchmark==0) {
+    gettimeofday(&tv,&tz);
+    tt=tv.tv_sec*1000000L+tv.tv_usec;
+    com.t=tt;
+    com.t2=1;
+    com.benchmark=1;
+  } else {
+    
+    guiMessage(" ");
+    
+    com.benchmark=0;
+  }
+}
 
 #ifdef USE_CMI
 void comCMICallback(const cmiToken *t)

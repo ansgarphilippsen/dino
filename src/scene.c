@@ -16,6 +16,7 @@
 #include "cl.h"
 #include "set.h"
 #include "help.h"
+#include "colors.h"
 
 #ifdef USE_CMI
 #include "gui_ext.h"
@@ -119,6 +120,9 @@ int sceneCommand(int wc, const char **wl)
 
 #ifdef EXPO
   float cr,cg,cb;
+#endif
+#ifdef INTERNAL_COLOR
+  struct COLOR_ENTRY *coltab;
 #endif
 
   if(wc<=0) {
@@ -1189,6 +1193,31 @@ int sceneCommand(int wc, const char **wl)
     glDisable(GL_LIGHTING);
   } else if(!strcmp(wl[0],"light")) {
     glEnable(GL_LIGHTING);
+  } else if(!strcmp(wl[0],"bench")) {
+    comBench();
+#ifdef INTERNAL_COLOR
+  } else if(!strcmp(wl[0],"showrgb")) {
+    if(wc>2) {
+      comMessage("error: at most one argument after showrgb\n");
+    } else {
+      i=0;
+      coltab=colorGetTab();
+      if(wc==2) {
+	sprintf(set,"*%s*",wl[1]);
+      } else {
+	clStrcpy(set,"*");
+      }
+
+      while(clStrlen(coltab[i].name)>0) {
+	if(rex(set,coltab[i].name)) {
+	  sprintf(message,"%s:\t%3d %3d %3d\n",
+		  coltab[i].name,coltab[i].r,coltab[i].g,coltab[i].b); 
+	  comMessage(message);
+	}
+	i++;
+      }
+    }
+#endif
   } else {
     sprintf(message,"scene: unknown command %s\n",wl[0]);
     comMessage(message);

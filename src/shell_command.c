@@ -18,6 +18,7 @@
   TODO
    var unset
    alias undef
+   aliases with tcl
    rpn stack non scalar
 */
 
@@ -39,6 +40,7 @@ static const char * alias_get(const char *reg);
 static void alias_def(const char *name, const char **wl, int wc);
 static void alias_undef(const char *name);
 static void init_vars(void);
+static void init_alias(void);
 
 #define MAXSCRIPTLEVEL 256
 
@@ -97,6 +99,8 @@ int shellInit(void)
   shell_subexp=Cmalloc(10240);
 
   init_vars();
+
+  init_alias();
 
   return 0;
 }
@@ -1236,5 +1240,23 @@ static void init_vars(void)
   int i;
   for(i=0;varlist[i]!=NULL;i+=2)
     shellSetVar(varlist[i],varlist[i+1]);
+
+}
+
+static char *aliaslist[]={
+  "write", "scene write",
+  "stereo", "scene stereo",
+  "mono", "scene stereo off",
+  NULL,NULL,
+};
+
+static void init_alias()
+{
+  int i;
+  for(i=0;aliaslist[i]!=NULL;i+=2) {
+    clStrcpy(shell_alias.entry[shell_alias.count].name,aliaslist[i]);
+    clStrcpy(shell_alias.entry[shell_alias.count].value,aliaslist[i+1]);
+    shell_alias.count++;
+  }  
 
 }

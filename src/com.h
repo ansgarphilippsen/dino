@@ -100,6 +100,7 @@ int comGenCubeLookup();
 void comCMICallback(const cmiToken *t);
 
 void comSetInitCommand(const char *s);
+void comBench(void);
 
 void tunnelvision(structObj *o);
 

@@ -109,18 +109,21 @@ int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"reset")) {
   } else if(!strcmp(wl[0],"grab")) {
-  } else if(!strcmp(wl[0],"ungrab")) {
-  } else if(!strcmp(wl[0],"hook")) {
-  } else if(!strcmp(wl[0],"unhook")) {
+    // TODO later
+    // if scalar object is grabed should e.g. change contouring
+    // level on the fly
   } else if(!strcmp(wl[0],"test")) {
     scalObj2Surf(obj,NULL);
   } else if(!strcmp(wl[0],"write")) {
+    comMessage("not implemented yet\n");
+    /*
     if(wc<2) {
       sprintf(message,"%s: expected filename for write command\n",obj->name);
       comMessage(message);
       return -1;
     }
     return scalObjWrite(obj, wc-1, wl+1);
+    */
   } else {
     sprintf(message,"%s: unknown command %s\n",obj->name,wl[0]);
     comMessage(message);
