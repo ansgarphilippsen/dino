@@ -199,4 +199,7 @@ int guiCheckCustomEvent(XEvent *event);
 int guiErrorHandler(Display *d, XErrorEvent *e);
 int guiIOErrorHandler(Display *d);
 
+void guiRegisterDnD(Widget site);
+void HandleDrop(Widget w, XtPointer client_data, XtPointer call_data);
+
 #endif

@@ -30,6 +30,7 @@ user menu
 
 #include <X11/keysym.h>
 #include <X11/extensions/XInput.h>
+#include <Xm/DragDrop.h>
 
 #ifdef EXPO
 #include <Xm/MwmUtil.h>
@@ -54,6 +55,10 @@ user menu
 #endif
 #ifdef SPACETEC
 #include "spacetec.h"
+#endif
+
+#ifdef JAVA_GUI
+#include "jci.h"
 #endif
 
 struct GUI gui;
@@ -134,6 +139,13 @@ static char *expo_message="DINO by Ansgar Philippsen  -  Special EXPO2000 versio
 
 int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 {
+#ifdef JAVA_GUI
+  debmsg("initializing JGUI");
+  jciInit();
+
+  return -1;
+#else
+
   int i,j;
   EventMask em;
   Arg arg[10];
@@ -196,7 +208,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 				  gui.form,
 				  arg,3);
 
-
+  guiRegisterDnD(gui.mform);
   
   /*
     Create the status bars at the bottom
@@ -217,6 +229,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   XtSetArg(arg[2],XmNtopAttachment,XmATTACH_FORM);
   XtSetArg(arg[3],XmNleftAttachment,XmATTACH_FORM);
   XtSetArg(arg[4],XmNbottomAttachment,XmATTACH_FORM);
+
   gui.message=XtCreateManagedWidget("message",xmLabelWidgetClass,
 				    gui.mform,arg,5);
 
@@ -454,6 +467,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
     initialization completed
   */
   return 0;
+#endif
 }
 
 int guiInitRGB()
@@ -1618,3 +1632,27 @@ int guiMInit(void (*func)(int, char **), int *argc, char ***argv)
   */
   return 1;
 }
+
+void guiRegisterDnD(Widget site)
+{
+  Atom    importList [1];
+  Arg     args [4];
+  int      nargs;
+  Atom    COMPOUND_TEXT;
+  
+  COMPOUND_TEXT = XmInternAtom(XtDisplay(site), 
+			       "COMPOUND_TEXT", False);
+  importList[0] = COMPOUND_TEXT;
+  nargs = 0;
+  
+  XtSetArg(args [nargs], XmNimportTargets, importList); nargs++;
+  XtSetArg(args [nargs], XmNnumImportTargets, 1); nargs++;
+  XtSetArg(args [nargs], XmNdropSiteOperations, XmDROP_COPY); nargs++;
+  XtSetArg(args [nargs], XmNdropProc, HandleDrop); nargs++;
+  XmDropSiteRegister(site, args, nargs);
+}
+
+void HandleDrop(Widget w, XtPointer client_data, XtPointer call_data)
+{
+}
+
