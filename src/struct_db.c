@@ -206,7 +206,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
     return structComLoad(node,wc-1,wl+1);
   } else if(clStrcmp(wl[0],"step")) {
     if(!node->trj_flag) {
-      sprintf(message,"%s: no trajectory loaded",node->name);
+      sprintf(message,"%s: no trajectory loaded\n",node->name);
       comMessage(message);
       return -1;
     }
@@ -685,19 +685,22 @@ int structSet(dbmStructNode *node, Set *s)
     } else if(clStrcmp(s->pov[pc].prop,"bfac")) {
       s->pov[pc].id=STRUCT_PROP_BFAC;
     } else {
-      comMessage("error: set: unknown property \n");
+      comMessage("error: set: unknown property ");
       comMessage(s->pov[pc].prop);
+      comMessage("\n");
       return -1;
     }
     if(s->pov[pc].op!=POV_OP_EQ && s->pov[pc].id!=STRUCT_PROP_TFAST) {
-      comMessage("error: set: expected operator = for property \n");
+      comMessage("error: set: expected operator = for property ");
       comMessage(s->pov[pc].prop);
+      comMessage("\n");
       return -1;
     }
     op=s->pov[pc].op;
     if(s->pov[pc].val_count>1 && s->pov[pc].id!=STRUCT_PROP_NCI) {
-      comMessage("error: set: expected only one value for property \n");
+      comMessage("error: set: expected only one value for property ");
       comMessage(s->pov[pc].prop);
+      comMessage("\n");
       return -1;
     }
   }
@@ -736,8 +739,9 @@ int structSet(dbmStructNode *node, Set *s)
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v1)!=0) {
-	comMessage("error in vector: \n");
+	comMessage("error in vector: ");
 	comMessage(val->val1);
+	comMessage("\n");
 	return -1;
       }   
       transApplyIf(&node->transform, v1);
@@ -756,8 +760,9 @@ int structSet(dbmStructNode *node, Set *s)
       } else if(clStrcmp(val->val1,"residue")) {
 	node->smode=SEL_RESIDUE;
       } else {
-	comMessage("error: unknown smode \n");
+	comMessage("error: unknown smode ");
 	comMessage(val->val1);
+	comMessage("\n");
 	return -1;
       }
       break;
@@ -773,8 +778,9 @@ int structSet(dbmStructNode *node, Set *s)
       } else if (clStrcmp(val->val1,"strand")) {
 	rt=STRUCT_RTYPE_STRAND;
       } else {
-	comMessage("unknown rtype: \n");
+	comMessage("unknown rtype: ");
 	comMessage(val->val1);
+	comMessage("\n");
 	return -1;
       }
 
@@ -819,8 +825,9 @@ int structSet(dbmStructNode *node, Set *s)
 	return -1;
       }
       if(comGetColor(val->val1,&r,&g,&b)<0) {
-	comMessage("error: set: unknown color \n");
+	comMessage("error: set: unknown color ");
 	comMessage(val->val1);
+	comMessage("\n");
 	return -1;
       }
       for(i=0;i<node->atom_count;i++) {
@@ -1763,7 +1770,8 @@ int structSubComGet(dbmStructNode *node,struct STRUCT_ATOM *ap,int wc, const cha
     sprintf(message,"{%.3f,%.3f,%.3f}",v[0],v[1],v[2]);
   } else if(clStrcmp(wl[0],"bfac")) {
     sprintf(message,"%.3f",ap->bfac);
-  } else if(clStrcmp(wl[0],"weight")) {
+  } else if(clStrcmp(wl[0],"weight") ||
+	    clStrcmp(wl[0],"occ")) {
     sprintf(message,"%.3f",ap->weight);
   } else if(clStrcmp(wl[0],"rname")) {
     sprintf(message,"%s",ap->residue->name);
@@ -1982,9 +1990,10 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
 	}
       }
       if(!f) {
-	comMessage("error: object \n");
+	comMessage("error: object ");
 	comMessage(v1);
 	comMessage(" not found");
+	comMessage("\n");
 	return -1;
       }
       break;
@@ -2413,7 +2422,8 @@ float structGetAtomProperty(struct STRUCT_ATOM *ap,const char *prop)
     return (float)ap->anum;
   else if(clStrcmp(prop,"bfac"))
     return ap->bfac;
-  else if(clStrcmp(prop,"weight"))
+  else if(clStrcmp(prop,"weight") ||
+	  clStrcmp(prop,"occ"))
     return ap->weight;
   else if(clStrcmp(prop,"rnum"))
     return (float)ap->residue->num;
@@ -2589,7 +2599,8 @@ int structGetMinMax(dbmStructNode *n, const char *prop, float *vmin, float *vmax
   } else if(clStrcmp(prop,"model")) {
     (*vmin)=n->min_max.model1;
     (*vmax)=n->min_max.model2;
-  } else if(clStrcmp(prop,"weight")) {
+  } else if(clStrcmp(prop,"weight") ||
+	    clStrcmp(prop,"occ")) {
     (*vmin)=n->min_max.weight1;
     (*vmax)=n->min_max.weight2;
   } else if(clStrcmp(prop,"bfac")) {
@@ -3361,7 +3372,8 @@ int structGetRangeVal(dbmStructNode *node, struct STRUCT_ATOM *atom, const char 
     (*r)=(float)atom->residue->num;
   } else if(clStrcmp(prop,"model")) {
     (*r)=(float)atom->model->num;
-  } else if(clStrcmp(prop,"occ")) {
+  } else if(clStrcmp(prop,"occ") ||
+	    clStrcmp(prop,"weight")) {
     (*r)=atom->weight;
   } else if(clStrcmp(prop,"bfac")) {
     (*r)=atom->bfac;

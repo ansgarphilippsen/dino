@@ -79,7 +79,7 @@ int omInit(int icf)
   om.root=DefaultRootWindow(om.dpy);
   om.cm=DefaultColormap(om.dpy,om.scrn);
   om.width=180;
-  om.height=400;
+  om.height=600;
 
   om.bd_color=BlackPixel(om.dpy,om.scrn);
   om.fg_color=BlackPixel(om.dpy,om.scrn);
@@ -198,8 +198,8 @@ int omInit(int icf)
   guiRegisterCustomEvent(om.top,omEvent,NULL);
 
   XMapWindow(om.dpy,om.top);
-  xwc.x=80;
-  xwc.y=30;
+  xwc.x=200;
+  xwc.y=0;
   XReconfigureWMWindow(om.dpy,om.top,om.scrn,
 		       CWX | CWY , &xwc);
 
