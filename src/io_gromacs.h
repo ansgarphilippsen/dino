@@ -1,7 +1,7 @@
 #ifndef _IO_GROMACS_H
 #define _IO_GROMACS_H
 
-#include <gromacs/xtcio.h>
+//#include <xtcio.h>
 
 #include "struct_db.h"
 
