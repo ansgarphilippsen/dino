@@ -10,7 +10,8 @@ known problems for DINO v0.8.3
   before moving, rotate the scene (left-click and move mouse some), then turn
   objects back on
 
-- writing large (e.g. 400%) TIFF files does not scale correctly (use PNG)
+- writing pics larger than the current screen size will not scale
+  correctly under linux
 
 - TIFF not compressed (use PNG)
 

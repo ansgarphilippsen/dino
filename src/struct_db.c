@@ -2383,7 +2383,7 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
 	return -1;
       }
       strcpy(type,wl[i+1]);
-      i++;
+      i+=2;
     } else {
       sprintf(message,"\nunknown option %s",wl[i]);
       comMessage(message);
@@ -2408,7 +2408,8 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
   } else {
     if(!strcmp(type,"pdb")) {
       tid=STRUCT_WRITE_PDB;
-    } else if(!strcmp(type,"xplorc")){
+    } else if(!strcmp(type,"xplorc") ||
+	      !strcmp(type,"cnsc")) {
       tid=STRUCT_WRITE_XPL;
     } else if(!strcmp(type,"charmm")){
       tid=STRUCT_WRITE_CRD;
