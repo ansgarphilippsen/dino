@@ -456,8 +456,7 @@ int structComNew(dbmStructNode *node, int wc, char **wl)
 	  type=STRUCT_NBOND;
 #endif
 	} else {
-	  clStrcpy(message,"error: new: unknown type \n");
-	  clStrncat(message,co.param[i].wl[0],100);
+	  sprintf(message,"error: new: unknown type %s\n",co.param[i].wl[0]);
 	  comMessage(message);
 	  ret=-1;
 	  break;
