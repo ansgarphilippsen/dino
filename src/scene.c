@@ -21,12 +21,47 @@
 #include "input.h"
 #include "cl.h"
 #include "set.h"
+#include "help.h"
 
 struct SCENE scene;
 extern struct GUI gui;
 extern struct GFX gfx;
 
 extern int debug_mode,gfx_mode;
+
+struct HELP_ENTRY scene_help[]={
+  {"separator","Scene commands",""},
+  {"autoslab","autoslab","Automatically adjust slab to fit minimal and maximal z-extension of all visible objects"},
+  {"center","center {x,y,z}","Sets current center of rotation"},
+  {"clear","clear","Empty scene stack"},
+  {"get","get PROPERTY",
+   "Gets scene property:\n\tcenter: Center of rotation\n\tnear: Near clipping plane\n\tfar: Far clipping plane\n\tslabw: Width of clipping plane\n\tfogd: Fog distance multiplier from far clipping plane\n\teyedist: Eyedistance (stereo parameter)\n\tfov: Field of view in degree\n\tfixz: Flag that determines wether clipping planes move along with translation\n\tdither: Turn dithering on or off\n\tdepthc: Turn dpthcueing on or off\n\tbg: Background color\n\tfogc: Fog color\n\tview: can be center, left o right\n\ttrans: absolute translation vector as {x,y,z}\n\trot: absolute rotation matrix as {{a,b,c},{d,e,g},{g,h,i}}\n\tmmat: Modelview matrix\n\trtc: Compact matrix of rotation, translation and center"},
+  {"grab","grab DEVICE","Grab an input device"},
+  {"hide","hide","Turns off graphics display"},
+  {"message","message STRING","Displays STRING in gui message banner"},
+  {"mono","mono","Forces mono mode"},
+  {"peek","peek","Retrieve topmost scene stack value without removing it"},
+  {"pop","pop","Retrieve topmost scene stack value"},
+  {"push","push ARG [ARG2 ..],","Push supplied arguments onto scene stack"},
+  {"reset","reset","Resets viewing matrix to identity"},
+  {"rotm","rotm {{a,b,c},{d,e,f},{g,h,i}}","Applies given rotation matrix"},
+  {"rotx","rotx ANGLE","Rotates ANGLE degrees around x-axis"},
+  {"roty","roty ANGLE","Rotates ANGLE degrees around y-axis"},
+  {"rotz","rotz ANGLE","Rotates ANGLE degrees around z-axis"},
+  {"set","set PROPERTY=VALUE",
+   "Sets scene property:\n\tnear: Near clipping plane\n\tfar: Far clipping plane\n\tslabw: Width of clipping plane\n\tfogd: Fog distance multiplier from far clipping plane\n\teyedist: Eyedistance (stereo parameter)\n\tfov: Field of view in degree\n\tfixz: Flag that determines wether clipping planes move along with translation\n\tdither: Turn dithering on or off\n\tdepthc: Turn dpthcueing on or off\n\tbg: Background color\n\tfogc: Fog color\n\tview: can be center, left o right\n\ttrans: absolute translation vector as {x,y,z}\n\trot: absolute rotation matrix as {{a,b,c},{d,e,g},{g,h,i}}\n\tmmat: Modelview matrix\n\trtc: Compact matrix of rotation, translation and center"},
+  {"show","show","Turns on graphics display"},
+  {"spin","spin","Toggle spinning after mouse movement"},
+  {"split","split","Toggles between split-screen stereo and normal stereo"},
+  {"stereo","stereo [on | off]","Toggles between stereo and mono (if supported)"},
+  {"transm","transm {a,b,d}","Applies given translation vector"},
+  {"transx","transx VAL","Translates VAL Angstrom along x-axis"}, 
+  {"transy","transy VAL","Translates VAL Angstrom along y-axis"}, 
+  {"transz","transz VAL","Translates VAL Angstrom along z-axis"}, 
+  {"write","write file.ext [-s n]",
+   "Writes scene to file. Supported formats are png tiff pov r3d ps"},
+  {NULL,NULL,NULL}
+};
 
 int sceneInit(void)
 {
@@ -94,6 +129,10 @@ int sceneCommand(int wc, char **wl)
 
   if(!strcmp(wl[0],"help") ||
      !strcmp(wl[0],"?")) {
+    if(wc<2)
+      help(scene_help,"scene",NULL);
+    else
+      help(scene_help,"scene",wl[1]);
   } else if(!strcmp(wl[0],"write")) {
     comWrite(wc-1,wl+1);
   } else if(!strcmp(wl[0],"show")) {

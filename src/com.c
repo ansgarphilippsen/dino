@@ -58,6 +58,40 @@ extern struct SCENE scene;
 
 extern int debug_mode;
 
+struct HELP_ENTRY top_help[] = {
+  {"separator","DBM commands",""},
+  {"delete","delete dataset [dataset2 ...]",
+   "Deletes all listed datasets with their objects"},
+  {"list","list",
+   "List all datasets"},
+  {"load","load file.ext [-type t] [-swap]",
+   "Load file into dataset. Supported formats are:\n\tpdb [.pdb .ent]\n\tccp4 [.map .ccp4]\n\tuhbd [.uhb .uhbd .pot}\n\txplorb [.xmap .xmp]\n\tcnsb [.cmap .cmp]\n\txplorc [.xpl]\n\t[cnsc [.cnsc]\n\tcharmm [.crd]\n\ttopo [.tiff]\n\tmsp [.msp .vet]\n\tmead [.fld .mead]\n\tpqr [.pqr]\n\tdelphi [.grd .ins]\n\tcharmmb [.cpot]\n\tgrasp [.grasp]"},
+  {"new", "new type [-name n]",
+   "Create a new dataset from scratch. Currently only type geom is supported"},
+  {"separator","shell commands",""},
+  {"alias","alias ABBREV FULL","Define an alias ABBREV which will be expanded to FULL whenever it appears as first word on command line"},
+  {"break","break","Interrupt shell script"},
+  {"cd","cd [DIR]","Changes directory, if DIR is ommited changes to home"},
+  {"clear","clear","Empty shell stack"},
+  {"dup","dup","duplicates topmost shell stack entry"},
+  {"echo","echo STRING","Print all following words on terminal"},
+  {"opr","opr OP [OP2 ..]","Apply one or more operators to shell stack"},
+  {"pause","pause","Pause shell script execution until key is presses. ESC will break from script"},
+  {"peek","peek","Gives topmost value from shell stack without removing it"},
+  {"pop","pop [var1 ...]","Retrieves values from shell stack, saving them into given variables"},
+  {"push","push ARG [ARG2 .. ]","Pushes all arguments onto shell stack"},
+  {"pwd","pwd","Show current directory"},
+  {"quit","quit", 
+   "Leave Program, current orientation is written to logfile"},
+  {"set","set VAR VAL","Define a variable VAL to have value VAL"},
+  {"show","show","List shell stack top to bottom"},
+  {"system","system STRING","Calls STRING as a Unix shell command"},
+  {"unset","unset VAR [VAR2 ..]","Undefine all listed variables"},
+  {"var","var","List all defined variables with their values"},
+  
+  {NULL,NULL,NULL}
+};
+
 int comInit()
 {
   int i,tc;
@@ -243,7 +277,10 @@ int comWorkPrompt(int word_count, char ** word_list)
     dinoExit(0);
   } else if(!strcmp(word_list[0],"help") ||
 	    !strcmp(word_list[0],"?")) {
-    help(word_count-1, word_list+1);
+    if(word_count>1)
+      help(top_help,"",word_list[1]);
+    else 
+      help(top_help,"",NULL);
   } else if(!strcmp(word_list[0],"load")) {
     if(dbmLoad(word_count-1,word_list+1)!=0) {
       errflag=1;
@@ -254,7 +291,7 @@ int comWorkPrompt(int word_count, char ** word_list)
     ***/
   } else if(!strcmp(word_list[0],"delete")) {
     if(word_count<2) {
-      comMessage("\nno db given");
+      comMessage("\nno dataset given");
       errflag=1;
     } else {
       for(i=1;i<word_count;i++) {

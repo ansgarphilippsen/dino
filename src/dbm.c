@@ -88,7 +88,7 @@ int dbmLoad(int wc, char **wl)
   int n;
   dbmNode *node;
   struct stat st;
-  char gunzip[256];
+  char gunzip[256],gunzip2[256];
   int cmp,ret,swap_flag,rn_flag;
   
   if(wc<1) {
