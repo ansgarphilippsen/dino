@@ -1,3 +1,5 @@
+<meta name="AppleTitle" content="Dino Help"></meta>
+
 <?php
 include "m_init.inc.php";
 

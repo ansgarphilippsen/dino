@@ -21,8 +21,10 @@
 				F52A76D102C09DCE019813D9,
 				F777710102C37CF601981365,
 				F537E919034356CC01FB7A39,
-				F52C79980323E2DF01FB7A39,
 				F52A76C902C08DA2019813D9,
+				F588E97B03532DEB01FB7A39,
+				F52C79980323E2DF01FB7A39,
+				F588E97A03532DEB01FB7A39,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -2506,6 +2508,18 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		F588E97A03532DEB01FB7A39 = {
+			isa = PBXFileReference;
+			name = NOTES;
+			path = ../../../NOTES;
+			refType = 2;
+		};
+		F588E97B03532DEB01FB7A39 = {
+			isa = PBXFileReference;
+			name = TODO;
+			path = ../../../TODO;
+			refType = 2;
 		};
 		F590620602BE8C02019813D9 = {
 			fileRef = F512CF4D0249799D01FB7A39;
