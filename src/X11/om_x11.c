@@ -78,13 +78,8 @@ int omInit(int icf)
   om.scrn=DefaultScreen(om.dpy);
   om.root=DefaultRootWindow(om.dpy);
   om.cm=DefaultColormap(om.dpy,om.scrn);
-#ifdef EXPO
-  om.width=400;
-  om.height=800;
-#else
   om.width=180;
   om.height=400;
-#endif
 
   om.bd_color=BlackPixel(om.dpy,om.scrn);
   om.fg_color=BlackPixel(om.dpy,om.scrn);
@@ -195,13 +190,8 @@ int omInit(int icf)
   guiRegisterCustomEvent(om.top,omEvent,NULL);
 
   XMapWindow(om.dpy,om.top);
-#ifdef EXPO
-  xwc.x=500;
-  xwc.y=0;
-#else
   xwc.x=80;
   xwc.y=30;
-#endif
   XReconfigureWMWindow(om.dpy,om.top,om.scrn,
 		       CWX | CWY , &xwc);
 
@@ -222,7 +212,6 @@ int omInit(int icf)
   XFlush(om.dpy);
   return 0;
 }
-
 
 
 

@@ -1,4 +1,4 @@
-# Makedef for linux
+# Makedef for linux - complete mess :(
 
 ARCH=LINUX
 MACH=i386

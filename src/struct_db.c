@@ -41,7 +41,8 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
 
   node->obj_count=0;
   node->obj_max=64;
-  node->obj=Ccalloc(node->obj_max,sizeof(structObj));
+  node->obj=0;
+  node->obj=Crecalloc(node->obj,node->obj_max,sizeof(structObj));
   if(node->obj==NULL) {
     sprintf(message,"memory error in structNewNode\n");
     comMessage(message);
@@ -1475,21 +1476,21 @@ structObj *structNewObj(dbmStructNode *node, char *name)
   structObj *no;
   
   structDelObj(node,name);
-  for(i=0;i<node->obj_max;i++) {
-    if(node->obj_flag[i]==0) {
-      node->obj_flag[i]=1;
-      no=&node->obj[i];
-      no->node=node;
-      comNewObj(node->name,name);
-      structSetDefault(no);
-      clStrcpy(no->name,name);
-      return no;
-    }
+  for(i=0;i<node->obj_max;i++)
+    if(node->obj_flag[i]==0) 
+      break;
+  if(i==node->obj_max) {
+    node->obj_max*=2;
+    node->obj=Crecalloc(node->obj,node->obj_max,sizeof(structObj));
   }
-
-  /* catch and increase obj_max */
-
-  return NULL;
+  
+  node->obj_flag[i]=1;
+  no=&node->obj[i];
+  no->node=node;
+  comNewObj(node->name,name);
+  structSetDefault(no);
+  clStrcpy(no->name,name);
+  return no;
 }
 
 int structDelObj(struct DBM_STRUCT_NODE *node,char *name)
@@ -2542,47 +2543,59 @@ int structBuildCA(dbmStructNode *n)
   float xyz1[3],xyz2[3],xyz[3];
   int abc[3];
 
-  xmin=n->atom[0].p->x;
-  xmax=n->atom[0].p->x;
-  ymin=n->atom[0].p->y;
-  ymax=n->atom[0].p->y;
-  zmin=n->atom[0].p->z;
-  zmax=n->atom[0].p->z;
+  if(n->atom_count<1) {
+    xyz1[0]=0;
+    xyz1[1]=0;
+    xyz1[2]=0;
+    xyz2[0]=1;
+    xyz2[1]=1;
+    xyz2[2]=1;
+    
+    n->ca=caInit(xyz1,xyz2,0,5.0);
 
-  for(i=1;i<n->atom_count;i++) {
-    xmin = (n->atom[i].p->x < xmin) ? n->atom[i].p->x : xmin;
-    xmax = (n->atom[i].p->x > xmax) ? n->atom[i].p->x : xmax;
-    ymin = (n->atom[i].p->y < ymin) ? n->atom[i].p->y : ymin;
-    ymax = (n->atom[i].p->y > ymax) ? n->atom[i].p->y : ymax;
-    zmin = (n->atom[i].p->z < zmin) ? n->atom[i].p->z : zmin;
-    zmax = (n->atom[i].p->z > zmax) ? n->atom[i].p->z : zmax;
-  }
+  } else {
 
-  xyz1[0]=xmin;
-  xyz1[1]=ymin;
-  xyz1[2]=zmin;
-  xyz2[0]=xmax;
-  xyz2[1]=ymax;
-  xyz2[2]=zmax;
-
-  n->ca=caInit(xyz1,xyz2,0,5.0);
-
-  for(c=0;c<2;c++) {
-    if(c==0) {
-      mode=CA_ADD;
-    } else {
-      caFix(n->ca);
-      mode=CA_WRITE;
+    xmin=n->atom[0].p->x;
+    xmax=n->atom[0].p->x;
+    ymin=n->atom[0].p->y;
+    ymax=n->atom[0].p->y;
+    zmin=n->atom[0].p->z;
+    zmax=n->atom[0].p->z;
+    
+    for(i=1;i<n->atom_count;i++) {
+      xmin = (n->atom[i].p->x < xmin) ? n->atom[i].p->x : xmin;
+      xmax = (n->atom[i].p->x > xmax) ? n->atom[i].p->x : xmax;
+      ymin = (n->atom[i].p->y < ymin) ? n->atom[i].p->y : ymin;
+      ymax = (n->atom[i].p->y > ymax) ? n->atom[i].p->y : ymax;
+      zmin = (n->atom[i].p->z < zmin) ? n->atom[i].p->z : zmin;
+      zmax = (n->atom[i].p->z > zmax) ? n->atom[i].p->z : zmax;
     }
-    for(i=0;i<n->atom_count;i++) {
-      xyz[0]=n->atom[i].p->x;
-      xyz[1]=n->atom[i].p->y;
-      xyz[2]=n->atom[i].p->z;
-      caXYZtoABC(n->ca,xyz,abc);
-      caAddPointer(n->ca,abc,(caPointer)&n->atom[i],mode);
+    
+    xyz1[0]=xmin;
+    xyz1[1]=ymin;
+    xyz1[2]=zmin;
+    xyz2[0]=xmax;
+    xyz2[1]=ymax;
+    xyz2[2]=zmax;
+    
+    n->ca=caInit(xyz1,xyz2,0,5.0);
+    
+    for(c=0;c<2;c++) {
+      if(c==0) {
+	mode=CA_ADD;
+      } else {
+	caFix(n->ca);
+	mode=CA_WRITE;
+      }
+      for(i=0;i<n->atom_count;i++) {
+	xyz[0]=n->atom[i].p->x;
+	xyz[1]=n->atom[i].p->y;
+	xyz[2]=n->atom[i].p->z;
+	caXYZtoABC(n->ca,xyz,abc);
+	caAddPointer(n->ca,abc,(caPointer)&n->atom[i],mode);
+      }
     }
   }
-
   return 0;
 }
 

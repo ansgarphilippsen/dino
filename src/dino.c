@@ -116,6 +116,9 @@ int dinoParseArgs(int argc, char **argv)
       } else if(!strcmp(argv[i],"-nogfx")) {
 	//fprintf(stderr,"-nogfx is not yet supported\n");
 	gfx_flags+=DINO_FLAG_NOGFX;
+      } else if(!strcmp(argv[i],"-noom")) {
+	//fprintf(stderr,"-nogfx is not yet supported\n");
+	gfx_flags+=DINO_FLAG_NOOBJMENU;
       } else if(!strcmp(argv[i],"-vidmode")) {
         if(i+1>=argc) {
           fprintf(stderr,"error: expected argument after -vidmode\n");

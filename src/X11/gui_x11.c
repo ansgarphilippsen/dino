@@ -218,10 +218,13 @@ int guiInit(int argc, char **argv)
     if(init_main()<0) {
       return -1;
     }    
-    debmsg("guiInit: initializing om\n");
-    omInit(icf);
-    gui.om_flag=1;
-
+    if(gfx_flags & DINO_FLAG_NOOBJMENU) {
+      gui.om_flag=0;
+    } else {
+      debmsg("guiInit: initializing om\n");
+      omInit(icf);
+      gui.om_flag=1;
+    }
     //  pad_init();
 
 
@@ -684,13 +687,15 @@ int guiCheckCustomEvent(XEvent *event)
   */
 
   /* this is an ugly patch */
-  if(om.pflag)
-    if(event->type==ButtonRelease)
-      if(event->xbutton.button==3) {
-	om.pflag=0;
-	XUnmapWindow(om.dpy,om.pwin);
-	omExposeEvent();
-      }
+  if(gui.om_flag) {
+    if(om.pflag)
+      if(event->type==ButtonRelease)
+	if(event->xbutton.button==3) {
+	  om.pflag=0;
+	  XUnmapWindow(om.dpy,om.pwin);
+	  omExposeEvent();
+	}
+  }
   
 
 
@@ -754,14 +759,14 @@ void guiCMICallback(const cmiToken *t)
     case CMI_REFRESH: gui.redraw++; break;
     case CMI_MESSAGE: guiMessage((char *)t->value); break;
     case CMI_CHECKR: check_redraw(); break;
-    case CMI_DS_NEW: omAddDB(cp[0]); break;
-    case CMI_DS_DEL: omDelDB(cp[0]); break;
+    case CMI_DS_NEW: if(gui.om_flag) {omAddDB(cp[0]);} break;
+    case CMI_DS_DEL: if(gui.om_flag) {omDelDB(cp[0]);} break;
     case CMI_DS_REN: /*TODO*/ break;
-    case CMI_OBJ_NEW: omAddObj(cp[0],cp[1]); break;
-    case CMI_OBJ_DEL: omDelObj(cp[0],cp[1]); break;
+    case CMI_OBJ_NEW: if(gui.om_flag) {omAddObj(cp[0],cp[1]);} break;
+    case CMI_OBJ_DEL: if(gui.om_flag) {omDelObj(cp[0],cp[1]);} break;
     case CMI_OBJ_REN: /*TODO*/ break;
-    case CMI_OBJ_SHOW: omShowObj(cp[0],cp[1]); break;
-    case CMI_OBJ_HIDE: omHideObj(cp[0],cp[1]); break;
+    case CMI_OBJ_SHOW: if(gui.om_flag) {omShowObj(cp[0],cp[1]);} break;
+    case CMI_OBJ_HIDE: if(gui.om_flag) {omHideObj(cp[0],cp[1]);} break;
     }
   }
 }
@@ -1303,13 +1308,13 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
     gui.last_y=cd->event->xbutton.y;
     //    memcpy(&gui.tp_button,&tp,sizeof(struct timezone));
     if(cd->event->xbutton.button==3) {
-
-      om.pwin=gui.user_menu;
-      om.pflag=1;
-      XMoveWindow(gui.dpy,gui.user_menu,
-		  cd->event->xbutton.x_root,cd->event->xbutton.y_root);
-      XMapRaised(gui.dpy,gui.user_menu);
-
+      if(gui.om_flag) {
+	om.pwin=gui.user_menu;
+	om.pflag=1;
+	XMoveWindow(gui.dpy,gui.user_menu,
+		    cd->event->xbutton.x_root,cd->event->xbutton.y_root);
+	XMapRaised(gui.dpy,gui.user_menu);
+      }
     }
     break;
   case ButtonRelease:
@@ -1355,8 +1360,10 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
     ************/
 
     if(cd->event->xbutton.button==3) {
-      om.pflag=0;
-      XUnmapWindow(gui.dpy,gui.user_menu);
+      if(gui.om_flag) {
+	om.pflag=0;
+	XUnmapWindow(gui.dpy,gui.user_menu);
+      }
     }
 
     break;

@@ -13,14 +13,14 @@
 
 extern int debug_mode;
 
-static void line_to_atom_entry(struct STRUCT_FILE_ATOM_ENTRY *ce, char *line, int format);
-static void line_to_connect_entry(struct STRUCT_FILE_CONNECT_ENTRY *ce, char *line);
-static void line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *ce, char *line);
-static void prep_struct_file(struct STRUCT_FILE *sf, int am, int cm, int sm);
-static void free_struct_file(struct STRUCT_FILE *sf);
-static void add_atom_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_ATOM_ENTRY *ae);
-static void add_connect_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_CONNECT_ENTRY *ae);
-static void add_secs_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_SECS_ENTRY *ae);
+static int line_to_atom_entry(struct STRUCT_FILE_ATOM_ENTRY *ce, char *line, int format);
+static int line_to_connect_entry(struct STRUCT_FILE_CONNECT_ENTRY *ce, char *line);
+static int line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *ce, char *line);
+static int prep_struct_file(struct STRUCT_FILE *sf, int am, int cm, int sm);
+static int free_struct_file(struct STRUCT_FILE *sf);
+static int add_atom_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_ATOM_ENTRY *ae);
+static int add_connect_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_CONNECT_ENTRY *ae);
+static int add_secs_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_SECS_ENTRY *ae);
 
 static struct STRUCT_ATOM_TABLE struct_atom_table[]={
   /* z     e      r    g    b  vdw */
@@ -53,15 +53,7 @@ int pdbRead(FILE *f,dbmNode *node)
   struct PDB_CRYST_ENTRY pdb_cryst;
   int pdb_cryst_flag=0;
   int model_count;
-  //int atom_count;
-  //int atom_max;
-  //int connect_count;
-  //int connect_max;
-  //int secs_count;
-  //int secs_max;
   char num[16];
-  //  struct STRUCT_FILE_ATOM_ENTRY *ao;
-  //struct STRUCT_FILE_CONNECT_ENTRY *co;
   struct STRUCT_FILE_ATOM_ENTRY tmpae;
   struct STRUCT_FILE_CONNECT_ENTRY tmpce;
   struct STRUCT_FILE_SECS_ENTRY tmpse;
@@ -69,12 +61,7 @@ int pdbRead(FILE *f,dbmNode *node)
   char c1[6],c2[6],c3[6],c4[6],c5[6];
   
   model_count=-1;
-  //atom_count=0;
-  //connect_count=0;
-  //atom_max=5000;
-  //connect_max=5000;
-  //pdb.atom_entry=Ccalloc(atom_max,sizeof(struct STRUCT_FILE_ATOM_ENTRY));
-  //pdb.connect_entry=Ccalloc(connect_max,sizeof(struct STRUCT_FILE_CONNECT_ENTRY));
+
   prep_struct_file(&pdb,5000,5000,100);
 
   
@@ -98,21 +85,6 @@ int pdbRead(FILE *f,dbmNode *node)
       clStrcpy(tmpae.mname,"");
       line_to_atom_entry(&tmpae,line, STRUCT_FILE_FORMAT_PDB);
       add_atom_entry(&pdb,&tmpae);
-      /*
-      pdb.atom_entry[atom_count].mnum=model_count;
-      strcpy(pdb.atom_entry[atom_count].mname,"");
-      pdbLine2AtomEntry(line,&pdb.atom_entry[atom_count]);
-      atom_count++;
-      if(atom_count>=atom_max) {
-	ao=pdb.atom_entry;
-	pdb.atom_entry=Ccalloc(atom_max+5000,
-			      sizeof(struct STRUCT_FILE_ATOM_ENTRY));
-	memcpy(pdb.atom_entry,ao,
-	       atom_max*sizeof(struct STRUCT_FILE_ATOM_ENTRY));
-	atom_max+=5000;
-	Cfree(ao);
-      }
-      */
     } else if(!strcmp(record,"CONECT")) {
       d1=0;
       sscanf(line,"%6c%5c%5c%5c%5c%5c",
@@ -134,20 +106,6 @@ int pdbRead(FILE *f,dbmNode *node)
 	    tmpce.a2=d2[i];
 	    add_connect_entry(&pdb,&tmpce);
 	  }
-	  /**************
-	  pdb.connect_entry[connect_count].a1=d1;
-	  pdb.connect_entry[connect_count].a2=d2[i++];
-	  connect_count++;
-	  if(connect_count>=connect_max) {
-	    co=pdb.connect_entry;
-	    pdb.connect_entry=Ccalloc(connect_max+5000,
-				     sizeof(struct STRUCT_FILE_CONNECT_ENTRY));
-	    memcpy(pdb.connect_entry,co,
-		   connect_max*sizeof(struct STRUCT_FILE_CONNECT_ENTRY));
-	    connect_max+=5000;
-	    Cfree(co);
-	  }
-	  **************/
 	}
       }
     } else if(!strcmp(record,"CRYST1")) {
@@ -247,11 +205,12 @@ int pdbLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
   ae->anum=atoi(field);
 
   for(j=0,i=0;i<4;i++) {
-    if(isalnum(line[i+12]) || line[i+12]=='*'  || line[i+12]=='\'')
+    if(isalnum(line[i+12]) || line[i+12]=='*'  || line[i+12]=='\'') {
       if(line[i+12]=='*')
 	ae->aname[j++]='\'';
       else
 	ae->aname[j++]=line[i+12];
+    }
   }
   ae->aname[j]='\0';
   
@@ -354,12 +313,19 @@ int xplorPDBRead(FILE *f,dbmNode *node)
   int model_count;
   int atom_count;
   int atom_max;
-  struct STRUCT_FILE_ATOM_ENTRY *ao;
   
   model_count=-1;
   atom_count=0;
   atom_max=5000;
-  pdb.atom_entry=Ccalloc(atom_max,sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+  pdb.atom_entry=0;
+  pdb.atom_entry=Crecalloc(pdb.atom_entry,
+			   atom_max,
+			   sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+
+  if(pdb.atom_entry==NULL) {
+    comMessage("memory allocation error in xplorPDBRead\n");
+    return -1;
+  }
   
   while(!feof(f)) {
     memset(line,0,sizeof(line));
@@ -382,13 +348,14 @@ int xplorPDBRead(FILE *f,dbmNode *node)
       xplorPDBLine2AtomEntry(line,&pdb.atom_entry[atom_count]);
       atom_count++;
       if(atom_count>=atom_max) {
-	ao=pdb.atom_entry;
-	pdb.atom_entry=Ccalloc(atom_max+5000,
-			      sizeof(struct STRUCT_FILE_ATOM_ENTRY));
-	memcpy(pdb.atom_entry,ao,
-	       atom_max*sizeof(struct STRUCT_FILE_ATOM_ENTRY));
 	atom_max+=5000;
-	Cfree(ao);
+	pdb.atom_entry=Crecalloc(pdb.atom_entry,
+				 atom_max,
+				 sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+	if(pdb.atom_entry==NULL) {
+	  comMessage("memory allocation error in xplorPDBRead\n");
+	  return -1;
+	}
       }
     } else if(!strcmp(record,"ENDMDL")) {
     }
@@ -420,11 +387,12 @@ int xplorPDBLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
   ae->anum=atoi(field);
 
   for(j=0,i=0;i<4;i++) {
-    if(isalnum(line[i+12]) || line[i+12]=='*' || line[i+12]=='\'')
+    if(isalnum(line[i+12]) || line[i+12]=='*' || line[i+12]=='\'') {
       if(line[i+12]=='*')
 	ae->aname[j++]='\'';
       else
 	ae->aname[j++]=line[i+12];
+    }
   }
   ae->aname[j]='\0';
 
@@ -527,7 +495,15 @@ int charmmRead(FILE *f,dbmNode *node)
   charmm.atom_count=num;
   sprintf(message,"charmmRead: allocating memory for %d atoms",num);
   debmsg(message);
-  charmm.atom_entry=Ccalloc(num+1,sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+  charmm.atom_entry=0;
+  charmm.atom_entry=Crecalloc(charmm.atom_entry,
+			      num+1,
+			      sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+
+  if(charmm.atom_entry==NULL) {
+    comMessage("memory allocation error in charmmRead\n");
+    return -1;
+  }
 
   node->structNode.model_flag=0;
   node->structNode.chain_flag=0;
@@ -726,8 +702,11 @@ int charmmTrjRead(FILE *f, dbmStructNode *node, int sf2)
   node->trj.atom_count=header.atom_count;
   node->trj.size=node->trj.atom_count*sizeof(struct STRUCT_TRJ_POSITION);
   node->trj.frame_count=header.num;
-
-  node->trj.pos=Ccalloc(node->trj.frame_count,node->trj.size);
+  
+  node->trj.pos=0;
+  node->trj.pos=Crecalloc(node->trj.pos,
+			  node->trj.frame_count,
+			  node->trj.size);
   if(node->trj.pos==NULL) {
     sprintf(message,"memory allocation error in trjRead for %dkb\n",
 	    node->trj.frame_count*node->trj.size/1024);
@@ -949,12 +928,15 @@ int pqrRead(FILE *f,dbmNode *node)
   int model_count;
   int atom_count;
   int atom_max;
-  struct STRUCT_FILE_ATOM_ENTRY *ao;
   
   model_count=-1;
   atom_count=0;
   atom_max=5000;
-  pdb.atom_entry=Ccalloc(atom_max,sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+  pdb.atom_entry=Crecalloc(NULL,atom_max,sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+  if(pdb.atom_entry==NULL) {
+    comMessage("memory allocation error in pqrRead\n");
+    return -1;
+  }
   
   while(!feof(f)) {
     memset(line,0,sizeof(line));
@@ -977,13 +959,14 @@ int pqrRead(FILE *f,dbmNode *node)
       pqrLine2AtomEntry(line,&pdb.atom_entry[atom_count]);
       atom_count++;
       if(atom_count>=atom_max) {
-	ao=pdb.atom_entry;
-	pdb.atom_entry=Ccalloc(atom_max+5000,
-			      sizeof(struct STRUCT_FILE_ATOM_ENTRY));
-	memcpy(pdb.atom_entry,ao,
-	       atom_max*sizeof(struct STRUCT_FILE_ATOM_ENTRY));
 	atom_max+=5000;
-	Cfree(ao);
+	pdb.atom_entry=Crecalloc(pdb.atom_entry,
+				 atom_max,
+				 sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+	if(pdb.atom_entry==NULL) {
+	  comMessage("memory allocation error in pqrRead\n");
+	  return -1;
+	}
       }
     } else if(!strcmp(record,"ENDMDL")) {
     }
@@ -1162,7 +1145,10 @@ int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
   node->trj.size=an*sizeof(struct STRUCT_TRJ_POSITION);
   node->trj.frame_count=fn;
 
-  node->trj.pos=Ccalloc(fn*an,sizeof(struct STRUCT_TRJ_POSITION));
+  node->trj.pos=0;
+  node->trj.pos=Crecalloc(node->trj.pos,
+			  fn*an,
+			  sizeof(struct STRUCT_TRJ_POSITION));
   if(node->trj.pos==NULL) {
     sprintf(message,"memory allocation error in trjRead for %dkb\n",
 	    node->trj.frame_count*node->trj.size/1024);
@@ -1274,13 +1260,17 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
   return 0;
 }
 
-static void prep_struct_file(struct STRUCT_FILE *sf, int am, int cm, int sm)
+static int prep_struct_file(struct STRUCT_FILE *sf, int am, int cm, int sm)
 {
   sf->atom_count=0;
   if(am>0) {
     sf->atom_max=am;
     sf->atom_entry=Crecalloc(NULL,am,
 			     sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+    if(sf->atom_entry==NULL) {
+      comMessage("memory allocation error in prep_struct_file\n");
+      return -1;
+    }
   } else {
     sf->atom_max=0;
     sf->atom_entry=NULL;
@@ -1290,6 +1280,10 @@ static void prep_struct_file(struct STRUCT_FILE *sf, int am, int cm, int sm)
     sf->connect_max=cm;
     sf->connect_entry=Crecalloc(NULL,cm,
 				sizeof(struct STRUCT_FILE_CONNECT_ENTRY));
+    if(sf->connect_entry==NULL) {
+      comMessage("memory allocation error in prep_struct_file\n");
+      return -1;
+    }
   } else {
     sf->connect_max=0;
     sf->connect_entry=NULL;
@@ -1299,13 +1293,18 @@ static void prep_struct_file(struct STRUCT_FILE *sf, int am, int cm, int sm)
   if(sm>0) {
     sf->secs_max=sm;
     sf->secs_entry=Crecalloc(NULL,sm,sizeof(struct STRUCT_FILE_SECS_ENTRY));
+    if(sf->secs_entry==NULL) {
+      comMessage("memory allocation error in prep_struct_file\n");
+      return -1;
+    }
   } else {
     sf->secs_max=0;
     sf->secs_entry=NULL;
   }
+  return 0;
 }
 
-static void free_struct_file(struct STRUCT_FILE *sf)
+static int free_struct_file(struct STRUCT_FILE *sf)
 {
   if(sf->atom_max>0)
     Cfree(sf->atom_entry);
@@ -1313,25 +1312,27 @@ static void free_struct_file(struct STRUCT_FILE *sf)
     Cfree(sf->connect_entry);
   if(sf->secs_max>0)
     Cfree(sf->secs_entry);
+  return 0;
 }
 
-static void line_to_atom_entry(struct STRUCT_FILE_ATOM_ENTRY *ae, char *line, int format)
+static int line_to_atom_entry(struct STRUCT_FILE_ATOM_ENTRY *ae, char *line, int format)
 {
   switch(format) {
   case STRUCT_FILE_FORMAT_PDB:
     pdbLine2AtomEntry(line,ae);
     break;
   }
-
+  return 0;
 }
 
-static void line_to_connect_entry(struct STRUCT_FILE_CONNECT_ENTRY *ce, char *line)
+static int line_to_connect_entry(struct STRUCT_FILE_CONNECT_ENTRY *ce, char *line)
 {
   // NOT USED
+  return 0;
 }
 
 
-static void line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *se, char *line)
+static int line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *se, char *line)
 {
   char tmp[8];
   if(line[0]=='H') {
@@ -1377,43 +1378,55 @@ static void line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *se, char *line)
     se->end=atoi(tmp);
     //fprintf(stderr,"STRAND: %s %3d %3d\n",se->chain,se->start,se->end);
   }
+  return 0;
 }
 
-
-
-static void add_atom_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_ATOM_ENTRY *ae)
+static int add_atom_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_ATOM_ENTRY *ae)
 {
   if(sf->atom_count>=sf->atom_max) {
-    sf->atom_entry=Crecalloc(sf->atom_entry,sf->atom_max+5000,
-			    sizeof(struct STRUCT_FILE_ATOM_ENTRY));
     sf->atom_max+=5000;
+    sf->atom_entry=Crecalloc(sf->atom_entry,sf->atom_max,
+			    sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+    if(sf->atom_entry==NULL) {
+      comMessage("memory allocation error in add_atom_entry\n");
+      return -1;
+    }
   }
   memcpy(&sf->atom_entry[sf->atom_count++],ae,
 	 sizeof(struct STRUCT_FILE_ATOM_ENTRY));
+  return 0;
 }
 
-static void add_connect_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_CONNECT_ENTRY *ce)
+static int add_connect_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_CONNECT_ENTRY *ce)
 {
   if(sf->connect_count>=sf->connect_max) {
-    sf->connect_entry=Crecalloc(sf->connect_entry,sf->connect_max+5000,
-			    sizeof(struct STRUCT_FILE_CONNECT_ENTRY));
     sf->connect_max+=1000;
+    sf->connect_entry=Crecalloc(sf->connect_entry,sf->connect_max,
+			    sizeof(struct STRUCT_FILE_CONNECT_ENTRY));
+    if(sf->connect_entry==NULL) {
+      comMessage("memory allocation error in add_connect_entry\n");
+      return -1;
+    }
   }
   memcpy(&sf->connect_entry[sf->connect_count++],ce,
 	 sizeof(struct STRUCT_FILE_CONNECT_ENTRY));
-
+  return 0;
 }
 
-static void add_secs_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_SECS_ENTRY *se)
+static int add_secs_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_SECS_ENTRY *se)
 {
   if(sf->secs_count>=sf->secs_max) {
-    sf->secs_entry=Crecalloc(sf->secs_entry,sf->secs_max+5000,
-			    sizeof(struct STRUCT_FILE_SECS_ENTRY));
     sf->secs_max+=100;
+    sf->secs_entry=Crecalloc(sf->secs_entry,sf->secs_max,
+			    sizeof(struct STRUCT_FILE_SECS_ENTRY));
+    if(sf->secs_entry==NULL) {
+      comMessage("memory allocation error in add_secs_entry\n");
+      return -1;
+    }
   }
   memcpy(&sf->secs_entry[sf->secs_count++],se,
 	 sizeof(struct STRUCT_FILE_SECS_ENTRY));
-
+  return 0;
 }
 
 
@@ -1458,23 +1471,42 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
   debmsg("structRead: allocating working memory: atom");
   atom_max=50000;
   atom_count=0;
-  atom=Ccalloc(atom_max,sizeof(struct STRUCT_ATOM));
+  atom=0;
+  atom=Crecalloc(atom,atom_max,sizeof(struct STRUCT_ATOM));
+  if(atom==NULL) {
+    comMessage("memory allocation error in FileEntry2DB (atom)\n");
+    return -1;
+  }
 
   debmsg("structRead: allocating working memory: residue");
   residue_max=5000;
   residue_count=0;
-  residue=Ccalloc(residue_max,sizeof(struct STRUCT_RESIDUE));
+  residue=0;
+  residue=Crecalloc(residue,residue_max,sizeof(struct STRUCT_RESIDUE));
+  if(residue==NULL) {
+    comMessage("memory allocation error in FileEntry2DB (residue)\n");
+    return -1;
+  }
 
   debmsg("structRead: allocating working memory: chain");
   chain_max=100;
   chain_count=0;
-  chain=Ccalloc(chain_max,sizeof(struct STRUCT_CHAIN));
+  chain=0;
+  chain=Crecalloc(chain,chain_max,sizeof(struct STRUCT_CHAIN));
+  if(chain==NULL) {
+    comMessage("memory allocation error in FileEntry2DB (chain)\n");
+    return -1;
+  }
 
   debmsg("structRead: allocating working memory: model");
   model_max=100;
   model_count=0;
-  model=Ccalloc(model_max,sizeof(struct STRUCT_MODEL));
-
+  model=0;
+  model=Crecalloc(model,model_max,sizeof(struct STRUCT_MODEL));
+  if(model==NULL) {
+    comMessage("memory allocation error in FileEntry2DB (model)\n");
+    return -1;
+  }
 
   debmsg("structRead: initializing atom_table");
   /* atom table */
@@ -1565,11 +1597,12 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       cmi=model_count;
       model_count++;
       if(model_count>=model_max) {
-	omodel=model;
-	model=Ccalloc(model_max+10,sizeof(struct STRUCT_MODEL));
-	memcpy(model,omodel,model_max*sizeof(struct STRUCT_MODEL));
-	model_max+=10;
-	Cfree(omodel);
+	model_max*=2;
+	model=Crecalloc(model,model_max,sizeof(struct STRUCT_MODEL));
+	if(model==NULL) {
+	  comMessage("memory allocation error in FileEntry2DB (model)\n");
+	  return -1;
+	}
       }
 
       cmp=&model[model_count-1];
@@ -1584,14 +1617,24 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       cmp->chain_count=0;
       cmp->chain_max=10;
       cmp->chain_add=10;
-      cmp->chain_index=Ccalloc(cmp->chain_max,sizeof(int));
+      cmp->chain_index=0;
+      cmp->chain_index=Crecalloc(cmp->chain_index,cmp->chain_max,sizeof(int));
+      if(cmp->chain_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (cmp->chain_index)\n");
+	return -1;
+      }
 
       cmp->atom=NULL;
       cmp->atom_count=0;
       cmp->atom_max=10000;
       cmp->atom_add=10000;
-      cmp->atom_index=Ccalloc(cmp->atom_max,sizeof(int));
-      
+      cmp->atom_index=0;
+      cmp->atom_index=Crecalloc(cmp->atom_index,cmp->atom_max,sizeof(int));
+      if(cmp->atom_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (cmp->atom_index)\n");
+	return -1;
+      }
+
       /* reset reference */
       re.anum=-1e6;
       strcpy(re.aname,"_dummy");
@@ -1624,11 +1667,12 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       cci=chain_count;
       chain_count++;
       if(chain_count>=chain_max) {
-	ochain=chain;
-	chain=Ccalloc(chain_max+10,sizeof(struct STRUCT_CHAIN));
-	memcpy(chain,ochain,chain_max*sizeof(struct STRUCT_CHAIN));
-	chain_max+=10;
-	Cfree(ochain);
+	chain_max*=2;
+	chain=Crecalloc(chain,chain_max,sizeof(struct STRUCT_CHAIN));
+	if(chain==NULL) {
+	  comMessage("memory allocation error in FileEntry2DB (chain)\n");
+	  return -1;
+	}
       }
       ccp=&chain[chain_count-1];
 
@@ -1643,14 +1687,28 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       ccp->residue_count=0;
       ccp->residue_max=1000;
       ccp->residue_add=1000;
-      ccp->residue_index=Ccalloc(ccp->residue_max,sizeof(int));
+      ccp->residue=0;
+      ccp->residue_index=Crecalloc(ccp->residue,
+				   ccp->residue_max,
+				   sizeof(int));
+      if(ccp->residue_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (ccp->residue_index)\n");
+	return -1;
+      }
 
       ccp->atom=NULL;
       ccp->atom_count=0;
       ccp->atom_count=0;
       ccp->atom_max=1000;
       ccp->atom_add=1000;
-      ccp->atom_index=Ccalloc(ccp->atom_max,sizeof(int));
+      ccp->atom_index=0;
+      ccp->atom_index=Crecalloc(ccp->atom_index,
+				ccp->atom_max,
+				sizeof(int));
+      if(ccp->atom_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (ccp->atom_index)\n");
+	return -1;
+      }
 
       ccp->model=NULL;
       ccp->model_num=cmi;
@@ -1658,11 +1716,14 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       /* fill the current model */
       cmp->chain_index[cmp->chain_count++]=cci;
       if(cmp->chain_count>=cmp->chain_max) {
-	oi=cmp->chain_index;
-	cmp->chain_index=Ccalloc(cmp->chain_max+cmp->chain_add,sizeof(int));
-	memcpy(cmp->chain_index,oi,cmp->chain_max*sizeof(int));
 	cmp->chain_max+=cmp->chain_add;
-	free(oi);
+	cmp->chain_index=Crecalloc(cmp->chain_index,
+				   cmp->chain_max+cmp->chain_add,
+				   sizeof(int));
+	if(cmp->chain_index==NULL) {
+	  comMessage("memory allocation error in FileEntry2DB (cmp->chain_index)\n");
+	  return -1;
+	}
       }
 
       /* reset reference */
@@ -1686,11 +1747,12 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       cri=residue_count;
       residue_count++;
       if(residue_count>=residue_max) {
-	oresidue=residue;
-	residue=Ccalloc(residue_max+1000,sizeof(struct STRUCT_RESIDUE));
-	memcpy(residue,oresidue,residue_max*sizeof(struct STRUCT_RESIDUE));
 	residue_max+=1000;
-	Cfree(oresidue);
+	residue=Crecalloc(residue,residue_max,sizeof(struct STRUCT_RESIDUE));
+	if(residue==NULL) {
+	  comMessage("memory allocation error in FileEntry2DB (residue)\n");
+	  return -1;
+	}
       }
       /* now fill the residue structure */
       crp=&residue[residue_count-1];
@@ -1702,18 +1764,28 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
       crp->atom_count=0;
       crp->atom_max=50;
       crp->atom_add=50;
-      crp->atom_index=Ccalloc(crp->atom_max,sizeof(int));
+      crp->atom_index=0;
+      crp->atom_index=Crecalloc(crp->atom_index,
+				crp->atom_max,
+				sizeof(int));
+      if(crp->atom_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (crp->atom_index)\n");
+	return -1;
+      }
       crp->chain=NULL;      /* to be filled later */
       crp->chain_num=cci;
 
       /* update the current chain */
       ccp->residue_index[ccp->residue_count++]=cri;
       if(ccp->residue_count>=ccp->residue_max) {
-	oi=ccp->residue_index;
-	ccp->residue_index=Ccalloc(ccp->residue_max+ccp->residue_add,sizeof(int));
-	memcpy(ccp->residue_index,oi,ccp->residue_max*sizeof(int));
 	ccp->residue_max+=ccp->residue_add;
-	Cfree(oi);
+	ccp->residue_index=Crecalloc(ccp->residue_index,
+				     ccp->residue_max,
+				     sizeof(int));
+	if(ccp->residue_index==NULL) {
+	  comMessage("memory allocation error in FileEntry2DB (ccp->residue_index)\n");
+	  return -1;
+	}
       }
 
       /* reset reference */
@@ -1728,11 +1800,12 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     cai=atom_count;
     atom_count++;
     if(atom_count>=atom_max) {
-      oatom=atom;
-      atom=Ccalloc(atom_max+10000,sizeof(struct STRUCT_ATOM));
-      memcpy(atom,oatom,atom_max*sizeof(struct STRUCT_ATOM));
-      atom_max+=10000;
-      Cfree(oatom);
+      atom_max*=2;
+      atom=Crecalloc(atom,atom_max,sizeof(struct STRUCT_ATOM));
+      if(atom==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (atom)\n");
+	return -1;
+      }
     }
     cap=&atom[atom_count-1];
 
@@ -1787,76 +1860,79 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     */
     crp->atom_index[crp->atom_count++]=cai;
     if(crp->atom_count>=crp->atom_max) {
-      oi=crp->atom_index;
-      crp->atom_index=Ccalloc(crp->atom_max+crp->atom_add,sizeof(int));
-      memcpy(crp->atom_index,oi,crp->atom_max*sizeof(int));
       crp->atom_max+=crp->atom_add;
-      Cfree(oi);
+      crp->atom_index=Crecalloc(crp->atom_index,
+				crp->atom_max,
+				sizeof(int));
+      if(crp->atom_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (crp->atom_index)\n");
+	return -1;
+      }
+
     }
 
     ccp->atom_index[ccp->atom_count++]=cai;
     if(ccp->atom_count>=ccp->atom_max) {
-      oi=ccp->atom_index;
-      ccp->atom_index=Ccalloc(ccp->atom_max+ccp->atom_add,sizeof(int));
-      memcpy(ccp->atom_index,oi,ccp->atom_max*sizeof(int));
       ccp->atom_max+=ccp->atom_add;
-      Cfree(oi);
+      ccp->atom_index=Crecalloc(ccp->atom_index,
+				ccp->atom_max,sizeof(int));
+      if(ccp->atom_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (ccp->atom_index)\n");
+	return -1;
+      }
     }
 
     cmp->atom_index[cmp->atom_count++]=cai;
     if(cmp->atom_count>=cmp->atom_max) {
-      oi=cmp->atom_index;
-      cmp->atom_index=Ccalloc(cmp->atom_max+cmp->atom_add,sizeof(int));
-      memcpy(cmp->atom_index,oi,cmp->atom_max*sizeof(int));
       cmp->atom_max+=cmp->atom_add;
-      Cfree(oi);
+      cmp->atom_index=Crecalloc(cmp->atom_index,
+				cmp->atom_max,sizeof(int));
+      if(cmp->atom_index==NULL) {
+	comMessage("memory allocation error in FileEntry2DB (cmp->atom_index)\n");
+	return -1;
+      }
     }
-    
   }
 
   comMessage("n");
 
-  debmsg("structRead: copy to dataset");
+  debmsg("structRead: assign to dataset");
 
-  /* 
-     allocate the memory in the node and copy
-     the filled structures
-  */
-  node->model=Ccalloc(model_count+1,sizeof(struct STRUCT_MODEL));
+  model=Crecalloc(model,model_count,sizeof(struct STRUCT_MODEL));
+  node->model=model;
   node->model_count=model_count;
   node->model_max=model_count;
   node->model_add=1;
   node->model_flag=model_flag;
-  memcpy(node->model,model,model_count*sizeof(struct STRUCT_MODEL));
-  Cfree(model);
 
-  node->chain=Ccalloc(chain_count+1,sizeof(struct STRUCT_CHAIN));
+  chain=Crecalloc(chain,chain_count+1,sizeof(struct STRUCT_CHAIN));
+  node->chain=chain;
   node->chain_count=chain_count;
   node->chain_max=chain_count;
   node->chain_add=1;
   node->chain_flag=chain_flag;
-  memcpy(node->chain,chain,chain_count*sizeof(struct STRUCT_CHAIN));
-  Cfree(chain);
 
-  node->residue=Ccalloc(residue_count+1,sizeof(struct STRUCT_RESIDUE));
+  residue=Crecalloc(residue,residue_count+1,sizeof(struct STRUCT_RESIDUE));
+  node->residue=residue;
   node->residue_count=residue_count;
   node->residue_max=residue_count;
   node->residue_add=1000;
   node->residue_flag=residue_flag;
-  memcpy(node->residue,residue,residue_count*sizeof(struct STRUCT_RESIDUE));
-  Cfree(residue);
 
-  node->atom=Ccalloc(atom_count+1,sizeof(struct STRUCT_ATOM));
+  atom=Crecalloc(atom,atom_count+1,sizeof(struct STRUCT_ATOM));
+  node->atom=atom;
   node->atom_count=atom_count;
   node->atom_max=atom_count;
   node->atom_add=10000;
-  memcpy(node->atom,atom,atom_count*sizeof(struct STRUCT_ATOM));
-  Cfree(atom);
 
   /*
     create the position array and fill it
   */
   node->apos=Ccalloc(node->atom_count+1,sizeof(struct STRUCT_APOS));
+  if(node->apos==NULL) {
+    comMessage("memory allocation error in FileEntry2DB (node->apos)\n");
+    return -1;
+  }
   node->apos_count=node->atom_count;
   node->apos_max=node->atom_count;
   node->apos_add=node->atom_add;
@@ -1878,6 +1954,11 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     cmp=&node->model[i];
 
     cmp->chain=Ccalloc(cmp->chain_count+1,sizeof(struct STRUCT_CHAIN *));
+    if(cmp->chain==NULL) {
+      comMessage("memory allocation error in FileEntry2DB (cmp->chain)\n");
+      return -1;
+    }
+    
     cmp->chain_max=cmp->chain_count;
     for(j=0;j<cmp->chain_count;j++) {
       cmp->chain[j]=&node->chain[cmp->chain_index[j]];
@@ -1885,6 +1966,10 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     Cfree(cmp->chain_index);
 
     cmp->atom=Ccalloc(cmp->atom_count+1,sizeof(struct STRUCT_ATOM *));
+    if(cmp->atom==NULL) {
+      comMessage("memory allocation error in FileEntry2DB (cmp->atom)\n");
+      return -1;
+    }
     cmp->atom_max=cmp->atom_count;
     for(j=0;j<cmp->atom_count;j++) {
       cmp->atom[j]=&node->atom[cmp->atom_index[j]];
@@ -1898,6 +1983,10 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     ccp->model=&node->model[ccp->model_num];
 
     ccp->residue=Ccalloc(ccp->residue_count+1,sizeof(struct STRUCT_RESIDUE *));
+    if(ccp->residue==NULL) {
+      comMessage("memory allocation error in FileEntry2DB (ccp->residue)\n");
+      return -1;
+    }
     ccp->residue_max=ccp->residue_count;
     for(j=0;j<ccp->residue_count;j++) {
       ccp->residue[j]=&node->residue[ccp->residue_index[j]];
@@ -1905,6 +1994,10 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     Cfree(ccp->residue_index);
 
     ccp->atom=Ccalloc(ccp->atom_count+1,sizeof(struct STRUCT_ATOM *));
+    if(ccp->atom==NULL) {
+      comMessage("memory allocation error in FileEntry2DB (ccp->atom)\n");
+      return -1;
+    }
     ccp->atom_max=ccp->atom_count;
     for(j=0;j<ccp->atom_count;j++) {
       ccp->atom[j]=&node->atom[ccp->atom_index[j]];
@@ -1918,6 +2011,10 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
     crp->chain=&node->chain[crp->chain_num];
 
     crp->atom=Ccalloc(crp->atom_count+1,sizeof(struct STRUCT_ATOM *));
+    if(crp->atom==NULL) {
+      comMessage("memory allocation error in FileEntry2DB (crp->atom)\n");
+      return -1;
+    }
     crp->atom_max=crp->atom_count;
     for(j=0;j<crp->atom_count;j++) {
       crp->atom[j]=&node->atom[crp->atom_index[j]];
@@ -1964,7 +2061,15 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
   /*
      now worry about the connectivity
   */
-  node->conn=Ccalloc(sf->connect_count,sizeof(struct STRUCT_CONNECTIVITY));
+  node->conn=0;
+  node->conn=Crecalloc(node->conn,
+		       sf->connect_count,
+		       sizeof(struct STRUCT_CONNECTIVITY));
+  if(node->conn==NULL) {
+    comMessage("memory allocation error in FileEntry2DB (node->conn)\n");
+    return -1;
+  }
+
   node->conn_count=sf->connect_count;
   node->conn_max=node->conn_count;
   node->conn_add=1000;
