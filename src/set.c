@@ -590,6 +590,8 @@ int povNew(POV *pov, char *s, int *vc, int *vm, struct POV_VALUE **vl)
   pov->val_offset=(*vc);
   pov->val_count=0;
   pov->id=-1;
+  pov->wildcard=0;
+  pov->dvalue=0.0;
 
   l=clStrlen(s);
   val=NULL;

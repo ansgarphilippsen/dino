@@ -125,7 +125,7 @@ float scalReadField(struct SCAL_FIELD *field, int u, int v, int w);
 
 int scalIsSelected(dbmScalNode *n, int u, int v, int w, Select *stack);
 int scalIsXYZSelected(dbmScalNode *, float x, float y, float z, Select *stack);
-int scalEvalPOV(dbmScalNode *n, int u, int v, int w, POV *poe);
+int scalEvalPOV(dbmScalNode *n, int uvw[3],float xyz[3], POV *poe);
 int scalEvalXYZPOV(dbmScalNode *,float x, float y, float z, POV *poe);
 
 int scalUVWtoXYZ(struct SCAL_FIELD *field,double *uvw,double *xyz);

@@ -865,9 +865,11 @@ static int compile_pov(dbmScalNode *node, POV *pov)
   int vc;
   double dval;
 
-  if(clStrcmp(pov->prop,"*")) {
+  if(clStrcmp(pov->prop,"*") && pov->op!=POV_OP_WI) {
     pov->wildcard=1;
     return 0;
+  } else {
+    pov->wildcard=0;
   }
 
   // assign ids and other data
@@ -911,6 +913,8 @@ static int compile_pov(dbmScalNode *node, POV *pov)
     if(clStrcmp(val->val1,"*") || clStrcmp(val->val2,"*")) {
       pov->wildcard=1;
       return 0;
+    } else {
+      pov->wildcard=0;
     }
 
     if(pov->id==SCAL_SEL_WITHIN) {
@@ -951,15 +955,25 @@ int scalCompileSelection(dbmScalNode *node, Select *sel)
 int scalIsSelected(dbmScalNode *node, int u, int v, int w, Select *sel)
 {
   int i,ec,res;
+  int uvw[3];
+  float duvw[3];
+  float xyz[3];
 
   if(sel==NULL)
     return 1;
 
+
   assert(sel->compiled);
+
+  uvw[0]=u;  uvw[1]=v;  uvw[2]=w;
+  duvw[0]=(float)u; duvw[1]=(float)v; duvw[2]=(float)w;
+  scalUVWtoXYZf(node->field, duvw,xyz);
+
+  transApplyf(&node->transform,xyz);
 
   ec=selectGetPOVCount(sel);
   for(i=0;i<ec;i++) {
-    res=scalEvalPOV(node,u,v,w,selectGetPOV(sel, i));
+    res=scalEvalPOV(node,uvw,xyz,selectGetPOV(sel, i));
     if(res==-1)
       return -1;
     selectSetResult(sel, i, res);
@@ -974,7 +988,7 @@ int scalIsSelected(dbmScalNode *node, int u, int v, int w, Select *sel)
   stored in POV; in addition, any type of string routines should
   be avoided.
 */
-int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
+int scalEvalPOV(dbmScalNode *node, int uvw[3], float xyz[3], POV *pov)
 {
   struct SCAL_FIELD *field=node->field;
   int i,vc;
@@ -982,10 +996,13 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
   const char *val1,*val2;
   struct POV_VALUE *val;
   char message[256];
-  double v1[3],v2[3],dist,dist2;
+  //double v1[3],v2[3],dist,dist2;
+  double dist,dist2;
   double diff,dx,dy,dz;
-  float pos[3],vv;
+  //float pos[3],
+  float vv;
   int ret;
+
 
   if(pov->wildcard) return 1;
 
@@ -1008,27 +1025,28 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
     switch(prop) {
     case SCAL_SEL_WITHIN:
       dist2=pov->dvalue;
-      
+      /*
       v1[0]=(double)u;
       v1[1]=(double)v;
       v1[2]=(double)w;
       scalUVWtoXYZ(field,v1,v2);
+      */
 
-      transApply(&node->transform,v2);
+      //transApply(&node->transform,v2);
       // range flag check already
       
       if(val->wi_flag) { // value is object
-	pos[0]=v2[0];
-	pos[1]=v2[1];
-	pos[2]=v2[2];
+	//pos[0]=xyz[0];
+	//pos[1]=xyz[1];
+	//pos[2]=xyz[2];
 	if(val->val1==NULL) {
-	  ret=dbmIsWithin(pos,dist2, node->name, val->val2);
+	  ret=dbmIsWithin(xyz,dist2, node->name, val->val2);
 	  if(ret<0)
 	    return -1;
 	  if(ret>0)
 	    return 1;
 	} else {
-	  ret=dbmIsWithin(pos,dist2, val->val1,val->val2);
+	  ret=dbmIsWithin(xyz,dist2, val->val1,val->val2);
 	  if(ret<0)
 	    return -1;
 	  if(ret>0)
@@ -1036,9 +1054,9 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
 	}
       } else {
 
-	dx=v2[0]-val->vect[0];
-	dy=v2[1]-val->vect[1];
-	dz=v2[2]-val->vect[2];
+	dx=xyz[0]-val->vect[0];
+	dy=xyz[1]-val->vect[1];
+	dz=xyz[2]-val->vect[2];
 
 	if((dx*dx+dy*dy+dz*dz)<dist2)
 	  return 1;
@@ -1047,49 +1065,33 @@ int scalEvalPOV(dbmScalNode *node, int u, int v, int w, POV *pov)
     case SCAL_SEL_OBJ:
       // TODO later
       break;
-    /*******
-    case SCAL_SEL_V:
-      vv=scalReadField(field, u, v, w);
-      if(rf) {
-	if(vv>=atof(val1) && vv<=atof(val2))
-	  return 1;
-      } else {
-	switch(op) {
-	case POV_OP_EQ: if(vv==atof(val1)) return 1; break;
-	case POV_OP_NE: if(vv!=atof(val1)) return 1; break;
-	case POV_OP_LT: if(vv<atof(val1)) return 1; break;
-	case POV_OP_LE: if(vv<=atof(val1)) return 1; break;
-	case POV_OP_GT: if(vv>atof(val1)) return 1; break;
-	case POV_OP_GE: if(vv>=atof(val1)) return 1; break;
-	default: comMessage("error: invalid operator\n"); return -1;
-	}
-      }
-      break;
-      *******************/
     case SCAL_SEL_V:
     case SCAL_SEL_X:
     case SCAL_SEL_Y:
     case SCAL_SEL_Z:
       switch(prop) {
       case SCAL_SEL_V:
-	vv=scalReadField(field, u, v, w);
+	//vv=scalReadField(field, u, v, w);
+	vv=scalReadField(field,uvw[0],uvw[1],uvw[2]);
 	break;
       case SCAL_SEL_X:
-	v1[0]=u; v1[1]=v; v1[2]=w;
-	scalUVWtoXYZ(field, v1, v2);
-	vv=v2[0];
+	//v1[0]=u; v1[1]=v; v1[2]=w;
+	//scalUVWtoXYZ(field, v1, v2);
+	//vv=v2[0];
+	vv=xyz[0];
 	break;
       case SCAL_SEL_Y:
-	v1[0]=u; v1[1]=v; v1[2]=w;
-	scalUVWtoXYZ(field, v1, v2);
-	vv=v2[1];
+	//v1[0]=u; v1[1]=v; v1[2]=w;
+	//scalUVWtoXYZ(field, v1, v2);
+	//vv=v2[1];
+	vv=xyz[1];
 	break;
       case SCAL_SEL_Z:
-	v1[0]=u; v1[1]=v; v1[2]=w;
-	scalUVWtoXYZ(field, v1, v2);
-	vv=v2[2];
+	//v1[0]=u; v1[1]=v; v1[2]=w;
+	//scalUVWtoXYZ(field, v1, v2);
+	//vv=v2[2];
+	vv=xyz[2];
 	break;
-	
       }
       if(rf) {
 	if(vv>=atof(val1) && vv<=atof(val2))

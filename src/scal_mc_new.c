@@ -326,18 +326,22 @@ int scalMCNCalcVert(int u, int v, int w, int id)
 
   scalUVWtoXYZf(scalMCNOrg.field,uvw,xyz);
 
-  r=scalMCNAddVert(xyz);
+  r=scalMCNAddVert(xyz,u,v,w);
 
   return r;
 }
 
-int scalMCNAddVert(float *p)
+int scalMCNAddVert(float *p, int u, int v, int w)
 {
   scalMCNVert *ov;
 
   scalMCNOrg.vert[scalMCNOrg.vert_count].p[0]=p[0];
   scalMCNOrg.vert[scalMCNOrg.vert_count].p[1]=p[1];
   scalMCNOrg.vert[scalMCNOrg.vert_count].p[2]=p[2];
+  scalMCNOrg.vert[scalMCNOrg.vert_count].uvw[0]=u;
+  scalMCNOrg.vert[scalMCNOrg.vert_count].uvw[1]=v;
+  scalMCNOrg.vert[scalMCNOrg.vert_count].uvw[2]=w;
+ 
   scalMCNOrg.vert[scalMCNOrg.vert_count].cc=0;
 
   scalMCNOrg.vert_count++;
@@ -672,6 +676,9 @@ int scalMCN2Obj()
     obj->point[i].v[0]=scalMCNOrg.vert[i].p[0];
     obj->point[i].v[1]=scalMCNOrg.vert[i].p[1];
     obj->point[i].v[2]=scalMCNOrg.vert[i].p[2];
+    obj->point[i].uvw[0]=scalMCNOrg.vert[i].uvw[0];
+    obj->point[i].uvw[1]=scalMCNOrg.vert[i].uvw[1];
+    obj->point[i].uvw[2]=scalMCNOrg.vert[i].uvw[2];
     obj->point[i].n[0]=0.0;
     obj->point[i].n[1]=0.0;
     obj->point[i].n[2]=0.0;

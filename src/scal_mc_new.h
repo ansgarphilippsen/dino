@@ -8,6 +8,7 @@ typedef struct SCAL_MC_NEW_VERT {
   float p[3]; /* position */
   int c[8];  /* neighbour list */
   int cc;     /* neighbour count */
+  int uvw[3]; /* index of nearest grid point */
 }scalMCNVert;
 
 typedef struct SCAL_MC_NEW_FACE {
@@ -54,7 +55,7 @@ int scalMCNCell(void);
 
 int scalMCNCalcVert(int u, int v, int w, int id);
 
-int scalMCNAddVert(float *p);
+int scalMCNAddVert(float *p, int u, int v, int w);
 
 int scalMCNAddLine(int v1, int v2);
 int scalMCNAddFace(int v1, int v2, int v3);
