@@ -1,3 +1,14 @@
+fixed bug in cnsb routine
+
+added -c flag to uhbd load to convert units based on header scale
+
+added -rn flag to surf load command, forcing a renormalization of the 
+normal vectors
+
+added error-catch to contouring
+
+added scalar-field dataset properties vm and vc
+
 using AppPlusShell widget instead of normal one
 
 topo may be asymmetric, scalexy is really scalex, ratio is maintained

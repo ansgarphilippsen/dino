@@ -446,6 +446,7 @@ int sceneCommand(int wc, char **wl)
 	gfxSetFog();
 	comRedraw();
       } else if(!strcmp(prop,"ortho")) {
+	comMessage("\nwarning: orthographic projection deprecated!");
 	if(gfx.mode==GFX_PERSP) {
 	  scenePersp2Ortho();
 	  gfx.mode=GFX_ORTHO;

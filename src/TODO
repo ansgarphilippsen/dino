@@ -1,3 +1,15 @@
+cnsb broken
+
+alternate model char broken
+
+picking with scene split (e.g. $CP) wrong
+
+use '-arch XXX' flag for load to identify architecture and to 
+automatically decide wether to swap or not (MIPS ALPHA PPC INTEL and MSB 
+and LSB)
+ 
+INSANE MEMORY USAGE BY SCALAR FIELDS !
+
 add warning about wrong file format when error occurs, try to automatize 
 byte swapping
 

@@ -54,6 +54,9 @@ extern struct GUI gui;
 extern struct GLF glf;
 extern int debug_mode;
 
+/********************
+ THESE ARE OBSOLETE
+
 static int write_buf1[]={GLX_RGBA, 
 			 GLX_DEPTH_SIZE,12,
 			 GLX_RED_SIZE,8,
@@ -106,7 +109,7 @@ static int write_buf6[]={GLX_RGBA,
 			 GLX_ACCUM_GREEN_SIZE, 1, 
 			 GLX_ACCUM_BLUE_SIZE, 1, 
 			 None};
-
+*****************/
 
 float jitter2[][2]={{0.25, 0.75}, {0.75, 0.25}}; 
 float jitter3[][2]={{0.5033922635, 0.8317967229}, 
@@ -163,6 +166,7 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
   pid_t child_id;
 #endif
   char message[256];
+  int accum_flag;
 
   /* get a new visinfo */
 
@@ -204,9 +208,17 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
     gui.win_height=(int)(scale*(float)gui.win_height);
     gfxResizeEvent();
 
-    visinfo=writeGetVis();
+    if(accum>1)
+      accum_flag=1;
+    else
+      accum_flag=0;
+
+    visinfo=writeGetVis(accum_flag);
     if(visinfo==NULL) {
       comMessage("\nfailed to find a correct visual for offline rendering");
+      if(accum_flag) {
+	comMessage("\nplease try again without accumulation (-a)");
+      }
       return -1;
     }
     
@@ -343,14 +355,14 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
   return 0;
 }
 
-XVisualInfo * writeGetVis()
+XVisualInfo * writeGetVis(int accum_flag)
 {
   int buf[64];
   int bufc=0,i,j,k;
   int depthi,rgbai,accumi;
   int d[]={12,8,4,1};
   int c[]={12,8,6,4,2,1};
-  int a[]={8,4,1,0};
+  int a[]={8,4,2,1};
   char message[256];
   XVisualInfo *vis;
 
@@ -364,37 +376,63 @@ XVisualInfo * writeGetVis()
   bufc++;
   buf[bufc++]=GLX_GREEN_SIZE;
   bufc++;
+  /*
   buf[bufc++]=GLX_ALPHA_SIZE;
   bufc++;
-  buf[bufc++]=GLX_ACCUM_RED_SIZE;
-  accumi=bufc++;
-  buf[bufc++]=GLX_ACCUM_BLUE_SIZE;
-  bufc++;
-  buf[bufc++]=GLX_ACCUM_GREEN_SIZE;
-  bufc++;
+  */
+  if(accum_flag) {
+    buf[bufc++]=GLX_ACCUM_RED_SIZE;
+    accumi=bufc++;
+    buf[bufc++]=GLX_ACCUM_BLUE_SIZE;
+    bufc++;
+    buf[bufc++]=GLX_ACCUM_GREEN_SIZE;
+    bufc++;
+  }
   buf[bufc++]=None;
 
-  for(k=0;k<sizeof(a);k++) {
+  if(accum_flag) {
+    for(k=0;k<sizeof(a);k++) {
+      for(i=0;i<sizeof(d);i++) {
+	for(j=0;j<sizeof(c);j++) {
+	  buf[depthi]=d[i];
+	  buf[rgbai+0]=c[j];
+	  buf[rgbai+2]=c[j];
+	  buf[rgbai+4]=c[j];
+	  buf[rgbai+6]=c[j];
+	  buf[accumi+0]=a[k];
+	  buf[accumi+2]=a[k];
+	  buf[accumi+4]=a[k];
+	  
+	  vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
+	  if(vis!=NULL) {
+	    sprintf(message,"found visual with rgba %d, depth %d and accum %d",
+		    buf[rgbai],buf[depthi],buf[accumi]);
+	    debmsg(message);
+	    return vis;
+	  }
+	}
+      }
+    }
+  } else {
     for(i=0;i<sizeof(d);i++) {
       for(j=0;j<sizeof(c);j++) {
-      	buf[depthi]=d[i];
+	buf[depthi]=d[i];
 	buf[rgbai+0]=c[j];
-      	buf[rgbai+2]=c[j];
-      	buf[rgbai+4]=c[j];
-	      buf[rgbai+6]=c[j];
-	      buf[accumi+0]=a[k];
-	      buf[accumi+2]=a[k];
-	      buf[accumi+4]=a[k];
-	      vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
-	      if(vis!=NULL) {
-		sprintf(message,"found visual with rgba %d, depth %d and accum %d",
-			buf[rgbai],buf[depthi],buf[accumi]);
-		debmsg(message);
-	        return vis;
-	      }
+	buf[rgbai+2]=c[j];
+	buf[rgbai+4]=c[j];
+	buf[rgbai+6]=c[j];
+	
+	vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
+	if(vis!=NULL) {
+	  sprintf(message,"found visual with rgba %d and depth %d",
+		  buf[rgbai],buf[depthi]);
+	  debmsg(message);
+	  return vis;
+	}
       }
     }
   }
+
   return NULL;
 }
 

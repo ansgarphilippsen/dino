@@ -13,7 +13,7 @@
 
 extern int debug_mode;
 
-int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int swap_flag)
+int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
 {
   char line[256];
   int vn,fn,vc,fc,fcc,i,k;
@@ -21,6 +21,8 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int swap_flag)
   float prober,fdummy1;
   struct DBM_SURF_NODE *sn=&node->surfNode;
   char d1[11],d2[11],d3[11],d4[11],d5[11],d6[11];
+
+  int swap_flag=(flag&DBM_FLAG_SWAP);
   
   do {
     fgets(line,256,f1);
@@ -630,7 +632,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
   return 0;
 }
 
-int graspRead(FILE *f, union DBM_NODE *node, int swap_flag)
+int graspRead(FILE *f, union DBM_NODE *node, int flag)
 {
   struct DBM_SURF_NODE *sn=&node->surfNode;
   struct GRASP_HEADER header;
@@ -646,7 +648,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int swap_flag)
   char *ws=" \t";
   int vertc,facec,grid,latt,i,k,propc;
 
-  
+  int swap_flag=(flag&DBM_FLAG_SWAP);
 
   fread(&header, sizeof(header),1,f);
 

@@ -40,7 +40,7 @@ enum             {WRITE_CENTER_VIEW,
 
 enum {WRITE_TYPE_TIFF, WRITE_TYPE_PNG};
 
-XVisualInfo* writeGetVis(void);
+XVisualInfo* writeGetVis(int accum_flag);
 
 int writeFile(char *name, int type, int accum, float scale, int dump);
 

@@ -121,8 +121,8 @@ int delphi2Read(FILE *f, dbmScalNode *sn)
   char uplbl[21],nxtlbl[71],botlbl[17];
   float scale, mid[3],fact;
   unsigned char dummy[4];
+  char message[1024];
   
-
   sn->field=Cmalloc(sizeof(struct SCAL_FIELD));
 
   if(sn->field==NULL) {
@@ -186,6 +186,9 @@ int delphi2Read(FILE *f, dbmScalNode *sn)
   }
   fact=1.0/scale;
   scalCELLtoVECT(sn->field,1.0,1.0,1.0,90.0,90.0,90.0,fact,fact,fact);
+
+  sprintf(message,"\n DELPHIG HEADER:\n %s\n %s\n %s", uplbl,nxtlbl,botlbl);
+  debmsg(message);
 
   return 0;
   
