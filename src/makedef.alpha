@@ -2,6 +2,7 @@
 
 ARCH=DEC
 MACH=osf
+STRIP = strip
 
 CC   = cc
 GOPT = -g2 -fullwarn

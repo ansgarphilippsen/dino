@@ -2,6 +2,7 @@
 
 ARCH=LINUX
 MACH=i386
+STRIP = strip -x -g
 
 #LIBDIR = -L../lib -L/usr/X11R6/lib
 LIBDIR = -L/usr/X11R6/lib

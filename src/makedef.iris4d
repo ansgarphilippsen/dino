@@ -2,6 +2,7 @@
 
 ARCH=SGI
 MACH=irix
+STRIP = strip -x -h
 
 CC   = cc
 GOPT = -O2 -n32 -fullwarn -mips3 

@@ -2,6 +2,7 @@
 
 ARCH=LINUX
 MACH=ppc
+STRIP = strip -x -g
 
 LIBDIR = -L/usr/X11R6/lib -L../extras/lib
 LIBSTATIC = /usr/lib/libtiff.a /usr/lib/libjpeg.a /usr/lib/libpng.a /usr/lib/libz.a

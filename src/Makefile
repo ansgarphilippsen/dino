@@ -18,7 +18,7 @@
 # USE_CMI
 
 OPTIONS= -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DCPK_NEW
-OPTIONS += -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI -DUSE_TCL #-DUSE_DLIST
+OPTIONS += -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI #-DUSE_TCL #-DUSE_DLIST
 
 # use tcl as interpreter
 #OPTIONS += -DTCL_SHELL
@@ -155,7 +155,8 @@ sinclude $(GUI)/make.addon
 
 dino: $(OBJ) gui
 	$(CC) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT) -o $@
-	strip -x -g -o ../bin/$@ $@
+	cp $@ ../bin/
+	$(STRIP) ../bin/$@
 
 gui:
 	cd $(GUI) && $(MAKE) gui
