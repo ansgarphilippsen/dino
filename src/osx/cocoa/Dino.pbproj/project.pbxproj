@@ -317,6 +317,7 @@
 				F52A76DB02C0F691019813D9,
 				F5156BD50313F99901A966FA,
 				F5156BD70313F9E201A966FA,
+				F5EFC2A4031434D201FB7A39,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -2423,6 +2424,12 @@
 		};
 		F5B2A2140312F28101A1B05C = {
 			fileRef = F5B2A2110312F28101A1B05C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5EFC2A4031434D201FB7A39 = {
+			fileRef = 17587328FF379C6511CA2CBB;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -15,9 +15,10 @@
 					ActiveTab = 0;
 					Frame = "{{0, 23}, {1024, 647}}";
 					Split0 = {
+						ActiveTab = 1;
 						Frame = "{{240, 0}, {784, 647}}";
 						Split0 = {
-							Frame = "{{0, 24}, {784, 623}}";
+							Frame = "{{0, 232}, {784, 415}}";
 						};
 						SplitCount = 1;
 						Tab0 = {
@@ -90,7 +91,7 @@
 					};
 					TabCount = 5;
 				};
-				WindowLocation = "{7, 10}";
+				WindowLocation = "{-4, 12}";
 			};
 		};
 		wantsIndex = 1;
