@@ -95,7 +95,9 @@ struct HELP_ENTRY top_help[] = {
 int comInit()
 {
   int i,tc;
-
+#ifdef LINUX
+  char joyname[128];
+#endif
   struct TRANSFORM_LIST_COMMAND mouse[]={
     {0, Button1Mask, TRANS_ROTY, -0.5},
     {1, Button1Mask, TRANS_ROTX, -0.5},
@@ -206,9 +208,9 @@ int comInit()
   com.benchmark=0;
 
 #ifdef LINUX
-  if(jInit()==0) {
+  if(jInit(joyname)==0) {
     com.joyflag=1;
-    fprintf(stdout,"Joystick found\n");
+    fprintf(stdout,"%s detected\n",joyname);
   } else {
     com.joyflag=0;
   }

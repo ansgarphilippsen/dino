@@ -5,7 +5,7 @@
 #include <linux/joystick.h>
 #endif
 
-int jInit(void);
+int jInit(char *n);
 
 int jCheck(void);
 
