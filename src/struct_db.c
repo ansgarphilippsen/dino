@@ -1223,7 +1223,7 @@ int structSubCommand(dbmStructNode *node,char *rsub, int wc, char **wl)
   if(structSubMatch(node,rsub,model,chain,residue,atom)!=0) {
     return -1;
   }
-
+  c=0;
   for(i=0;i<node->atom_count;i++) {
     cap=&node->atom[i];
     sprintf(sub1,"%d",cap->residue->num);
