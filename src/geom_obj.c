@@ -9,6 +9,7 @@
 #include "geom_obj.h"
 #include "Cmalloc.h"
 #include "mat.h"
+#include "bspline.h"
 
 
 int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, char **wl)
@@ -30,6 +31,7 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
     geomObjAdd(obj,wc-1,wl+1);
   } else if(!strcmp(wl[0],"del")) {
     geomObjDel(obj,wc-1,wl+1);
+    geomObjRegen(obj);
   } else if(!strcmp(wl[0],"get")) {
   } else if(!strcmp(wl[0],"set")) {
     strcpy(set,"");
@@ -58,7 +60,8 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
       return -1;
     }
     if(obj->render.mode!=RENDER_OFF && 
-       obj->render.mode!=RENDER_ON) {
+       obj->render.mode!=RENDER_ON &&
+       obj->render.mode!=RENDER_TUBE) {
       obj->render.mode=RENDER_OFF;
       comMessage("\ninvalid render mode");
     }
@@ -77,6 +80,16 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
     sprintf(message,"\nunknown command %s",wl[0]);
   }
 
+  geomObjRegen(obj);
+  
+  comRedraw();
+
+  return 0;
+}
+
+int geomObjRegen(geomObj *obj)
+{
+  int i;
   if(obj->render.mode==RENDER_ON) {
     if(obj->va.count>0)
       Cfree(obj->va.p);
@@ -106,10 +119,9 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
 			obj->line[i].c);
       }
     }
+  } else if (obj->render.mode==RENDER_TUBE) {
+    geomSmooth(obj);
   }
-  
-  comRedraw();
-
   return 0;
 }
 
@@ -156,9 +168,15 @@ geomObj *geomNewObj(struct DBM_GEOM_NODE *node, char *name, int type)
       } else if (no->type==GEOM_SLAB) {
 
       }
+      no->r=1.0;
+      no->g=1.0;
+      no->b=1.0;
+
       no->render.show=1;
       no->render.mode=RENDER_OFF;
       no->render.detail=3;
+      no->render.detail2=3;
+      no->render.tube_ratio=1.0;
       no->render.nice=1;
       no->render.stipple_flag=0;
       no->render.stipple_factor=1;
@@ -167,6 +185,7 @@ geomObj *geomNewObj(struct DBM_GEOM_NODE *node, char *name, int type)
       no->render.stippleo=0.2;
       no->render.line_width=1.0;
       no->render.point_size=1.0;
+      no->render.bond_width=1.0;
       no->render.transparency=1.0;
       /* the other render stats are unused */
 
@@ -270,9 +289,9 @@ int geomObjAdd(geomObj *obj,int wc, char **wl)
   dbmSplit(param,',',&pc,&pl);
 
   /* default values */
-  c[0]=1.0;
-  c[1]=1.0;
-  c[2]=1.0;
+  c[0]=obj->r;
+  c[1]=obj->g;
+  c[2]=obj->b;
   r=1.0;
   t=1.0;
 
@@ -599,6 +618,7 @@ int geomObjDel(geomObj *obj,int wc, char **wl)
     }
 
   }  
+
   return 0;
 }
 
@@ -672,6 +692,18 @@ int geomObjSet(geomObj *obj, struct DBM_SET *s, int flag)
   strcpy(sel,s->sel_string);
 
   dbmSplit(sel,' ',&sc,&sl);
+
+  if(clStrcmp(sel,"*")) {
+    for(j=0;j<s->ec;j++) {
+      switch(s->e[j].id) {
+      case GEOM_COLOR:
+	obj->r=s->e[j].value.v[0][0];
+	obj->g=s->e[j].value.v[0][1];
+	obj->b=s->e[j].value.v[0][2];
+	break;
+      }
+    }
+  }
 
   for(k=0;k<sc;k++)
     selp[k]=sl[k];
@@ -794,8 +826,109 @@ int geomEleMatch(char *oexpr,int type, int n)
   return 0;
 }
 
+int geomSmooth(geomObj *obj)
+{
+  cgfxSplinePoint *point_list;
+  cgfxPoint *spoint_list;
+  cgfxVA va;
+  int i;
+  int detail;
+  float n1[4],n2[4],n3[4],n4[4];
 
+  n4[0]=1.0; n4[1]=0.0; n4[2]=0.0;
 
+  if(obj->va.count>0)
+    Cfree(obj->va.p);
+  obj->va.count=0;
+  obj->va.max=0;
+  obj->va.p=NULL;
 
+  if(obj->point_count==0)
+    return -1;
 
+  point_list=Ccalloc(obj->point_count,sizeof(cgfxSplinePoint));
 
+  detail=obj->render.detail;
+  if(detail<1)
+    detail=1;
+
+  for(i=0;i<obj->point_count;i++) {
+    point_list[i].v[0]=obj->point[i].v[0];
+    point_list[i].v[1]=obj->point[i].v[1];
+    point_list[i].v[2]=obj->point[i].v[2];
+    point_list[i].c[0]=obj->point[i].c[0];
+    point_list[i].c[1]=obj->point[i].c[1];
+    point_list[i].c[2]=obj->point[i].c[2];
+    point_list[i].c[3]=obj->render.transparency;
+    point_list[i].rad=obj->render.bond_width;
+    point_list[i].id=CGFX_COIL;
+  }
+
+  for(i=0;i<obj->point_count;i++) {
+    if(i==0) {
+      n1[0]=point_list[0].v[0]-point_list[1].v[0];
+      n1[1]=point_list[0].v[1]-point_list[1].v[1];
+      n1[2]=point_list[0].v[2]-point_list[1].v[2];
+      n2[0]=point_list[2].v[0]-point_list[1].v[0];
+      n2[1]=point_list[2].v[1]-point_list[1].v[1];
+      n2[2]=point_list[2].v[2]-point_list[1].v[2];
+    } else if(i==obj->point_count-1) {
+      n1[0]=point_list[i-2].v[0]-point_list[i-1].v[0];
+      n1[1]=point_list[i-2].v[1]-point_list[i-1].v[1];
+      n1[2]=point_list[i-2].v[2]-point_list[i-1].v[2];
+      n2[0]=point_list[i].v[0]-point_list[i-1].v[0];
+      n2[1]=point_list[i].v[1]-point_list[i-1].v[1];
+      n2[2]=point_list[i].v[2]-point_list[i-1].v[2];
+    } else {
+      n1[0]=point_list[i-1].v[0]-point_list[i].v[0];
+      n1[1]=point_list[i-1].v[1]-point_list[i].v[1];
+      n1[2]=point_list[i-1].v[2]-point_list[i].v[2];
+      n2[0]=point_list[i+1].v[0]-point_list[i].v[0];
+      n2[1]=point_list[i+1].v[1]-point_list[i].v[1];
+      n2[2]=point_list[i+1].v[2]-point_list[i].v[2];
+    }
+    // use n2 as direction
+    point_list[i].d[0]=n2[0];
+    point_list[i].d[1]=n2[1];
+    point_list[i].d[2]=n2[2];
+    
+    matfNormalize(point_list[i].d,point_list[i].d);
+    
+    matfCalcCross(n1,n2,n3);
+    
+    // check against reference
+    
+    if(matfCalcDot(n3,n4)<0) {
+      matfCalcCross(n2,n1,n3);
+    }
+    
+    matfNormalize(n3,point_list[i].n);
+    /*
+    fprintf(stderr,"\n %.2f %.2f %.2f\n %.2f %.2f %.2f\n %.2f %.2f %.2f\n",
+	    point_list[i].v[0],point_list[i].v[1],point_list[i].v[2],
+	    point_list[i].d[0],point_list[i].d[1],point_list[i].d[2],
+	    point_list[i].n[0],point_list[i].n[1],point_list[i].n[2]);
+    */
+    // take as new reference
+    n4[0]=n3[0];
+    n4[1]=n3[1];
+    n4[2]=n3[2];
+    matfNormalize(n4,n4);
+  }
+  
+  bsplineGenerate(point_list, &spoint_list, obj->point_count,
+		  detail, CGFX_INTPOL_COL);
+
+  cgfxGenHSC(&va, point_list, obj->point_count, &obj->render);
+  cgfxAppend(&obj->va,&va);
+  Cfree(va.p);
+  /*
+  for(i=0;i<obj->va.count;i++) {
+    fprintf(stderr,"\n%.2f %.2f %.2f  %.2f %.2f %.2f  %.2f %.2f %.2f",
+	    obj->va.p[i].v[0],obj->va.p[i].v[1],obj->va.p[i].v[2],
+	    obj->va.p[i].n[0],obj->va.p[i].n[1],obj->va.p[i].n[2],
+	    obj->va.p[i].c[0],obj->va.p[i].c[1],obj->va.p[i].c[2]);
+  }
+  */
+  return 0;
+}

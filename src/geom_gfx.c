@@ -144,7 +144,7 @@ int geomDrawObj(geomObj *obj)
     glEnableClientState(GL_COLOR_ARRAY);
     glVertexPointer(3,GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].v);
     glNormalPointer(GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].n);
-    glColorPointer(4,GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].c); 
+    glColorPointer(3,GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].c); 
 
 #ifdef SUN
      glBegin(GL_TRIANGLES);
@@ -153,12 +153,12 @@ int geomDrawObj(geomObj *obj)
      }
      glEnd();
 #else
-    glDrawArrays(GL_TRIANGLES,0,obj->va.count);
+     glDrawArrays(GL_TRIANGLES,0,obj->va.count);
 #endif
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+     glDisableClientState(GL_VERTEX_ARRAY);
+     glDisableClientState(GL_NORMAL_ARRAY);
+     glDisableClientState(GL_COLOR_ARRAY);
   }
   glPopAttrib();
 

@@ -93,6 +93,9 @@ typedef struct GEOM_OBJ {
   cgfxVA va;
 
   double pos[3],dir[3],eq[4];
+
+  float r,g,b;
+
 }geomObj;
 
 geomObj *geomNewObj(struct DBM_GEOM_NODE *node, char *name, int type);
@@ -106,6 +109,8 @@ int geomObjDel(geomObj *obj,int wc, char **wl);
 int geomObjList(geomObj *obj, int wc, char **wl);
 int geomObjSet(geomObj *obj, struct DBM_SET *, int flag);
 int geomEleMatch(char *expr,int type, int n);
+int geomObjRegen(geomObj *);
+int geomSmooth(geomObj *obj);
 
 #endif
 

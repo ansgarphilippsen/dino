@@ -56,7 +56,6 @@ int bsplineGenerate(cgfxSplinePoint *sp, cgfxPoint **pp, int n, int detail, int 
     }
   }
 
-
   // and colors
 
   if(cgfx_flag & CGFX_INTPOL_COL) {
@@ -115,6 +114,7 @@ int bsplineGenerate(cgfxSplinePoint *sp, cgfxPoint **pp, int n, int detail, int 
   }
   matfNormalize(p[1].d,p[0].d);
   matfNormalize(p[i-1].d,p[i].d);
+
   
   return 0;
 }

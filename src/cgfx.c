@@ -1526,8 +1526,9 @@ int cgfxConnectProfile(cgfxVA *va, cgfxProfile *p1, cgfxProfile *p2, int f)
 
   if(p1->p[0].v[0]==p2->p[0].v[0] &&
      p1->p[0].v[1]==p2->p[0].v[1] &&
-     p1->p[0].v[2]==p2->p[0].v[2])
+     p1->p[0].v[2]==p2->p[0].v[2]) {
     return -1;
+  }
   
   v1[0]=p1->p[0].n[0];
   v1[1]=p1->p[0].n[1];
@@ -1550,14 +1551,13 @@ int cgfxConnectProfile(cgfxVA *va, cgfxProfile *p1, cgfxProfile *p2, int f)
   o=0;  // still does not work correctly, i.e. gives jagged edges for strands
 
   o=p1->pc-2;  // EMPIRICAL ??? why does this work ???
-  
+
   for(i=0;i<p1->pc-1;i++) {
     k=i+1;
     l1=i+o;
     l2=k+o;
     l1%=p1->pc-1;
     l2%=p1->pc-1;
-
     cgfxCopyPVa(&p1->p[i],&va->p[va->count]);
     va->count++;
     cgfxCopyPVa(&p2->p[l2],&va->p[va->count]);
