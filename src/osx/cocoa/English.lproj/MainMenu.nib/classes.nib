@@ -24,7 +24,6 @@
                 showAxis = id; 
                 showCPMarker = id; 
                 toggleDepthCueing = id; 
-                toggleDinoObject = id; 
                 viewCenter = id; 
                 viewLeft = id; 
                 viewRight = id; 
@@ -34,9 +33,7 @@
             OUTLETS = {
                 dinoCLI = CLIView; 
                 dinoGL = DinoGLView; 
-                dinoOM = NSOutlineView; 
                 statusBox = NSTextField; 
-                toggleButton = NSButton; 
                 versionBox = NSTextField; 
             }; 
             SUPERCLASS = NSObject; 
@@ -47,7 +44,18 @@
             OUTLETS = {sliderX = NSSlider; sliderY = NSSlider; }; 
             SUPERCLASS = NSOpenGLView; 
         }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {toggleDinoObject = id; }; 
+            CLASS = OMController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                dinoController = Controller; 
+                dinoOM = NSOutlineView; 
+                toggleButton = NSButton; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
     ); 
     IBVersion = 1; 
 }
