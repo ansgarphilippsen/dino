@@ -49,7 +49,7 @@ struct GFX_LIGHT gfx_def_light[]={
 #if 1
   {1,0,
    {0.5, 0.7, 1.0, 0.0},
-   {0.05, 0.05, 0.05, 1.0},
+   {0.1, 0.1, 0.1, 1.0},
    {0.45, 0.45, 0.45, 1.0},
    {0.5, 0.5, 0.5, 1.0},
    1.0,0.0,0.0,
@@ -59,7 +59,7 @@ struct GFX_LIGHT gfx_def_light[]={
    {-0.7, -0.4, 1.0, 0.0},
    {0.05, 0.05, 0.05, 0.0},
    {0.45, 0.45, 0.45, 1.0},
-   {0.0, 0.0, 0.0, 1.0},
+   {0.5, 0.5, 0.5, 1.0},
    1.0,0.0,0.0,
    180.0,{0,0,-1},0.0
   },
@@ -197,7 +197,7 @@ int gfxInit()
   gfx.axisflag=1;
   gfx.current_view=GFX_CENTER;
   gfx.slab_flag=0;
-  gfx.spin=0;
+  gfx.anim=0;
 
   gfx.stereo_active=0;
   gfx.stereo_mode=GFX_STEREO_OFF;

@@ -99,6 +99,13 @@ static int eval_line(int argc, char **argv)
       return -1;
     }
   } else {
+    /*
+      stereo-mode 
+      dials-device
+      gfx-geometry
+      menu-geometry
+    */
+
     // unknown keyword
     /* ignore for now
       sprintf(message,"startup: unknown keyword %s\n",argv[0]);

@@ -1,3 +1,7 @@
+added .dcd as CHARMM trj extension
+
+added scene rock
+
 fixed dist/angle/torsion bug
 
 fixed bug in XPLORA/CNSA read routine

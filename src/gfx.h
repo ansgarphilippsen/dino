@@ -62,7 +62,8 @@ struct GFX
   int cpflag;
   int slab_flag;
   int fixz;
-  int spin,sx,sy,sdx,sdy;
+  int anim;
+  int sx,sy,sdx,sdy;
   int dither;
 
   int dlist_flag;

@@ -550,7 +550,7 @@ int surfGenerate(surfObj *obj, Select *sel)
 	flag=1;
     } else {
       if(obj->vert_flag[vi1] || obj->vert_flag[vi2] || obj->vert_flag[vi3]) {
-	// obscure fix, vert_id[] should be allows zero ??
+	// obscure fix, vert_id[] should be allowed zero ??
 	if(vert_id[vi1]>0 && vert_id[vi2]>0 && vert_id[vi3]>0) {
 	  flag=1;
 	}

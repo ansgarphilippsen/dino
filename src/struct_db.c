@@ -2409,9 +2409,9 @@ int structSetDefault(structObj *obj)
   obj->render.cgfx_flag=CGFX_INTPOL_COL | CGFX_HSC_CAP;
 
   comSetDefMat(&obj->render.mat);
-  obj->render.mat.spec[0]=0.6;
-  obj->render.mat.spec[1]=0.6;
-  obj->render.mat.spec[2]=0.6;
+  obj->render.mat.spec[0]=0.3;
+  obj->render.mat.spec[1]=0.3;
+  obj->render.mat.spec[2]=0.3;
   obj->render.mat.spec[3]=1.0;
   obj->render.mat.shin=32;
 
@@ -2671,7 +2671,8 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
   }
 
   if(strlen(type)==0) {
-    if(!strcmp(ext,"trj")) {
+    if(!strcmp(ext,"trj") ||
+       !strcmp(ext,"dcd")) {
       id=STRUCT_TRJ_CHARMM; /* default */
     } else if(!strcmp(ext,"crd")) {
       id=STRUCT_TRJ_CNS; /* default */
