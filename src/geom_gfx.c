@@ -46,7 +46,17 @@ int geomDrawObj(geomObj *obj)
     glDisable(GL_CULL_FACE);
     glDisable(GL_COLOR_MATERIAL);
 
-    glPointSize(obj->render.point_size);
+   if(obj->render.nice) {
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_DITHER);
+  } else {
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_DITHER);
+  }
+
+  glPointSize(obj->render.point_size);
     glLineWidth(obj->render.line_width);
 
     glBegin(GL_POINTS);
