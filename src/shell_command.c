@@ -576,7 +576,7 @@ static void rpn_show(void)
     shellOut("stack is empty\n");
   } else {
     for(i=0;i<rpn_stack.count;i++) {
-      sprintf(mess,"%3d: ",i);
+      sprintf(mess,"%3d: ",rpn_stack.count-i-1);
       shellOut(mess);
       shellOut(rpn_stack.entry[i]);
       shellOut("\n");

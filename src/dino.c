@@ -135,7 +135,8 @@ int dinoParseArgs(int argc, char **argv)
           exit(-1);
         }
         strncpy(logfile,argv[++i],128);
-      } else if(!strcmp(argv[i],"+log")) {
+      } else if(!strcmp(argv[i],"+log") ||
+		!strcmp(argv[i],"-nolog")) {
         strcpy(logfile,"");
       } else if(!strcmp(argv[i],"-s")) {
         if(i+1>=argc) {

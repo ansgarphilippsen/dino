@@ -159,7 +159,7 @@ int transCommand(transMat *trans, int command, int axis, double value)
   return 0;
 }
 
-int transReset(transMat *trans)
+void transResetRot(transMat *trans)
 {
   int i;
   double imat[]={1.0,0.0,0.0,0.0,
@@ -167,12 +167,30 @@ int transReset(transMat *trans)
 		 0.0,0.0,1.0,0.0,
 		 0.0,0.0,0.0,1.0};
   for(i=0;i<16;i++) trans->rot[i]=imat[i];
-  trans->cen[0]=0.0; trans->cen[1]=0.0; trans->cen[2]=0.0; trans->cen[3]=0.0;
-  trans->tra[0]=0.0; trans->tra[1]=0.0; trans->tra[2]=0.0; trans->tra[3]=0.0;
+}
 
+void transResetCen(transMat *trans)
+{
+  trans->cen[0]=0.0; trans->cen[1]=0.0; trans->cen[2]=0.0; trans->cen[3]=0.0;
+}
+
+void transResetTra(transMat *trans)
+{
+  trans->tra[0]=0.0; trans->tra[1]=0.0; trans->tra[2]=0.0; trans->tra[3]=0.0;
+}
+
+void transResetSlab(transMat *trans)
+{
   trans->slabn=1.0;
   trans->slabf=1000;
-  return 0;
+}
+
+void transReset(transMat *trans)
+{
+  transResetRot(trans);
+  transResetCen(trans);
+  transResetTra(trans);
+  transResetSlab(trans);
 }
 
 int transApply(transMat *trans, double *v)

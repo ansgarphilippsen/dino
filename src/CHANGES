@@ -2,7 +2,15 @@ fixed dist/angle/torsion bug
 
 fixed bug in XPLORA/CNSA read routine
 
+fixed obj limit for struct dataset
+
+rewrote memory allocation during struct read to fix possible memory leaks 
+and crashes for huge structures
+
 ---
+
+added flag "-noom" to avoid object menu from being dsiplayed (required for 
+large number of datasets/objects)
 
 scene stack is now populated with coordinates rather than atom-id !!
 

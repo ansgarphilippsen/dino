@@ -53,7 +53,12 @@ typedef struct TRANSFORM_LIST {
 }transList;
 
 int transCommand(transMat *trans, int command, int axis, double value);
-int transReset(transMat *trans);
+
+void transResetRot(transMat *trans);
+void transResetTra(transMat *trans);
+void transResetCen(transMat *trans);
+void transResetSlab(transMat *trans);
+void transReset(transMat *trans);
 
 int transApply(transMat *trans, double *v);
 int transApplyf(transMat *trans, float *v);

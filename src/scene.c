@@ -144,10 +144,30 @@ int sceneCommand(int wc, const char **wl)
     comRedraw();
   } else if(clStrcmp(wl[0],"reset")) {
     // TODO parameters center rot all, etc
-    transReset(&gfx.transform);
-    gfx.transform.tra[2]=-100.0;
-    gfx.transform.slabn=1.0;
-    gfx.transform.slabf=1000.0;
+    if(wc>1) {
+      for(i=1;i<wc;i++) {
+	if(clStrcmp(wl[i],"center")) {
+	  transResetCen(&gfx.transform);
+	} else if(clStrcmp(wl[i],"rot")) {
+	  transResetRot(&gfx.transform);
+	} else if(clStrcmp(wl[i],"trans")) {
+	  transResetTra(&gfx.transform);
+	  gfx.transform.tra[2]=-100.0;
+	} else if(clStrcmp(wl[i],"clip")) {
+	  transResetSlab(&gfx.transform);
+	  gfx.transform.slabn=1.0;
+	  gfx.transform.slabf=1000.0;
+	} else {
+	  // ignore invalid expression
+	}
+      }
+    } else {
+      // reset all
+      transReset(&gfx.transform);
+      gfx.transform.tra[2]=-100.0;
+      gfx.transform.slabn=1.0;
+      gfx.transform.slabf=1000.0;
+    }
     gfxSetViewport();
     gfxSetProjection(gfx.current_view);
     gfxSetFog();
