@@ -772,10 +772,20 @@ void comDBRedraw()
   }
 }
 
+#ifdef NEW_SHELL
+static char com_message2[1024];
+#endif
+
 void comMessage(const char *s)
 {
 #ifdef NEW_SHELL
-  shellOut(s);
+  if(s[0]=='\n') {
+    clStrcpy(com_message2,s+1);
+    clStrcat(com_message2,"\n");
+    shellOut(com_message2);
+  } else {
+    shellOut(s);
+  }
 #else
   shellOut(s);
 #endif
