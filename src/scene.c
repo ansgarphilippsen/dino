@@ -64,6 +64,8 @@ struct HELP_ENTRY scene_help[]={
   {NULL,NULL,NULL}
 };
 
+static int scene_virgin_flag;
+
 int sceneInit(void)
 {
   debmsg("sceneInit: filling default values");
@@ -98,6 +100,8 @@ int sceneInit(void)
   gfx.axisflag=0;
   
   scene.cpflag=0;
+
+  scene_virgin_flag=1;
   
   return 0;
 
@@ -158,6 +162,7 @@ int sceneCommand(int wc, const char **wl)
     gfxSetProjection(gfx.current_view);
     gfxSetFog();
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"center")) {
     /**********************
             center
@@ -192,6 +197,7 @@ int sceneCommand(int wc, const char **wl)
     gfx.transform.slabf=(-gfx.transform.tra[2])+newd;
     gfxSetSlab(gfx.transform.slabn, gfx.transform.slabf);
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"rotx")) {
     /**********************
              rotx
@@ -203,6 +209,7 @@ int sceneCommand(int wc, const char **wl)
     }
     transCommand(&gfx.transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"roty")) {
     /**********************
             roty
@@ -214,6 +221,7 @@ int sceneCommand(int wc, const char **wl)
     }
     transCommand(&gfx.transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"rotz")) {
     /**********************
              rotz
@@ -225,6 +233,7 @@ int sceneCommand(int wc, const char **wl)
     }
     transCommand(&gfx.transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"rotm")) { 
     /**********************
              rotm
@@ -245,6 +254,7 @@ int sceneCommand(int wc, const char **wl)
     */    
     transMultM(&gfx.transform,v1);
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"transx")) {
     /**********************
 	     transx
@@ -256,6 +266,7 @@ int sceneCommand(int wc, const char **wl)
     }
     transCommand(&gfx.transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"transy")) {
     /**********************
              transy
@@ -267,6 +278,7 @@ int sceneCommand(int wc, const char **wl)
     }
     transCommand(&gfx.transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"transz")) {
     /**********************
              transz
@@ -278,6 +290,7 @@ int sceneCommand(int wc, const char **wl)
     }
     transCommand(&gfx.transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"transm")) {
     /**********************
              transm
@@ -296,6 +309,7 @@ int sceneCommand(int wc, const char **wl)
     transCommand(&gfx.transform,TRANS_TRAY,-1, v1[1]);
     transCommand(&gfx.transform,TRANS_TRAZ,-1, v1[2]);
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"set")) {
     /**********************
              set
@@ -342,6 +356,7 @@ int sceneCommand(int wc, const char **wl)
 	}
 	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"far")) {
 	/**********************
 	       set far
@@ -371,6 +386,7 @@ int sceneCommand(int wc, const char **wl)
 	}
 	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"slabw")) {
 	/**********************
 	       slabwidth
@@ -407,6 +423,7 @@ int sceneCommand(int wc, const char **wl)
 	gfx.transform.slabf=d2+oldd*0.5;
 	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"fogo")) {
 	/**********************
 	       set fog offset
@@ -446,6 +463,7 @@ int sceneCommand(int wc, const char **wl)
 	*****/
 	gfxSetFog();
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"persp")) {
 	if(gfx.mode==GFX_ORTHO) {
 	  sceneOrtho2Persp();
@@ -465,6 +483,7 @@ int sceneCommand(int wc, const char **wl)
 	gfxSetProjection(gfx.current_view);
 	gfxSetFog();
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"eyedist")) {
 	/**********************
 	       set eyedist
@@ -859,6 +878,7 @@ int sceneCommand(int wc, const char **wl)
 	gfx.transform.tra[1]=v1[1];
 	gfx.transform.tra[2]=v1[2];
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"rotmat") ||
 		!strcmp(prop,"rot")) {
 	/**********************
@@ -891,6 +911,7 @@ int sceneCommand(int wc, const char **wl)
 	for(i=0;i<16;i++)
 	  gfx.transform.rot[i]=v2[i];
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"mmat")) {
 	/**********************
 	     set modelmat
@@ -925,6 +946,7 @@ int sceneCommand(int wc, const char **wl)
 	gfx.transform.tra[1]=v1[13];
 	gfx.transform.tra[2]=v1[14];
 	comRedraw();
+	scene_virgin_flag=0;
       } else if(!strcmp(prop,"rtc")) {
 	/**********************
 	     set rot trans cen
@@ -946,6 +968,7 @@ int sceneCommand(int wc, const char **wl)
 	}
 	transSetAll(&gfx.transform, val);
 	comRedraw();
+	scene_virgin_flag=0;
       } else {
 	sprintf(message,"unknown expression %s%s%s\n",prop,op,val);
 	comMessage(message);
@@ -1091,6 +1114,7 @@ int sceneCommand(int wc, const char **wl)
     gfxSetFog();
     gfxSetProjection(gfx.current_view);
     comRedraw();
+    scene_virgin_flag=0;
   } else if(!strcmp(wl[0],"split")) {
 #ifdef USE_CMI
     if(gfx.stereo_mode==GFX_STEREO_OFF) {
@@ -1773,3 +1797,7 @@ void sceneSetCenter(double c[3])
 }
 
 
+int sceneIsVirgin(void)
+{
+  return scene_virgin_flag;
+}

@@ -85,6 +85,8 @@ int writeFile(char *name, struct WRITE_PARAM *p)
     break;
   }
 
+  free(img.data);
+
   return 0;
 }
 
@@ -184,7 +186,7 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
   char message[512];
 
   png_bytep *row_pointers;
-  png_byte *data,*row;
+  png_byte *row;
   
 
   png_structp png_ptr;
@@ -231,9 +233,8 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
   png_write_info(png_ptr, info_ptr);
 
   row_pointers=Ccalloc(image->param.height, sizeof(png_bytep));
-  data=Ccalloc(image->param.width*image->param.height*3,sizeof(png_byte));
 
-  if(row_pointers==NULL || data==NULL) {
+  if(row_pointers==NULL) {
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
     comMessage("error during memory allocation in pngWrite()\n");
@@ -251,7 +252,6 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
 
   png_write_end(png_ptr, info_ptr);
 
-  Cfree(data);
   Cfree(row_pointers);
  
   png_destroy_write_struct(&png_ptr, (png_infopp)NULL);

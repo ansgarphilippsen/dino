@@ -737,7 +737,7 @@ void comDBRedraw()
     switch(dbm.node[i].common.type) {
     case DBM_NODE_STRUCT:
       structDraw(&dbm.node[i].structNode,0);
-      structDraw(&dbm.node[i].structNode,1);
+      //structDraw(&dbm.node[i].structNode,1);
       break;
     case DBM_NODE_SCAL:
       scalDraw(&dbm.node[i].scalNode,0);
@@ -757,7 +757,7 @@ void comDBRedraw()
   for(i=0;i<dbm.nodec_max;i++) {
     switch(dbm.node[i].common.type) {
     case DBM_NODE_STRUCT:
-//      structDraw(&dbm.node[i].structNode,1);
+      structDraw(&dbm.node[i].structNode,1);
       break;
     case DBM_NODE_SCAL:
       scalDraw(&dbm.node[i].scalNode,1);

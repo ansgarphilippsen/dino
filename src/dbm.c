@@ -691,6 +691,7 @@ int dbmLoad(int wc, const char **wl)
 
   if(first_flag) {
     first_flag=0;
+    if(sceneIsVirgin());
     center_on_ds(node);
   }
 

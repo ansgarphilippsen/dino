@@ -652,6 +652,8 @@ int structSet(dbmStructNode *node, Set *s)
       s->pov[pc].id=STRUCT_PROP_SG;
     } else if(clStrcmp(s->pov[pc].prop,"frame")) {
       s->pov[pc].id=STRUCT_PROP_FRAME;
+    } else if(clStrcmp(s->pov[pc].prop,"bfac")) {
+      s->pov[pc].id=STRUCT_PROP_BFAC;
     } else {
       comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
@@ -877,6 +879,14 @@ int structSet(dbmStructNode *node, Set *s)
       }
       strcpy(node->xtal->space_group_name,val->val1);
       dbmCalcXtal(node->xtal);
+      break;
+      // TODO OTHER ATOM PROPERTIES
+    case STRUCT_PROP_BFAC:
+      for(i=0;i<node->atom_count;i++) {
+	if(structIsAtomSelected(node, &node->atom[i], sel)) {
+	  node->atom[i].bfac=atof(val->val1);
+	}
+      }
       break;
     }
   }

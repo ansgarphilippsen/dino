@@ -749,18 +749,8 @@ int povSplitVal(POV *pov, char *val, int *vc, int *vm, struct POV_VALUE **vl)
     }
 
     // actually, a range would be tolerable for {}
-    if(val[0]=='{') {
-      v[(*vc)].wi_flag=0;
-      if(matExtract1Df(val,3,v[(*vc)].vect)!=0) {
-	comMessage("error: in vector: \n");
-	comMessage(val);
-	return -1;
-      }
-    } else {
-      if(val[0]!='.') {
-	comMessage("error: expected a value beginning with . for <>\n");
-	return -1;
-      }
+    // if val starts with a dot, its an object
+    if(val[0]=='.') {
       v[(*vc)].wi_flag=1;
       d=val+1;
       p=clStrchr(d,'.');
@@ -773,6 +763,22 @@ int povSplitVal(POV *pov, char *val, int *vc, int *vm, struct POV_VALUE **vl)
 	o=p+1;
 	v[(*vc)].val1=d;
 	v[(*vc)].val2=o;
+      }
+
+    } else {
+      // see if val is a coordinate
+      v[(*vc)].wi_flag=0;
+      if(matExtract1Df(val,3,v[(*vc)].vect)!=0) {
+	comMessage("error: in expected vector: \n");
+	comMessage(val);
+	return -1;
+      }
+    }
+    if(val[0]=='{') {
+    } else {
+      if(val[0]!='.') {
+	comMessage("error: expected a value beginning with . for <>\n");
+	return -1;
       }
     }
 

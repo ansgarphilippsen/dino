@@ -49,6 +49,7 @@ enum {STRUCT_PROP_COLOR,
       STRUCT_PROP_COLOR1,
       STRUCT_PROP_COLOR2,
       STRUCT_PROP_COLOR3,
+      STRUCT_PROP_BFAC,
       STRUCT_PROP_ROT,
       STRUCT_PROP_TRANS,
       STRUCT_PROP_RTC,    // rot trans cen all in one

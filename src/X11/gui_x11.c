@@ -375,7 +375,7 @@ static int init_main()
   */
   debmsg("guiInit: creating main layout");
 //  XtSetArg(arg[0],XmNdropSiteActivity,XmDROP_SITE_INACTIVE);
-  gui.form=XmCreateForm(gui.top, "form", arg, 1);
+  gui.form=XmCreateForm(gui.top, "form", arg, 0);
   XtManageChild(gui.form);
 
   // Create form that will hold message areas

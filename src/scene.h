@@ -45,3 +45,4 @@ int sceneSubClipSet(int c, int wc, const char **wl);
 int sceneSubClipGet(int c, int wc, const char **wl);
 
 int sceneMorph(int wc, const char **wl);
+int sceneIsVirgin(void);
