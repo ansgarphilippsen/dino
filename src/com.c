@@ -1246,6 +1246,8 @@ int comWrite(int wc,char **wl)
       pov_mode=WRITE_POV_NEW;
     } else if(!strcmp(wl[n],"-smooth")) {
       pov_mode=WRITE_POV_SMOOTH;
+    } else if(!strcmp(wl[n],"-mega")) {
+      pov_mode=WRITE_POV_MEGA;
     } else if(!strcmp(wl[n],"-plane")) {
       pov_flag+=WRITE_POV_PLANE;
     } else if(!strcmp(wl[n],"-box")) {
