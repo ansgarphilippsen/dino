@@ -12,12 +12,15 @@
 #define sqrtf(x) ((float)(sqrt((double)(x))))
 #endif
 
-#ifdef OSX
+#ifdef DARWIN
 #define sqrtf(x) ((float)(sqrt((double)(x))))
 #endif
 
-#ifdef DARWIN
-#define sqrtf(x) ((float)(sqrt((double)(x))))
+#ifdef OSX
+float sqrtf(float v)
+{
+     return (float) sqrt((double)v);
+}
 #endif
 
 #define MAT_NEW_EXTRACTION

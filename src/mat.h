@@ -4,6 +4,10 @@
 #define MAT_MAX_WORD_COUNT 100
 #define MAT_MAX_STRING_LENGTH 255
 
+#ifdef OSX
+extern float sqrtf(float v);
+#endif
+
 typedef struct MAT_WORD_LIST
 {
   int wc;
