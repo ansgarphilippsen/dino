@@ -52,7 +52,7 @@ user menu
 
 static void gl_info();
 static int init_main();
-static XVisualInfo *init_visual(int df, int sf,int st, int af);
+static XVisualInfo *init_visual(int df, int sf,int st, int af, int cf);
 static Colormap get_colormap(XVisualInfo *vinfo);
 static void glx_init(Widget ww, XtPointer clientData, XtPointer call);
 static void glx_expose(Widget ww, XtPointer clientData, XtPointer call);
@@ -132,6 +132,8 @@ int guiInit(int argc, char **argv)
   char message[256];
   int nostereo=0;
   int use_stereo=0;
+  int dblbuff = 1;
+  int consflag = 0;
 #ifdef SGI
   int stereo_available=0;
 #endif
@@ -229,7 +231,15 @@ int guiInit(int argc, char **argv)
     }
     //  pad_init();
 
+    if(gfx_flags | DINO_FLAG_CONS) {
+      consflag=1;
+    } else {
+      consflag=0;
+    }
 
+    if(gfx_flags & DINO_FLAG_NODBLBUFF) {
+      dblbuff=0;
+    }
 
 
     
@@ -257,11 +267,15 @@ int guiInit(int argc, char **argv)
     }
 #endif
     
-    // try with stencil buffer
-    vi=init_visual(1,use_stereo,1,0);
-    if(!vi) {
-      gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-      vi=init_visual(1,use_stereo,0,0);
+    if(gfx_flags & DINO_FLAG_NOSTENCIL) { 
+	vi=init_visual(dblbuff,use_stereo,0,0,consflag);
+    } else {
+      // try with stencil buffer
+      vi=init_visual(dblbuff,use_stereo,1,0,consflag);
+      if(!vi) {
+	gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
+	vi=init_visual(dblbuff,use_stereo,0,0,consflag);
+      }
     }
 
 #ifdef LINUX_STEREO    
@@ -270,10 +284,14 @@ int guiInit(int argc, char **argv)
       if(!vi) {
 	fprintf(stderr,"No stereo visual found, using mono\n");
 	use_stereo=0;
-	vi=init_visual(1,use_stereo,1,0);
-	if(!vi) {
-	  gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-	  vi=init_visual(1,use_stereo,0,0);
+	if(gfx_flags & DINO_FLAG_NOSTENCIL) { 
+	  vi=init_visual(dblbuff,use_stereo,0,0,consflag);
+	} else {
+	  vi=init_visual(dblbuff,use_stereo,1,0,consflag);
+	  if(!vi) {
+	    gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
+	    vi=init_visual(dblbuff,use_stereo,0,0,consflag);
+	  }
 	}
 	gui.stereo_available=0;
       } else {
@@ -285,10 +303,10 @@ int guiInit(int argc, char **argv)
 
 #ifdef SGI_STEREO
     if(!vi && use_stereo) {
-      vi=init_visual(1,0,1,0);
+      vi=init_visual(dblbuff,0,1,0,consflag);
       if(!vi) {
 	gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-	vi=init_visual(1,0,0,0);
+	vi=init_visual(dblbuff,0,0,0,consflag);
       }
       
       stereo_available=SGI_STEREO_LOW;
@@ -528,20 +546,20 @@ void guiTimeProc(XtPointer client_data)
 {
   check_redraw();
 
-  //comTimeProc();
   cmiTimer();
 
   guitTimeProc();
 
-  XtAppAddTimeOut(gui.app,10,(XtTimerCallbackProc)guiTimeProc,NULL);
+  XtAppAddTimeOut(gui.app,2,(XtTimerCallbackProc)guiTimeProc,NULL);
 }
 
 static void check_redraw(void)
 {
   if(gui.redraw) {
     gui.redraw=0;
-    //    gfxRedraw();
+    glXWaitX();
     cmiRedraw();
+    //glXWaitGL();
   }
 }
 
@@ -661,7 +679,9 @@ int guiMessage2(char *m)
 
 void guiSwapBuffers()
 {
-  glXSwapBuffers(gui.dpy, gui.glxwindow);
+  if(!(gfx_flags & DINO_FLAG_NODBLBUFF)) {
+    glXSwapBuffers(gui.dpy, gui.glxwindow);
+  }
 }
 
 
@@ -926,7 +946,7 @@ static int init_colordb()
   find the best X11 visual available
 */
 
-static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, int use_accum)
+static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, int use_accum, int cons_flag)
 {
   int buf[64];
   int bufc=0,i,j,k;
@@ -934,6 +954,7 @@ static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, i
   int d[]={16,12,8,6,4,1};
   int c[]={12,8,6,5,4,2,1};
   int a[]={8,4};
+  int is,js,ks;
   char message[256];
   XVisualInfo *vis;
 
@@ -976,14 +997,24 @@ static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, i
   }
   buf[bufc++]=None;
 
-  for(j=0;j<sizeof(c)/sizeof(int);j++) {
-    for(i=0;i<sizeof(d)/sizeof(int);i++) {
+  if(cons_flag) {
+    is=2; // start at 8-bit z-depth
+    js=3; // start at 5-bit color depth
+    ks=1; // start at 4-bit accum
+  } else {
+    js=0;
+    is=0;
+    ks=0;
+  }
+
+  for(j=js;j<sizeof(c)/sizeof(int);j++) {
+    for(i=is;i<sizeof(d)/sizeof(int);i++) {
       buf[depthi]=d[i];
       buf[redi]=c[j];
       buf[bluei]=c[j];
       buf[greeni]=c[j];
       if(use_accum) {
-	for(k=0;k<sizeof(a)/sizeof(int);k++) {
+	for(k=ks;k<sizeof(a)/sizeof(int);k++) {
 	  buf[accumi+0]=a[k];
 	  buf[accumi+2]=a[k];
 	  buf[accumi+4]=a[k];
@@ -1789,6 +1820,7 @@ static XVisualInfo *get_offscreen_visual(int af)
 {
   XVisualInfo *vi=NULL;
   int use_stencil;
+  int consflag;
 
   if(gfx_flags | DINO_FLAG_NOSTENCIL) {
     use_stencil=0;
@@ -1796,13 +1828,19 @@ static XVisualInfo *get_offscreen_visual(int af)
     use_stencil=1;
   }
 
+  if(gfx_flags | DINO_FLAG_CONS) {
+    consflag=1;
+  } else {
+    consflag=0;
+  }
+
   if(af) {
-    vi=init_visual(0,0,use_stencil,1);
+    vi=init_visual(0,0,use_stencil,1,consflag);
     if(!vi) {
       outMessage("could not find visual with accumulation buffer\n");
     }
   } else {
-    vi=init_visual(0,0,use_stencil,0);
+    vi=init_visual(0,0,use_stencil,0,consflag);
   }
   return vi;
 }

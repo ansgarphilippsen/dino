@@ -36,7 +36,7 @@
 extern struct SCENE scene;
 struct GFX gfx;
 
-extern int debug_mode,gfx_mode;
+extern int debug_mode,gfx_flags;
 
 struct GFX_LIGHT gfx_def_light[]={
 #if 1
@@ -437,11 +437,35 @@ int gfxGLInit(void)
 int gfxRedraw() 
 {
   int ws;
+  int gl_center, gl_left, gl_right;
+
+  if(gfx_flags & DINO_FLAG_NODBLBUFF) {
+#ifdef SGI_STEREO
+    gl_center = GLW_STEREO_CENTER;
+    gl_left = GLW_STEREO_LEFT;
+    gl_right = GLW_STEREO_RIGHT;
+#else
+    gl_center = GL_FRONT;
+    gl_left = GL_FRONT_LEFT;
+    gl_right = GL_FRONT_RIGHT;
+#endif
+  } else {
+#ifdef SGI_STEREO
+    gl_center = GLW_STEREO_CENTER;
+    gl_left = GLW_STEREO_LEFT;
+    gl_right = GLW_STEREO_RIGHT;
+#else
+    gl_center = GL_BACK;
+    gl_left = GL_BACK_LEFT;
+    gl_right = GL_BACK_RIGHT;
+#endif
+  }
+
   if(gfx.stereo_mode==GFX_STEREO_SPLIT) {
 #ifdef SGI_STEREO
-    glwDrawBuffer(GLW_STEREO_CENTER);
+    glwDrawBuffer(gl_center);
 #else
-    glDrawBuffer(GL_BACK);
+    glDrawBuffer(gl_center);
 #endif
     gfx.aspect=0.5*(double)gfx.win_width/(double)gfx.win_height;
     glViewport(0,0,gfx.win_width/2, gfx.win_height);
@@ -457,17 +481,17 @@ int gfxRedraw()
 
   } else if(gfx.stereo_mode==GFX_STEREO_HW) {
 #ifdef SGI_STEREO
-    glwDrawBuffer(GLW_STEREO_RIGHT);
+    glwDrawBuffer(gl_right);
 #else
-    glDrawBuffer(GL_BACK_RIGHT);
+    glDrawBuffer(gl_right);
 #endif
     gfxSetProjection(GFX_RIGHT);
     gfxSceneRedraw(1);
     comDBRedraw();
 #ifdef SGI_STEREO
-    glwDrawBuffer(GLW_STEREO_LEFT);
+    glwDrawBuffer(gl_left);
 #else
-    glDrawBuffer(GL_BACK_LEFT);
+    glDrawBuffer(gl_left);
 #endif
     gfxSetProjection(GFX_LEFT);
     gfxSceneRedraw(1);
@@ -475,17 +499,17 @@ int gfxRedraw()
 
   } else {
 #ifdef SGI_STEREO
-    glwDrawBuffer(GLW_STEREO_CENTER);
+    glwDrawBuffer(gl_center);
 #else
-    glDrawBuffer(GL_BACK);
+    glDrawBuffer(gl_center);
 #endif
     gfxSetProjection(gfx.current_view);
     gfxSceneRedraw(1);
     comDBRedraw();
   }
-  
+
   guiSwapBuffers();
-  
+
   return 0;
 }
 

@@ -90,6 +90,7 @@ enum {
 #define CMI_KEY_LEFT    0x106
 #define CMI_KEY_RIGHT   0x107
 
+// this should really be a union
 typedef struct CMI_TOKEN {
   int target;         // target
   int command;        // command

@@ -12,6 +12,8 @@ typedef char* string;
 #define DINO_FLAG_STEREO    1<<2
 #define DINO_FLAG_NOSTEREO  1<<3
 #define DINO_FLAG_NOOBJMENU 1<<4
+#define DINO_FLAG_NODBLBUFF 1<<5
+#define DINO_FLAG_CONS      1<<6
 
 #ifdef __cplusplus
 extern "C" {
