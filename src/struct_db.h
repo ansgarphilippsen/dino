@@ -61,7 +61,9 @@ enum {STRUCT_PROP_COLOR,
       STRUCT_PROP_RAD,    // radius
       STRUCT_PROP_SMODE,  // selection mode
       STRUCT_PROP_CELL,   // unit cell
+      STRUCT_PROP_HELSYM, // helical params
       STRUCT_PROP_SG,     // space group  
+      STRUCT_PROP_SYMVIEW,// symmetry view mode
       STRUCT_PROP_TFAST,  // fast trj update
       STRUCT_PROP_FRAME   // current frame to display
 };
@@ -155,7 +157,7 @@ struct STRUCT_RESIDUE {
   char name[16];
   int num;
   int type;                    /* type: helix, strand or coil */
-  int class;                   /* class: misc, protein, na, ch */
+  int clss;                    /* class: misc, protein, na, ch */
   struct STRUCT_ATOM **atom;   /* pointer to pointer to atoms */
   int *atom_index;             /* atom indexes */
   int atom_count;              /* number of atoms in this residue */
@@ -297,6 +299,7 @@ typedef struct DBM_STRUCT_NODE {
   int conn_flag;
 
   struct XTAL *xtal;              /* pointer to crystallographic info */
+  struct HELICAL *helical;
   int show_cell;
 
   struct STRUCT_ATOM_TABLE *atom_table;
@@ -360,8 +363,8 @@ int structCheckNCB(struct DBM_STRUCT_NODE *node, struct STRUCT_ATOM *a1, struct 
 
 int structConnectAtoms(struct DBM_STRUCT_NODE *n,struct STRUCT_BOND **,int *bc, int *bm, struct STRUCT_ATOM *a1, struct STRUCT_ATOM *a2);
 
-int structSubCommand(struct DBM_STRUCT_NODE *n,char *sub, int wc, char **wl);
-int structSubComGet(struct DBM_STRUCT_NODE *node,struct STRUCT_ATOM *ap,int wc, char **wl);
+int structSubCommand(struct DBM_STRUCT_NODE *n,char *sub, int wc, const char **wl);
+int structSubComGet(struct DBM_STRUCT_NODE *node,struct STRUCT_ATOM *ap,int wc, const char **wl);
 int structSubMatch(struct DBM_STRUCT_NODE *n, char *sub, char *m, char *c, char *r, char *a);
 int structSubGetNum(struct DBM_STRUCT_NODE *n, char *m, char *c, char *r, char *a);
 
@@ -394,8 +397,6 @@ int structGetRangeVal(dbmStructNode *node, struct STRUCT_ATOM *atom, const char 
 int structGetRangeXYZVal(dbmStructNode *node, const char *prop, float *p, float *r);
 
 int structDraw(dbmStructNode *node, int f);
-int structDrawObj(structObj *obj);
-int structDrawBDObj(dbmStructNode *node, structObj *obj);
 
 int structRecalcBonds(dbmStructNode *node);
 int structRecalcBondList(struct STRUCT_BOND *bond, int bond_count);

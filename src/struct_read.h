@@ -70,6 +70,8 @@ int pdbRead(FILE *f,dbmNode *node);
 int pdbLine2AtomEntry(char *,struct STRUCT_FILE_ATOM_ENTRY *);
 int pdbLine2ConnectEntry(char *,struct STRUCT_FILE_CONNECT_ENTRY *);
 
+int gmxRead(FILE *f,dbmNode *node);
+
 int xplorPDBRead(FILE *f,dbmNode *node);
 int xplorPDBLine2AtomEntry(char *,struct STRUCT_FILE_ATOM_ENTRY *);
 

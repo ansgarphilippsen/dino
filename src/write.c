@@ -84,7 +84,7 @@ int writeFile(char *name, struct WRITE_PARAM *p)
     write_png(&img,name);
     break;
   case WRITE_TYPE_TIFF:
-    debmsg("writing out image in tiff format");
+    debmsg("THE TIFF FORMAT IS DEPRECATED - PLEASE USE png");
     write_tiff(&img,name);
     break;
   }

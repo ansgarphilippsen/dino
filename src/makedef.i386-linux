@@ -33,8 +33,8 @@ LIBMOTIF = /usr/X11R6/lib/libXm.a
 
 endif
 
-CC   = gcc-2.96
-CPP  = g++-2.96
+CC   = gcc
+CPP  = g++
 COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(LIBGLW) $(LIBSTATIC)
 

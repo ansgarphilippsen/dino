@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
 
 #include "transform.h"
+#include "Cmalloc.h"
 #include "com.h"
 #include "mat.h"
 #include "gfx.h"
@@ -441,4 +443,62 @@ int transApplyIf(transMat *trans, float *v)
 int transCopy(transMat *src, transMat *dest)
 {
   memcpy(src,dest,sizeof(transMat));
+  return 0;
+}
+
+
+void transListInit(transList* list, int max)
+{
+  transListDelete(list);
+  list->trans=Crecalloc(0,max,sizeof(transMat));
+  list->max=max;
+  list->count=0;
+}
+
+void transListDelete(transList* list)
+{
+  if(list->max>0) {
+    Cfree(list->trans);
+  }
+  list->max=0;
+  list->count=0;
+  list->trans=0;
+}
+
+int transListGetEntryCount(transList *list)
+{
+  return list->count;
+}
+
+transMat* transListGetEntry(transList* list, int n)
+{
+  if(n>=0 && n < list->max) {
+    return &list->trans[n];
+  } else {
+    return 0;
+  }
+}
+
+void transListAddEntry(transList* list,transMat* t)
+{
+  if(t) {
+    if(list->count>=list->max) {
+      list->max+=10;
+      list->trans=Crecalloc(list->trans,list->max,sizeof(transMat));
+    }
+    memcpy(&list->trans[list->count],t,sizeof(transMat));
+    list->count++;
+  }
+}
+
+void transFromSymm(transMat *tm, struct SYMM_MATRIX *sm)
+{
+  transReset(tm);
+  tm->rot[0]=(double)sm->m[0]; tm->rot[1]=(double)sm->m[1]; tm->rot[2]=(double)sm->m[2];
+  tm->rot[4]=(double)sm->m[4]; tm->rot[5]=(double)sm->m[5]; tm->rot[6]=(double)sm->m[6];
+  tm->rot[8]=(double)sm->m[8]; tm->rot[9]=(double)sm->m[9]; tm->rot[10]=(double)sm->m[10];
+
+  //tm->tra[0]=(double)sm->m[3]; 
+  //tm->tra[1]=(double)sm->m[7]; 
+  //tm->rot[2]=(double)sm->m[11];
 }

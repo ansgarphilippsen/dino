@@ -7,7 +7,7 @@
 #define KEY_RIGHT 0x204
 
 int guitInit(void);
-void guiOutit(void);
+void guitOutit(void);
 
 void guitTimeProc(void);
 void guitWrite(const char *s);

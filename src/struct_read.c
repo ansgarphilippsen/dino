@@ -66,7 +66,7 @@ int pdbRead(FILE *f,dbmNode *node)
 
   
   while(!feof(f)) {
-		memset(line,0,256);
+    memset(line,0,256);
     fgets(line,sizeof(line),f);
     for(i=0;i<6;i++) {
       if(isspace(line[i]))
@@ -1260,6 +1260,107 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
   return 0;
 }
 
+static void gmx_to_aentry(char *line, struct STRUCT_FILE_ATOM_ENTRY* aentry)
+{
+  int i,j;
+  char s[16];
+
+  // residue number
+  for(i=0;i<5;i++)
+    s[i] = line[i+0];
+  s[i]='\0';
+  aentry->rnum=atoi(s);
+
+  // residue name
+  for(j=0,i=0;i<5;i++) {
+    if(!isspace(line[i+5])) {
+      s[j++]=line[i+5];
+    }
+  }
+  s[j]='\0';
+  clStrcpy(aentry->rname,s);
+
+  // atom name
+  for(j=0,i=0;i<5;i++) {
+    if(!isspace(line[i+10])) {
+      s[j++]=line[i+10];
+    }
+  }
+  s[j]='\0';
+  clStrcpy(aentry->aname,s);
+
+  // atom number
+  for(i=0;i<5;i++)
+    s[i] = line[i+15];
+  s[i]='\0';
+  aentry->anum=atoi(s);
+
+  for(i=0;i<8;i++)
+    s[i] = line[i+20];
+  s[i]='\0';
+  aentry->x=atof(s)*10.0;
+
+  for(i=0;i<8;i++)
+    s[i] = line[i+28];
+  s[i]='\0';
+  aentry->y=atof(s)*10.0;
+
+  for(i=0;i<8;i++)
+    s[i] = line[i+36];
+  s[i]='\0';
+  aentry->z=atof(s)*10.0;
+
+  aentry->element[0]=aentry->aname[0];
+  aentry->element[1]='\0';
+  aentry->cnum=-1;
+  clStrcpy(aentry->cname,"");
+  aentry->mnum=0;
+  clStrcpy(aentry->mname,"");
+  aentry->c1=0.0;
+  aentry->c2=0.0;
+  aentry->c3=0.0;
+}
+
+int gmxRead(FILE *f,dbmNode *node)
+{
+  struct STRUCT_FILE gmx;
+  struct STRUCT_FILE_ATOM_ENTRY aentry;
+  int atomcount, ac;
+  char line[256];
+
+  memset(line,0,256);
+
+  // comment
+  fgets(line,sizeof(line),f);
+  // number of atoms
+  fgets(line,sizeof(line),f);
+  sscanf(line,"%d",&atomcount);
+  if(atomcount<1 || atomcount>1e6) {
+    sprintf(line,"nonsense atom count of %d - aborting\n",atomcount);
+    comMessage(line);
+    return -1;
+  }
+
+  prep_struct_file(&gmx,atomcount,atomcount,1);
+
+  for(ac=0;ac<atomcount;ac++) {
+    memset(line,0,sizeof(line));
+    fgets(line,sizeof(line),f);
+    gmx_to_aentry(line,&aentry);
+    add_atom_entry(&gmx,&aentry);
+  }
+
+  structFileEntry2DB(&gmx,&node->structNode);
+  node->structNode.xtal=NULL;
+
+  Cfree(gmx.atom_entry);
+  Cfree(gmx.connect_entry);
+
+  return 0;
+  
+}
+
+
 static int prep_struct_file(struct STRUCT_FILE *sf, int am, int cm, int sm)
 {
   sf->atom_count=0;
@@ -2120,7 +2221,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
        clStrcmp(node->residue[rc].name,"VAL") ||
        clStrcmp(node->residue[rc].name,"TRP") ||
        clStrcmp(node->residue[rc].name,"TYR")) {
-      node->residue[rc].class=STRUCT_PROTEIN;
+      node->residue[rc].clss=STRUCT_PROTEIN;
       /*
 	fprintf(stderr,"%s %d protein\n",
 	node->residue[rc].name,node->residue[rc].num);
@@ -2135,12 +2236,13 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
 	       clStrcmp(node->residue[rc].name,"URI") ||
 	       clStrcmp(node->residue[rc].name,"GUA") ||
 	       clStrcmp(node->residue[rc].name,"THY")) {
-      node->residue[rc].class=STRUCT_NA;
+      node->residue[rc].clss=STRUCT_NA;
     } else {
-      node->residue[rc].class=STRUCT_MISC;
+      node->residue[rc].clss=STRUCT_MISC;
     }
   }
 
   return 0;
 
 }
+

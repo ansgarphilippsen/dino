@@ -43,13 +43,13 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
   node->obj_count=0;
   node->obj_max=64;
   node->obj=0;
-  node->obj=Crecalloc(node->obj,node->obj_max,sizeof(structObj));
+  node->obj=(structObj*)Crecalloc(node->obj,node->obj_max,sizeof(structObj));
   if(node->obj==NULL) {
     sprintf(message,"memory error in structNewNode\n");
     comMessage(message);
     return -1;
   }
-  node->obj_flag=Ccalloc(node->obj_max,sizeof(int));
+  node->obj_flag=(int*)Ccalloc(node->obj_max,sizeof(int));
   if(node->obj_flag==NULL) {
     sprintf(message,"memory error in structNewNode\n");
     comMessage(message);
@@ -74,6 +74,7 @@ int structNewNode(struct DBM_STRUCT_NODE *node)
 #endif
   node->conn=NULL;
   node->xtal=NULL;
+  node->helical=NULL;
   node->atom_table=NULL;
   node->ca=NULL;
   node->trj_flag=0;
@@ -149,9 +150,9 @@ int structPrepRes(dbmStructNode *node)
       node->residue[i].v4[j]=0.0;
       node->residue[i].v5[j]=0.0;
     }
-    if(node->residue[i].class==STRUCT_PROTEIN) {
+    if(node->residue[i].clss==STRUCT_PROTEIN) {
       structGetVectProtein(node->residue+i);
-    } else if(node->residue[i].class==STRUCT_NA) {
+    } else if(node->residue[i].clss==STRUCT_NA) {
       node->residue[i].res_id=structGetVectNA(node->residue+i);
     } else {
     }
@@ -378,7 +379,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
       return -1;
     }
     if(wc==1) {
-      sprintf(message,"%s %f.2 %f.2 %f.2  %f.2 %f.2 %f.2\n",
+      sprintf(message,"%s %.2f %.2f %.2f  %.2f %.2f %.2f\n",
 	      node->xtal->space_group_name,
 	      node->xtal->a, node->xtal->b, node->xtal->c,
 	      node->xtal->alpha, node->xtal->beta, node->xtal->gamma);
@@ -653,7 +654,10 @@ int structSet(dbmStructNode *node, Set *s)
       s->pov[pc].id=STRUCT_PROP_COLOR;
     } else if(clStrcmp(s->pov[pc].prop,"cell")) {
       s->pov[pc].id=STRUCT_PROP_CELL;
-    } else if(clStrcmp(s->pov[pc].prop,"sg")) {
+    } else if(clStrcmp(s->pov[pc].prop,"helicalparams")) {
+      s->pov[pc].id=STRUCT_PROP_HELSYM;
+    } else if(clStrcmp(s->pov[pc].prop,"sg") ||
+	      clStrcmp(s->pov[pc].prop,"spacegroup")) {
       s->pov[pc].id=STRUCT_PROP_SG;
     } else if(clStrcmp(s->pov[pc].prop,"frame")) {
       s->pov[pc].id=STRUCT_PROP_FRAME;
@@ -857,7 +861,7 @@ int structSet(dbmStructNode *node, Set *s)
 	return -1;
       }
       if(node->xtal==NULL) {
-	node->xtal=Cmalloc(sizeof(struct XTAL));
+	node->xtal=(struct XTAL*)Cmalloc(sizeof(struct XTAL));
 	strcpy(node->xtal->space_group_name,"P1");
       }
       node->xtal->a=v1[0];
@@ -874,7 +878,7 @@ int structSet(dbmStructNode *node, Set *s)
 	return -1;
       }
       if(node->xtal==NULL) {
-	node->xtal=Cmalloc(sizeof(struct XTAL));
+	node->xtal=(struct XTAL*)Cmalloc(sizeof(struct XTAL));
 	node->xtal->a=1.0;
 	node->xtal->b=1.0;
 	node->xtal->c=1.0;
@@ -885,6 +889,20 @@ int structSet(dbmStructNode *node, Set *s)
       strcpy(node->xtal->space_group_name,val->val1);
       dbmCalcXtal(node->xtal);
       break;
+    case STRUCT_PROP_HELSYM:
+      if(val->range_flag) {
+	comMessage("error: set: unexpected range in property helicalsym\n");
+	return -1;
+      }
+      if(matExtract1Df(val->val1,2,v1)==-1) {
+	comMessage("error in helicalsym value, expected {angle,dist}\n");
+	return -1;
+      }
+      if(node->helical==NULL) {
+	node->helical=(struct HELICAL*)Cmalloc(sizeof(struct HELICAL));
+      }
+      node->helical->angle=v1[0];
+      node->helical->dist=v1[1];
       // TODO OTHER ATOM PROPERTIES
     case STRUCT_PROP_BFAC:
       for(i=0;i<node->atom_count;i++) {
@@ -979,6 +997,17 @@ int structGet(dbmStructNode *node, char *prop)
 	      node->xtal->space_group_name);
       comMessage(message);
     }
+  } else if(!strcmp(prop,"helicalparams")){
+    if(node->helical==NULL) {
+      sprintf(message,"%s: no helical parameters defined\n",node->name);
+      comMessage(message);
+      ret=-1;
+    } else {
+      sprintf(message,"%s: helical parameters: %.3f %.3f\n",
+	      node->name,
+	      node->helical->angle,node->helical->dist);
+      comMessage(message);
+    }
   } else if(!strcmp(prop,"rot")) {
     comReturn(transGetRot(&node->transform));
   } else if(!strcmp(prop,"trans")) {
@@ -1034,7 +1063,7 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
   int ca_c;
 
   b_max=node->atom_count*2; // empirical
-  nb=Crecalloc(NULL,b_max,sizeof(struct STRUCT_BOND));
+  nb=(struct STRUCT_BOND*)Crecalloc(NULL,b_max,sizeof(struct STRUCT_BOND));
   bc=0;
 
   // reset connectivity
@@ -1074,7 +1103,7 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
 		  for(abc2[2]=abc1[2]-1;abc2[2]<=abc1[2]+1;abc2[2]++) {
 		    caGetList(node->ca,abc2,&ca_p,&ca_c);
 		    for(ac2=0;ac2<ca_c;ac2++) {
-		      ap2=ca_p[ac2];
+		      ap2=(struct STRUCT_ATOM*)ca_p[ac2];
 		      if(ap1->model==ap2->model)
 			if(ap1->n!=ap2->n)
 			  if(structIsConnected(ap1,ap2))
@@ -1332,7 +1361,7 @@ int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_AT
 		a5=node->bond[a3->bondi[bc]].atom1;
 	      }
 
-	      if(matfCalcAngle(a3->p,a4->p,a3->p,a5->p)<alimit) {
+	      if(matfCalcAngle((float*)a3->p,(float*)a4->p,(float*)a3->p,(float*)a5->p)<alimit) {
 		ret=0;
 		break;
 	      }
@@ -1364,7 +1393,7 @@ int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_AT
 		be roughly in pos
 		of H atom
 	      */
-	      if(matfCalcAngle(a4->p,pos,a3->p,pos)<alimit) {
+	      if(matfCalcAngle((float*)a4->p,pos,(float*)a3->p,pos)<alimit) {
 		ret=0;
 	      } 
 	    }
@@ -1464,7 +1493,7 @@ int structConnectAtoms(dbmStructNode *node, struct STRUCT_BOND **nb,int *bc, int
     (*nb)[(*bc)].n=(*bc);
     (*bc)++;
     if((*bc)>=(*bm)) {
-      (*nb)=Crecalloc((*nb),(*bm)+max_add,sizeof(struct STRUCT_BOND));
+      (*nb)=(struct STRUCT_BOND*)Crecalloc((*nb),(*bm)+max_add,sizeof(struct STRUCT_BOND));
       (*bm)+=max_add;
     }
     return 0;
@@ -1486,7 +1515,7 @@ structObj *structNewObj(dbmStructNode *node, char *name)
       break;
   if(i==node->obj_max) {
     node->obj_max*=2;
-    node->obj=Crecalloc(node->obj,node->obj_max,sizeof(structObj));
+    node->obj=(structObj*)Crecalloc(node->obj,node->obj_max,sizeof(structObj));
   }
   
   node->obj_flag[i]=1;
@@ -1522,7 +1551,7 @@ int structRenew(structObj *obj, char *set, char *sel)
 }
 
 
-int structSubCommand(dbmStructNode *node,char *rsub, int wc, char **wl)
+int structSubCommand(dbmStructNode *node,char *rsub, int wc, const char **wl)
 {
   char sub1[256],sub2[256];
   int anum;
@@ -1683,7 +1712,7 @@ int structSubGetNum(struct DBM_STRUCT_NODE *node, char *model, char *chain, char
 }
 
 
-int structSubComGet(dbmStructNode *node,struct STRUCT_ATOM *ap,int wc, char **wl)
+int structSubComGet(dbmStructNode *node,struct STRUCT_ATOM *ap,int wc, const char **wl)
 {
   float v[3];
   char message[256];
@@ -2033,7 +2062,7 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
 	comMessage("error: expected operator = or != for class\n");
 	return -1;
       }
-      switch(atom->residue->class) {
+      switch(atom->residue->clss) {
       case STRUCT_PROTEIN: if(rex(v1,"protein")) return 1; break;
       case STRUCT_NA: if(rex(v1,"na")) return 1; break;
       case STRUCT_MISC: if(rex(v1,"misc")) return 1; break;
@@ -2268,7 +2297,7 @@ struct STRUCT_ATOM ** structPick(struct DBM_STRUCT_NODE *node, double *p1, doubl
   double cur_d,cur_u;
 
   atom_listm=100;
-  atom_list=Ccalloc(atom_listm, sizeof(struct STRUCT_ATOM*));
+  atom_list=(struct STRUCT_ATOM **)Ccalloc(atom_listm, sizeof(struct STRUCT_ATOM*));
   atom_listc=0;
 
   /* p1 and p2 should be multiplied with the struct mmat */
@@ -2330,7 +2359,7 @@ struct STRUCT_ATOM ** structPick(struct DBM_STRUCT_NODE *node, double *p1, doubl
 	    atom_list[atom_listc++]=obj->atom[ac].ap;
 	    if(atom_listc>=atom_listm) {
 	      ol=atom_list;
-	      atom_list=Ccalloc(atom_listm+100, sizeof(struct STRUCT_ATOM*));
+	      atom_list=(struct STRUCT_ATOM **)Ccalloc(atom_listm+100, sizeof(struct STRUCT_ATOM*));
 	      memcpy(atom_list,ol,atom_listm*sizeof(struct STRUCT_ATOM));
 	      atom_listm+=100;
 	      Cfree(ol);
@@ -2376,12 +2405,15 @@ int structSetDefault(structObj *obj)
   obj->residue_count=0;
   obj->atom=NULL;
   obj->atom_count=0;
-  obj->atom_flag=Ccalloc(obj->node->atom_count,sizeof(unsigned char));
+  obj->atom_flag=(unsigned char*)Ccalloc(obj->node->atom_count,sizeof(unsigned char));
   obj->bond=NULL;
   obj->bond_count=0;
   obj->s_bond=NULL;
   obj->s_bond_count=0;
   obj->node=NULL;
+  obj->transform_list.count=0;
+  obj->transform_list.max=0;
+  obj->symview=0;
   /*********
   obj->tv=NULL;
   obj->tvm=0;
@@ -3586,7 +3618,7 @@ int structReconnect2(struct DBM_STRUCT_NODE *node)
     Cfree(node->bond);
   
   b_max=10000;
-  nb=Crecalloc(NULL,b_max,sizeof(struct STRUCT_BOND));
+  nb=(struct STRUCT_BOND*)Crecalloc(NULL,b_max,sizeof(struct STRUCT_BOND));
   bc=0;
 
   // implicit connectivity based on lookup tables
@@ -3619,7 +3651,7 @@ int structReconnect2(struct DBM_STRUCT_NODE *node)
 		for(abc2[2]=abc1[2]-1;abc2[2]<=abc1[2]+1;abc2[2]++) {
 		  caGetList(node->ca,abc2,&ca_p,&ca_c);
 		  for(ac2=0;ac2<ca_c;ac2++) {
-		    ap2=ca_p[ac2];
+		    ap2=(struct STRUCT_ATOM*)ca_p[ac2];
 		    if(ap1->model==ap2->model)
 		      if(ap1->n!=ap2->n)
 			if(structIsConnected(ap1,ap2))
@@ -3724,7 +3756,7 @@ int structReconnect2(struct DBM_STRUCT_NODE *node)
 
   node->bond_count=bc;
   node->bond_max=bc+100;
-  node->bond=Ccalloc(bc+100,sizeof(struct STRUCT_BOND));
+  node->bond=(struct STRUCT_BOND*)Ccalloc(bc+100,sizeof(struct STRUCT_BOND));
   memcpy(node->bond,nb,bc*sizeof(struct STRUCT_BOND));
   Cfree(nb);
 #ifdef WITH_NCBONDS

@@ -3,7 +3,7 @@
 
 typedef struct LEX_POE {
   char property[64];
-  char operator[16];
+  char op[16];
   char value[2048];
   int oflag;
   float dist,dist2,v[3];

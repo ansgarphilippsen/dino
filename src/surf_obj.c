@@ -266,7 +266,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 
     if(clStrlen(s->range.prop)==0) {
       sprintf(message,"using range of default property from %g to %g\n",
-	      s->range.prop,rval1,rval2);
+	      rval1,rval2);
     } else {
       sprintf(message,"using range of property %s from %g to %g\n",
 	      s->range.prop,rval1,rval2);

@@ -72,6 +72,9 @@ typedef struct STRUCT_OBJ {
   cgfxPoint *sp;
   int spc;
 
+  transList transform_list;
+
+  int symview;
 }structObj;
 
 

@@ -74,7 +74,7 @@ OBJ := $(TMP:.cpp=.o)
 COPT += -I./$(GUI)
 
 export CC
-export CCP
+export CPP
 export COPT
 export INCLUDE
 export OPTIONS
@@ -96,7 +96,7 @@ gui:
 	$(CC) $(COPT) -c $<
 
 .cpp.o:
-	$(CCP) $(COPT) -c $<
+	$(CPP) $(COPT) -c $<
 
 clean:
 	rm -f *.o dino *~ core #* .depend

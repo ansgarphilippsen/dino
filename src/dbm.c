@@ -67,10 +67,11 @@ static struct EXT_DEF {
   {"grasp","grasp"},
   {"bdtrj","bdtrj"},
   {"spi","spider"},
+  {"gro","gromacs"},
 #ifdef USE_BRIX_FORMAT
   {"brk","brix"},
-#endif
   {"omap","brix"},
+#endif
   {"",""}
 };
 
@@ -78,7 +79,7 @@ static struct EXT_DEF {
 int dbmInit(void)
 {
   dbm.nodec_max=128;
-  dbm.node=Ccalloc(dbm.nodec_max,sizeof(dbmNode));
+  dbm.node=(dbmNode*)Ccalloc(dbm.nodec_max,sizeof(dbmNode));
   dbm.node_count=0;
 
   debmsg("dbmInit: calling conInit");
@@ -247,6 +248,19 @@ int dbmLoad(int wc, const char **wl)
     sprintf(message,"loading %s, type pdb ...\n[",name);
     comMessage(message);
     if(pdbRead(f,node)!=0) {
+      if(cmp) pclose(f); else fclose(f);
+      dbmDeleteNode(name);
+      return -1;
+    }
+    if(cmp) pclose(f); else fclose(f);
+    node->structNode.conn_flag=conn_flag;
+    structPrep(&node->structNode);
+  } else if(!strcmp(type,"gromacs")) {
+    node=dbmNewNode(DBM_NODE_STRUCT,name);
+    
+    sprintf(message,"loading %s, type gromacs ...\n[",name);
+    comMessage(message);
+    if(gmxRead(f,node)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;
@@ -751,7 +765,7 @@ dbmNode *dbmNewNode(int type, char *oname)
 	dbm.node[i].geomNode.obj_count=0;
 	dbm.node[i].geomNode.obj_max=64;
 	transReset(&dbm.node[i].geomNode.transform);
-	if((dbm.node[i].geomNode.obj=Ccalloc(64,sizeof(geomObj *)))==NULL) {
+	if((dbm.node[i].geomNode.obj=(geomObj**)Ccalloc(64,sizeof(geomObj *)))==NULL) {
 	  comMessage("memory allocation error in NewNode\n");
 	  return NULL;
 	}
@@ -1976,7 +1990,7 @@ int dbmPickAdd(dbmPickList *pl, float x, float y, float z, char *n, char *id)
   pl->count++;
   if(pl->count>=pl->max) {
     pl->max+=1000;
-    pl->ele=Crecalloc(pl->ele,pl->max,sizeof(dbmPickElement));
+    pl->ele=(dbmPickElement*)Crecalloc(pl->ele,pl->max,sizeof(dbmPickElement));
   }
   return 0;
 }

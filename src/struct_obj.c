@@ -17,6 +17,7 @@
 #include "struct_obj.h"
 #include "cl.h"
 #include "bspline.h"
+#include "symm.h"
 #ifdef BUILD
 #include "build.h"
 #endif
@@ -27,6 +28,7 @@
 
 //static char struct_obj_return[256];
 
+static void prep_symview(structObj* obj);
 static void gen_spline_nd(cgfxPoint *sp, int spc);
 static int com_render(structObj *obj, int wc, char **wl)
 {
@@ -339,6 +341,9 @@ int structObjRenew(structObj *obj, Set *set, Select *sel)
   if(structObjSet(obj,set,0)<0)
     return -1;
 
+  // handle symview if requested
+  prep_symview(obj);
+
   memset(obj->atom_flag,0,sizeof(unsigned char)*obj->node->atom_count);
 
   if(obj->type==STRUCT_TRACE) {
@@ -368,7 +373,7 @@ int structObjRenew(structObj *obj, Set *set, Select *sel)
 }
 
 
-
+// flag is 0 for pre-creation settings, 1 otherwise
 int structObjSet(structObj *obj, Set *set, int flag)
 {
   int ac,f,pc;
@@ -378,57 +383,11 @@ int structObjSet(structObj *obj, Set *set, int flag)
   float vmin,vmax;
   char message[256];
 
-  if(flag==0)
-    return 0;
-
   if(set->pov_count==0) {
     return 0;
   }
 
-  /*
-  if(set->range_flag) {
-    rval1=atof(set->range.val1);
-    rval2=atof(set->range.val2);
-  }
-  */
-
-  if(set->range_flag) {
-    // get min and max
-    // if dataset is self
-    if(set->range.src==NULL) {
-      if(structGetMinMax(obj->node, set->range.prop,&vmin,&vmax)<0) {
-	sprintf(message,"error: unknown range property %s\n",set->range.prop);
-	comMessage(message);
-	return -1;
-      }
-    } else {
-      if(dbmGetMinMax(set->range.src,set->range.prop,&vmin,&vmax)<0) {
-	sprintf(message,"error: unknown range property %s\n",set->range.prop);
-	comMessage(message);
-	return -1;
-      }
-    }
-    if(clStrcmp(set->range.val1,"min"))
-      rval1=vmin;
-    else if(clStrcmp(set->range.val1,"max"))
-      rval1=vmax;
-    else
-      rval1=atof(set->range.val1);
-
-    if(clStrcmp(set->range.val2,"min"))
-      rval2=vmin;
-    else if(clStrcmp(set->range.val2,"max"))
-      rval2=vmax;
-    else
-      rval2=atof(set->range.val2);
-    
-    sprintf(message,"using range of property %s from %g to %g\n",
-	    set->range.prop,rval1,rval2);
-    comMessage(message);
-  }
-
-
-
+  // assign numeric ids to all pov expressions
   for(pc=0;pc<set->pov_count;pc++) {
     if(clStrcmp(set->pov[pc].prop,"color") ||
        clStrcmp(set->pov[pc].prop,"colour") ||
@@ -450,149 +409,214 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      clStrcmp(set->pov[pc].prop,"radius") ||
 	      clStrcmp(set->pov[pc].prop,"rad")) {
       set->pov[pc].id=STRUCT_PROP_RAD;
+    } else if(clStrcmp(set->pov[pc].prop,"symview")) {
+      set->pov[pc].id=STRUCT_PROP_SYMVIEW;
     } else {
       comMessage("error: set: unknown property \n");
       comMessage(set->pov[pc].prop);
       return -1;
     }
-    if(set->pov[pc].op!=POV_OP_EQ) {
-      comMessage("error: set: expected operator = for property \n");
+    if(set->pov[pc].op!=POV_OP_EQ ) {
+      comMessage("error: set: expected operator = for property ");
       comMessage(set->pov[pc].prop);
+      comMessage("\n");
       return -1;
     }
     if(set->pov[pc].val_count>1) {
-      comMessage("error: set: expected only one value for property \n");
+      comMessage("error: set: expected only one value for property ");
       comMessage(set->pov[pc].prop);
+      comMessage("\n");
       return -1;
     }
   }
 
 
-  /* 
-     pre-evaluation and object properties
-  */
-  for(pc=0;pc<set->pov_count;pc++) {
-    val=povGetVal(&set->pov[pc],0);
-    switch(set->pov[pc].id) {
+  if(flag) {
+    // post-creation stuff
 
-    case STRUCT_PROP_COLOR:
-    case STRUCT_PROP_COLOR1:
-    case STRUCT_PROP_COLOR2:
-    case STRUCT_PROP_COLOR3:
-      if(comGetColor(val->val1,&r3,&g3,&b3)<0) {
-	sprintf(message,"error: set: unknown color %s\n",val->val1);
-	comMessage(message);
-	return -1;
-      }
-      if(set->range_flag) {
-	if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	  sprintf(message,"error: set: unknown color %s\n",val->val2);
+    if(set->range_flag) {
+      // get min and max
+      // if dataset is self
+      if(set->range.src==NULL) {
+	if(structGetMinMax(obj->node, set->range.prop,&vmin,&vmax)<0) {
+	  sprintf(message,"error: unknown range property %s\n",set->range.prop);
+	  comMessage(message);
+	  return -1;
+	}
+      } else {
+	if(dbmGetMinMax(set->range.src,set->range.prop,&vmin,&vmax)<0) {
+	  sprintf(message,"error: unknown range property %s\n",set->range.prop);
 	  comMessage(message);
 	  return -1;
 	}
       }
-#ifdef WITH_NCBONDS
-      if(obj->type==STRUCT_NBOND && set->pov[pc].id==STRUCT_PROP_COLOR) {
-	/*
-	if(comGetColor(val->val1,&r,&g,&b)<0) {
-	  comMessage("error: set: unknown color \n");
-	  comMessage(val->val1);
+      if(clStrcmp(set->range.val1,"min"))
+	rval1=vmin;
+      else if(clStrcmp(set->range.val1,"max"))
+	rval1=vmax;
+      else
+	rval1=atof(set->range.val1);
+      
+      if(clStrcmp(set->range.val2,"min"))
+	rval2=vmin;
+      else if(clStrcmp(set->range.val2,"max"))
+	rval2=vmax;
+      else
+	rval2=atof(set->range.val2);
+      
+      sprintf(message,"using range of property %s from %g to %g\n",
+	      set->range.prop,rval1,rval2);
+      comMessage(message);
+    }
+    
+    
+    /* 
+       pre-evaluation and object properties
+    */
+    for(pc=0;pc<set->pov_count;pc++) {
+      val=povGetVal(&set->pov[pc],0);
+      switch(set->pov[pc].id) {
+	
+      case STRUCT_PROP_COLOR:
+      case STRUCT_PROP_COLOR1:
+      case STRUCT_PROP_COLOR2:
+      case STRUCT_PROP_COLOR3:
+	if(comGetColor(val->val1,&r3,&g3,&b3)<0) {
+	  sprintf(message,"error: set: unknown color %s\n",val->val1);
+	  comMessage(message);
 	  return -1;
 	}
-	*/
-	obj->nbond_prop.r=r;
-	obj->nbond_prop.g=g;
-	obj->nbond_prop.b=b;
-      }
-#endif
-      break;
-    }
-  }
-
-  for(ac=0;ac<obj->atom_count;ac++) {
-    f=0;
-    if(set->select_flag) {
-      if(structIsAtomSelected(obj->node, obj->atom[ac].ap, &set->select))
-	f=1;
-    } else {
-      f=1;
-    }
-    if(f) {
-      for(pc=0;pc<set->pov_count;pc++) {
-	val=povGetVal(&set->pov[pc],0);
-	switch(set->pov[pc].id) {
-	case STRUCT_PROP_RAD:
-	  if(val->range_flag) {
-	    r=atof(val->val1);
-	    r2=atof(val->val2);
-	    if(set->range.src==NULL) {
-	      // this dataset
-	      if(structGetRangeVal(obj->node,obj->atom[ac].ap,set->range.prop,&rval)<0)
-		return -1;
-	    } else {
-	      if(dbmGetRangeVal(&set->range,(float*)obj->atom[ac].ap->p,&rval)<0)
-		return -1;
-	    }
-	    // fprintf(stderr,"%f %f %f\n",rval1,rval2,rval);
-	    frac1=rval2-rval1;
-	    frac2=rval-rval1;
-	    if(frac1==0.0) {
-	      if(frac2==0.0)
-		frac2=0.5;
-	      else
-		frac2=-2.0;
-	    } else {
-	      frac2/=frac1;
-	    }
-	    if(set->range.clamp) {
-	      if(frac2<0.0) {
-		frac2=0.0;
-	      } else if(frac2>1.0) {
-		frac2=1.0;
-	      }
-	    }
-	    if(frac2>=0.0 && frac2<=1.0) {
-	      obj->atom[ac].prop.radius=(r2-r)*frac2+r;
-	    }
-	  } else {
-	    obj->atom[ac].prop.radius=atof(val->val1);
+	if(set->range_flag) {
+	  if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+	    sprintf(message,"error: set: unknown color %s\n",val->val2);
+	    comMessage(message);
+	    return -1;
 	  }
-	  break;
- 	case STRUCT_PROP_COLOR:
- 	case STRUCT_PROP_COLOR1:
- 	case STRUCT_PROP_COLOR2:
- 	case STRUCT_PROP_COLOR3:
-	  r=r3; g=g3; b=b3;
-	  if(set->range_flag) {
-	    if(set->range.src==NULL) {
-	      // this dataset
-	      if(structGetRangeVal(obj->node,obj->atom[ac].ap,set->range.prop,&rval)<0)
-		return -1;
-	    } else {
-	      if(dbmGetRangeVal(&set->range,(float*)obj->atom[ac].ap->p,&rval)<0)
-		return -1;
-	    }
-	    frac1=rval2-rval1;
-	    frac2=rval-rval1;
-	    if(frac1==0.0) {
-	      if(frac2==0.0)
-		frac2=0.5;
-	      else
-		frac2=-2.0;
-	    } else {
-	      frac2/=frac1;
-	    }
-	    if(set->range.clamp) {
-	      if(frac2<0.0) {
-		frac2=0.0;
-	      } else if(frac2>1.0) {
-		frac2=1.0;
+	}
+#ifdef WITH_NCBONDS
+	if(obj->type==STRUCT_NBOND && set->pov[pc].id==STRUCT_PROP_COLOR) {
+	  obj->nbond_prop.r=r;
+	  obj->nbond_prop.g=g;
+	  obj->nbond_prop.b=b;
+	}
+#endif
+	break;
+      }
+    }
+    
+    // go through all atoms of object and evaluate all "set" properties
+    for(ac=0;ac<obj->atom_count;ac++) {
+      f=0;
+      if(set->select_flag) {
+	if(structIsAtomSelected(obj->node, obj->atom[ac].ap, &set->select))
+	  f=1;
+      } else {
+	f=1;
+      }
+      if(f) {
+	for(pc=0;pc<set->pov_count;pc++) {
+	  val=povGetVal(&set->pov[pc],0);
+	  switch(set->pov[pc].id) {
+	  case STRUCT_PROP_RAD:
+	    if(val->range_flag) {
+	      r=atof(val->val1);
+	      r2=atof(val->val2);
+	      if(set->range.src==NULL) {
+		// this dataset
+		if(structGetRangeVal(obj->node,obj->atom[ac].ap,set->range.prop,&rval)<0)
+		  return -1;
+	      } else {
+		if(dbmGetRangeVal(&set->range,(float*)obj->atom[ac].ap->p,&rval)<0)
+		  return -1;
 	      }
+	      // fprintf(stderr,"%f %f %f\n",rval1,rval2,rval);
+	      frac1=rval2-rval1;
+	      frac2=rval-rval1;
+	      if(frac1==0.0) {
+		if(frac2==0.0)
+		  frac2=0.5;
+		else
+		  frac2=-2.0;
+	      } else {
+		frac2/=frac1;
+	      }
+	      if(set->range.clamp) {
+		if(frac2<0.0) {
+		  frac2=0.0;
+		} else if(frac2>1.0) {
+		  frac2=1.0;
+		}
+	      }
+	      if(frac2>=0.0 && frac2<=1.0) {
+		obj->atom[ac].prop.radius=(r2-r)*frac2+r;
+	      }
+	    } else {
+	      obj->atom[ac].prop.radius=atof(val->val1);
 	    }
-	    if(frac2>=0.0 && frac2<=1.0) {
-	      r+=(r2-r)*frac2;
-	      g+=(g2-g)*frac2;
-	      b+=(b2-b)*frac2;
+	    break;
+	  case STRUCT_PROP_COLOR:
+	  case STRUCT_PROP_COLOR1:
+	  case STRUCT_PROP_COLOR2:
+	  case STRUCT_PROP_COLOR3:
+	    r=r3; g=g3; b=b3;
+	    if(set->range_flag) {
+	      if(set->range.src==NULL) {
+		// this dataset
+		if(structGetRangeVal(obj->node,obj->atom[ac].ap,set->range.prop,&rval)<0)
+		  return -1;
+	      } else {
+		if(dbmGetRangeVal(&set->range,(float*)obj->atom[ac].ap->p,&rval)<0)
+		  return -1;
+	      }
+	      frac1=rval2-rval1;
+	      frac2=rval-rval1;
+	      if(frac1==0.0) {
+		if(frac2==0.0)
+		  frac2=0.5;
+		else
+		  frac2=-2.0;
+	      } else {
+		frac2/=frac1;
+	      }
+	      if(set->range.clamp) {
+		if(frac2<0.0) {
+		  frac2=0.0;
+		} else if(frac2>1.0) {
+		  frac2=1.0;
+		}
+	      }
+	      if(frac2>=0.0 && frac2<=1.0) {
+		r+=(r2-r)*frac2;
+		g+=(g2-g)*frac2;
+		b+=(b2-b)*frac2;
+		if(set->pov[pc].id==STRUCT_PROP_COLOR) {
+		  obj->atom[ac].prop.r=r;
+		  obj->atom[ac].prop.g=g;
+		  obj->atom[ac].prop.b=b;
+		  obj->atom[ac].prop.c[0][0]=r;
+		  obj->atom[ac].prop.c[0][1]=g;
+		  obj->atom[ac].prop.c[0][2]=b;
+		  obj->atom[ac].prop.c[1][0]=r;
+		  obj->atom[ac].prop.c[1][1]=g;
+		  obj->atom[ac].prop.c[1][2]=b;
+		  obj->atom[ac].prop.c[2][0]=r;
+		  obj->atom[ac].prop.c[2][1]=g;
+		  obj->atom[ac].prop.c[2][2]=b;
+		} else if(set->pov[pc].id==STRUCT_PROP_COLOR1) {
+		  obj->atom[ac].prop.c[0][0]=r;
+		  obj->atom[ac].prop.c[0][1]=g;
+		  obj->atom[ac].prop.c[0][2]=b;
+		} else if(set->pov[pc].id==STRUCT_PROP_COLOR2) {
+		  obj->atom[ac].prop.c[1][0]=r;
+		  obj->atom[ac].prop.c[1][1]=g;
+		  obj->atom[ac].prop.c[1][2]=b;
+		} else if(set->pov[pc].id==STRUCT_PROP_COLOR3) {
+		  obj->atom[ac].prop.c[2][0]=r;
+		  obj->atom[ac].prop.c[2][1]=g;
+		  obj->atom[ac].prop.c[2][2]=b;
+		}
+	      }
+	    } else {
 	      if(set->pov[pc].id==STRUCT_PROP_COLOR) {
 		obj->atom[ac].prop.r=r;
 		obj->atom[ac].prop.g=g;
@@ -620,46 +644,22 @@ int structObjSet(structObj *obj, Set *set, int flag)
 		obj->atom[ac].prop.c[2][2]=b;
 	      }
 	    }
-	  } else {
-	    /**********
-	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val1);
-	      return -1;
-	    }
-	    ********/
-	    if(set->pov[pc].id==STRUCT_PROP_COLOR) {
-	      obj->atom[ac].prop.r=r;
-	      obj->atom[ac].prop.g=g;
-	      obj->atom[ac].prop.b=b;
-	      obj->atom[ac].prop.c[0][0]=r;
-	      obj->atom[ac].prop.c[0][1]=g;
-	      obj->atom[ac].prop.c[0][2]=b;
-	      obj->atom[ac].prop.c[1][0]=r;
-	      obj->atom[ac].prop.c[1][1]=g;
-	      obj->atom[ac].prop.c[1][2]=b;
-	      obj->atom[ac].prop.c[2][0]=r;
-	      obj->atom[ac].prop.c[2][1]=g;
-	      obj->atom[ac].prop.c[2][2]=b;
-	    } else if(set->pov[pc].id==STRUCT_PROP_COLOR1) {
-	      obj->atom[ac].prop.c[0][0]=r;
-	      obj->atom[ac].prop.c[0][1]=g;
-	      obj->atom[ac].prop.c[0][2]=b;
-	    } else if(set->pov[pc].id==STRUCT_PROP_COLOR2) {
-	      obj->atom[ac].prop.c[1][0]=r;
-	      obj->atom[ac].prop.c[1][1]=g;
-	      obj->atom[ac].prop.c[1][2]=b;
-	    } else if(set->pov[pc].id==STRUCT_PROP_COLOR3) {
-	      obj->atom[ac].prop.c[2][0]=r;
-	      obj->atom[ac].prop.c[2][1]=g;
-	      obj->atom[ac].prop.c[2][2]=b;
-	    }
+	    break;
 	  }
-	  break;
 	}
       }
+      
     }
-
+  } else {
+    // this is evaluated for pre-creation (flag==0)
+    for(pc=0;pc<set->pov_count;pc++) {
+      val=povGetVal(&set->pov[pc],0);
+      switch(set->pov[pc].id) {
+      case STRUCT_PROP_SYMVIEW:
+	obj->symview=atoi(val->val1);
+	break;
+      }
+    }
   }
 
   return 0;
@@ -708,7 +708,7 @@ int structObjCp(structObj *o1, structObj *o2)
 
 static int atom_to_point(structAtom *a, struct STRUCT_ATOM_PROP *pr, cgfxSplinePoint *p, struct RENDER *r) {
   int ret=0;
-  if(a->residue->class==STRUCT_PROTEIN) {
+  if(a->residue->clss==STRUCT_PROTEIN) {
     p->v[0]=a->p->x;
     p->v[1]=a->p->y;
     p->v[2]=a->p->z;
@@ -727,7 +727,7 @@ static int atom_to_point(structAtom *a, struct STRUCT_ATOM_PROP *pr, cgfxSplineP
     }
     p->v1=a->residue->v1;
     ret=1;
-  } else if(a->residue->class==STRUCT_NA) {
+  } else if(a->residue->clss==STRUCT_NA) {
     if(r->mode==RENDER_TUBE) {
       p->v[0]=a->p->x;
       p->v[1]=a->p->y;
@@ -1411,11 +1411,11 @@ int structObjTrace(struct DBM_STRUCT_NODE *node, structObj *obj, Select *sel)
     for(rc=0;rc<node->residue_count;rc++) {
       for(ac=0;ac<node->residue[rc].atom_count;ac++) {
 	r=0;
-	if(node->residue[rc].class==STRUCT_PROTEIN) {
+	if(node->residue[rc].clss==STRUCT_PROTEIN) {
 	  if(!strcmp("CA",node->residue[rc].atom[ac]->name)) {
 	    r=structIsAtomSelected(obj->node,node->residue[rc].atom[ac],sel);
 	  }
-	} else if(node->residue[rc].class==STRUCT_NA) {
+	} else if(node->residue[rc].clss==STRUCT_NA) {
 	  if(!strcmp("P",node->residue[rc].atom[ac]->name)){
 	    r=structIsAtomSelected(obj->node,node->residue[rc].atom[ac],sel);
 	  }
@@ -1995,3 +1995,60 @@ int structObjDelete(structObj *obj)
   return 0;
 }
 
+static void prep_symview(structObj* obj)
+{
+  transMat tmat;
+  struct SYMM_INFO sinfo;
+  int sc;
+  double angle,dist;
+  char msg[256];
+  /* 
+     based on symview settings, generate a list
+     of additional transformations to be used
+  */
+  if(obj->symview!=0) {
+    transReset(&tmat);
+    if(obj->symview==1) { // xtal symmetry
+      if(obj->node->xtal) {
+	clStrcpy(sinfo.name,obj->node->xtal->space_group_name);
+	if(symGetMatrixByName(&sinfo)<0) {
+	  // error
+	  sprintf(msg,"no info for spacegroup %s\n",sinfo.name);
+	  comMessage(msg);
+	  return;
+	} else {
+	  transListInit(&obj->transform_list,sinfo.mcount);
+	  sprintf(msg,"%d symmetry mates generated\n",sinfo.mcount-1);
+	  comMessage(msg);
+	  for(sc=0;sc<sinfo.mcount;sc++) {
+	    transFromSymm(&tmat,&sinfo.mat[sc]);
+	    transListAddEntry(&obj->transform_list,&tmat);
+	    fprintf(stderr,"%s\n",transGetAll(&tmat));
+	  }
+	}
+      } else { // xtal==0
+	comMessage("No crystallographic info in dataset\n");
+	return;
+      }
+    } else if(obj->symview==2) {
+      if(obj->node->helical) { // helical info
+	transListInit(&obj->transform_list,11);
+	for(sc=-5;sc<=5;sc++) {
+	  angle = obj->node->helical->angle*(double)sc;
+	  dist = obj->node->helical->dist*(double)sc;
+	  matMakeRotMat(angle,0.0,0.0,1.0,tmat.rot);
+	  tmat.tra[2]=dist;
+	  transListAddEntry(&obj->transform_list,&tmat);
+	  fprintf(stderr,"%s\n",transGetAll(&tmat));
+	}
+      } else {
+	comMessage("no helical symmetry info in dataset\n");
+	return;
+      }
+    } else {
+      sprintf(msg,"invalid value %d for symview, must be 0, 1 or 2\n", obj->symview);
+    }
+  } else {
+    transListDelete(&obj->transform_list);
+  }
+}

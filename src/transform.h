@@ -1,6 +1,9 @@
 #ifndef _TRANSFORM_H
 #define _TRANSFORM_H
 
+#include <stdio.h>
+#include "symm.h"
+
 enum TRANSFORM_DEVICE {TRANS_NONE=0,
 		       TRANS_MOUSE,
 		       TRANS_DIALS,
@@ -38,19 +41,26 @@ typedef struct TRANSFORM_MATRIX {
   double slabn2,slabf2;
 }transMat;
 
-
 typedef struct TRANSFORM_LIST {
+  transMat *trans;
+  int count,max;
+} transList;
+
+
+struct TRANSFORM_DEVICE_LIST_COMMAND { // list of commands for each axis/mask
+  int axis,mask;    // axis/mask that defines the command
+  int command;      // the command id
+  double factor;     // multiplication factor
+};
+
+typedef struct TRANSFORM_DEVICE_LIST {
   int device,mask;    // device/name combination of this entry
   char name[64];      // name for this device/mask combination
-  struct TRANSFORM_LIST_COMMAND { // list of commands for each axis/mask
-    int axis,mask;    // axis/mask that defines the command
-    int command;      // the command id
-    double factor;     // multiplication factor
-  }command[TRANSFORM_MAX_COMMAND_LIST];
+  struct TRANSFORM_DEVICE_LIST_COMMAND command[TRANSFORM_MAX_COMMAND_LIST];
   transCustom custom[TRANSFORM_MAX_CUSTOM];
   double factor;      // generic factor to regulate ALL commands
   transMat *transform;
-}transList;
+}transDeviceList;
 
 int transCommand(transMat *trans, int command, int axis, double value);
 
@@ -85,5 +95,13 @@ int transApplyRot(transMat *trans, double *v);
 int transApplyRotf(transMat *trans, float *v);
 
 int transCopy(transMat *src, transMat *dest);
+
+void transFromSymm(transMat *tm, struct SYMM_MATRIX *sm);
+
+void transListInit(transList* list, int max);
+void transListDelete(transList* list);
+int transListGetEntryCount(transList *list);
+transMat* transListGetEntry(transList* list, int n);
+void transListAddEntry(transList* list,transMat* t);
 
 #endif

@@ -441,7 +441,7 @@ int lexExtractPOE(char *s, lexPOE *exp)
     return -1;
   */
   strcpy(exp->property,prop);
-  strcpy(exp->operator,op);
+  strcpy(exp->op,op);
   strcpy(exp->value,value);
 
   /* pre-evaluate within expressions */

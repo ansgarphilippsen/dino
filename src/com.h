@@ -38,7 +38,7 @@ struct GLOBAL_COM {
 
   int joyflag;
 
-  transList *tlist;
+  transDeviceList *tlist;
   int tlist_max,tlist_count;
 
   int benchmark;

@@ -1,3 +1,5 @@
+added gromax .gro format
+
 render is called after struct.obj renew
 
 surf reset parameters work

@@ -117,7 +117,7 @@ int comInit(struct COM_PARAMS *params)
 
 static void init_transform(struct COM_PARAMS *params)
 {
-  struct TRANSFORM_LIST_COMMAND mouse[]={
+  struct TRANSFORM_DEVICE_LIST_COMMAND mouse[]={
     {0, CMI_BUTTON1_MASK, TRANS_ROTY, -0.5},
     {1, CMI_BUTTON1_MASK, TRANS_ROTX, -0.5},
     {0, CMI_BUTTON1_MASK | CMI_SHIFT_MASK, TRANS_TRAX, -1.0},
@@ -135,7 +135,7 @@ static void init_transform(struct COM_PARAMS *params)
     {-1, 0, 0, 0}
   };
 
-  struct TRANSFORM_LIST_COMMAND dials[]={
+  struct TRANSFORM_DEVICE_LIST_COMMAND dials[]={
     {0, 0, TRANS_ROTX, 0.05},
     {2, 0, TRANS_ROTY, 0.05},
     {4, 0, TRANS_ROTZ, -0.05},
@@ -149,7 +149,7 @@ static void init_transform(struct COM_PARAMS *params)
     {-1,0,0,0}
   };
 
-  struct TRANSFORM_LIST_COMMAND spaceball[]={
+  struct TRANSFORM_DEVICE_LIST_COMMAND spaceball[]={
     {0,0,TRANS_TRAX, 0.01},
     {1,0,TRANS_TRAY, 0.01},
     {2,0,TRANS_TRAZ, -0.003},
@@ -162,7 +162,7 @@ static void init_transform(struct COM_PARAMS *params)
   int i,j,tc;
 
   com.tlist_max=8;
-  com.tlist=Ccalloc(com.tlist_max,sizeof(transList));
+  com.tlist=(transDeviceList*)Ccalloc(com.tlist_max,sizeof(transDeviceList));
   tc=0;
 
   for(i=0;i<com.tlist_max;i++) {
@@ -182,7 +182,7 @@ static void init_transform(struct COM_PARAMS *params)
   strcpy(com.tlist[tc].name,"mouse");
   for(i=0;mouse[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&mouse[i],
-	   sizeof(struct TRANSFORM_LIST_COMMAND));
+	   sizeof(struct TRANSFORM_DEVICE_LIST_COMMAND));
     if(com.tlist[tc].command[i].command==TRANS_ROTX ||
        com.tlist[tc].command[i].command==TRANS_ROTY ||
        com.tlist[tc].command[i].command==TRANS_ROTZ) {
@@ -204,7 +204,7 @@ static void init_transform(struct COM_PARAMS *params)
   strcpy(com.tlist[tc].name,"mouse2");
   for(i=0;mouse[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&mouse[i],
-	   sizeof(struct TRANSFORM_LIST_COMMAND));
+	   sizeof(struct TRANSFORM_DEVICE_LIST_COMMAND));
     if(com.tlist[tc].command[i].command==TRANS_ROTX ||
        com.tlist[tc].command[i].command==TRANS_ROTY ||
        com.tlist[tc].command[i].command==TRANS_ROTZ) {
@@ -226,7 +226,7 @@ static void init_transform(struct COM_PARAMS *params)
   strcpy(com.tlist[tc].name,"dials");
   for(i=0;dials[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&dials[i],
-	   sizeof(struct TRANSFORM_LIST_COMMAND));
+	   sizeof(struct TRANSFORM_DEVICE_LIST_COMMAND));
     if(com.tlist[tc].command[i].command==TRANS_ROTX ||
        com.tlist[tc].command[i].command==TRANS_ROTY ||
        com.tlist[tc].command[i].command==TRANS_ROTZ) {
@@ -246,7 +246,7 @@ static void init_transform(struct COM_PARAMS *params)
   strcpy(com.tlist[tc].name,"dials2");
   for(i=0;dials[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&dials[i],
-	   sizeof(struct TRANSFORM_LIST_COMMAND));
+	   sizeof(struct TRANSFORM_DEVICE_LIST_COMMAND));
     if(com.tlist[tc].command[i].command==TRANS_ROTX ||
        com.tlist[tc].command[i].command==TRANS_ROTY ||
        com.tlist[tc].command[i].command==TRANS_ROTZ) {
@@ -267,7 +267,7 @@ static void init_transform(struct COM_PARAMS *params)
   strcpy(com.tlist[tc].name,"spaceball");
   for(i=0;spaceball[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&spaceball[i],
-	   sizeof(struct TRANSFORM_LIST_COMMAND));
+	   sizeof(struct TRANSFORM_DEVICE_LIST_COMMAND));
     if(com.tlist[tc].command[i].command==TRANS_ROTX ||
        com.tlist[tc].command[i].command==TRANS_ROTY ||
        com.tlist[tc].command[i].command==TRANS_ROTZ) {
@@ -287,7 +287,7 @@ static void init_transform(struct COM_PARAMS *params)
   strcpy(com.tlist[tc].name,"spaceball2");
   for(i=0;spaceball[i].axis!=-1;i++) {
     memcpy(&com.tlist[tc].command[i],&spaceball[i],
-	   sizeof(struct TRANSFORM_LIST_COMMAND));
+	   sizeof(struct TRANSFORM_DEVICE_LIST_COMMAND));
     if(com.tlist[tc].command[i].command==TRANS_ROTX ||
        com.tlist[tc].command[i].command==TRANS_ROTY ||
        com.tlist[tc].command[i].command==TRANS_ROTZ) {
