@@ -53,7 +53,7 @@ user menu
 #endif
 
 static int init_main(int argc, char **argv);
-static int init_visual(int sf,int st);
+static XVisualInfo *init_visual(int sf,int st, int af);
 static Colormap get_colormap(XVisualInfo *vinfo);
 static void glx_init(Widget ww, XtPointer clientData, XtPointer call);
 static void glx_expose(Widget ww, XtPointer clientData, XtPointer call);
@@ -70,6 +70,7 @@ static int error_handler(Display *d, XErrorEvent *e);
 static int error_io_handler(Display *d);
 static int pad_init(void);
 static int set_stereo(int m);
+static XVisualInfo *get_offscreen_visual(int af);
 
 #ifndef INTERNAL_COLOR
 static int init_colordb(void);
@@ -118,6 +119,7 @@ int guiInit(int argc, char **argv)
   int nostereo=0;
   int use_stereo;
   int stereo_available=0;
+  XVisualInfo *vi;
 #ifdef SGI
   int ev,er;
 #endif
@@ -177,26 +179,28 @@ int guiInit(int argc, char **argv)
 #endif
   
   // try with stencil buffer
-  ret=init_visual(use_stereo,1);
-  if(ret<0) {
+  vi=init_visual(use_stereo,1,0);
+  if(!vi) {
     gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-    ret=init_visual(use_stereo,0);
+    vi=init_visual(use_stereo,0,0);
   }
 
 
 #ifdef SGI_STEREO
-  if(ret<0 && use_stereo) {
-    ret=init_visual(0,1);
-    if(ret<0) {
+  if(!vi && use_stereo) {
+    vi=init_visual(0,1,0);
+    if(!vi) {
       gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-      ret=init_visual(0,0);
+      vi=init_visual(0,0,0);
     }
 
     stereo_available=SGI_STEREO_LOW;
   }
 #endif
 
-  if(ret<0) {
+  gui.visinfo=vi;
+
+  if(!gui.visinfo) {
     cmiMessage("fatal error: no suitable visual found\n");
     return -1;
   }
@@ -821,14 +825,16 @@ static int init_colordb()
   find the best X11 visual available
 */
 
-static int init_visual(int use_stereo, int use_stencil)
+static XVisualInfo *init_visual(int use_stereo, int use_stencil, int use_accum)
 {
   int buf[64];
-  int bufc=0,i,j;
-  int depthi,redi,bluei,greeni,alphai;
+  int bufc=0,i,j,k;
+  int depthi,redi,bluei,greeni,alphai,accumi;
   int d[]={16,12,8,6,4,1};
   int c[]={12,8,6,5,4,2,1};
+  int a[]={8,4};
   char message[256];
+  XVisualInfo *vis;
 
   buf[bufc++]=GLX_RGBA;
 #ifdef SGI_STEREO
@@ -855,6 +861,14 @@ static int init_visual(int use_stereo, int use_stencil)
   bluei=bufc++;
   buf[bufc++]=GLX_GREEN_SIZE;
   greeni=bufc++;
+  if(use_accum) {
+    buf[bufc++]=GLX_ACCUM_RED_SIZE;
+    accumi=bufc++;
+    buf[bufc++]=GLX_ACCUM_BLUE_SIZE;
+    bufc++;
+    buf[bufc++]=GLX_ACCUM_GREEN_SIZE;
+    bufc++;
+  }
   buf[bufc++]=None;
 
   for(j=0;j<sizeof(c)/sizeof(int);j++) {
@@ -863,18 +877,34 @@ static int init_visual(int use_stereo, int use_stencil)
       buf[redi]=c[j];
       buf[bluei]=c[j];
       buf[greeni]=c[j];
-      sprintf(message,"trying visual with depth %d and rgba %d",d[i],c[j]);
-      debmsg(message);
-      gui.visinfo=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
-      if(gui.visinfo!=NULL) {
-	sprintf(message,"using this visual");
+      if(use_accum) {
+	for(k=0;k<sizeof(a)/sizeof(int);k++) {
+	  buf[accumi+0]=a[k];
+	  buf[accumi+2]=a[k];
+	  buf[accumi+4]=a[k];
+	  sprintf(message,"trying visual with depth %d, rgba %d and accum %d",d[i],c[j],a[k]);
+	  debmsg(message);
+	  vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
+	  if(vis) {
+	    sprintf(message,"using this visual");
+	    debmsg(message);
+	    return vis;
+	  }
+	}
+      } else {
+	sprintf(message,"trying visual with depth %d and rgba %d",d[i],c[j]);
 	debmsg(message);
-	return 0;
+	vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
+	if(vis) {
+	  sprintf(message,"using this visual");
+	  debmsg(message);
+	  return vis;
+	}
       }
     }
   }
   debmsg("no suitable visual found");
-  return -1;
+  return NULL;
 }
 
 /*
@@ -1527,3 +1557,63 @@ static int pad_init()
   return 0;
 }
 
+
+static Pixmap offscreen_pixmap;
+static GLXPixmap glx_pixmap;
+
+int guiCreateOffscreenContext(int w, int h, int af)
+{
+  XVisualInfo *visinfo;
+  GLXContext glx_context;
+
+  // get visual
+  if((visinfo=get_offscreen_visual(af))==NULL) {
+    cmiMessage("error: failed to find visual for offscreen rendering\n");
+  }
+  
+  // create new context
+  if((glx_context=glXCreateContext(gui.dpy, visinfo, 0, False))==NULL) {
+    cmiMessage("error: offscreen rendering context could not be created");
+    return -1;
+  }
+
+  // create X pixmap
+  offscreen_pixmap=XCreatePixmap(gui.dpy,gui.glxwindow,w,h,visinfo->depth);
+
+  // convert to glx pixmap
+  glx_pixmap=glXCreateGLXPixmap(gui.dpy, visinfo, offscreen_pixmap);
+
+  glXMakeCurrent(gui.dpy,glx_pixmap,glx_context);
+
+  return 0;
+}
+
+int guiDestroyOffscreenContext()
+{
+  glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
+  glXDestroyGLXPixmap(gui.dpy,glx_pixmap);
+  XFreePixmap(gui.dpy,offscreen_pixmap);
+  return 0;
+}
+
+static XVisualInfo *get_offscreen_visual(int af)
+{
+  XVisualInfo *vi=NULL;
+  int use_stencil;
+
+  if(gfx_flags | DINO_FLAG_NOSTENCIL) {
+    use_stencil=0;
+  } else {
+    use_stencil=1;
+  }
+
+  if(af) {
+    vi=init_visual(0,use_stencil,1);
+    if(!vi) {
+      cmiMessage("could not find visual with accumulation buffer\n");
+    }
+  } else {
+    vi=init_visual(0,use_stencil,0);
+  }
+  return vi;
+}

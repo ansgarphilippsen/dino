@@ -1,6 +1,6 @@
 # called from toplevel Makefile
 
-SRC = main_x11.c gui_x11.c om_x11.c write_x11.c AppPlus.c extension.c \
+SRC = main_x11.c gui_x11.c om_x11.c AppPlus.c extension.c \
       GLwDrawA.c GLwMDrawA.c
 
 sinclude makedef.$(HOSTTYPE)

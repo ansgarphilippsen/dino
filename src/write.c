@@ -13,15 +13,20 @@
 
 
 static int write_png(struct WRITE_IMAGE *img,char *name);
+static int get_image(struct WRITE_IMAGE *img);
 
-
-int writeFile(char *name, int type, int accum, float scale, int dump)
+int writeFile(char *name, struct WRITE_PARAM *p)
 {
   struct WRITE_IMAGE img;
-  
-  guiGetImage(&img);
 
-  switch(type) {
+  memcpy(&img.param,p,sizeof(struct WRITE_PARAM));
+
+  if(img.param.dump && !img.param.accum) {
+    get_image(&img);
+  }
+
+
+  switch(img.param.type) {
   case WRITE_TYPE_PNG:
     write_png(&img,name);
     break;
@@ -29,6 +34,14 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
 
   return 0;
 
+}
+
+static int get_image(struct WRITE_IMAGE *img)
+{
+  int w=img->param.width,h=img->param.height;
+  img->data=malloc(w*h*3);
+  glReadPixels(0,0,w,h,GL_RGB,GL_UNSIGNED_BYTE,img->data);
+  return 0;
 }
 
 static int write_png(struct WRITE_IMAGE *image,char *name)
@@ -82,14 +95,14 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
   
   png_init_io(png_ptr, fp);
 
-  png_set_IHDR(png_ptr, info_ptr, image->width, image->height, 8, 
+  png_set_IHDR(png_ptr, info_ptr, image->param.width, image->param.height, 8, 
 	       PNG_COLOR_TYPE_RGB,PNG_INTERLACE_NONE,
 	       PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
   png_write_info(png_ptr, info_ptr);
 
-  row_pointers=Ccalloc(image->height, sizeof(png_bytep));
-  data=Ccalloc(image->width*image->height*3,sizeof(png_byte));
+  row_pointers=Ccalloc(image->param.height, sizeof(png_bytep));
+  data=Ccalloc(image->param.width*image->param.height*3,sizeof(png_byte));
 
   if(row_pointers==NULL || data==NULL) {
     fclose(fp);
@@ -98,8 +111,8 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
     return -1;
   }
 
-  for(k=0;k<image->height;k++)
-    row_pointers[k]=&image->data[k*image->width*3];
+  for(k=0;k<image->param.height;k++)
+    row_pointers[k]=&image->data[k*image->param.width*3];
 
   png_write_image(png_ptr, row_pointers);
 

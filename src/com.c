@@ -1413,14 +1413,19 @@ int comWrite(int wc,const char **wl)
   char type[256];
   char scal[256];
   char message[256];
-  int n,accum=1,newi;
+  int n,newi;
   int ow,oh;
   float scale;
   FILE *f,*f2;
   int pov_flag=0;
   int pov_mode=0;
   char pov_def[256];
-  int dump=0;
+  struct WRITE_PARAM wparam;
+
+  wparam.dump=1;
+  wparam.accum=0;
+  wparam.width=gfx.win_width;
+  wparam.height=gfx.win_height;
 
   if(wc<1) {
     comMessage("filename missing\n");
@@ -1456,9 +1461,10 @@ int comWrite(int wc,const char **wl)
       n++;
     } else if(!strcmp(wl[n],"-dump") ||
 	      !strcmp(wl[n],"-d")) {
-      dump=1;
-    } else if(!strcmp(wl[n],"-scale") ||
-	      !strcmp(wl[n],"-s")) {
+      comMessage("write: -dump is deprecated\n");
+    } else if(clStrcmp(wl[n],"-scale") ||
+	      clStrcmp(wl[n],"-size") ||
+	      clStrcmp(wl[n],"-s")) {
       if(n+1>=wc) {
 	sprintf(message,"write: missing parameter for %s\n",wl[n]);
 	comMessage(message);
@@ -1466,21 +1472,30 @@ int comWrite(int wc,const char **wl)
       }
       strcpy(scal,wl[n+1]);
       if(scal[strlen(scal)-1]=='%') {
+	// percentage of current window
 	scal[strlen(scal)-1]='\0';
 	scale=atof(scal)/100;
+	if(scale<0) {
+	  comMessage("write: scale factor must be >0\n");
+	  return -1;
+	} else {
+	  wparam.dump=0;
+	  wparam.width*=scale;
+	  wparam.height*=scale;
+	}
       } else if(clStrchr(scal,'x')) {
+	// explicit wxh
 	comMessage("not implemented yet\n");
       } else {
-#ifdef USE_CMI
-	scale=atof(scal)/(float)gfx.win_width;
-#else
-	scale=atof(scal)/(float)gui.win_width;
-#endif
-	/*
-	sprintf(message,"write: specify %% for scale value (e.g. 200%%)\n");
-	comMessage(message);
-	return -1;
-	*/
+	// square dimension
+	if(atoi(scal)>0) {
+	  wparam.dump=0;
+	  wparam.width=atoi(scal);
+	  wparam.height=atoi(scal);
+	} else {
+	  comMessage("write: dimension must be >0\n");
+	  return -1;
+	}
       }
       n++;
     } else if(!strcmp(wl[n],"-accum") ||
@@ -1491,13 +1506,12 @@ int comWrite(int wc,const char **wl)
 	return -1;
       }
       newi=atoi(wl[n+1]);
-      if(!(newi==1 || newi==2 || newi==3 || newi==4 || newi==5 || newi==6 ||
+      if(!(newi==0 || newi==2 || newi==3 || newi==4 || newi==5 || newi==6 ||
 	   newi==8 || newi==9 || newi==12 || newi==16)) {
-	sprintf(message,"error: accum must be one of 1 (off), 2,3,4,5,6,8,9,12,16\n");
-	comMessage(message);
+	comMessage("write: accum must be one of 0 (off), 2,3,4,5,6,8,9,12 or 16\n");
 	return -1;
       } else {
-	accum=atoi(wl[n+1]);
+	wparam.accum=newi;
       }
       n++;
     } else if(!strcmp(wl[n],"-new") ||
@@ -1579,12 +1593,13 @@ int comWrite(int wc,const char **wl)
   } else if(!strcmp(type,"png")) {
     comMessage("Writing png file...\n");
     fclose(f);
-    writeFile(file,WRITE_TYPE_PNG,accum,scale,dump);
+    wparam.type=WRITE_TYPE_PNG;
+    writeFile(file,&wparam);
   } else if(!strcmp(type,"tiff")) {
     comMessage("WARNING: deprecated format ! Please use png instead\n");
-    comMessage("Writing tiff file...\n");
-    fclose(f);
-    writeFile(file,WRITE_TYPE_TIFF,accum,scale,dump);
+    //comMessage("Writing tiff file...\n");
+    //fclose(f);
+    //writeFile(file,WRITE_TYPE_TIFF,accum,scale,dump);
 #ifdef VRML
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {

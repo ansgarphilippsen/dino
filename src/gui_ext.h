@@ -29,7 +29,9 @@ int guiMainLoop(void);
 
 int guiMessage(char *m);
 
-int guiGetImage(struct WRITE_IMAGE *img);
+//int guiGetImage(struct WRITE_IMAGE *img);
+int guiCreateOffscreenContext(int w, int h, int af);
+int guiDestroyOffscreenContext(void);
 
 void guiSwapBuffers(void);
 

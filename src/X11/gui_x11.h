@@ -117,6 +117,8 @@ struct GUI
   Window glxwindow;
   int glx_vis;
 
+  int glxvisinfo[64],glxvisinfo_count;
+
   int inside;
   int redraw;
 

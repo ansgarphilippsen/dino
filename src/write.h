@@ -12,12 +12,19 @@ enum             {WRITE_CENTER_VIEW,
 
 enum {WRITE_TYPE_TIFF, WRITE_TYPE_PNG};
 
-struct WRITE_IMAGE {
-  unsigned char *data;
-  int width,height;
+struct WRITE_PARAM {
+  int type;  // output type
+  int accum; // if non-zero, the amount of accumulation rounds
+  int width,height;  // dimensions of image
+  int dump;  // if non-zero, take pixels from screen
 };
 
-int writeFile(char *name, int type, int accum, float scale, int dump);
+struct WRITE_IMAGE {
+  unsigned char *data;
+  struct WRITE_PARAM param;
+};
+
+int writeFile(char *name, struct WRITE_PARAM *p);
 
 #endif
 
