@@ -6,6 +6,7 @@ int shellParseCommand(const char **wl, int wc);
 int shellIsScript(void);
 const char * shellResolveAlias(const char *reg);
 void shellInterrupt(void);
+int shellSystem(const char *c);
 
 
 #endif

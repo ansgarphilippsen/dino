@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 
 #include "gui_terminal.h"
 #include "shell_command.h"
@@ -41,6 +42,7 @@ static void alias_def(const char *name, const char **wl, int wc);
 static void alias_undef(const char *name);
 static void init_vars(void);
 static void init_alias(void);
+
 
 #define MAXSCRIPTLEVEL 256
 
@@ -142,7 +144,7 @@ int shellParseCommand(const char **wl, int wc)
       clStrcat(subexp," ");
       clStrcat(subexp,wl[i]);
     }
-    system(subexp);
+    shellSystem(subexp);
 
   } else if(clStrcmp(wl[0],"system")) {
     // system subcommand
@@ -151,7 +153,7 @@ int shellParseCommand(const char **wl, int wc)
       clStrcat(subexp," ");
       clStrcat(subexp,wl[i]);
     }
-    system(subexp);
+    shellSystem(subexp);
 
   } else if(clStrcmp(wl[0],"set")) {    
     // set variable
@@ -272,6 +274,33 @@ int shellParseCommand(const char **wl, int wc)
 
 }
 
+/*
+  passes a command to a new shell instance
+
+  this used to be just system(c)
+*/
+
+int shellSystem(const char *c)
+{
+  FILE *fp;
+  char message[256];
+
+  if((fp=popen(c,"r"))==NULL) {
+    sprintf(message,"%s\n",strerror(errno));
+    shellOut(message);
+    return -1;
+  }
+
+  while(!feof(fp)) {
+    if(fgets(message,255,fp)!=NULL) {
+      shellOut(message);
+    }
+  }
+
+  pclose(fp);
+
+  return 0;
+}
 
 /*
   this function is periodically called from the timer routine
@@ -1279,3 +1308,4 @@ void shellInterrupt(void)
 {
   interrupt_flag=1;
 }
+
