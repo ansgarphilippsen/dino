@@ -949,7 +949,7 @@ int gridContour(gridObj *obj, Select *sel)
 
   vertm=1000;
   vertc=0;
-  vert=Ccalloc(vertm,sizeof(gridVert));
+  vert=Crecalloc(NULL,vertm,sizeof(gridVert));
 
   for(level=level_start; level<=level_end; level+=level_step) {
     for(u=step+1;u<(field->width-step-1);u+=step) {
@@ -1028,10 +1028,7 @@ int gridContour(gridObj *obj, Select *sel)
 	}
 
 	if(vertc+4>=vertm) {
-	  ov=vert;
-	  vert=Ccalloc(vertm+1000,sizeof(gridVert));
-	  memcpy(vert,ov,sizeof(gridVert)*vertm);
-	  Cfree(ov);
+	  vert=Crecalloc(vert,vertm+1000,sizeof(gridVert));
 	  vertm+=1000;
 	}
 
