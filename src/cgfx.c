@@ -1086,9 +1086,11 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       
     }
 
-    debmsg("GenHSC: adding endpoints");
-    cgfxSphereVA(bw_save,sp[0].v,sp[0].colp[0],va,render->detail1);
-    cgfxSphereVA(render2->tube_width,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
+    if(render->cgfx_flag & CGFX_HSC_CAP) {
+      debmsg("GenHSC: adding endpoints");
+      cgfxSphereVA(bw_save,sp[0].v,sp[0].colp[0],va,render->detail1);
+      cgfxSphereVA(render2->tube_width,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
+    }
 
     debmsg("GenHSC: adding additional elements");
     if(render->mode==RENDER_HSC) {

@@ -2406,7 +2406,7 @@ int structSetDefault(structObj *obj)
   obj->render.na_method=0;
     
   obj->render.transparency=1.0;
-  obj->render.cgfx_flag=CGFX_INTPOL_COL;
+  obj->render.cgfx_flag=CGFX_INTPOL_COL | CGFX_HSC_CAP;
 
   comSetDefMat(&obj->render.mat);
   obj->render.mat.spec[0]=0.6;

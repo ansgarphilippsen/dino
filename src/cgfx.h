@@ -1,8 +1,9 @@
 #ifndef CGFX_H
 #define CGFX_H
 
-#define CGFX_INTPOL_COL 0x1
-#define CGFX_USE_RAD    0x2
+#define CGFX_INTPOL_COL 1<<0
+#define CGFX_USE_RAD    1<<1
+#define CGFX_HSC_CAP    1<<2
 
 #include <GL/gl.h>
 

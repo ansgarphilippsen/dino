@@ -859,6 +859,27 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
+    } else if(!strcmp(prop,"cap")) {
+      /********************
+	      hsc cap
+      ********************/
+      if(!strcmp(op,"!")) {
+	render->cgfx_flag&=(~CGFX_HSC_CAP);
+      } else if(strlen(op)==0) {
+	render->cgfx_flag|=CGFX_HSC_CAP;
+      } else if(!strcmp(op,"=")) {
+	if(!strcmp(val,"0") ||
+	   !strcmp(val,"false") ||
+	   !strcmp(val,"off")) {
+	  render->cgfx_flag&=(~CGFX_HSC_CAP);
+	} else {
+	  render->cgfx_flag|=CGFX_HSC_CAP;
+	}
+      } else {
+	sprintf(message,"invalid operator %s\n",op);
+	comMessage(message);
+	return -1;
+      }
     } else if(!strcmp(prop,"userad")) {
       /********************
 	      userad
