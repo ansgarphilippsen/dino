@@ -5,7 +5,7 @@
 using std::string;
 
 #include <wx/wx.h>
-#include <wx/tglbtn.h>
+#include <wx/checkbox.h>
 
 
 namespace {
@@ -25,7 +25,7 @@ private:
 };
 
 // Obj entry within Dataset entry
-class OMObject: public wxToggleButton {
+class OMObject: public wxCheckBox {
 public:
   OMObject(wxWindow* p, const string& name);
 

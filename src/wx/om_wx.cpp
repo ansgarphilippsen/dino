@@ -27,7 +27,7 @@ void OMDataset::RemoveObj(const string& name)
 
 // om object
 OMObject::OMObject(wxWindow* p, const string& name):
-  wxToggleButton(p, -1, name.c_str())
+  wxCheckBox(p, -1, name.c_str())
 {
   SetName(name.c_str());
 }
