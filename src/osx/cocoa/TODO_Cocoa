@@ -2,6 +2,7 @@
 TODO list specific to the Cocoa distribution:
 _____________________________________________
 
+- Text input always sent to CLI;
 
 - X,Y rotation slider;
 
