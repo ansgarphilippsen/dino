@@ -18,11 +18,8 @@
     IBOutlet NSTextField   *statusBox;
     IBOutlet NSTextField   *versionBox;
     IBOutlet CLIView       *dinoCLI;
-    IBOutlet NSOutlineView *dinoOM;
-    IBOutlet NSButton      *toggleButton;
     
     NSTimer             *controlTimer;
-    NSMutableArray      *dataSetList;
     NSOpenGLContext     *offScreenContext;
     void                *memPointer;
 }
@@ -61,28 +58,10 @@
 - (IBAction)showAxis:(id)sender;
 - (IBAction)hideAxis:(id)sender;
 - (IBAction)resetAll:(id)sender;
-// Object menu
-- (id)dataSetOfName:(NSString *)name;
-- (void)omAddDB:(NSString *)name;
-- (void)omDelDB:(NSString *)name;
-- (void)omAddObj:(NSString *)name inDB:(NSString *)db;
-- (void)omDelObj:(NSString *)name inDB:(NSString *)db;
-- (void)omHideObj:(NSString *)name ofDB:(NSString *)db;
-- (void)omShowObj:(NSString *)name ofDB:(NSString *)db;
-- (IBAction)toggleDinoObject:(id)sender;
-// OutlineView data source (for Object menu)
-- (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item;
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item;
-- (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item;
-- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item;
-- (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item;
-- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray *)rows toPasteboard:(NSPasteboard *)pboard;
-- (NSDragOperation)tableView:(NSTableView *)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation;
-- (BOOL)tableView:(NSTableView*)tableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation;
 // Graphical Control
 - (IBAction)rotFromSliderX:(id)sender;
 - (IBAction)rotFromSliderY:(id)sender;
-// OffScrenn OpenGL Context
+// OffScreen OpenGL Context
 - (int)offScreenContextWidth:(int)width Height:(int)height Accum:(int)af;
 - (void)releaseOffScreenContext;
 

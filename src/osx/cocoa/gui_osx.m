@@ -13,6 +13,7 @@ Connects the Aqua user interface to Dino via CMI
 #include <sys/time.h>
 
 #import  "Controller.h"
+#import  "OMController.h"
 #include "dino.h"
 #include "gui_ext.h"
 
@@ -197,37 +198,37 @@ Object Menu
 
 int omAddDB(const char *name)
 {
-    [[Controller dinoController]  omAddDB:[NSString stringWithCString:name]];
+    [[OMController dinoOMController]  omAddDB:[NSString stringWithCString:name]];
     return 0;
 }
 
 int omDelDB(const char *name)
 {
-    [[Controller dinoController]  omDelDB:[NSString stringWithCString:name]];
+    [[OMController dinoOMController]  omDelDB:[NSString stringWithCString:name]];
     return 0;
 }
 
 int omAddObj(const char *db, const char *name)
 {
-    [[Controller dinoController]  omAddObj:[NSString stringWithCString:name] inDB:[NSString stringWithCString:db]];
+    [[OMController dinoOMController]  omAddObj:[NSString stringWithCString:name] inDB:[NSString stringWithCString:db]];
     return 0;
 }
 
 int omDelObj(const char *db, const char *name)
 {
-    [[Controller dinoController]  omDelObj:[NSString stringWithCString:name] inDB:[NSString stringWithCString:db]];
+    [[OMController dinoOMController]  omDelObj:[NSString stringWithCString:name] inDB:[NSString stringWithCString:db]];
     return 0;
 }
 
 int omHideObj(const char *db, const char *name)
 {
-    [[Controller dinoController]  omHideObj:[NSString stringWithCString:name] ofDB:[NSString stringWithCString:db]];
+    [[OMController dinoOMController]  omHideObj:[NSString stringWithCString:name] ofDB:[NSString stringWithCString:db]];
     return 0;
 }
 
 int omShowObj(const char *db, const char *name)
 {
-    [[Controller dinoController]  omShowObj:[NSString stringWithCString:name] ofDB:[NSString stringWithCString:db]];
+    [[OMController dinoOMController]  omShowObj:[NSString stringWithCString:name] ofDB:[NSString stringWithCString:db]];
     return 0;
 }
 
