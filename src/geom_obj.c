@@ -817,6 +817,31 @@ int geomObjSet(geomObj *obj, struct DBM_SET *s, int flag)
 	  }
 	}
       }
+
+      for(i=0;i<obj->tri_count;i++) {
+	fprintf(stderr,"tri %d\n",i);
+	if(geomEleMatch(selp[k],GEOM_TYPE_TRI,i)) {
+	  tri=&obj->tri[i];
+	fprintf(stderr," found\n");
+	  
+	  for(j=0;j<s->ec;j++) {
+	    switch(s->e[j].id) {
+	    case GEOM_COLOR:
+	      tri->c[0]=s->e[j].value.v[0][0];
+	      tri->c[1]=s->e[j].value.v[0][1];
+	      tri->c[2]=s->e[j].value.v[0][2];
+	      break;
+	    case GEOM_TRANSPARENCY:
+	      tri->c[3]=s->e[j].value.f[0];
+	      break;
+	    case GEOM_FILL:
+	      tri->fill=s->e[j].value.i[0];
+	      break;
+	    }
+	  }
+	}
+      }
+
       for(i=0;i<obj->rect_count;i++) {
 	if(geomEleMatch(selp[k],GEOM_TYPE_RECT,i)) {
 	  rect=&obj->rect[i];

@@ -573,39 +573,41 @@ int matExtract2Df(const char *string, int dim1, int dim2, float *res)
 int matExtractMatrix(const char *s, int *d1, int *d2, double *res)
 {
   int ret=-1;
+#if 0
+  int i;
+#endif
   if(matExtract1D(s,3,res)==0) {
     (*d1)=3;
     (*d2)=1;
     ret=0;
-  } 
-  if(matExtract1D(s,4,res)==0) {
+  } else if(matExtract1D(s,4,res)==0) {
     (*d1)=4;
     (*d2)=1;
     ret=0;
-  } 
-  // for geom dataset
-  if(matExtract2D(s,2,3,res)==0) {
+  } else if(matExtract2D(s,2,3,res)==0) {
     (*d1)=3;
     (*d2)=2;
     ret=0;
-  }
-  if(matExtract2D(s,3,3,res)==0) {
+  } else if(matExtract2D(s,3,3,res)==0) {
     (*d1)=3;
     (*d2)=3;
     ret=0;
-  }
-  // for geom dataset
-  if(matExtract2D(s,4,3,res)==0) {
+  } else if(matExtract2D(s,4,3,res)==0) {
     (*d1)=3;
     (*d2)=4;
     ret=0;
-  }
-  if(matExtract2D(s,4,4,res)==0) {
+  } else if(matExtract2D(s,4,4,res)==0) {
     (*d1)=4;
     (*d2)=4;
     ret=0;
   }
-
+#if 0
+  fprintf(stderr,"matExtract: [%s]\n",s);
+  for(i=0;i<4;i++) {
+    fprintf(stderr,"%f %f %f %f\n",
+	    res[i*4+0],res[i*4+1],res[i*4+2], res[i*4+3]);
+  }
+#endif
   return ret;
 }
 
@@ -1802,7 +1804,7 @@ int matM3toM4(double *m3,double *m4)
 {
   m4[0]=m3[0]; m4[1]=m3[1]; m4[2]=m3[2]; m4[3]=0.0;
   m4[4]=m3[3]; m4[5]=m3[4]; m4[6]=m3[5]; m4[7]=0.0;
-  m4[8]=m3[6]; m4[9]=m3[7]; m4[10]=m3[6]; m4[11]=0.0;
+  m4[8]=m3[6]; m4[9]=m3[7]; m4[10]=m3[8]; m4[11]=0.0;
   m4[12]=0.0; m4[13]=0.0; m4[14]=0.0; m4[15]=1.0;
   return 0;
 }

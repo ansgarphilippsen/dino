@@ -48,6 +48,8 @@ static struct CHARBUF {
 static char *prompt="dino> ";
 static int suspend;
 
+static int has_terminal;
+
 int guitInit()
 {
   // set up the terminal
@@ -66,8 +68,13 @@ int guitInit()
   debmsg("guit: setting terminal properties");
 
   if(tcgetattr(0,&tmode)<0){
-    perror("tcgetattr");
-    dinoExit(1);
+    //perror("tcgetattr");
+    //dinoExit(1);
+    has_terminal=0;
+    suspend=1;
+    return -1;
+  } else {
+    has_terminal=1;
   }
 
   tsavemode=tmode;
@@ -97,26 +104,39 @@ int guitInit()
 
   guitWrite(prompt);
 
-
   return 0;
 }
 
+void guitOutit()
+{
+  if(has_terminal) {
+    tcsetattr(0,TCSAFLUSH,&tsavemode);
+  }
+}
+
+
 void guitSuspend(int f)
 {
-  suspend=f;
-  if(!suspend)
-    guitWrite(prompt);
+  if(has_terminal) {
+    suspend=f;
+    if(!suspend)
+      guitWrite(prompt);
+  }
 }
 
 void guitWrite(const char *s)
 {
-  write(fileno(stdout),s,clStrlen(s));
+  if(has_terminal) {
+    write(fileno(stdout),s,clStrlen(s));
+  }
 }
 
 void guitAddChar(unsigned char c)
 {
-  if(charbuf.count<charbuf.max)
-    charbuf.buf[charbuf.count++]=c;
+  if(has_terminal) {
+    if(charbuf.count<charbuf.max)
+      charbuf.buf[charbuf.count++]=c;
+  }
 }
 
 
@@ -130,7 +150,7 @@ void guitTimeProc()
   int rc;
   unsigned char tmpbuf[64],c;
 
-  if(!suspend) {
+  if(has_terminal && !suspend) {
     // check for stdin input
     if((rc=read(fileno(stdin),tmpbuf,63))>0) {
       parse_tmpbuf(rc,tmpbuf);
@@ -339,11 +359,6 @@ static void draw_line(void)
   write(fileno(stdout),inbuf.buf+inbuf.offset,ccount);
   memset(cmd_buf,0x08,ccount-inbuf.pos+inbuf.offset);
   write(fileno(stdout),cmd_buf,ccount-inbuf.pos+inbuf.offset);
-}
-
-void guitOutit()
-{
-  tcsetattr(0,TCSAFLUSH,&tsavemode);
 }
 
 static void finish(int n)

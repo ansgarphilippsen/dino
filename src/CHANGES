@@ -1,3 +1,6 @@
+fixed bug in mat M3ToM4 conversion
+
+fixed geom tri not filled for set fill
 
 -----
 
