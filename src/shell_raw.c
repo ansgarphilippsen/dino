@@ -284,7 +284,7 @@ int shellSetVar(const char *name2, const char *value2, int level)
   if(clStrcmp(name2,"CP")) {
     if(matExtractMatrix(value2,&d1,&d2,res)==0) {
       if(d1==3 && d2==1) {
-	comSetCP(res[0],res[1],res[2]);
+	comSetCP(0,res[0],res[1],res[2]);
       } else {
 	comMessage("value for CP must be a vector\n");
 	return -1;
