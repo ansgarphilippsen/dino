@@ -1833,6 +1833,9 @@ static XVisualInfo *get_offscreen_visual(int af)
 
 void guiExit()
 {
+  glXWaitX();
+  glFinish();
   glXWaitGL();
+  XSync(gui.dpy,True);
   XCloseDisplay(gui.dpy);
 }

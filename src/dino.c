@@ -237,14 +237,14 @@ void dinoExit(int n)
   debmsg("ensuring stereo off\n");
   cmiStereo(0);
   
-  debmsg("closing down gui\n");
-  guiExit();
-
 #ifndef OSX
   debmsg("restoring terminal\n");
   guitOutit();
 #endif
   
+  debmsg("closing down gui\n");
+  guiExit();
+
   debmsg("exit");
   exit(n);
 }
