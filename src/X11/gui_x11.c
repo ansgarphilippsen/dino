@@ -374,7 +374,8 @@ int guiInit(int argc, char **argv)
     reset redraw flag
   */
   gui.redraw=0;
-  
+
+  // display info about OpenGL
   gl_info();
 
   

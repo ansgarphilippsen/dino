@@ -1,44 +1,100 @@
 TODO LIST FOR DINO
 
-This should be implemented / fixed asap
-=======================================
+should be done sooner or later
+==============================
 
-OpenDX scalar field format
-
-filer dataset name to replace . with _
-
-add flag to POVray output to write out untransformed coordinates
+XD grid format (external filter, split into ascii coord and binary grid file)
 
 add -selection to attachment (pass pointer to select)
 
-add range flag clamp to all ds (e.g surf)
+OpenDX scalar field format
 
-allow underscore in vars
+cleanup stereo code (init ok, but flags and switching is badly hacked)
+
+Gromacs trj support
+
+crystallographic symmetry
+
+hydrogen bonds (new nbond obj)
+
+introduce temp object for simplified sytnax (aka rasmol)
+
+This should be implemented / fixed asap
+=======================================
+
+support more than 20 models
+
+get dials to work again on SGI
+
+ensure shared version does not contain libGLcore.so
+
+add property cp (rw) to scene
+
+add scal.slab to pov output
+
+re-implement scene spin
+
+add flag to POVray output to write out untransformed coordinates
+
+check PDB loading (esp multi-model)
+
+check transparency for lines/contour (back/front sorting)
+
+delete should accept wildcards
+
+scene:lightN grab INPUTDEVICE
+
+set labels on/off with command plus selection possible
+
+write image file from scalar-field slab
+
+struct restrc affects surf after attachment -> bug or feature ???
+
+*??*relink against static motif on linux
+
+*ALPHA*rewrite POV output to accept cgfx VA
 
 *ALPHA*.dinorc
 
-scalar field dataset offset !!!!!!!
+*ALPHA* add helix cylinders!
+
+*WORKAROUND*fix argument passing in scripts
+
+*WORKAROUND*round caps do not work with tuber!=1
+
+*DIFFICULT* delay calculation of triangles for isocontours until 
+  render fill is called for the first time!
+
+*OK*add POVray v3.5
+
+*OK*new picking not working -> back to old
+
+*OK* only activate stereo visual on linux if "-stereo" is passed on command line
+
+*OK*add range property "dist" that is distance in A from $CP
+(-range prop=dist,val=0:100) to struct and surf ds
+
+*OK*matrix extraction code broken !!!
+
+*OK*geom objects not visible behind surface (drawing order)
+
+*OK*.surf render light2 not working
+
+*OK*filter dataset name to replace . with _
+
+*OK*add range flag clamp to all ds (e.g surf)
+
+*OK*allow underscore in vars
 
 *OK*naming detail vs detail2
 
 *OK*add flag to -range that will either clamp or ignore outside values
 
-*ALPHA* add helix cylinders!
-
 *OK* render bw=0 resp sr=0 should deactivate cyl resp sphere rendering
 
-*DIFFICULT* delay calculation of triangles for isocontours until 
-  render fill is called for the first time!
+*OK*struct write should honor restriction
 
-struct write should honor restriction
-
-check POVray output
-
-check PDB loading (esp multi-model)
-
-apply transformation to surface normals
-
-check transparency for lines/contour (back/front sorting)
+*OK*apply transformation to surface normals
 
 *OK* transparent hsc == new coloring code
 
@@ -46,26 +102,11 @@ check transparency for lines/contour (back/front sorting)
 
 *OK*check colors on SGI
 
-delete should accept wildcards
-
-new picking not working -> back to old
-
-scene:lightN grab INPUTDEVICE
-
-set labels on/off with command plus selection possible
-
 *OK*automatic swapping
+
+*OK*use -sel -select -selection
 
 *DEPRECATED*use '-arch XXX' flag for load to identify architecture and to 
 automatically decide wether to swap or not (MIPS ALPHA PPC INTEL and MSB 
 and LSB)
  
-relink against static motif on linux
-
-rewrite POV output to accept cgfx VA
-
-write image file from scalar-field slab
-
-struct restrc affects surf after attachment -> bug or feature ???
-
-*OK* use -sel -select -selection

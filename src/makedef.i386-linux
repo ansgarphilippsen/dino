@@ -66,9 +66,6 @@ CCP  = g++
 COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused $(JAVA_INC)
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(MALLOCLIB) $(LIBGLW) $(LIBSTATIC) $(JAVA_LIBS)
 
-#SRC += autoplay.c joy.c
-#SRC += jci.c
-
 SRC += joy.c
 
 ifneq (,$(findstring X11_GUI,$(OPTIONS)))

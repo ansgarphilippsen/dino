@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <curses.h>
+//#include <curses.h>
 #include <signal.h>
 #include <ctype.h>
 #include <sys/ioctl.h> /* for struct winsize */
