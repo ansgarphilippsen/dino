@@ -81,6 +81,7 @@ static id dinoController;
 - (void)sendEventToCLI:(NSEvent *)theEvent
 {
     [[dinoCLI shellView] keyDown:theEvent];
+    [[dinoCLI window] makeKeyWindow];
 }
 
 //------------------------------------------------------
