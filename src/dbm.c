@@ -302,15 +302,6 @@ int dbmLoad(int wc, const char **wl)
     if(cmp) pclose(f); else fclose(f);
     node->structNode.conn_flag=0;
     structPrep(&node->structNode);
-    /***
-    debmsg("structPrep: build CA");       
-    structBuildCA(&node->structNode);
-    debmsg("structPrep: prep res");       
-    structPrepRes(&node->structNode);
-    structSetMinMax(&node->structNode);
-    structRecenter(&node->structNode);
-    comMessage("\n");
-    ***/
   } else if(!strcmp(type,"dgrid")) {
     /*
       DINO GRID
@@ -324,8 +315,6 @@ int dbmLoad(int wc, const char **wl)
     if(ret!=0) {
       dbmDeleteNode(name);
       return -1;
-    } else {
-      scalSetMinMax(&node->scalNode);
     }
   } else if(!strcmp(type,"spider")) {
     /*
@@ -340,8 +329,6 @@ int dbmLoad(int wc, const char **wl)
     if(ret!=0) {
       dbmDeleteNode(name);
       return -1;
-    } else {
-      scalSetMinMax(&node->scalNode);
     }
   } else if(!strcmp(type,"charmmb")) {
     /*
@@ -356,8 +343,6 @@ int dbmLoad(int wc, const char **wl)
     if(ret!=0) {
       dbmDeleteNode(name);
       return -1;
-    } else {
-      scalSetMinMax(&node->scalNode);
     }
   } else if(!strcmp(type,"pqr")) {
     /*
@@ -373,25 +358,8 @@ int dbmLoad(int wc, const char **wl)
       return -1;
     }
     if(cmp) pclose(f); else fclose(f);
-    comMessage(".");
     node->structNode.conn_flag=conn_flag;
     structPrep(&node->structNode);
-    /***
-    sprintf(message," %d atom(s),",node->structNode.atom_count);
-    if(node->structNode.residue_flag)
-      sprintf(message,"%s %d residue(s),",
-	      message,node->structNode.residue_count);
-    if(node->structNode.chain_flag)
-      sprintf(message,"%s %d chain(s),",
-	      message,node->structNode.chain_count);
-    if(node->structNode.model_flag)
-      sprintf(message,"%s %d model(s),",
-	      message,node->structNode.model_count);
-    sprintf(message,"%s %d bond(s)",
-	    message,node->structNode.bond_count);
-    comMessage(message);
-    comMessage("\n");
-    ***/
   } else if(!strcmp(type,"xplorb")) {
     /*
       XPLOR binary map
@@ -405,8 +373,6 @@ int dbmLoad(int wc, const char **wl)
     if(ret!=0) {
       dbmDeleteNode(name);
       return -1;
-    } else {
-      scalSetMinMax(&node->scalNode);
     }
   } else if(!strcmp(type,"cnsb")) {
     /*
@@ -421,8 +387,6 @@ int dbmLoad(int wc, const char **wl)
     if(ret!=0) {
       dbmDeleteNode(name);
       return -1;
-    } else {
-      scalSetMinMax(&node->scalNode);
     }
   } else if(!strcmp(type,"cnsa")) {
     node=dbmNewNode(DBM_NODE_SCAL,name);
@@ -434,8 +398,6 @@ int dbmLoad(int wc, const char **wl)
     if(ret!=0) {
       dbmDeleteNode(name);
       return -1;
-    } else {
-      scalSetMinMax(&node->scalNode);
     }
   } else if(!strcmp(type,"xplora")) {
     /*
@@ -450,8 +412,6 @@ int dbmLoad(int wc, const char **wl)
     if(ret!=0) {
       dbmDeleteNode(name);
       return -1;
-    } else {
-      scalSetMinMax(&node->scalNode);
     }
   } else if(!strcmp(type,"ccp4")) {
     /*
@@ -701,25 +661,8 @@ int dbmLoad(int wc, const char **wl)
       return -1;
     }
     if(cmp) pclose(f); else fclose(f);
-    comMessage(".");
     node->structNode.conn_flag=conn_flag;
     structPrep(&node->structNode);
-    /***
-    sprintf(message," %d atom(s),",node->structNode.atom_count);
-    if(node->structNode.residue_flag)
-      sprintf(message,"%s %d residue(s),",
-	      message,node->structNode.residue_count);
-    if(node->structNode.chain_flag)
-      sprintf(message,"%s %d chain(s),",
-	      message,node->structNode.chain_count);
-    if(node->structNode.model_flag)
-      sprintf(message,"%s %d model(s),",
-	      message,node->structNode.model_count);
-    sprintf(message,"%s %d bond(s)",
-	    message,node->structNode.bond_count);
-    comMessage(message);
-    comMessage("\n");
-    ****/
   } else {
     if(cmp) pclose(f); else fclose(f);
     comMessage("Unknown type \n");

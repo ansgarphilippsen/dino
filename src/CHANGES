@@ -1,3 +1,11 @@
+added spider format
+
+fixed scalar rcen now default center of dataset (instead of 0,0,0)
+
+scalar dataset loading gives min, max + stddev
+
+more code cleanup
+
 ---
 
 added render nice/fast to geom

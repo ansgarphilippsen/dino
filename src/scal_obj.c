@@ -299,7 +299,7 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
     return -1;
 
   if(obj->type==SCAL_CONTOUR) {
-    sprintf(message,"Contouring at %f ...\n",obj->level);
+    sprintf(message,"Contouring at %g ...\n",obj->level);
     comMessage(message);
 
     /* check selection syntax */

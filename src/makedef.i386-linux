@@ -35,6 +35,6 @@ endif
 
 CC   = gcc-2.96
 CPP  = g++-2.96
-COPT = -O2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
+COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(LIBGLW) $(LIBSTATIC)
 
