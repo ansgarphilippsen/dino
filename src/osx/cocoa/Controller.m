@@ -25,9 +25,6 @@ static id dinoController;
     dinoController=self;
 
     [dinoCLI setCommandHandler:dinoController];
-//    NSDrawer *CLIDrawer = [[[dinoGL window] drawers] objectAtIndex:0];
-//    [CLIDrawer setContentSize:NSMakeSize(0,160)];	
-//    [CLIDrawer openOnEdge:NSMinYEdge];
 
     [[dinoGL window] setFrameAutosaveName:@"GFXWindowPref"];
     [[dinoGL window] setFrameUsingName:@"GFXWindowPref"];

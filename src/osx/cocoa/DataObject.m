@@ -59,7 +59,6 @@
     [super dealloc];
 }
 
-
 - (void)setName:(NSString *)s{
     [s retain];
     [name release];

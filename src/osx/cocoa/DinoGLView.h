@@ -29,7 +29,6 @@
 
 @interface GFXWindow : NSWindow
 {
-
 }
 
 // Overrides
