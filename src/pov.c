@@ -1318,7 +1318,7 @@ int writePOV(FILE *fpov, FILE *finc,char *fpovn, int flag, int mode, int version
     }
 
     if(k==0) {
-      fprintf(f,"\n#declare _Scene = #include \"%s\"\n",fpovn);
+      fprintf(f,"\n#declare _Scene = union{#include \"%s\"}\n",fpovn);
     }
 
     if(k==1) {
