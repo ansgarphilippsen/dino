@@ -73,20 +73,9 @@ int sceneInit(void)
   scene.stack_m=32;
   scene.stack=Ccalloc(scene.stack_m,sizeof(struct SCENE_STACK));
 
-#ifdef EXPO
-  scene.label_m=256;
-  scene.label_c=0;
-  scene.label=Ccalloc(scene.label_m,sizeof(struct SCENE_LABEL));
-#endif
-  
   gfx.fixz=1;
   gfx.smooth=1;
 
-  /*
-  for(i=0;scene_def_reg[i].oname!=NULL;i++) {
-
-  }
-  */
 
   /* grab the dial box */
   //  comGrabInput(GUI_DIALS, (comInputFunc)gfxCommand, NULL);
@@ -100,6 +89,7 @@ int sceneInit(void)
   gfx.axisflag=0;
   
   scene.cpflag=0;
+  scene.rulerflag=0;
 
   scene_virgin_flag=1;
   
@@ -650,6 +640,34 @@ int sceneCommand(int wc, const char **wl)
 	      gfx.axisflag=0;
 	    } else {
 	      gfx.axisflag=1;
+	    }
+	  }
+	}
+	comRedraw();
+      } else if(clStrcmp(prop,"ruler")) {
+	/**********************
+	       set ruler
+	**********************/
+	if(clStrcmp(op,"!")) {
+	  scene.rulerflag=0;
+	} else if(strlen(val)==0 && strlen(op)==0) {
+	  scene.rulerflag=1;
+	} else if(strlen(val)==0 && strlen(op)>0) {
+	  sprintf(message,"scene: missing value\n");
+	  comMessage(message);
+	  return -1;
+	} else {
+	  if(strcmp(op,"=")) {
+	    sprintf(message,"scene: unknown operator: %s\n",op);
+	    comMessage(message);
+	    return -1;
+	  } else {
+	    if(clStrcmp(val,"0") || 
+	       clStrcmp(val,"false") ||
+	       clStrcmp(val,"no")) {
+	      scene.rulerflag=0;
+	    } else {
+	      scene.rulerflag=1;
 	    }
 	  }
 	}

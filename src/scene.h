@@ -16,11 +16,8 @@ struct SCENE {
   struct SCENE_STACK *stack;
   int stack_p,stack_m;
   float cp[3];
-  int cpflag;
-#ifdef EXPO
-  struct SCENE_LABEL *label;
-  int label_c,label_m;
-#endif
+  int cpflag, rulerflag;
+  
 };
 
 #endif

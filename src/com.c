@@ -824,7 +824,7 @@ int comPick(int screenx, int screeny, int flag)
   double eye_offset=gfx.eye_offset;
   double v[3];
 
-  char message[2560],message2[256];
+  char message[256],message2[256];
   char *var[2];
 
 #ifdef PICK_NEW
@@ -897,13 +897,6 @@ int comPick(int screenx, int screeny, int flag)
     scene.cp[2]=(p2[2]+p1[2])*0.5;
   }
 
-  sprintf(message,"{%.5f,%.5f,%.5f}",scene.cp[0],scene.cp[1],scene.cp[2]);
-  strcpy(message2,"CP");
-  shellSetVar(message2,message,0);
-
-
-  if(scene.cpflag)
-    comRedraw();
 
   if(gluUnProject(sx,sy,gfx.transform.slabn,
 		  mmatrix,pmatrix,viewport,
@@ -992,11 +985,13 @@ int comPick(int screenx, int screeny, int flag)
     guiMessage(message);
     strcpy(message,"CS");
     shellSetVar(message,pick->id,0);
-    scenePush(pick->id);
 
-    strcpy(message,"CP");
-    sprintf(message2,"{%4f,%4f,%4f}",pick->p[0],pick->p[1],pick->p[2]);
-    shellSetVar(message,message2,0);
+    // this has been replaced by the actual coordinate!
+    // scenePush(pick->id);
+
+    scene.cp[0]=pick->p[0];
+    scene.cp[1]=pick->p[1];
+    scene.cp[2]=pick->p[2];
 
     // TODO: toggle label
   } else {
@@ -1096,16 +1091,28 @@ int comPick(int screenx, int screeny, int flag)
     guiMessage(pick);
     strcpy(message,"CS");
     shellSetVar(message,cs,0);
-    scenePush(cs);
+    // coordinate is directly pushed onto scene stack
+    //scenePush(cs);
 
-    strcpy(message,"CP");
-    sprintf(message2,"{%4f,%4f,%4f}",atom->p->x,atom->p->y,atom->p->z);
+    // update CP
+    scene.cp[0]=atom->p->x;
+    scene.cp[0]=atom->p->y;
+    scene.cp[0]=atom->p->z;
 
-    shellSetVar(message,message2,0);
   } else {
     guiMessage(" ");
   }
 #endif
+
+  sprintf(message,"{%.5f,%.5f,%.5f}",scene.cp[0],scene.cp[1],scene.cp[2]);
+  strcpy(message2,"CP");
+  shellSetVar(message2,message,0);
+  scenePush(message);
+
+  if(scene.cpflag)
+    comRedraw();
+
+
   return 0;
 }
 
@@ -1898,13 +1905,13 @@ int comPlay(dbmNode *node, int command)
   return 0;
 }
 
-char com_return_buf[256];
+char com_return_buf[4096];
 
 void comReturn(const char *r)
 {
   int i;
   if(r!=NULL) {
-    for(i=0;i<256;i++) {
+    for(i=0;i<sizeof(com_return_buf)-1;i++) {
       com_return_buf[i]=r[i];
       if(com_return_buf[i]=='\0')
 	break;

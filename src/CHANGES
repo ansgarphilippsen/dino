@@ -1,7 +1,12 @@
+fixed dist/angle/torsion bug
 
 fixed bug in XPLORA/CNSA read routine
 
 ---
+
+scene stack is now populated with coordinates rather than atom-id !!
+
+added ruler (between near&flar clipping plane)
 
 added render flag 'cap' to turn on/off hsc end capping
 

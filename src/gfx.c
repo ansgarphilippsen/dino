@@ -159,6 +159,9 @@ static struct RENDER_MATERIAL gfx_def_mat={
 };
 
 
+static void draw_axis(void);
+static void draw_ruler(void);
+
 
 /******************************
 
@@ -548,10 +551,12 @@ int gfxSceneRedraw(int clear)
   glLoadIdentity();
 
 
+  // light
   for(i=0;i<8;i++)
     if(gfx.light[i].on && !gfx.light[i].local)
       glLightfv(GL_LIGHT0+i,GL_POSITION,gfx.light[i].pos);
 
+  // additional clipping plabes
   for(i=0;i<1;i++)
     if(gfx.clip[i].on) {
       glPushMatrix();
@@ -597,6 +602,7 @@ int gfxSceneRedraw(int clear)
       glLightfv(GL_LIGHT0+i,GL_POSITION,gfx.light[i].pos);
 
 
+  // CP cursor
   if(scene.cpflag) {
     glDisable(GL_LIGHTING);
     glColor3f(1.0,1.0,0.5);
@@ -611,37 +617,16 @@ int gfxSceneRedraw(int clear)
     glEnable(GL_LIGHTING);
   }
 
-  if(gfx.axisflag) {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(-50,50,-50,50,-50,50);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glTranslated(0,0,0);
-    
-    glMultMatrixd(gfx.transform.rot);
-    
-    glDisable(GL_LIGHTING);
-    glBegin(GL_LINES);
-    glColor3f(1,0,0);
-    glVertex3f(-1,0,0);
-    glVertex3f(10,0,0);
-    glColor3f(0,1,0);
-    glVertex3f(0,-1,0);
-    glVertex3f(0,10,0);
-    glColor3f(0,0,1);
-    glVertex3f(0,0,-1);
-    glVertex3f(0,0,10);
-    glEnd();
-    glEnable(GL_LIGHTING);
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
+  // ruler
+  if(scene.rulerflag) {
+    draw_ruler();
   }
-  
+
+  // axis
+  if(gfx.axisflag) {
+    draw_axis();
+  }
+
   
   return 0;
 }
@@ -963,3 +948,175 @@ void gfxCMICallback(const cmiToken *t)
 }
 #endif
 
+static void draw_axis()
+{
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(-50,50,-50,50,-50,50);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+  glTranslated(0,0,0);
+  glMultMatrixd(gfx.transform.rot);
+  glDisable(GL_LIGHTING);
+  glBegin(GL_LINES);
+  glColor3f(1,0,0);
+  glVertex3f(-1,0,0);
+  glVertex3f(10,0,0);
+  glColor3f(0,1,0);
+  glVertex3f(0,-1,0);
+  glVertex3f(0,10,0);
+  glColor3f(0,0,1);
+  glVertex3f(0,0,-1);
+  glVertex3f(0,0,10);
+  glEnd();
+  glEnable(GL_LIGHTING);
+  glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+}
+
+/*
+  draw a ruler on the screen:
+
+  a) determine the distance from left to right screen edge
+     at the depth of the COR
+
+  b) draw a horizontal line with vertical ones
+ 
+*/
+
+static void draw_ruler()
+{
+  GLdouble mmatrix[16];
+  GLdouble pmatrix[16];
+  GLint viewport[4];
+  GLdouble sx,sy,sz,px1,py1,pz1,px2,py2,pz2, dist;
+  char label[256];
+
+  double min_pixel_per_gap = 5.0;
+  double length_of_crossbar = 0.008;
+  double length_of_crossbar2 = 0.025;
+  double cor;
+  double ratio, gapunit, step, stepdh,stepdv;
+  int count;
+
+  glGetDoublev(GL_MODELVIEW_MATRIX,mmatrix);
+  glGetDoublev(GL_PROJECTION_MATRIX,pmatrix);
+  glGetIntegerv(GL_VIEWPORT,viewport);
+
+  cor = (-gfx.transform.tra[2]-gfx.transform.slabn2)/(gfx.transform.slabf2-gfx.transform.slabn2);
+  cor=0.5;
+  //fprintf(stderr,"%f %f %f %f %f\n",gfx.transform.slabn2,gfx.transform.slabf2,gfx.transform.cen[2],gfx.transform.tra[2],cor);
+
+  if(gluUnProject(0.0,
+		  0.5*(double)viewport[3],
+		  cor,
+		  mmatrix,pmatrix,viewport,
+		  &px1,&py1,&pz1)==GL_FALSE){
+    return;
+  }
+
+  if(gluUnProject((double)viewport[2],
+		  0.5*(double)viewport[3],
+		  cor,
+		  mmatrix,pmatrix,viewport,
+		  &px2,&py2,&pz2)==GL_FALSE){
+    return;
+  }
+
+  dist = sqrt((px2-px1)*(px2-px1)+
+	      (py2-py1)*(py2-py1)+
+	      (pz2-pz1)*(pz2-pz1));
+
+  // ratio is angstroem per pixel
+  ratio = dist / (double)viewport[2];
+  // gapunit is the unit in angstroem per gap (some integer power of 10)
+  gapunit = pow(10.0,ceil(log10(ratio*min_pixel_per_gap)));
+  // horizontal stepdelta
+  stepdh = 2.0 * (gapunit / ratio) / (double)viewport[2];
+  // vertical stepdelta
+  stepdv = 2.0 * (gapunit / ratio) / (double)viewport[3];
+
+  glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT);
+
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(-1,1,1,1,-1,1);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  glDisable(GL_LIGHTING);
+  glDisable(GL_FOG);
+  //glDisable(GL_DEPTH_TEST);
+  glEnable(GL_COLOR_LOGIC_OP);
+  glLogicOp(GL_XOR);
+
+  glColor4f(1.0,1.0,1.0,0.5);
+
+
+  glLineWidth(1.0);
+  glBegin(GL_LINES);
+  glVertex2f(-1.0,0.0);
+  glVertex2f(1.0,0.0);
+  glVertex2f(0.0,-1.0);
+  glVertex2f(0.0,1.0);
+  glEnd();
+
+  glRasterPos2f(-0.98,0.03);
+
+  if(cor < 0.0 || cor > 1.0) {
+    glfDrawString("center out of bounds");
+  } else {
+    sprintf(label,"%g A",gapunit);
+    glfDrawString(label);
+
+
+    glBegin(GL_LINES);
+    // horizontal axis
+    for(count=0,step=0.0; step<=1.0; count++, step+=stepdh) { 
+      if(count%10==0) {
+	glVertex2f(step,-length_of_crossbar2);
+	glVertex2f(step,+length_of_crossbar2);
+	glVertex2f(-step,-length_of_crossbar2);
+	glVertex2f(-step,+length_of_crossbar2);
+      } else {
+	glVertex2f(step,-length_of_crossbar);
+	glVertex2f(step,+length_of_crossbar);
+	glVertex2f(-step,-length_of_crossbar);
+	glVertex2f(-step,+length_of_crossbar);
+      }
+    }
+    
+    // vertical axis
+    for(count=0,step=0.0; step<=1.0; count++, step+=stepdh) { 
+      if(count%10==0) {
+	glVertex2f(-length_of_crossbar2,step);
+	glVertex2f(+length_of_crossbar2,step);
+	glVertex2f(-length_of_crossbar2,-step);
+	glVertex2f(+length_of_crossbar2,-step);
+      } else {
+	glVertex2f(-length_of_crossbar,step);
+	glVertex2f(+length_of_crossbar,step);
+	glVertex2f(-length_of_crossbar,-step);
+	glVertex2f(+length_of_crossbar,-step);
+      }
+    }
+    
+    
+    glEnd();
+
+  }
+
+  glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+
+  glPopAttrib();
+
+}

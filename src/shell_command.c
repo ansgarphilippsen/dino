@@ -202,7 +202,7 @@ int shellParseCommand(const char **wl, int wc)
 	shellSetVar(wl[i],rpn_pop(),0);
       }
     } else {
-      rpn_pop();
+      comReturn(rpn_pop());
     }
 
   } else if(clStrcmp(wl[0],"dup")) {
@@ -215,7 +215,7 @@ int shellParseCommand(const char **wl, int wc)
 
   } else if(clStrcmp(wl[0],"peek")) {
     // peek at top most entry
-    rpn_peek();
+    comReturn(rpn_peek());
 
   } else if(clStrcmp(wl[0],"show")) {
     // dump stack
@@ -1166,6 +1166,7 @@ static void rpn_opr(const char *op)
 	shellOut("error: expected 2 vectors for op dist\n");
       } else {
 	sprintf(op_result,"%f",matCalcDistance(res1,res2));
+	tresult=RPN_TYPE_SCALAR;
       }
     } else if(clStrcmp(op,"angle")) {
       type1=rpn_get_value(rpn_pop(),res1);
@@ -1177,6 +1178,7 @@ static void rpn_opr(const char *op)
 	shellOut("error: expected 3 vectors for op angle\n");
       } else {
 	sprintf(op_result,"%f",matCalcAngle(res1,res2,res3,res2));
+	tresult=RPN_TYPE_SCALAR;
       }
     } else if(clStrcmp(op,"torsion")) {
       type1=rpn_get_value(rpn_pop(),res1);
@@ -1190,6 +1192,7 @@ static void rpn_opr(const char *op)
 	shellOut("error: expected 4 vectors for op torsion\n");
       } else {
 	sprintf(op_result,"%f",matCalcTorsion(res1,res2,res3,res4));
+	tresult=RPN_TYPE_SCALAR;
       }
     }
   }

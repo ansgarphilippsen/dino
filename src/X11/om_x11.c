@@ -53,10 +53,9 @@ static struct OM_POPUP_LIST om_user_list[]={
   {"center CS","scene center [$CS]"},
   {"center CP","scene center $CP"},
   {"separator",""},
-  /*  {"dist","push [[scene pop] get xyz] [[scene pop] get xyz]; opr - abs; scene message Distance: [pop]"},*/
-  {"calc dist (2)","push [[scene pop]] [[scene pop]]; opr dist; scene message Distance: [pop]"},
-  {"calc angle (3)","push [[scene pop]] [[scene pop]] [[scene pop]]; opr angle; scene message Angle: [pop]"},
-  {"calc torsion (4)","push [[scene pop]] [[scene pop]] [[scene pop]] [[scene pop]]; opr torsion; scene message Torsion: [pop]"},
+  {"calc dist (2)","push [scene pop] [scene pop]; opr dist; scene message Distance: [pop]"},
+  {"calc angle (3)","push [scene pop] [scene pop] [scene pop]; opr angle; scene message Angle: [pop]"},
+  {"calc torsion (4)","push [scene pop] [scene pop] [scene pop] [scene pop]; opr torsion; scene message Torsion: [pop]"},
   {NULL,NULL}
 };
 
