@@ -55,7 +55,8 @@ struct GFX
 
   GLfloat fog_color[4];
   int fog,fog_mode;
-  float fog_near,fog_far,fog_dist,fog_density;
+  float fog_near,fog_far,fog_density;
+  float fog_near_offset,fog_far_offset;
 
   int axisflag;
   int cpflag;

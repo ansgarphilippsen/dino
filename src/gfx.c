@@ -207,9 +207,10 @@ int gfxInit()
 
   gfx.fog=0;
   gfx.fog_mode=GL_LINEAR;
-  gfx.fog_dist=25.0;
-  gfx.fog_near=gfx.transform.slabn;
-  gfx.fog_far=gfx.transform.slabf;
+  gfx.fog_near_offset=10.0;
+  gfx.fog_far_offset=0.0;
+  gfx.fog_near=gfx.transform.slabn+gfx.fog_near_offset;
+  gfx.fog_far=gfx.transform.slabf+gfx.fog_far_offset;
   gfx.fog_density=0.25;
 
   gfx.use_dlist_flag=0;
@@ -669,11 +670,8 @@ int gfxSetSlab(float near, float far)
 
 int gfxSetFog(void)
 {
-  //  int slab_near_far_dist=gfx.transform.slabf-gfx.transform.slabn;
-
-  gfx.fog_near=gfx.transform.slabn;
-  //  gfx.fog_far=slab_near_far_dist*gfx.fog_dist+gfx.transform.slabf;
-  gfx.fog_far=gfx.fog_dist+gfx.transform.slabf;
+  gfx.fog_near=gfx.transform.slabn+gfx.fog_near_offset;
+  gfx.fog_far=gfx.transform.slabf+gfx.fog_far_offset;
 
   glFogf(GL_FOG_START,gfx.fog_near);
   glFogf(GL_FOG_END,gfx.fog_far);
