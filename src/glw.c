@@ -10,30 +10,6 @@
 
 extern struct GFX gfx;
 
-/*
-int glwStereoInit()
-{
-#ifdef SGI_STEREO
-  return SGIStereoInit(gui.dpy,XtWindow(gui.glxwin));
-#else
-  return -1;
-#endif
-}
-
-void glwStereoMode(GLenum mode)
-{
-#ifdef SGI_STEREO
-  //  SGIStereoMode(mode);
-#endif
-}
-
-void glwStereoSwitch(int mode)
-{
-#ifdef SGI_STEREO
-  SGISwitchStereo(mode);
-#endif
-}
-*/
 
 void glwDrawBuffer(GLenum mode)
 {

@@ -835,10 +835,18 @@ int gfxSetAccProjection(int view, float fpixdx, float fpixdy)
 {
   GLdouble eye_offset;
   GLdouble pixdx, pixdy;
+  GLdouble iod,fd;
+  GLdouble angle,fr;
 
   if(view==GFX_LEFT) {
+    iod=-gfx.eye_dist;
+    fd=gfx.eye_offset;
   } else if(view==GFX_RIGHT) {
+    iod=gfx.eye_dist;
+    fd=gfx.eye_offset;
   } else {
+    iod=0.0;
+    fd=0.0;
   }
 
   pixdx=fpixdx;
@@ -847,6 +855,15 @@ int gfxSetAccProjection(int view, float fpixdx, float fpixdy)
   gfxAccPerspective(gfx.fovy,gfx.aspect,
 		    gfx.transform.slabn,gfx.transform.slabf,
 		    pixdx, pixdy);
+
+  if(iod!=0.0) {
+    fr=(-fd-gfx.transform.slabn)/(gfx.transform.slabf-gfx.transform.slabn);
+    angle=180.0/M_PI*atan(fd/(2.0*iod));
+    glTranslated(0.0,0.0,gfx.transform.tra[2]);
+    glRotated(-angle,0.0,1.0,0.0);
+    glTranslated(0.0,0.0,-gfx.transform.tra[2]);
+  }
+
 
   return 0;
 
