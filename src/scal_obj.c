@@ -478,6 +478,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		} else {
 		  frac2/=frac1;
 		}
+		if(s->range.clamp) {
+		  if(frac2<0.0) {
+		    frac2=0.0;
+		  } else if(frac2>1.0) {
+		    frac2=1.0;
+		  }
+		}
 		if(frac2>=0.0 && frac2<=1.0) {
 		  obj->point[ec].c[0]=(r2-r)*frac2+r;
 		  obj->point[ec].c[1]=(g2-g)*frac2+g;
@@ -541,6 +548,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		} else {
 		  frac2/=frac1;
 		}
+		if(s->range.clamp) {
+		  if(frac2<0.0) {
+		    frac2=0.0;
+		  } else if(frac2>1.0) {
+		    frac2=1.0;
+		  }
+		}
 		if(frac2>=0.0 && frac2<=1.0) {
 		  obj->vect[ec].c[0]=(r2-r)*frac2+r;
 		  obj->vect[ec].c[1]=(g2-g)*frac2+g;
@@ -588,6 +602,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		  frac2=-2.0;
 	      } else {
 		frac2/=frac1;
+	      }
+	      if(s->range.clamp) {
+		if(frac2<0.0) {
+		  frac2=0.0;
+		} else if(frac2>1.0) {
+		  frac2=1.0;
+		}
 	      }
 	      if(frac2>=0.0 && frac2<=1.0) {
 		obj->slab.tex[ec*4+0]=(char)(127.0*((r2-r)*frac2+r));
@@ -664,6 +685,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	    } else {
 	      frac2/=frac1;
 	    }
+	    if(s->range.clamp) {
+	      if(frac2<0.0) {
+		frac2=0.0;
+	      } else if(frac2>1.0) {
+		frac2=1.0;
+	      }
+	    }
 	    if(frac2>=0.0 && frac2<=1.0) {
 	      obj->point[ec].rad=(rad2-rad1)*frac2+rad1;
 	    }
@@ -735,6 +763,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		  frac2=-2.0;
 	      } else {
 		frac2/=frac1;
+	      }
+	      if(s->range.clamp) {
+		if(frac2<0.0) {
+		  frac2=0.0;
+		} else if(frac2>1.0) {
+		  frac2=1.0;
+		}
 	      }
 	      if(frac2>=0.0 && frac2<=1.0) {
 		obj->vect[ec].length=(rad2-rad1)*frac2+rad1;

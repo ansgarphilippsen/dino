@@ -908,13 +908,15 @@ int cgfxGenCylinder(cgfxVA *va, float *fbeg, float *fend, float frad, float fsti
   return 0;
 }
 static  cgfxProfile pro1, pro2, pro3, pro4, pro5, pro6, pro_last;
+static Render tmp_render1, tmp_render2;
 
 int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 {
   int i,k,ks,maxp;
   cgfxPoint *cp1,*cp2;
   float cylp1[3],cylp2[3],cyld[3];
-  
+  Render *render1=&tmp_render1,*render2=&tmp_render2;  
+
   int morph,sf;
   float frac,bw_save;
 
@@ -935,13 +937,32 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
     
     va->count=0;
     va->p=Crecalloc(NULL,va->max, sizeof(cgfxVAField));
+
+    memcpy(render2,render,sizeof(Render));
+    if(render->cgfx_flag & CGFX_USE_RAD) {
+      render2->helix_width*=sp[0].rad;
+      render2->strand_width*=sp[0].rad;
+      render2->helix_thickness*=sp[0].rad;
+      render2->strand_thickness*=sp[0].rad;
+      render2->tube_width*=sp[0].rad;
+    }
+    cgfxSphereVA(render2->tube_width,sp[0].v,sp[0].colp[0],va,render->detail1);
     
-    
+    //    for(i=0;i<pc-1;i++) {
     for(i=0;i<pc-1;i++) {
+      memcpy(render1,render2,sizeof(Render));
+      memcpy(render2,render,sizeof(Render));
+      if(render->cgfx_flag & CGFX_USE_RAD) {
+	render2->helix_width*=sp[0].rad;
+	render2->strand_width*=sp[0].rad;
+	render2->helix_thickness*=sp[0].rad;
+	render2->strand_thickness*=sp[0].rad;
+	render2->tube_width*=sp[0].rad;
+      }
       if(render->mode==RENDER_HSC) {
 
+	/* CYLINDRICAL HELIX */
 	if(sp[i+1].id==CGFX_HELIX && render->helix_method==1) {
-
 	  cgfxGenProfile(&pro1, sp[i].id, render);
 	  for(k=0;k<=sp[i].pc;k++) {
 	    cgfxHSCTransform(&pro1, &sp[i].p[k], &pro5);
@@ -987,26 +1008,35 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 	  if(i>=pc)
 	    break;
 
-	}
+	} // CYLINDRICAL HELIX END
 
 	/* determine i and i+1 profile */
 	if(sp[i].id==sp[i+1].id) {
-	  morph=0;
-	  cgfxGenProfile(&pro1, sp[i].id, render);
+	  morph=1;
+	  cgfxGenProfile(&pro2, sp[i].id, render1);
+	  cgfxGenProfile(&pro1, sp[i].id, render2);
+	  //morph=0;
+	  //cgfxGenProfile(&pro1, sp[i].id, render);
 	} else {
 	  morph=1;
 	  if(sp[i+1].id==CGFX_STRAND2) {
-	    cgfxGenProfile(&pro2, CGFX_STRAND1, render);
-	    cgfxGenProfile(&pro1, CGFX_STRAND2, render);
+	    cgfxGenProfile(&pro2, CGFX_STRAND1, render1);
+	    cgfxGenProfile(&pro1, CGFX_STRAND2, render2);
 	  } else if(sp[i].id !=CGFX_STRAND && sp[i+1].id==CGFX_STRAND) {
-	    morph=0;
-	    cgfxGenProfile(&pro1, sp[i].id, render);
+	    cgfxGenProfile(&pro2, sp[i].id, render1);
+	    cgfxGenProfile(&pro1, sp[i].id, render2);
+	    //morph=0;
+	    //cgfxGenProfile(&pro1, sp[i].id, render);
 	  } else {
-	    cgfxGenProfile(&pro2, sp[i].id, render);
-	    cgfxGenProfile(&pro1, sp[i+1].id, render);
+	    cgfxGenProfile(&pro2, sp[i].id, render1);
+	    cgfxGenProfile(&pro1, sp[i+1].id, render2);
 	  }
 	}
       } else {
+	morph=1;
+	cgfxGenProfile(&pro2, CGFX_TUBE, render1);
+	cgfxGenProfile(&pro1, CGFX_TUBE, render2);
+	/*
 	morph=1;
 	bw_save=render->bond_width;
 	render->bond_width=sp[i].rad;
@@ -1014,6 +1044,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 	render->bond_width=sp[i+1].rad;
 	cgfxGenProfile(&pro1, CGFX_TUBE, render);
 	render->bond_width=bw_save;
+	*/
       }
 
       // go through interpolated points
@@ -1052,8 +1083,10 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       
     }
 
-    cgfxSphereVA(sp[0].rad,sp[0].v,sp[0].colp[0],va,render->detail1);
-    cgfxSphereVA(sp[pc-1].rad,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
+    // TODO
+    //cgfxSphereVA(sp[0].rad,sp[0].v,sp[0].colp[0],va,render->detail1);
+    //cgfxSphereVA(sp[pc-1].rad,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
+    cgfxSphereVA(render2->tube_width,sp[pc-1].v,sp[pc-1].colp[0],va,render->detail1);
 
     if(render->mode==RENDER_HSC) {
       for(i=0;i<pc;i++) {
@@ -1479,10 +1512,10 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
   case CGFX_NA:
   default:
     if(render->tube_ratio<=1.0) {
-      rad1=(double)render->bond_width;
+      rad1=(double)render->tube_width;
       rad2=(double)rad1*render->tube_ratio;
     } else {
-      rad2=(double)render->bond_width;
+      rad2=(double)render->tube_width;
       rad1=(double)rad2/render->tube_ratio;
     }
     pro->pc=detail*4+1;

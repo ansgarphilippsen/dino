@@ -37,6 +37,7 @@ typedef struct RANGE {
   union DBM_NODE *src;
   const char *prop;
   const char *val1,*val2;
+  int clamp;
 }Range;
 
 typedef struct SELECT {

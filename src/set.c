@@ -407,7 +407,7 @@ int setNew(Set *s, int argc, char **argv)
   for(i=0;i<co.param_count;i++) {
 
     if(co.param[i].p==NULL) {
-      ;
+
     } else if(clStrcmp(co.param[i].p,"selection") ||
 	      clStrcmp(co.param[i].p,"sel")) {
       if(selectNew(&s->select,co.param[i].wc,co.param[i].wl)<0) {
@@ -798,13 +798,13 @@ struct POV_VALUE *povGetVal(POV *pov, int n)
 
 int rangeNew(Range *r, int argc, char **argv)
 {
-  int i,l=0;
+  int i,l=0,d;
   char *p;
   POV *pov;
   int pov_count;
   struct POV_VALUE *vlist,*pv;
   int vcount,vmax;
-  
+  char message[256];
 
   if(argc<=0) {
     comMessage("\nerror: range: missing parameters");
@@ -815,6 +815,7 @@ int rangeNew(Range *r, int argc, char **argv)
   r->prop=NULL;
   r->val1=NULL;
   r->val2=NULL;
+  r->clamp=0;
 
   if(argc<=0)
     return 0;
@@ -836,7 +837,9 @@ int rangeNew(Range *r, int argc, char **argv)
 
   r->buf_count=clStrlen(r->buf);
 
+  // handle deprecated range
   l=0;
+  d=0;
   for(i=0;i<r->buf_count;i++) {
     if(r->buf[i]=='<') {
       r->buf[i]=' ';
@@ -845,9 +848,14 @@ int rangeNew(Range *r, int argc, char **argv)
       r->buf[i]=' ';
       l--;
     } else if(r->buf[i]==',') {
-      if(l>0)
+      if(l>0) {
 	r->buf[i]=':';
+	d++;
+      }
     }
+  }
+  if(d) {
+    comMessage("warning: range syntax <x,y> deprecated, use x:y instead\n");
   }
   if(l!=0) {
     comMessage("\nerror: range: unbalanced < >");
@@ -870,6 +878,8 @@ int rangeNew(Range *r, int argc, char **argv)
   pov_count=0;
 
   p=r->buf;
+
+
   for(i=0;i<r->buf_count;i++)
     if(r->buf[i]==',') {
       r->buf[i]='\0';
@@ -988,9 +998,12 @@ int rangeNew(Range *r, int argc, char **argv)
 	  r->val2=pv->val1;
 	}
       }
+    } else if(clStrcmp(pov[i].prop,"clamp")) {
+      r->clamp=1;
     } else {
-      comMessage("\nerror: range: unknown property: ");
-      comMessage(pov[i].prop);
+      sprintf(message,"error: range: unknown property: %s (%d)\n",
+	      pov[i].prop,i);
+      comMessage(message);
       Cfree(pov);
       Cfree(vlist);
       return -1;

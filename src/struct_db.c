@@ -2305,6 +2305,7 @@ int structSetDefault(structObj *obj)
   obj->render.line_width=1.0;
   obj->render.bond_width=0.2;
   obj->render.tube_ratio=1.0;
+  obj->render.tube_width=0.3;
   obj->render.sphere_radius=0.2;
   obj->render.helix_width=1.0;
   obj->render.helix_thickness=0.3;

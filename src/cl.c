@@ -154,7 +154,8 @@ int clStrncat(char *d, const char *s, int m)
   k=clStrlen(s);
   i=clStrlen(d);
   j=0;
-  while(s[j]!='\0' && j<m && k+j<m) d[i++]=s[j++];
+  //  while(s[j]!='\0' && j<m && k+j<m) d[i++]=s[j++];
+  while(s[j]!='\0' && j<m) d[i++]=s[j++];
   d[i]='\0';
   return j;
 }

@@ -379,6 +379,13 @@ int gridObjSet(gridObj *obj, Set *s, int flag)
 		  } else {
 		    frac2/=frac1;
 		  }
+		  if(s->range.clamp) {
+		    if(frac2<0.0) {
+		      frac2=0.0;
+		    } else if(frac2>1.0) {
+		      frac2=1.0;
+		    }
+		  }
 		  if(frac2>=0.0 && frac2<=1.0) {
 		    obj->vert[vc].c[0]=(r2-r)*frac2+r;
 		    obj->vert[vc].c[1]=(g2-g)*frac2+g;

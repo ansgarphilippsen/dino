@@ -469,6 +469,13 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	    } else {
 	      frac2/=frac1;
 	    }
+	    if(set->range.clamp) {
+	      if(frac2<0.0) {
+		frac2=0.0;
+	      } else if(frac2>1.0) {
+		frac2=1.0;
+	      }
+	    }
 	    if(frac2>=0.0 && frac2<=1.0) {
 	      obj->atom[ac].prop.radius=(r2-r)*frac2+r;
 	    }
@@ -509,6 +516,13 @@ int structObjSet(structObj *obj, Set *set, int flag)
 		frac2=-2.0;
 	    } else {
 	      frac2/=frac1;
+	    }
+	    if(set->range.clamp) {
+	      if(frac2<0.0) {
+		frac2=0.0;
+	      } else if(frac2>1.0) {
+		frac2=1.0;
+	      }
 	    }
 	    if(frac2>=0.0 && frac2<=1.0) {
 	      r+=(r2-r)*frac2;

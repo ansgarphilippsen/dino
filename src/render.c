@@ -459,9 +459,9 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	*/
       if(render->sphere_radius<render->bond_width)
 	render->sphere_radius=render->bond_width;
-      // DEPRECATED FOR TUBE
       if(render->mode==RENDER_TUBE || render->mode==RENDER_HSC) {
-	comMessage("warning: parameter bw is deprecated for tube diameter, use atom property rad instead\n");
+	comMessage("warning: use of bw for tube or hsc is deprecated, use tubew instead\n");
+	render->tube_width=render->bond_width;
       }
      } else if(!strcmp(prop,"tuber")) {
       /********************
@@ -483,6 +483,31 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	render->tube_ratio=atof(val);
       } else if(!strcmp(op,"-=")) {
 	render->tube_ratio=atof(val);
+      } else {
+	sprintf(message,"\ninvalid operator %s", op);
+	comMessage(message);
+	return -1;
+      }
+     } else if(!strcmp(prop,"tubew")) {
+      /********************
+	     tubew
+      ********************/
+      if(strlen(op)==0) {
+	sprintf(message,"\nmissing operator");
+	comMessage(message);
+	return -1;
+      }
+      if(strlen(val)==0) {
+	sprintf(message,"\nmissing value");
+	comMessage(message);
+	return -1;
+      }
+      if(!strcmp(op,"=")) {
+	render->tube_width=atof(val);
+      } else if(!strcmp(op,"+=")) {
+	render->tube_width=atof(val);
+      } else if(!strcmp(op,"-=")) {
+	render->tube_width=atof(val);
       } else {
 	sprintf(message,"\ninvalid operator %s", op);
 	comMessage(message);
@@ -825,6 +850,27 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	  render->cgfx_flag&=(~CGFX_INTPOL_COL);
 	} else {
 	  render->cgfx_flag|=CGFX_INTPOL_COL;
+	}
+      } else {
+	sprintf(message,"\ninvalid operator %s",op);
+	comMessage(message);
+	return -1;
+      }
+    } else if(!strcmp(prop,"radflag")) {
+      /********************
+	      intpol
+      ********************/
+      if(!strcmp(op,"!")) {
+	render->cgfx_flag&=(~CGFX_USE_RAD);
+      } else if(strlen(op)==0) {
+	render->cgfx_flag|=CGFX_USE_RAD;
+      } else if(!strcmp(op,"=")) {
+	if(!strcmp(val,"0") ||
+	   !strcmp(val,"false") ||
+	   !strcmp(val,"off")) {
+	  render->cgfx_flag&=(~CGFX_USE_RAD);
+	} else {
+	  render->cgfx_flag|=CGFX_USE_RAD;
 	}
       } else {
 	sprintf(message,"\ninvalid operator %s",op);

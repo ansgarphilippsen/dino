@@ -3,14 +3,6 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#ifdef SGI
-//extern union DBM_NODE ;
-#endif
-#ifdef DEC
-#endif
-#ifdef LINUX
-#endif
-
 
 enum             {RENDER_SIMPLE,
 		  RENDER_CPK,
@@ -48,11 +40,11 @@ typedef struct RENDER {
   double helix_width,helix_thickness;
   double strand_width,strand_thickness;
   double arrow_thickness;
-  double tube_ratio;
+  double tube_ratio, tube_width;
   double sugar_thickness,base_thickness;
   double transparency;
   GLuint list;
-  int cgfx_flag;
+  int cgfx_flag;  // various boolean flags
 
   int strand_method;
   int helix_method;

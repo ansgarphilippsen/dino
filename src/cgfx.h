@@ -2,6 +2,7 @@
 #define CGFX_H
 
 #define CGFX_INTPOL_COL 0x1
+#define CGFX_USE_RAD    0x2
 
 #include <GL/gl.h>
 

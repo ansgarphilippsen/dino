@@ -1,4 +1,9 @@
-tube radius is determined by object property radius, not by bw anymore
+added range flag clamp
+
+diameter of tube determined by tubew, not bw
+
+atom prop rad can be used to modify the hsc/tube rendering with render 
+flag radflag
 
 rewrote shell code completely!
 
