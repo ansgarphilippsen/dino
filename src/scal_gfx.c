@@ -246,8 +246,17 @@ int scalDrawObj(scalObj *obj)
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
 #endif
 
+      if(obj->contour_method==1) {
+	if(obj->render.dbl_light) {
+	  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	} else {
+	  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+	}
+      } else {
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+      }
+
       // TEMPORARY
-      //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
       glEnable(GL_LIGHTING);

@@ -391,9 +391,27 @@ static void gen_faces(scalObj *obj)
       f->v1[k] = obj->point[f->pi0].v[k];
       f->v2[k] = obj->point[f->pi1].v[k];
       f->v3[k] = obj->point[f->pi2].v[k];
-
     }
-    // normals
+    // color
+    for(k=0;k<4;k++) {
+      f->c1[k]=1.0;
+      f->c2[k]=1.0;
+      f->c3[k]=1.0;
+    }
+  }
+
+  // reset point normals
+  for(i=0;i<obj->point_count;i++) {
+    obj->point[i].n[0]=0.0;
+    obj->point[i].n[1]=0.0;
+    obj->point[i].n[2]=0.0;
+    obj->point[i].nc=0;
+  }
+
+  for(i=0;i<obj->face_count;i++) {
+    f=&obj->face[i];
+
+    // face normal
     v1[0]=f->v2[0] - f->v1[0];
     v1[1]=f->v2[1] - f->v1[1];
     v1[2]=f->v2[2] - f->v1[2];
@@ -402,17 +420,28 @@ static void gen_faces(scalObj *obj)
     v2[2]=f->v3[2] - f->v1[2];
     matfCalcCross(v1,v2,n1);
     matfNormalize(n1,n1);
+    
+    // add to points
     for(k=0;k<3;k++) {
-      f->n1[k]=n1[k];
-      f->n2[k]=n1[k];
-      f->n3[k]=n1[k];
+      obj->point[f->pi0].n[k]+=n1[k];
+      obj->point[f->pi1].n[k]+=n1[k];
+      obj->point[f->pi2].n[k]+=n1[k];
+    }
+  }
+
+  // calculate point normals
+  for(i=0;i<obj->point_count;i++) {
+    matfNormalize(obj->point[i].n,obj->point[i].n);
+  }
+
+  // assign to face
+  for(i=0;i<obj->face_count;i++) {
+    f=&obj->face[i];
+    for(k=0;k<3;k++) {
+      f->n1[k]=obj->point[f->pi0].n[k];
+      f->n2[k]=obj->point[f->pi1].n[k];
+      f->n3[k]=obj->point[f->pi2].n[k];
     }
 
-    // color
-    for(k=0;k<4;k++) {
-      f->c1[k]=1.0;
-      f->c2[k]=1.0;
-      f->c3[k]=1.0;
-    }
   }
 }
