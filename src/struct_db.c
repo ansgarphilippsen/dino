@@ -2379,7 +2379,11 @@ int structSetDefault(structObj *obj)
   obj->render.detail1=3;
   obj->render.detail2=6;
   obj->render.nice=1;
+#ifdef LINUX
   obj->render.line_width=2.0;
+#else
+  obj->render.line_width=1.0;
+#endif
   obj->render.bond_width=0.2;
   obj->render.tube_ratio=1.0;
   obj->render.tube_width=0.4;
