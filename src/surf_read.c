@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dino.h"
 #include "dbm.h"
 #include "com.h"
 #include "Cmalloc.h"
@@ -9,6 +10,8 @@
 #include "surf_db.h"
 #include "cl.h"
 #include "mat.h"
+
+extern int debug_mode;
 
 int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int swap_flag)
 {
@@ -89,7 +92,7 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int swap_flag)
     sn->v[vn].num=vn;
     sn->v[vn].restrict=0;
 
-    for(k=0;k<10;k++)
+    for(k=0;k<PROP_MAX_VALUES;k++)
       sn->v[vn].cprop[k]=0.0;
   }
 
@@ -158,7 +161,7 @@ int mspRead(FILE *f, union DBM_NODE *node)
     sn->v[vn].n[2]=(float)atof(d6);
     sn->v[vn].num=vn;
     sn->v[vn].restrict=0;
-    for(k=0;k<10;k++)
+    for(k=0;k<PROP_MAX_VALUES;k++)
       sn->v[vn].cprop[k]=0.0;
   }
 
@@ -206,15 +209,17 @@ int adsRead(FILE *f, union DBM_NODE *node)
   int ncount;
   PropTable propt;
   Prop prop;
-  char propn[16];
+  char propn[64];
   int propc,propi;
-  float cprop[10];
+  float cprop[PROP_MAX_VALUES];
 
-  propReset(&propt);
+  //  propReset(&propt);
   propc=0;
 
-  for(k=0;k<10;k++)
+  for(k=0;k<PROP_MAX_VALUES;k++)
     prop.v[k]=0.0;
+
+  debmsg("adsRead: reading header");
 
   while(!feof(f)) {
     fgets(line,255,f);
@@ -229,8 +234,8 @@ int adsRead(FILE *f, union DBM_NODE *node)
       vsize=atoi(strtok(NULL,d));
     } else if(!strcmp(p,"PROPERTY")) {
       propc++;
-      sprintf(propn,"c%d",propc);
-      propAddName(&propt,propn);
+      //      sprintf(propn,"c%d",propc);
+      //      propAddName(&propt,propn);
       sprintf(message,"\ncp%d: %s",propc-1,b+9);
       comMessage(message);
     } else if(!strcmp(p,"DATA")) {
@@ -247,6 +252,8 @@ int adsRead(FILE *f, union DBM_NODE *node)
     return -1;
   }
 
+  debmsg("adsRead: allocating memory for entries");
+
   entry=Ccalloc(usize*vsize+128,sizeof(struct ADS_ENTRY));
 
   if(entry==NULL) {
@@ -254,8 +261,12 @@ int adsRead(FILE *f, union DBM_NODE *node)
     return -1;
   }
 
+  debmsg("adsRead: resetting all flags");
+
   for(i=0;i<usize*vsize;i++)
     entry[i].flag=0;
+
+  debmsg("adsRead: reading entries");
 
   fgets(line,255,f);
   ce.u=atoi(strtok(line,d));
@@ -264,8 +275,8 @@ int adsRead(FILE *f, union DBM_NODE *node)
   ce.y=atof(strtok(NULL,d));
   ce.z=atof(strtok(NULL,d));
 
-  if(propc>10)
-    propc=10;
+  if(propc>PROP_MAX_VALUES)
+    propc=PROP_MAX_VALUES;
 
   for(propi=0;propi<propc;propi++) {
     p=strtok(NULL,d);
@@ -282,7 +293,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
   entry[i].flag=1;
   entry[i].u=ce.u; entry[i].v=ce.v;
   entry[i].x=ce.x; entry[i].y=ce.y; entry[i].z=ce.z;
-  for(k=0;k<10;k++)
+  for(k=0;k<PROP_MAX_VALUES;k++)
     entry[i].c[k]=prop.v[k];
   
   vm=0;
@@ -313,16 +324,21 @@ int adsRead(FILE *f, union DBM_NODE *node)
     entry[i].flag=1;
     entry[i].u=ce.u; entry[i].v=ce.v;
     entry[i].x=ce.x; entry[i].y=ce.y; entry[i].z=ce.z;
-    for(k=0;k<10;k++)
+    for(k=0;k<PROP_MAX_VALUES;k++)
       entry[i].c[k]=prop.v[k];
     vm++;
   }
+
   vm+=10;
   vm*=2;
+
+  debmsg("adsRead: allocating memory for vertices");
 
   vert=Crecalloc(NULL,vm,sizeof(struct SURF_VERTICE));
 
   vc=0;
+
+  debmsg("adsRead: converting entries to vertices");
 
   for(u=0;u<usize;u++) {
     for(v=0;v<vsize;v++) {
@@ -416,23 +432,29 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	vert[vc].attach_element=0;
 	vert[vc].restrict=0;
 	entry[i].vert_p=vc;
-	for(k=0;k<10;k++)
+	for(k=0;k<PROP_MAX_VALUES;k++)
 	  vert[vc].cprop[k]=entry[i].c[k];
 	vc++;
+
+	if(vc+10>=vm) {
+	  debmsg("adsRead: reallocating memory for vertices");
+	  vm+=1000;
+	  vert=Crecalloc(vert,vm,sizeof(struct SURF_VERTICE));
+	}
 
 	if(u<usize-1 && v<vsize-1) {
 	  middlec=1;
 	  middlex=entry[i].x;
 	  middley=entry[i].y;
 	  middlez=entry[i].z;
-	  for(k=0;k<10;k++)
+	  for(k=0;k<PROP_MAX_VALUES;k++)
 	    cprop[k]=entry[i].c[k];
 	  if(entry[p2].flag) {
 	    middlec++;
 	    middlex+=entry[p2].x;
 	    middley+=entry[p2].y;
 	    middlez+=entry[p2].z;
-	    for(k=0;k<10;k++)
+	    for(k=0;k<PROP_MAX_VALUES;k++)
 	      cprop[k]+=entry[p2].c[k];
 	  }
 	  if(entry[p3].flag) {
@@ -440,7 +462,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    middlex+=entry[p3].x;
 	    middley+=entry[p3].y;
 	    middlez+=entry[p3].z;
-	    for(k=0;k<10;k++)
+	    for(k=0;k<PROP_MAX_VALUES;k++)
 	      cprop[k]+=entry[p3].c[k];
 	  }
 	  if(entry[p4].flag) {
@@ -448,7 +470,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    middlex+=entry[p4].x;
 	    middley+=entry[p4].y;
 	    middlez+=entry[p4].z;
-	    for(k=0;k<10;k++)
+	    for(k=0;k<PROP_MAX_VALUES;k++)
 	      cprop[k]+=entry[p4].c[k];
 	  }
 	  // only if 3 or 4 corners defined
@@ -456,7 +478,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    middlex/=(float)middlec;
 	    middley/=(float)middlec;
 	    middlez/=(float)middlec;
-	    for(k=0;k<10;k++)
+	    for(k=0;k<PROP_MAX_VALUES;k++)
 	      cprop[k]/=(float)middlec;
 	    vert[vc].p[0]=middlex;
 	    vert[vc].p[1]=middley;
@@ -530,7 +552,7 @@ int adsRead(FILE *f, union DBM_NODE *node)
 	    vert[vc].attach_element=0;
 	    vert[vc].restrict=0;
 	    entry[i].vertm_p=vc;
-	    for(k=0;k<10;k++)
+	    for(k=0;k<PROP_MAX_VALUES;k++)
 	      vert[vc].cprop[k]=cprop[k];
 	    vc++;
 	  } else {
@@ -541,9 +563,13 @@ int adsRead(FILE *f, union DBM_NODE *node)
     }
   }
 
+  debmsg("adsRead: allocating memory for faces");
+
   fc=0;
   fm=10000;
   face=Crecalloc(NULL,fm,sizeof(struct SURF_FACE));
+
+  debmsg("adsRead: connecting vertices to faces");
 
   for(u=0;u<usize-1;u++) {
     for(v=0;v<vsize-1;v++) {
@@ -578,20 +604,17 @@ int adsRead(FILE *f, union DBM_NODE *node)
       }
 
       if(fc+5>=fm) {
-	Crecalloc(face,fm+10000,sizeof(struct SURF_FACE));
-	fm+=10000;
+	fm+=1000;
+	face=Crecalloc(face,fm,sizeof(struct SURF_FACE));
       }
-      
     }
   }
 
-  sn->v=Ccalloc(vc,sizeof(struct SURF_VERTICE));
+  sn->v=Crecalloc(vert,vc,sizeof(struct SURF_VERTICE));
   sn->vc=vc;
-  memcpy(sn->v,vert,vc*sizeof(struct SURF_VERTICE));
 
-  sn->f=Ccalloc(fc,sizeof(struct SURF_FACE));
+  sn->f=Crecalloc(face,fc,sizeof(struct SURF_FACE));
   sn->fc=fc;
-  memcpy(sn->f,face,fc*sizeof(struct SURF_FACE));
 
   comMessage("\n");
 
@@ -660,7 +683,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int swap_flag)
   
   propc=0;
   p=strtok(header.content2,",");
-  while(p!=NULL && propc<10) {
+  while(p!=NULL && propc<PROP_MAX_VALUES) {
     sprintf(message,"\ncp%d: %s",propc,p);
     comMessage(message);
     propc++;
@@ -695,7 +718,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int swap_flag)
     */
     vert[i].num=i;
     vert[i].restrict=0;
-    for(k=0;k<10;k++)
+    for(k=0;k<PROP_MAX_VALUES;k++)
       vert[i].cprop[k]=0.0;
   }
 

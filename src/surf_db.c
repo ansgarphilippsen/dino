@@ -1005,29 +1005,29 @@ int surfFix(dbmSurfNode *node)
 int surfCalcMinMax(dbmSurfNode *n)
 {
   int i,vc;
-  float vmin[10],vmax[10];
+  float vmin[PROP_MAX_VALUES],vmax[PROP_MAX_VALUES];
 
   if(n->vc==0) {
-    for(i=0;i<10;i++) {
+    for(i=0;i<PROP_MAX_VALUES;i++) {
       n->cprop_min[i]=0.0;
       n->cprop_max[i]=0.0;
     }
     return -1;
   }
-  for(i=0;i<10;i++) {
+  for(i=0;i<PROP_MAX_VALUES;i++) {
     vmin[i]=n->v[0].cprop[i];
     vmax[i]=n->v[0].cprop[i];
   }
 
   for(vc=1;vc<n->vc;vc++) {
-    for(i=0;i<10;i++) {
+    for(i=0;i<PROP_MAX_VALUES;i++) {
       if(n->v[vc].cprop[i]<vmin[i])
 	vmin[i]=n->v[vc].cprop[i];
       if(n->v[vc].cprop[i]>vmax[i])
 	vmax[i]=n->v[vc].cprop[i];
     }
   }
-  for(i=0;i<10;i++) {
+  for(i=0;i<PROP_MAX_VALUES;i++) {
     n->cprop_min[i]=vmin[i];
     n->cprop_max[i]=vmax[i];
   }

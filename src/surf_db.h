@@ -61,7 +61,7 @@ typedef struct DBM_SURF_NODE {
 
   PropTable pt;
   
-  float cprop_min[10],cprop_max[10];
+  float cprop_min[PROP_MAX_VALUES],cprop_max[PROP_MAX_VALUES];
 
 }dbmSurfNode;
 

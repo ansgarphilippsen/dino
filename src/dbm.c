@@ -597,7 +597,7 @@ int dbmLoad(int wc, char **wl)
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
     surfBuildCA(&node->surfNode);
-    surfCalcMinMax(&node->surfNode);
+    //    surfCalcMinMax(&node->surfNode);
   } else if(!strcmp(type,"topo")) {
     /* topography format requested */
     if((node=dbmNewNode(DBM_NODE_GRID,name))==NULL)

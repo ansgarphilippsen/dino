@@ -8,7 +8,7 @@ struct ADS_ENTRY {
   int u,v;
   float x,y,z;
   int vert_p,vertm_p;
-  float c[10];
+  float c[PROP_MAX_VALUES];
 };
 
 struct GRASP_HEADER {

@@ -34,7 +34,7 @@ struct SURF_VERTICE {
     done yet
     Prop prop;
   */
-  float cprop[10];
+  float cprop[PROP_MAX_VALUES];
 };
 
 struct SURF_FACE {

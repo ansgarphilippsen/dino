@@ -1,10 +1,10 @@
 #ifndef PROP_H
 #define PROP_H
 
-#define PROP_MAX_VALUES 16
+#define PROP_MAX_VALUES 32
 
 typedef struct PROP_TABLE {
-  char s[PROP_MAX_VALUES];
+  char s[PROP_MAX_VALUES][64];
   int n[PROP_MAX_VALUES];
 }PropTable;
 
