@@ -35,7 +35,7 @@ enum {
   CMI_DEL,
   CMI_REN,
   CMI_SHOW,
-  CMI_HIDE,
+  CMI_HIDE
 };
 
 // input types
