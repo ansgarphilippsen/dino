@@ -1,0 +1,18 @@
+# makedef for IRIX
+
+ARCH=SGI
+
+#LIBTIFF=../tiff/libtiff/libtiff_n32.a
+
+CC   = cc
+GOPT = -g2 -n32 -fullwarn -mips3 
+WOPT = -woff 1552,1174,1692,1209,3201
+IOPT = -I/usr/freeware/include -I/usr/include/CC -I./../ -I./../spacetec -I.
+SLIB = -ltiff -lpng -lz
+
+COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D $(ARCH) -Xcpluscomm -D IRIX -D SPACETEC
+LIBS = -lc -lGLw -lGLU -lGL ../spacetec/libspwinput_mips3.a -lXi -lXm -lXt -lXmu -lXext -lX11 -lm -limage  $(SLIB)
+LOPT = -n32 -mips3 $(LIBS) -L/usr/freeware/lib32
+
+SRC += sgi_video.c spacetec.c
+
