@@ -47,6 +47,17 @@ static id dinoController;
 
 }
 
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filenameWithPath
+{
+    NSString *directory = [filenameWithPath stringByDeletingLastPathComponent];
+    NSString *filename = [filenameWithPath lastPathComponent];
+    
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:directory];
+    NSString *tag = @"@";
+    NSString *theScript = [tag stringByAppendingString:filename];
+    [self command:theScript from:(id)theApplication];
+}
+
 - (void)timerControl
 {
     guiTimeProc(NULL);
@@ -148,11 +159,11 @@ static id dinoController;
 }
 
 - (IBAction)centerCP:(id)sender{
-   [self command:@"scene center $CP" from:(id)sender]; 
+   [self command:@"scene center [$CP]" from:(id)sender]; 
 }
 
 - (IBAction)centerCS:(id)sender{
-    [self command:@"scene center $CS" from:(id)sender]; 
+    [self command:@"scene center [$CS]" from:(id)sender]; 
 }
 
 - (IBAction)calcDist:(id)sender{

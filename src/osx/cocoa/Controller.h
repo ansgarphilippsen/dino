@@ -21,6 +21,7 @@
 + (id)dinoController;
 - (void)awakeFromNib;
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification;
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filenameWithPath;
 - (void)timerControl;
 - (void)dealloc;
 // CLI Interaction

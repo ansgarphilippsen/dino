@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		080E96DDFE201D6D7F000001 = {
 			children = (
@@ -21,7 +21,7 @@
 				F52A76D102C09DCE019813D9,
 				F777710102C37CF601981365,
 				F537E919034356CC01FB7A39,
-				F52A76C902C08DA2019813D9,
+				560696430573C03C0067B72D,
 				F588E97B03532DEB01FB7A39,
 				F52C79980323E2DF01FB7A39,
 				F588E97A03532DEB01FB7A39,
@@ -29,6 +29,7 @@
 			isa = PBXGroup;
 			name = Classes;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //080
 //081
@@ -48,12 +49,15 @@
 			isa = PBXGroup;
 			name = "Linked Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		1058C7A1FEA54F0111CA2CBB = {
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		1058C7A2FEA54F0111CA2CBB = {
 			children = (
@@ -63,6 +67,7 @@
 			isa = PBXGroup;
 			name = "Other Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		1058C7A3FEA54F0111CA2CBB = {
 			fileRef = 1058C7A1FEA54F0111CA2CBB;
@@ -81,9 +86,11 @@
 //173
 //174
 		17587328FF379C6511CA2CBB = {
-			isa = PBXApplicationReference;
+			explicitFileType = wrapper.application;
+			isa = PBXFileReference;
 			path = Dino.app;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 //170
 //171
@@ -102,6 +109,7 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //190
 //191
@@ -114,6 +122,8 @@
 //293
 //294
 		29B97313FDCFA39411CA2CEA = {
+			buildSettings = {
+			};
 			buildStyles = (
 				4A9504CCFFE6A4B311CA0CBA,
 				4A9504CDFFE6A4B311CA0CBA,
@@ -138,12 +148,15 @@
 			name = Dino;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97316FDCFA39411CA2CEA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = main.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
@@ -158,6 +171,7 @@
 			name = Resources;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA = {
 			children = (
@@ -168,18 +182,23 @@
 			name = Frameworks;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97324FDCFA39411CA2CEA = {
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		29B97325FDCFA39411CA2CEA = {
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		29B97326FDCFA39411CA2CEA = {
 			buildPhases = (
@@ -326,7 +345,7 @@
 				F56D6CCB034CC48001FB7A39,
 				F56D6CCD034CC48001FB7A39,
 				56597ECE0438BD1E00FB7A39,
-				56268E1A0466D3D6009854CB,
+				5606964C0573C06E0067B72D,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -340,6 +359,7 @@
 				F5FF217103240B7301FB7A39,
 				F5CA802D0326860901FB7A39,
 				56FF2E7A05050B5E009854CB,
+				560696440573C03C0067B72D,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -420,7 +440,7 @@
 				F52A76CF02C08DDC019813D9,
 				F56D6CD0034CC98A01FB7A39,
 				56597ECD0438BD1E00FB7A39,
-				56268E190466D3D6009854CB,
+				5606964B0573C06E0067B72D,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -445,20 +465,23 @@
 //4A3
 //4A4
 		4A9504CCFFE6A4B311CA0CBA = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OPTIMIZATION_CFLAGS = "-O0";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
 		};
 		4A9504CDFFE6A4B311CA0CBA = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -473,28 +496,47 @@
 //562
 //563
 //564
-		56268E170466D3D6009854CB = {
+		560696430573C03C0067B72D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = io_gromacs.c;
-			path = /Users/bernechs/work/Dino/dino/src/io_gromacs.c;
-			refType = 0;
+			lastKnownFileType = text;
+			name = GUI_HOWTO;
+			path = ../../../GUI_HOWTO;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
-		56268E180466D3D6009854CB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = io_gromacs.h;
-			path = /Users/bernechs/work/Dino/dino/src/io_gromacs.h;
-			refType = 0;
-		};
-		56268E190466D3D6009854CB = {
-			fileRef = 56268E170466D3D6009854CB;
+		560696440573C03C0067B72D = {
+			fileRef = 560696430573C03C0067B72D;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		56268E1A0466D3D6009854CB = {
-			fileRef = 56268E180466D3D6009854CB;
+		560696490573C06E0067B72D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = io_gromacs.c;
+			path = ../../io_gromacs.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		5606964A0573C06E0067B72D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = io_gromacs.h;
+			path = ../../io_gromacs.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		5606964B0573C06E0067B72D = {
+			fileRef = 560696490573C06E0067B72D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		5606964C0573C06E0067B72D = {
+			fileRef = 5606964A0573C06E0067B72D;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -502,16 +544,20 @@
 		56597ECB0438BD1E00FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = io_spider.c;
 			path = ../../io_spider.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		56597ECC0438BD1E00FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = io_spider.h;
 			path = ../../io_spider.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		56597ECD0438BD1E00FB7A39 = {
 			fileRef = 56597ECB0438BD1E00FB7A39;
@@ -600,8 +646,8 @@
 				F512CF810249799D01FB7A39,
 				F512CF840249799D01FB7A39,
 				F512CF850249799D01FB7A39,
-				56268E170466D3D6009854CB,
-				56268E180466D3D6009854CB,
+				560696490573C06E0067B72D,
+				5606964A0573C06E0067B72D,
 				56597ECB0438BD1E00FB7A39,
 				56597ECC0438BD1E00FB7A39,
 				F512CF8C0249799D01FB7A39,
@@ -689,895 +735,1150 @@
 			name = DinoCore;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F512CF3B0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = bspline.c;
 			path = ../../bspline.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF3C0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = bspline.h;
 			path = ../../bspline.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF3D0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = build.c;
 			path = ../../build.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF3E0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = build.h;
 			path = ../../build.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF3F0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = ccp4.c;
 			path = ../../ccp4.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF400249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = ccp4.h;
 			path = ../../ccp4.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF410249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = cgfx.c;
 			path = ../../cgfx.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF420249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = cgfx.h;
 			path = ../../cgfx.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF430249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = charmm.c;
 			path = ../../charmm.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF440249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = charmm.h;
 			path = ../../charmm.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF450249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = cl.c;
 			path = ../../cl.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF460249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = cl.h;
 			path = ../../cl.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF470249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = clist_all.h;
 			path = ../../clist_all.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF480249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = clist.h;
 			path = ../../clist.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF490249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = Cmalloc.c;
 			path = ../../Cmalloc.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF4A0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = Cmalloc.h;
 			path = ../../Cmalloc.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF4B0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = cmi.c;
 			path = ../../cmi.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF4C0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = cmi.h;
 			path = ../../cmi.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF4D0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = com.c;
 			path = ../../com.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF4E0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = com.h;
 			path = ../../com.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF4F0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = conn.c;
 			path = ../../conn.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF500249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = conn.h;
 			path = ../../conn.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF510249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = cubearray.c;
 			path = ../../cubearray.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF520249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = cubearray.h;
 			path = ../../cubearray.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF530249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = dbm.c;
 			path = ../../dbm.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF540249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = dbm.h;
 			path = ../../dbm.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF550249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = delphi.c;
 			path = ../../delphi.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF560249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = delphi.h;
 			path = ../../delphi.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF570249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = dino.c;
 			path = ../../dino.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF580249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = dino.h;
 			path = ../../dino.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF5B0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = font_16.h;
 			path = ../../font_16.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF5C0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = font_24.h;
 			path = ../../font_24.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF5D0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = geom_db.c;
 			path = ../../geom_db.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF5E0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = geom_db.h;
 			path = ../../geom_db.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF5F0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = geom_gfx.c;
 			path = ../../geom_gfx.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF600249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = geom_gfx.h;
 			path = ../../geom_gfx.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF610249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = geom_obj.c;
 			path = ../../geom_obj.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF620249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = geom_obj.h;
 			path = ../../geom_obj.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF630249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = gfx.c;
 			path = ../../gfx.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF640249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = gfx.h;
 			path = ../../gfx.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF650249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = glf.c;
 			path = ../../glf.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF660249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = glf.h;
 			path = ../../glf.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF670249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = glw.c;
 			path = ../../glw.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF680249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = glw.h;
 			path = ../../glw.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF6F0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = grid_db.c;
 			path = ../../grid_db.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF700249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = grid_db.h;
 			path = ../../grid_db.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF710249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = grid_gfx.c;
 			path = ../../grid_gfx.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF720249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = grid_obj.c;
 			path = ../../grid_obj.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF730249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = grid_obj.h;
 			path = ../../grid_obj.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF740249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = grid_read.c;
 			path = ../../grid_read.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF800249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = help.c;
 			path = ../../help.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF810249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = help.h;
 			path = ../../help.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF840249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = input.c;
 			path = ../../input.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF850249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = input.h;
 			path = ../../input.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF8C0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = mat.c;
 			path = ../../mat.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF8D0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = mat.h;
 			path = ../../mat.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF8E0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = mead.c;
 			path = ../../mead.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF8F0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = mead.h;
 			path = ../../mead.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF970249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = pick.h;
 			path = ../../pick.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF980249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = pov_macro.h;
 			path = ../../pov_macro.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF990249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = pov.c;
 			path = ../../pov.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF9A0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = pov.h;
 			path = ../../pov.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF9B0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = prop.c;
 			path = ../../prop.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF9C0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = prop.h;
 			path = ../../prop.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF9D0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = render.c;
 			path = ../../render.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF9E0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = render.h;
 			path = ../../render.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CF9F0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = rex.c;
 			path = ../../rex.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA00249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = rex.h;
 			path = ../../rex.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA10249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scal_db.c;
 			path = ../../scal_db.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA20249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_db.h;
 			path = ../../scal_db.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA30249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scal_gfx.c;
 			path = ../../scal_gfx.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA40249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_gfx.h;
 			path = ../../scal_gfx.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA50249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_mc_new_lookup_35.h;
 			path = ../../scal_mc_new_lookup_35.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA60249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_mc_new_lookup.h;
 			path = ../../scal_mc_new_lookup.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA80249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scal_mc_new.c;
 			path = ../../scal_mc_new.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFA90249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_mc_new.h;
 			path = ../../scal_mc_new.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFAB0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scal_obj.c;
 			path = ../../scal_obj.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFAC0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_obj.h;
 			path = ../../scal_obj.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFAD0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scal_read.c;
 			path = ../../scal_read.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFAE0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_read.h;
 			path = ../../scal_read.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFAF0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scal_write.c;
 			path = ../../scal_write.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFB00249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_write.h;
 			path = ../../scal_write.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFB10249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scene.c;
 			path = ../../scene.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFB20249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scene.h;
 			path = ../../scene.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFB30249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = set.c;
 			path = ../../set.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFB40249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = set.h;
 			path = ../../set.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFB90249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = sglib.c;
 			path = ../../sglib.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFBA0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = sglib.h;
 			path = ../../sglib.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC00249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = startup.c;
 			path = ../../startup.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC10249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = startup.h;
 			path = ../../startup.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC20249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = struct_common.h;
 			path = ../../struct_common.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC30249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = struct_db.c;
 			path = ../../struct_db.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC40249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = struct_db.h;
 			path = ../../struct_db.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC50249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = struct_gfx.c;
 			path = ../../struct_gfx.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC60249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = struct_gfx.h;
 			path = ../../struct_gfx.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC70249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = struct_obj.c;
 			path = ../../struct_obj.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC80249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = struct_obj.h;
 			path = ../../struct_obj.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFC90249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = struct_read.c;
 			path = ../../struct_read.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFCA0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = struct_read.h;
 			path = ../../struct_read.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFCB0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = struct_write.c;
 			path = ../../struct_write.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFCC0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = struct_write.h;
 			path = ../../struct_write.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFCD0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = surf_db.c;
 			path = ../../surf_db.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFCE0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = surf_db.h;
 			path = ../../surf_db.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFCF0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = surf_gfx.c;
 			path = ../../surf_gfx.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD00249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = surf_gfx.h;
 			path = ../../surf_gfx.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD10249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = surf_obj.c;
 			path = ../../surf_obj.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD20249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = surf_obj.h;
 			path = ../../surf_obj.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD30249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = surf_read.c;
 			path = ../../surf_read.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD40249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = surf_read.h;
 			path = ../../surf_read.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD50249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = surf_write.c;
 			path = ../../surf_write.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD60249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = surf_write.h;
 			path = ../../surf_write.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD70249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = symm.c;
 			path = ../../symm.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD80249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = symm.h;
 			path = ../../symm.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFD90249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = transform.c;
 			path = ../../transform.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFDA0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = transform.h;
 			path = ../../transform.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFDB0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = uhbd.c;
 			path = ../../uhbd.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFDC0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = uhbd.h;
 			path = ../../uhbd.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFDD0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = vect_db.h;
 			path = ../../vect_db.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFDE0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = vrml.c;
 			path = ../../vrml.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFDF0249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = vrml.h;
 			path = ../../vrml.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE00249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = write.c;
 			path = ../../write.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE10249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = write.h;
 			path = ../../write.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE20249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = writePS.c;
 			path = ../../writePS.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE30249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = writePS.h;
 			path = ../../writePS.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE40249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = xplor.c;
 			path = ../../xplor.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE50249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = xplor.h;
 			path = ../../xplor.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE60249799D01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = xtal.h;
 			path = ../../xtal.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F512CFE70249799D01FB7A39 = {
 			fileRef = F512CF3C0249799D01FB7A39;
@@ -2337,8 +2638,10 @@
 		};
 		F5156BD40313F99901A966FA = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
 			path = icon.icns;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5156BD50313F99901A966FA = {
 			fileRef = F5156BD40313F99901A966FA;
@@ -2349,8 +2652,10 @@
 		F5156BD60313F9E201A966FA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.html;
 			path = Credits.html;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5156BD70313F9E201A966FA = {
 			fileRef = F5156BD60313F9E201A966FA;
@@ -2361,26 +2666,34 @@
 		F528331502491AB001FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = Controller.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F528331602491AB001FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = Controller.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F528331902491AD301FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = DinoGLView.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F528331A02491AD301FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = DinoGLView.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F528331D02491C2001FB7A39 = {
 			children = (
@@ -2394,54 +2707,69 @@
 			isa = PBXGroup;
 			name = CLI;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F528331F02491C4901FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = CLIView.h;
 			path = "3rd Party classes/CLI/CLIView.h";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F528332002491C4901FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = CLIView.m;
 			path = "3rd Party classes/CLI/CLIView.m";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F528332102491C4901FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = ShellView.h;
 			path = "3rd Party classes/CLI/ShellView.h";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F528332202491C4901FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = ShellView.m;
 			path = "3rd Party classes/CLI/ShellView.m";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F528332302491C4901FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = StrBuffer.h;
 			path = "3rd Party classes/CLI/StrBuffer.h";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F528332402491C4901FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = StrBuffer.m;
 			path = "3rd Party classes/CLI/StrBuffer.m";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F528332F0249212601FB7A39 = {
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = OpenGL.framework;
 			path = /System/Library/Frameworks/OpenGL.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F52833300249212601FB7A39 = {
 			fileRef = F528332F0249212601FB7A39;
@@ -2478,13 +2806,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		F52A76C902C08DA2019813D9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = GUI_HOWTO;
-			path = /Users/bernechs/work/Dino/dino/GUI_HOWTO;
-			refType = 0;
 		};
 		F52A76CA02C08DDC019813D9 = {
 			fileRef = F528331F02491C4901FB7A39;
@@ -2526,16 +2847,20 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = gui_osx.m;
 			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		F52A76D102C09DCE019813D9 = {
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = gui_osx.h;
 			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		F52A76D202C09E67019813D9 = {
@@ -2558,12 +2883,15 @@
 			name = MainMenu.nib;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F52A76D702C0F691019813D9 = {
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/MainMenu.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F52A76D802C0F691019813D9 = {
 			children = (
@@ -2573,13 +2901,16 @@
 			name = InfoPlist.strings;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F52A76D902C0F691019813D9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F52A76DA02C0F691019813D9 = {
 			fileRef = F52A76D802C0F691019813D9;
@@ -2590,20 +2921,26 @@
 		F52C79980323E2DF01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = TODO_Cocoa;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F530F03E034928A301FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = OMController.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F530F03F034928A301FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = OMController.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F530F040034928A301FB7A39 = {
 			fileRef = F530F03E034928A301FB7A39;
@@ -2620,9 +2957,11 @@
 		F537E919034356CC01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = gui_terminal.h;
 			path = ../../gui_terminal.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F537E91B034356CC01FB7A39 = {
 			fileRef = F537E919034356CC01FB7A39;
@@ -2633,14 +2972,18 @@
 		F550C2F403400B2A01808B89 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = DataObject.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F550C2F503400B2A01808B89 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = DataObject.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F550C2F603400B2A01808B89 = {
 			fileRef = F550C2F403400B2A01808B89;
@@ -2657,23 +3000,29 @@
 		F56D6C40034CC48001FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_iso_table.h;
 			path = ../../scal_iso_table.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F56D6C41034CC48001FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = scal_iso.c;
 			path = ../../scal_iso.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F56D6C42034CC48001FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = scal_iso.h;
 			path = ../../scal_iso.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F56D6CCB034CC48001FB7A39 = {
 			fileRef = F56D6C40034CC48001FB7A39;
@@ -2702,16 +3051,20 @@
 		F588E97A03532DEB01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = NOTES;
 			path = ../../../NOTES;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F588E97B03532DEB01FB7A39 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = TODO;
 			path = ../../../TODO;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F590620602BE8C02019813D9 = {
 			fileRef = F512CF4D0249799D01FB7A39;
@@ -2721,9 +3074,11 @@
 		};
 		F5CA80040326860901FB7A39 = {
 			includeInIndex = 1;
-			isa = PBXFolderReference;
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
 			path = "Dino Manual";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5CA802D0326860901FB7A39 = {
 			fileRef = F5CA80040326860901FB7A39;
@@ -2733,8 +3088,10 @@
 		};
 		F5FF217003240B7301FB7A39 = {
 			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
 			path = README.rtf;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5FF217103240B7301FB7A39 = {
 			fileRef = F5FF217003240B7301FB7A39;
@@ -2755,16 +3112,20 @@
 		F77770FC02C37CCA01981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = colors.c;
 			path = ../../colors.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F77770FD02C37CCA01981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = colors.h;
 			path = ../../colors.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F77770FE02C37CCA01981365 = {
 			fileRef = F77770FD02C37CCA01981365;
@@ -2781,44 +3142,56 @@
 		F777710002C37CF601981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = dbm_common.h;
 			path = ../../dbm_common.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F777710102C37CF601981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = gui_ext.h;
 			path = ../../gui_ext.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F777710202C37CF601981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = shell_command.c;
 			path = ../../shell_command.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F777710302C37CF601981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = shell_command.h;
 			path = ../../shell_command.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F777710402C37CF601981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = shell_raw.c;
 			path = ../../shell_raw.c;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F777710502C37CF601981365 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = shell_raw.h;
 			path = ../../shell_raw.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F777710602C37CF601981365 = {
 			fileRef = F777710002C37CF601981365;
