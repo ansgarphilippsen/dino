@@ -1471,6 +1471,9 @@ static int deviceMotionNotify=0,deviceButtonPress=0,
 static void extension_event(Widget w, XtPointer client_data, XEvent *event)
 {
   int i;
+  static int val_save[] = {0,0,0,0,0,0};
+  static int val_count = 0;
+  static int val_max = 4;
   XDeviceMotionEvent *device_motion;
   static int dial_state[] = {0,0,0,0,0,0,0,0};
 
@@ -1509,16 +1512,20 @@ static void extension_event(Widget w, XtPointer client_data, XEvent *event)
       if(device_motion->deviceid==gui.spaceballDevice->device_id) {
 	if(device_motion->first_axis==0) {
 	  if(device_motion->axis_data[0]!=0) {
-	    
-	    val[0]=CMI_INPUT_SPACEBALL;
-	    //fprintf(stderr,"spaceball ");
-	    for(i=0;i<6;i++) {
-	      val[3]=i;
-	      val[4]=device_motion->axis_data[i];
-	      //fprintf(stderr,"%d ",val[4]);
-	      cmiSubmit(&t);
+
+	    if(val_count>=val_max) {
+	      val[0]=CMI_INPUT_SPACEBALL;
+	      for(i=0;i<6;i++) {
+		val[3]=i;
+		val[4]=(int)((float)val_save[i]/(float)val_max);
+		cmiSubmit(&t);
+	      } 
+	    } else {
+	      for(i=0;i<6;i++) {
+		val_save[i]=device_motion->axis_data[i];
+	      }
+	      val_count++;
 	    }
-	    //fprintf(stderr,"\n");
 	  }
 	}
       }
