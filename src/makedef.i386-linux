@@ -2,7 +2,8 @@
 
 ARCH=LINUX
 MACH=i386
-STRIP = strip -x -g
+#STRIP = strip -x -g
+STRIP = echo
 
 #LIBDIR = -L../lib -L/usr/X11R6/lib
 LIBDIR = -L/usr/X11R6/lib
@@ -55,7 +56,7 @@ endif
 
 CC   = gcc
 CCP  = g++
-COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused $(JAVA_INC)
+COPT = -O2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused $(JAVA_INC)
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(MALLOCLIB) $(LIBGLW) $(LIBSTATIC) $(JAVA_LIBS)
 
 #SRC += autoplay.c joy.c

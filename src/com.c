@@ -1596,10 +1596,11 @@ int comWrite(int wc,const char **wl)
     wparam.type=WRITE_TYPE_PNG;
     writeFile(file,&wparam);
   } else if(!strcmp(type,"tiff")) {
-    comMessage("WARNING: deprecated format ! Please use png instead\n");
-    //comMessage("Writing tiff file...\n");
-    //fclose(f);
-    //writeFile(file,WRITE_TYPE_TIFF,accum,scale,dump);
+    //comMessage("WARNING: deprecated format ! Please use png instead\n");
+    comMessage("Writing tiff file...\n");
+    fclose(f);
+    wparam.type=WRITE_TYPE_TIFF;
+    writeFile(file,&wparam);
 #ifdef VRML
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {

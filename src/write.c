@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include <png.h>
+#include <tiffio.h>
 
 #include "dino.h"
 #include "write.h"
@@ -17,6 +18,7 @@ extern struct GFX gfx;
 extern int debug_mode;
 
 static int write_png(struct WRITE_IMAGE *img,char *name);
+static int write_tiff(struct WRITE_IMAGE *img,char *name);
 static void do_jitter(int accum);
 static int get_image(struct WRITE_IMAGE *img);
 
@@ -76,6 +78,10 @@ int writeFile(char *name, struct WRITE_PARAM *p)
   case WRITE_TYPE_PNG:
     debmsg("writing out image in png format");
     write_png(&img,name);
+    break;
+  case WRITE_TYPE_TIFF:
+    debmsg("writing out image in tiff format");
+    write_tiff(&img,name);
     break;
   }
 
@@ -254,4 +260,26 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
      
 
   return 0;
+}
+
+static int write_tiff(struct WRITE_IMAGE *image,char *name)
+{
+  TIFF *tif;
+  tdata_t buf;
+  uint32 row;
+
+  tif=TIFFOpen(name,"w");
+
+  TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, image->param.width);
+  TIFFSetField(tif, TIFFTAG_IMAGELENGTH, image->param.height);
+  TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, 8);
+  TIFFSetField(tif, TIFFTAG_PLANARCONFIG, 1);
+  TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 3); 
+
+  for(row=0;row<image->param.height;row++) {
+    buf=(tdata_t)&image->data[(image->param.height-row-1)*image->param.width*3];
+    TIFFWriteScanline(tif,buf,row,0);
+  }
+
+  TIFFClose(tif);
 }
