@@ -1317,6 +1317,7 @@ int comWrite(int wc,char **wl)
     writeFile(file,WRITE_TYPE_PNG,accum);
     gui.win_width=ow;
     gui.win_height=oh;
+    gfxSetViewport();
     gfxResizeEvent();
   } else if(!strcmp(type,"tiff")) {
     comMessage("\nWriting tiff file...");
@@ -1329,6 +1330,7 @@ int comWrite(int wc,char **wl)
     writeFile(file,WRITE_TYPE_TIFF,accum);
     gui.win_width=ow;
     gui.win_height=oh;
+    gfxSetViewport();
     gfxResizeEvent();
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {

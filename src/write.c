@@ -195,6 +195,7 @@ int writeFile(char *name, int type, int accum)
   glXMakeCurrent(gui.dpy,glx_pixmap,glx_context);
 
   /* Initialize the rendering context */
+  gfxSetViewport();
   gfxGLInit();
 
   /*
