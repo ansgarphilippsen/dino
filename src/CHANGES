@@ -1,5 +1,5 @@
 rewrote POVray section, improved output, renamed '-new' to '-patch', added
-'-nocolor'
+'-nocolor', better megapov support
 
 first implementation of scal-obj slab
 
