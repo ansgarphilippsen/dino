@@ -21,7 +21,8 @@ enum                 {STRUCT_TRJ_NONE,
 		      STRUCT_TRJ_XPLOR,
 		      STRUCT_TRJ_DINO,
 		      STRUCT_TRJ_CNS,
-		      STRUCT_TRJ_BD};
+		      STRUCT_TRJ_BD,
+		      STRUCT_TRJ_BINPOS};
 
 enum {STRUCT_WRITE_PDB,
       STRUCT_WRITE_XPL,

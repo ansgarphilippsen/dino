@@ -1389,8 +1389,8 @@ int comWrite(int wc,char **wl)
 
   if(!strcmp(type,"raster")) {
     comMessage("\nWARNING: deprecated format! Please use POVray instead");
-    comMessage("\nWriting Raster3D (version 2.4 or above) file...");
-    writeRaster(f);
+    //    comMessage("\nWriting Raster3D (version 2.4 or above) file...");
+    //    writeRaster(f);
     fclose(f);
   } else if(!strcmp(type,"pov")) {
     // open second file

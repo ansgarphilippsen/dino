@@ -2573,6 +2573,8 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
       id=STRUCT_TRJ_CNS; /* default */
     } else if(!strcmp(ext,"dtrj")) {
       id=STRUCT_TRJ_DINO;
+    } else if(!strcmp(ext,"binpos")) {
+      id=STRUCT_TRJ_BINPOS;
     } else {
       sprintf(message,"\nunknown extension %s, please specify type",ext);
       comMessage(message);
@@ -2587,6 +2589,8 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     id=STRUCT_TRJ_CNS;
   } else if(!strcmp(type,"dino")) {
     id=STRUCT_TRJ_DINO;
+  } else if(!strcmp(type,"binpos")) {
+    id=STRUCT_TRJ_BINPOS;
   } else {
     sprintf(message,"\nunknown type %s",type);
     comMessage(message);
@@ -2608,6 +2612,8 @@ int structComLoad(struct DBM_STRUCT_NODE *node, int wc, char **wl)
     ret=cnsTrjRead(f,node, swap_flag);
   } else if(id==STRUCT_TRJ_DINO) {
     ret=dinoTrjRead(f,node, swap_flag);
+  } else if(id==STRUCT_TRJ_BINPOS) {
+    ret=binposTrjRead(f,node, swap_flag);
   } else {
     sprintf(message,"\nthis type is not yet supported");
     comMessage(message);

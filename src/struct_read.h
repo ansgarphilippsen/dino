@@ -66,6 +66,7 @@ int pqrRead(FILE *f,dbmNode *node);
 int pqrLine2AtomEntry(char *,struct STRUCT_FILE_ATOM_ENTRY *);
 
 int dinoTrjRead(FILE *f, dbmStructNode *node, int sf);
+int binposTrjRead(FILE *f, dbmStructNode *node, int sf);
 
 int bonesRead(FILE *f, dbmNode *node);
 

@@ -1715,7 +1715,7 @@ int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
     Cfree(node->trj.pos);
     return -1;
   }
-  sprintf(message," %d trajectories with %d atoms  each",
+  sprintf(message," %d trajectories with %d atoms each",
 	  fn,an);
 
   comMessage(message);
@@ -1723,4 +1723,75 @@ int dinoTrjRead(FILE *f, dbmStructNode *node, int sf)
   node->trj_flag=1;
   return 0;
 
+}
+
+int binposTrjRead(FILE *f, dbmStructNode *node, int sf) 
+{
+  char hdr[5];
+  int ac,acount,fcount,fmax,tpos;
+  float *fptr;
+  struct STRUCT_TRJ_POSITION *tptr;
+  char message[256];
+
+  fread(hdr,sizeof(char),4,f);
+  hdr[4]='\0';
+
+  if(!clStrcmp(hdr,"fxyz")) {
+    comMessage("\nerror: invalid binpos header");
+    return -1;
+  }
+
+  if(node->trj_flag) {
+    /* there is already a trajectory associated */
+    Cfree(node->trj.pos);
+  }
+
+  fcount=0;
+  fmax=10;
+  acount=-1;
+  while(!feof(f)) {
+    fread(&ac,sizeof(int),1,f);
+
+    if(acount==-1) {
+      acount=ac;
+      fptr=Ccalloc(sizeof(float),acount*3);
+      tptr=Crecalloc(NULL,sizeof(struct STRUCT_TRJ_POSITION),acount*fmax);
+    } else {
+      if(ac!=acount) {
+	comMessage("\natom count missmatch error");
+	Cfree(fptr);
+	Cfree(tptr);
+	return -1;
+      }
+    }
+
+    fread(fptr,sizeof(float),acount*3,f);
+    for(ac=0;ac<acount;ac++) {
+      tpos=(fcount*acount+ac);
+      (tptr+tpos)->x=fptr[ac*3+0];
+      (tptr+tpos)->y=fptr[ac*3+1];
+      (tptr+tpos)->z=fptr[ac*3+2];
+    }
+    
+    fcount++;
+    if(fcount>=fmax) {
+      fmax+=10;
+      tptr=Crecalloc(tptr,sizeof(struct STRUCT_TRJ_POSITION),acount*fmax);
+    }
+  }
+
+  node->trj_flag=1;
+  node->trj.type=STRUCT_TRJ_DINO;
+  node->trj.atom_count=acount;
+  node->trj.size=acount*sizeof(struct STRUCT_TRJ_POSITION);
+  node->trj.frame_count=fcount;
+  node->trj.pos=Crecalloc(tptr,sizeof(struct STRUCT_TRJ_POSITION),acount*fcount);
+
+  sprintf(message," %d trajectories with %d atoms each",
+	  fcount,acount);
+
+  comMessage(message);
+  
+  
+  return 0;
 }

@@ -1,8 +1,10 @@
+raster3D output removed
+
 auto-detection of swapping for scalar field maps
 
 fixed 'degenerate cylinder error' in POVray output
 
-reduced memory usage of scalar-field object by 50%
+reduced memory usage of scalar-field object by ~30%
 
 fixed atom-id picking bug
 
