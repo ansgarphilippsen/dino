@@ -8,11 +8,11 @@
 \inputencoding auto
 \fontscheme times
 \graphics default
-\float_placement !hbp
+\float_placement !htb
 \paperfontsize 10
 \spacing single 
-\papersize a4paper
-\paperpackage a4
+\papersize Default
+\paperpackage a4wide
 \use_geometry 0
 \use_amsmath 0
 \paperorientation portrait
@@ -40,7 +40,7 @@ www.dino3d.org
 \begin_inset Formula \( \copyright  \)
 \end_inset 
 
- 1998-2001 Ansgar Philippsen
+ 1998-2002 Ansgar Philippsen
 \layout Date
 
 Manual Version 
@@ -205,6 +205,18 @@ SET_EXPR
 \layout Standard
 
 SEL_EXPR
+\layout Section
+
+Startup File
+\layout Standard
+
+Upon startup, the file 
+\family typewriter 
+.dinorc
+\family default 
+ is first looked for in the current directory and then in home directory.
+ If it is present, it will be parsed.
+ The syntax of this startup file is as follows:
 \layout Chapter
 
 Shell, Scene and GUI
@@ -220,7 +232,7 @@ Commands are typed into the terminal.
 \align center 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="4" columns="2">
+<lyxtabular version="2" rows="5" columns="2">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="center" valignment="top" leftline="false" rightline="false" width="" special="">
 <column alignment="left" valignment="top" leftline="true" rightline="false" width="" special="">
@@ -313,6 +325,24 @@ BKSPC
 \layout Standard
 
 Removes character just right of the cursor
+\end_inset 
+</cell>
+</row>
+<row topline="false" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+^K
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Erases entire line
 \end_inset 
 </cell>
 </row>
@@ -766,7 +796,7 @@ Lists all currently defined variables with their values.
 
 \begin_float wide-tab 
 \layout Standard
-
+\line_top 
 
 \begin_inset  Tabular
 <lyxtabular version="2" rows="18" columns="2">
@@ -1110,7 +1140,7 @@ scene write
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{predef}
 
@@ -1122,7 +1152,7 @@ Predefined Variables and Aliases
 
 \begin_float wide-tab 
 \layout Standard
-
+\line_top 
 
 \begin_inset  Tabular
 <lyxtabular version="2" rows="20" columns="2">
@@ -1502,7 +1532,7 @@ Requires a direction vector V and a scalar value S, returns the rotation
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{shell_stack_op}
 
@@ -1704,7 +1734,21 @@ clip
  the near clipping plane is set to 10.0, the far clipping plane to 1000.0.
 \layout RefEntry
 
-rot
+rotm
+\layout Syntax
+
+scene rotm MATRIX
+\layout Standard
+
+Multiplies the supplied 3x3 MATRIX to the current rotation matrix.
+ This matrix is 
+\emph on 
+not
+\emph default 
+ check for validity.
+\layout RefEntry
+
+rotx roty rotz
 \layout Syntax
 
 scene (rotx | roty | rotz) ANGLE
@@ -1816,7 +1860,16 @@ scene
  The availability of hardware stereo mode will be reported during startup.
 \layout RefEntry
 
-trans
+transm
+\layout Syntax
+
+scene transm VECTOR
+\layout Standard
+
+Adds the supplied VECTOR to the current translation vector.
+\layout RefEntry
+
+transx transy transz
 \layout Syntax
 
 scene (transx | transy | transz) VALUE
@@ -1827,10 +1880,10 @@ Translates VALUE along one of the major axis.
 
 \begin_float wide-tab 
 \layout Standard
-
+\line_top 
 
 \begin_inset  Tabular
-<lyxtabular version="2" rows="18" columns="4">
+<lyxtabular version="2" rows="20" columns="4">
 <features rotate="false" islongtable="false" endhead="0" endfirsthead="0" endfoot="0" endlastfoot="0">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="15mm" special="">
 <column alignment="left" valignment="center" leftline="true" rightline="false" width="84mm" special="">
@@ -1968,7 +2021,7 @@ flag
 
 \layout Standard
 
-true
+false
 \end_inset 
 </cell>
 </row>
@@ -2148,6 +2201,52 @@ black
 
 \layout Standard
 
+fogm
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Fog mode, one of 
+\family typewriter 
+linear
+\family default 
+, 
+\family typewriter 
+exp
+\family default 
+ or 
+\family typewriter 
+exp2
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+flag
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+linear
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
 fogd
 \end_inset 
 </cell>
@@ -2156,7 +2255,49 @@ fogd
 
 \layout Standard
 
-Fog adjustment from -1.0 to +1.0
+Fog distance for modes 
+\family typewriter 
+exp
+\family default 
+ and 
+\family typewriter 
+exp2
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+float
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="true" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+1.0
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="false" newpage="false">
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+fogo
+\end_inset 
+</cell>
+<cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
+\begin_inset Text
+
+\layout Standard
+
+Fog offset from far clipping plane for mode 
+\family typewriter 
+linear
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -2240,7 +2381,6 @@ Modelview, includes rotation and translation
 
 \layout Standard
 
-n.a.
 \end_inset 
 </cell>
 </row>
@@ -2342,7 +2482,6 @@ Rotation, Translation and Center of Rotation in one
 
 \layout Standard
 
-n.a.
 \end_inset 
 </cell>
 </row>
@@ -2428,7 +2567,17 @@ view
 
 \layout Standard
 
-view mode, can be center, left or right
+view mode, one of 
+\family typewriter 
+center
+\family default 
+, 
+\family typewriter 
+left
+\family default 
+ or 
+\family typewriter 
+right
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="center" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -2444,6 +2593,8 @@ mode
 
 \layout Standard
 
+
+\family typewriter 
 center
 \end_inset 
 </cell>
@@ -2454,7 +2605,7 @@ center
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{scene_prop}
 
@@ -2486,7 +2637,7 @@ PNG Raster Image
 PNG provides a open-source, royalty-free, efficient graphics format.
  See 
 \family typewriter 
-http://www.libpng.org/pub/png
+http://www.libpng.org/
 \end_float 
 \layout Syntax
 
@@ -2710,7 +2861,7 @@ Displays all properties of this light.
 
 \begin_float wide-tab 
 \layout Standard
-
+\line_top 
 
 \begin_inset  Tabular
 <lyxtabular version="2" rows="13" columns="4">
@@ -3185,7 +3336,7 @@ spot direction
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{light_prop}
 
@@ -15597,17 +15748,6 @@ Attachment
 
 Circular Subdivisions
 \newline 
-
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align center \pextra_type 2 \pextra_alignment 0 \pextra_start_minipage 1 \pextra_widthp 100
-
-
-\begin_inset Figure size 242 54
-file circ_div.eps
-flags 9
-
-\end_inset 
-
 
 \layout Paragraph*
 
