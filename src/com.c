@@ -782,11 +782,12 @@ void comMessage(const char *s)
   }
 }
 
-void comSetCP(double x,double y, double z) 
+void comSetCP(transMat* t, double x,double y, double z) 
 {
   scene.cp[0]=x;
   scene.cp[1]=y;
   scene.cp[2]=z;
+  if(t) transApplyf(t,scene.cp);
 }
 
 int comPick(int screenx, int screeny, int flag)
@@ -803,6 +804,7 @@ int comPick(int screenx, int screeny, int flag)
   dbmPickElement *pick=NULL;
 #else
   struct STRUCT_ATOM **atomlist,*atom;
+  transMat *transform;
   char cs[256],pick[256];
 #endif
   double eye_dist=gfx.eye_dist;
@@ -873,9 +875,9 @@ int comPick(int screenx, int screeny, int flag)
   }
 
   if(flag) {
-    comSetCP(p1[0],p1[1],p1[2]);
+    comSetCP(0,p1[0],p1[1],p1[2]);
   } else {
-    comSetCP((p2[0]+p1[0])*0.5,(p2[1]+p1[1])*0.5,(p2[2]+p1[2])*0.5);
+    comSetCP(0,(p2[0]+p1[0])*0.5,(p2[1]+p1[1])*0.5,(p2[2]+p1[2])*0.5);
   }
 
 
@@ -970,7 +972,7 @@ int comPick(int screenx, int screeny, int flag)
     // this has been replaced by the actual coordinate!
     // scenePush(pick->id);
 
-    comSetCP(pick->p[0],pick->p[1],pick->p[2]);
+    comSetCP(0,pick->p[0],pick->p[1],pick->p[2]);
 
     // TODO: toggle label
   } else {
@@ -1074,7 +1076,7 @@ int comPick(int screenx, int screeny, int flag)
     //scenePush(cs);
 
     // update CP
-    comSetCP(atom->p->x,atom->p->y,atom->p->z);
+    comSetCP(&dbm.node[f].structNode.transform,atom->p->x,atom->p->y,atom->p->z);
 
   } else {
     guiMessage(" ");
@@ -1629,6 +1631,25 @@ int comEndDisplayList(void)
   return 0;
 }
 
+static void check_limits(double x,double y, double z, double limx[2], double limy[2], double limz[6])
+{
+  limx[0] = (x<limx[0]) ? x : limx[0];
+  limx[1] = (x>limx[1]) ? x : limx[1];
+  limy[0] = (y<limy[0]) ? y : limy[0];
+  limy[1] = (y>limy[1]) ? y : limy[1];
+
+  if(z<limz[2]) {
+    limz[0]=x;
+    limz[1]=y;
+    limz[2]=z;
+  }
+  if(z>limz[5]) {
+    limz[3]=x;
+    limz[4]=y;
+    limz[5]=z;
+  }
+}
+
 int comGetMinMaxSlab()
 {
   int i,j,k,f;
@@ -1637,8 +1658,8 @@ int comGetMinMaxSlab()
 			       0.0,0.0,1.0,0.0,
 			       0.0,0.0,0.0,1.0};
   GLint vp[4];
-  double vv[3],vx,vy,vz,nx,ny,nz,fx,fy,fz,near,far,wx,wy,wz;
-
+  double vv[3],vx,vy,vz,near,far,wx,wy,wz;
+  double limx[2],limy[2],limz[6];
 
   structObj *struct_obj;
   scalObj *scal_obj;
@@ -1649,8 +1670,8 @@ int comGetMinMaxSlab()
   glGetDoublev(GL_PROJECTION_MATRIX,pm);
   glGetIntegerv(GL_VIEWPORT,vp);
 
-  nz=1e6;
-  fz=-1e6;
+  limz[0]=limz[1]=limz[2]=limy[0]=limx[0]=1e6;
+  limz[3]=limz[4]=limz[5]=limy[1]=limx[1]=-1e6;
 
   f=0;
   for(i=0;i<dbm.nodec_max;i++) {
@@ -1671,18 +1692,8 @@ int comGetMinMaxSlab()
 	      vx=vv[0]; vy=vv[1]; vz=vv[2];
 	      
 	      gluProject(vx,vy,vz,mm,pm,vp,&wx,&wy,&wz);
-	      
-	      if(wz<nz) {
-		nx=wx;
-		ny=wy;
-		nz=wz;
-	      }
-	      if(wz>fz) {
-		fx=wx;
-		fy=wy;
-		fz=wz;
-	      }
-	      
+
+	      check_limits(wx,wy,wz,limx,limy,limz);
 	    }
 	  }
 	}
@@ -1703,18 +1714,8 @@ int comGetMinMaxSlab()
 	      vx=vv[0]; vy=vv[1]; vz=vv[2];
 	      
 	      gluProject(vx,vy,vz,mm,pm,vp,&wx,&wy,&wz);
-	      
-	      if(wz<nz) {
-		nx=wx;
-		ny=wy;
-		nz=wz;
-	      }
-	      if(wz>fz) {
-		fx=wx;
-		fy=wy;
-		fz=wz;
-	      }
-	      
+
+	      check_limits(wx,wy,wz,limx,limy,limz);
 	    }
 	  }
 	}
@@ -1735,18 +1736,8 @@ int comGetMinMaxSlab()
 	      vx=vv[0]; vy=vv[1]; vz=vv[2];
 	      
 	      gluProject(vx,vy,vz,mm,pm,vp,&wx,&wy,&wz);
-	      
-	      if(wz<nz) {
-		nx=wx;
-		ny=wy;
-		nz=wz;
-	      }
-	      if(wz>fz) {
-		fx=wx;
-		fy=wy;
-		fz=wz;
-	      }
-	      
+
+	      check_limits(wx,wy,wz,limx,limy,limz);
 	    }
 	  }
 	}
@@ -1767,18 +1758,8 @@ int comGetMinMaxSlab()
 	      vx=vv[0]; vy=vv[1]; vz=vv[2];
 	      
 	      gluProject(vx,vy,vz,mm,pm,vp,&wx,&wy,&wz);
-	      
-	      if(wz<nz) {
-		nx=wx;
-		ny=wy;
-		nz=wz;
-	      }
-	      if(wz>fz) {
-		fx=wx;
-		fy=wy;
-		fz=wz;
-	      }
-	      
+
+	      check_limits(wx,wy,wz,limx,limy,limz);
 	    }
 	  }
 	}
@@ -1787,10 +1768,12 @@ int comGetMinMaxSlab()
     
   }
   
-  gluUnProject(nx,ny,nz,im,pm,vp,&vx,&vy,&vz);
+  gluUnProject(limz[0],limz[1],limz[2],im,pm,vp,&vx,&vy,&vz);
   near=-vz;
-  gluUnProject(fx,fy,fz,im,pm,vp,&vx,&vy,&vz);
+  gluUnProject(limz[3],limz[4],limz[5],im,pm,vp,&vx,&vy,&vz);
   far=-vz;
+
+  // use limx and limy to implement autofit
 
   near-=3.0;
   if(near<0.0)
