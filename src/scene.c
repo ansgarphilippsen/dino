@@ -138,7 +138,6 @@ int sceneCommand(int wc, const char **wl)
     gfx.show=0;
     comRedraw();
   } else if(clStrcmp(wl[0],"reset")) {
-    // TODO parameters center rot all, etc
     if(wc>1) {
       for(i=1;i<wc;i++) {
 	if(clStrcmp(wl[i],"center")) {
@@ -517,12 +516,31 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage(message);
 	  return -1;
 	}
-
-	//if(gfx.eye_dist<0.0)
-	// gfx.eye_dist=0.0;
-
+	
+	if(gfx.eye_dist<0.0)
+	  gfx.eye_dist=0.0;
+	
 	gfxSetProjection(gfx.current_view);
 	comRedraw();
+      } else if(clStrcmp(prop,"splitmode")) {
+	/******************
+            splitmode
+	******************/
+	if(strlen(op)==0) {
+	  sprintf(message,"scene: missing operator\n");
+	  comMessage(message);
+	  return -1;
+	}
+	if(strlen(val)==0) {
+	  sprintf(message,"scene: missing value\n");
+	  comMessage(message);
+	  return -1;
+	}
+	if(atoi(val)==0) {
+	  gfx.split_mode=0;
+	} else {
+	  gfx.split_mode=1;
+	}
       } else if(clStrcmp(prop,"fov")) {
 	/**********************
 	       set fovy

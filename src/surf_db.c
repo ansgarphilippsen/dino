@@ -38,6 +38,7 @@ int surfNewNode(dbmSurfNode *node)
 
 int surfCommand(struct DBM_SURF_NODE *node,int wc, char **wl)
 {
+  int i;
   char message[256];
   char *empty_com[]={"get","center"};
 
@@ -78,10 +79,22 @@ int surfCommand(struct DBM_SURF_NODE *node,int wc, char **wl)
     surfFix(node);
     comRedraw();
   } else if(!strcmp(wl[0],"reset")) {
-    if(wc>1)
-      comMessage("warning: ignored superfluous words after reset\n");
-
-    transReset(&node->transform);
+    if(wc==1) {
+      transReset(&node->transform);
+    } else {
+      for(i=1;i<wc;i++) {
+	if(clStrcmp(wl[i],"all")) {
+	  transReset(&node->transform);
+	  surfRecenter(node);
+	} else if(clStrcmp(wl[i],"center")) {
+	  surfRecenter(node);
+	} else if(clStrcmp(wl[i],"rot")) {
+	  transResetRot(&node->transform);
+	} else if(clStrcmp(wl[i],"trans")) {
+	  transResetTra(&node->transform);
+	}
+      }
+    }
     comRedraw();
   } else if(!strcmp(wl[0],"rotx")) {
     if(wc<2) {
@@ -479,7 +492,7 @@ int surfSet(dbmSurfNode *node, Set *s)
       break;
     case SURF_PROP_RTC:
       if(val->range_flag) {
-	comMessage("error: set: unexpected range in property trans\n");
+	comMessage("error: set: unexpected range in property rtc\n");
 	return -1;
       }
       if(transSetAll(&node->transform,val->val1)<0)
@@ -488,7 +501,7 @@ int surfSet(dbmSurfNode *node, Set *s)
       break;
     case SURF_PROP_RCEN:
       if(val->range_flag) {
-	comMessage("error: set: unexpected range in property trans\n");
+	comMessage("error: set: unexpected range in property rcen\n");
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v1)!=0) {
@@ -514,17 +527,9 @@ int surfGet(dbmSurfNode *node, char *prop)
   float v[3];
 
   if(!strcmp(prop,"center")) {
-    v[0]=0.0;
-    v[1]=0.0;
-    v[2]=0.0;
-    for(i=0;i<node->vc;i++) {
-      v[0]+=node->v[i].p[0];
-      v[1]+=node->v[i].p[1];
-      v[2]+=node->v[i].p[2];
-    }
-    v[0]/=(double)i;
-    v[1]/=(double)i;
-    v[2]/=(double)i;
+    v[0]=node->transform.cen[0];
+    v[1]=node->transform.cen[1];
+    v[2]=node->transform.cen[2];
     transApplyf(&node->transform,v);
     sprintf(message,"{%.5f,%.5f,%.5f}",v[0],v[1],v[2]);
     comReturn(message);
@@ -1344,3 +1349,33 @@ int surfRenormalize(dbmSurfNode *n)
 
   return 0;
 }
+
+void surfPrep(dbmSurfNode *node)
+{
+  surfRecenter(node);
+  surfBuildCA(node);
+  surfCalcMinMax(node);
+}
+
+void surfRecenter(dbmSurfNode *node)
+{
+  float v[3];
+  int i;
+  v[0]=0.0;
+  v[1]=0.0;
+  v[2]=0.0;
+  if(node->vc>0) {
+    for(i=0;i<node->vc;i++) {
+      v[0]+=node->v[i].p[0];
+      v[1]+=node->v[i].p[1];
+      v[2]+=node->v[i].p[2];
+    }
+    v[0]/=(double)i;
+    v[1]/=(double)i;
+    v[2]/=(double)i;
+  }
+  node->transform.cen[0]=v[0];
+  node->transform.cen[1]=v[1];
+  node->transform.cen[2]=v[2];
+}
+

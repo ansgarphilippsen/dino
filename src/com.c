@@ -384,7 +384,10 @@ int comWorkPrompt(int word_count, const char ** word_list)
       errflag=1;
     } else {
       for(i=1;i<word_count;i++) {
-	dbmDeleteNode(word_list[i]);
+	if(dbmDeleteNode(word_list[i])<0) {
+	  sprintf(message,"dataset %s not found\n",word_list[i]);
+	  comMessage(message);
+	}
       }
     }
   } else if(!strcmp(word_list[0],"rename")) {
@@ -392,7 +395,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
       comMessage("syntax: rename old new\n");
       errflag=1;
     } else {
-      
+      comMessage("not implemented...\n");
     }
   } else if(!strcmp(word_list[0],"save")) {
     comMessage("save not implemted\n");
@@ -400,8 +403,8 @@ int comWorkPrompt(int word_count, const char ** word_list)
   } else if(!strcmp(word_list[0],"list")) {
     for(i=0;i<dbm.nodec_max;i++)
       if(dbm.node[i].common.type!=DBM_NODE_EMPTY) {
-	comMessage("\n");
 	comMessage(dbm.node[i].common.name);
+	comMessage("\n");
       }
   } else if(!strcmp(word_list[0],"scene")) {
     /* scene command */
@@ -681,7 +684,9 @@ void comTimeProc()
   }
 
   if(gfx.anim==1) { // spin along last movement
-    // TODO spin
+    transCommand(&gfx.transform,TRANS_ROTX,0,com.mouse_spin_x);
+    transCommand(&gfx.transform,TRANS_ROTY,0,com.mouse_spin_y);
+    comRedraw();
   } else if(gfx.anim==2) { // rock around y-axis
     rock_motion+=0.3;
     transCommand(&gfx.transform,TRANS_ROTY,0,sin(0.5*rock_motion));
@@ -777,6 +782,13 @@ void comMessage(const char *s)
   }
 }
 
+void comSetCP(double x,double y, double z) 
+{
+  scene.cp[0]=x;
+  scene.cp[1]=y;
+  scene.cp[2]=z;
+}
+
 int comPick(int screenx, int screeny, int flag)
 {
   int i,j,f,l;
@@ -861,13 +873,9 @@ int comPick(int screenx, int screeny, int flag)
   }
 
   if(flag) {
-    scene.cp[0]=p1[0];
-    scene.cp[1]=p1[1];
-    scene.cp[2]=p1[2];
+    comSetCP(p1[0],p1[1],p1[2]);
   } else {
-    scene.cp[0]=(p2[0]+p1[0])*0.5;
-    scene.cp[1]=(p2[1]+p1[1])*0.5;
-    scene.cp[2]=(p2[2]+p1[2])*0.5;
+    comSetCP((p2[0]+p1[0])*0.5,(p2[1]+p1[1])*0.5,(p2[2]+p1[2])*0.5);
   }
 
 
@@ -962,9 +970,7 @@ int comPick(int screenx, int screeny, int flag)
     // this has been replaced by the actual coordinate!
     // scenePush(pick->id);
 
-    scene.cp[0]=pick->p[0];
-    scene.cp[1]=pick->p[1];
-    scene.cp[2]=pick->p[2];
+    comSetCP(pick->p[0],pick->p[1],pick->p[2]);
 
     // TODO: toggle label
   } else {
@@ -1068,9 +1074,7 @@ int comPick(int screenx, int screeny, int flag)
     //scenePush(cs);
 
     // update CP
-    scene.cp[0]=atom->p->x;
-    scene.cp[0]=atom->p->y;
-    scene.cp[0]=atom->p->z;
+    comSetCP(atom->p->x,atom->p->y,atom->p->z);
 
   } else {
     guiMessage(" ");
@@ -1192,6 +1196,7 @@ int comIsWithin(double *po, double d, const char *obj)
   return 0;
 }
 ***************/
+
 float comGetProperty(dbmNode *src,const char *prop,float *pos)
 {
   switch(src->common.type) {
@@ -1866,6 +1871,7 @@ int comTransform(int device, int mask, int axis, int ivalue)
 
   mask &= CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_BUTTON3_MASK | CMI_BUTTON4_MASK | CMI_BUTTON5_MASK | CMI_SHIFT_MASK | CMI_CNTRL_MASK | CMI_LOCK_MASK;
 
+
   for(i=0;i<com.tlist_count;i++) {
     if(com.tlist[i].device==device && 
        (com.tlist[i].mask&mask)==com.tlist[i].mask) {
@@ -1890,6 +1896,15 @@ int comTransform(int device, int mask, int axis, int ivalue)
 			   com.tlist[i].command[j].command,
 			   axis,
 			   value*com.tlist[i].command[j].factor);
+
+	      // store mouse x/y movement
+	      if(device==TRANS_MOUSE) {
+		if(com.tlist[i].command[j].command==TRANS_ROTX) {
+		  com.mouse_spin_x=value*com.tlist[i].command[j].factor;
+		} else if (com.tlist[i].command[j].command==TRANS_ROTY) {
+		  com.mouse_spin_y=value*com.tlist[i].command[j].factor;
+		}
+	      }
 	    }
 	  }
 	}

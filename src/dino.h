@@ -5,7 +5,7 @@ typedef char* string;
 
 #define debmsg(m) if(debug_mode) fprintf(stderr,"[DEBUG] %s\n",m)
 
-#define VERSION "0.8.6"
+#define VERSION "0.9.0-1"
 
 #define DINO_FLAG_NOGFX     1<<0
 #define DINO_FLAG_NOSTENCIL 1<<1

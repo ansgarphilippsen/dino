@@ -28,12 +28,72 @@
 //static char struct_obj_return[256];
 
 static void gen_spline_nd(cgfxPoint *sp, int spc);
+static int com_render(structObj *obj, int wc, char **wl)
+{
+  int od;
+  float bw;
+  char message[256];
+
+  od=obj->render.detail1;
+  bw=obj->render.bond_width;
+  if(renderSet(&obj->render,wc-1,wl+1)!=0) {
+    sprintf(message,"%s: syntax error in render statement\n",obj->node->name);
+    comMessage(message);
+    return -1;
+  }
+  
+  if(obj->type==STRUCT_CONNECT) {
+    if(obj->render.mode!=RENDER_SIMPLE && 
+       obj->render.mode!=RENDER_CPK &&
+       obj->render.mode!=RENDER_CUSTOM) {
+      obj->render.mode=RENDER_SIMPLE;
+      comMessage("invalid render mode\n");
+      return -1;
+    }
+  } else {
+    if(obj->render.mode==RENDER_HELIX ||
+       obj->render.mode==RENDER_STRAND ||
+       obj->render.mode==RENDER_STRAND2) {
+      comMessage("render modes helix and strand no longer supported\n");
+      obj->render.mode=RENDER_TUBE;
+    }
+    
+    if(obj->render.mode!=RENDER_SIMPLE && 
+       obj->render.mode!=RENDER_CUSTOM &&
+       obj->render.mode!=RENDER_TUBE &&
+       obj->render.mode!=RENDER_HSC &&
+       obj->render.mode!=RENDER_SLINE) {
+      obj->render.mode=RENDER_SIMPLE;
+      comMessage("invalid render mode\n");
+      return -1;
+    } else {
+      if(obj->render.mode==RENDER_TUBE ||
+	 obj->render.mode==RENDER_HSC ||
+	 obj->render.mode==RENDER_SLINE) {
+	structSmooth(obj);
+      }
+    }
+  }
+  if(obj->render.detail1!=od) {
+    comNewDisplayList(obj->sphere_list);
+    cgfxSphere(1.0,obj->render.detail1);
+    comEndDisplayList();
+  }
+  
+  if(obj->render.mode==RENDER_CUSTOM ||
+     obj->render.mode==RENDER_CPK) {
+    structObjGenVA(obj);
+  }
+  
+  comRedraw();
+  
+  return 0;
+}
 
 int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **wl)
 {
-  int i,od;
+  int i;
   float p[]={0.0,0.0,0.0};
-  float bw;
   char message[256];
   char *empty_com[]={"get","center"};
 
@@ -60,66 +120,7 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
   } else if(!strcmp(wl[0],"get")) {
     return structObjComGet(obj, wc-1,wl+1);
   } else if(!strcmp(wl[0],"render")) {
-    od=obj->render.detail1;
-    bw=obj->render.bond_width;
-    if(renderSet(&obj->render,wc-1,wl+1)!=0) {
-      sprintf(message,"%s: syntax error in render statement\n",node->name);
-      comMessage(message);
-      return -1;
-    }
-
-    if(obj->type==STRUCT_CONNECT) {
-      if(obj->render.mode!=RENDER_SIMPLE && 
-	 obj->render.mode!=RENDER_CPK &&
-	 obj->render.mode!=RENDER_CUSTOM) {
-	obj->render.mode=RENDER_SIMPLE;
-	comMessage("invalid render mode\n");
-	return -1;
-      }
-    } else {
-      // DEPRECATED
-      /*
-      if(bw!=obj->render.bond_width) {
-	for(i=0;i<obj->atom_count;i++)
-	  obj->atom[i].prop.radius=obj->render.bond_width;
-      }
-      */
-      if(obj->render.mode==RENDER_HELIX ||
-	 obj->render.mode==RENDER_STRAND ||
-	 obj->render.mode==RENDER_STRAND2) {
-	comMessage("render modes helix and strand no longer supported\n");
-	obj->render.mode=RENDER_TUBE;
-      }
-
-      if(obj->render.mode!=RENDER_SIMPLE && 
-	 obj->render.mode!=RENDER_CUSTOM &&
-	 obj->render.mode!=RENDER_TUBE &&
-	 obj->render.mode!=RENDER_HSC &&
-	 obj->render.mode!=RENDER_SLINE) {
-	obj->render.mode=RENDER_SIMPLE;
-	comMessage("invalid render mode\n");
-	return -1;
-      } else {
-	if(obj->render.mode==RENDER_TUBE ||
-	   obj->render.mode==RENDER_HSC ||
-	   obj->render.mode==RENDER_SLINE) {
-	  structSmooth(obj);
-	}
-      }
-    }
-    if(obj->render.detail1!=od) {
-      comNewDisplayList(obj->sphere_list);
-      cgfxSphere(1.0,obj->render.detail1);
-      comEndDisplayList();
-    }
-
-    if(obj->render.mode==RENDER_CUSTOM ||
-       obj->render.mode==RENDER_CPK) {
-      structObjGenVA(obj);
-    }
-
-    
-    comRedraw();
+    return com_render(obj,wc,wl);
   } else if(!strcmp(wl[0],"material")) {
     if(wc<2) {
       comMessage(renderGetMaterial(&obj->render.mat));
@@ -284,6 +285,8 @@ int structObjComRenew(structObj *obj, int wc, char **wl)
     selectDelete(&obj->select);
     memcpy(&obj->select,&sel,sizeof(Select));
   }
+
+  com_render(obj,0,NULL);
   
   setDelete(&set);
   clDelete(&co);

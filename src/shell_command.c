@@ -1258,7 +1258,22 @@ static void alias_def(const char *name2, const char **wl, int wc)
 
 static void alias_undef(const char *name)
 {
-  // TODO
+  int i,j;
+
+  for(i=0;i<shell_alias.count;i++) {
+    if(clStrcmp(shell_alias.entry[i].name,name))
+      break;
+  }
+  
+
+  if(i<shell_alias.count) {
+    for(j=i+1;j<shell_alias.count;j++) {
+      clStrcpy(shell_alias.entry[j-1].name,shell_alias.entry[j].name);
+      clStrcpy(shell_alias.entry[j-1].value,shell_alias.entry[j].value);
+    }
+    shell_alias.count--;
+  }
+  
 }
 
 static const char *alias_get(const char *name)

@@ -122,4 +122,6 @@ int surfDrawObj(surfObj *obj);
 int surfPrepObj(surfObj *obj);
 
 int surfRenormalize(dbmSurfNode *);
+void surfPrep(dbmSurfNode *);
+void surfRecenter(dbmSurfNode *);
 #endif

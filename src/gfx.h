@@ -48,7 +48,7 @@ struct GFX
   // this is a copy from struct GUI to allow
   // frontend - backend separation
   int win_width,win_height;
-  int stereo_active,stereo_mode;
+  int stereo_active,stereo_mode,split_mode;
   float eye_dist, eye_offset;
 
   int current_view;

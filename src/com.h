@@ -47,7 +47,8 @@ struct GLOBAL_COM {
   unsigned char cube_lookup[144];
 
   int ms_mask,ms_axis,ms_ivalue;
-  
+
+  float mouse_spin_x, mouse_spin_y;
 };
 
 struct COM_PARAMS {
@@ -69,6 +70,7 @@ void comTimeProc(void);
 void comRedraw(void);
 void comDBRedraw(void);
 void comMessage(const char *s);
+void comSetCP(double x, double y, double z);
 int comPick(int x, int y, int flag);
 int comCustom(double value);
 int comGetColor(const char *, float *r, float *g, float *b);

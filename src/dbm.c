@@ -567,8 +567,7 @@ int dbmLoad(int wc, const char **wl)
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
     comMessage("\n");
-    surfBuildCA(&node->surfNode);
-    surfCalcMinMax(&node->surfNode);
+    surfPrep(&node->surfNode);
   } else if(!strcmp(type,"msp")) {
     /* MSP surface format */
     node=dbmNewNode(DBM_NODE_SURF, name);
@@ -589,8 +588,7 @@ int dbmLoad(int wc, const char **wl)
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
     comMessage("\n");
-    surfBuildCA(&node->surfNode);
-    surfCalcMinMax(&node->surfNode);
+    surfPrep(&node->surfNode);
   } else if(!strcmp(type,"grasp")) {
     /* GRASP surface format */
     node=dbmNewNode(DBM_NODE_SURF, name);
@@ -611,8 +609,7 @@ int dbmLoad(int wc, const char **wl)
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
     comMessage("\n");
-    surfBuildCA(&node->surfNode);
-    surfCalcMinMax(&node->surfNode);
+    surfPrep(&node->surfNode);
     if(rn_flag)
       surfRenormalize(&node->surfNode);
   } else if(!strcmp(type,"ads")) {
@@ -635,8 +632,7 @@ int dbmLoad(int wc, const char **wl)
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
     comMessage("\n");
-    surfBuildCA(&node->surfNode);
-    //    surfCalcMinMax(&node->surfNode);
+    surfPrep(&node->surfNode);
   } else if(!strcmp(type,"topo")) {
     /* topography format requested */
     if((node=dbmNewNode(DBM_NODE_GRID,name))==NULL)
@@ -690,7 +686,6 @@ static void center_on_ds(dbmNode *n)
 	  n->common.transform.cen[1], 
 	  n->common.transform.cen[2]);
   comMessage(message);
-  
 }
 
 

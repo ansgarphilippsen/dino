@@ -117,6 +117,7 @@ struct GUI
   Dimension win_widths,win_heights;
   Colormap cmap;
   GLXContext glxcontext;
+
   Window glxwindow;
   int glx_vis;
 

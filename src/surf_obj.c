@@ -263,9 +263,14 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
       rval2=vmax;
     else
       rval2=atof(s->range.val2);
-    
-    sprintf(message,"using range of property %s from %g to %g\n",
-	    s->range.prop,rval1,rval2);
+
+    if(clStrlen(s->range.prop)==0) {
+      sprintf(message,"using range of default property from %g to %g\n",
+	      s->range.prop,rval1,rval2);
+    } else {
+      sprintf(message,"using range of property %s from %g to %g\n",
+	      s->range.prop,rval1,rval2);
+    }
     comMessage(message);
   }
   

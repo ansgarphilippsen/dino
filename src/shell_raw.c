@@ -274,12 +274,30 @@ void shellLog(const char *s)
 */
 int shellSetVar(const char *name2, const char *value2, int level)
 {
-#ifdef USE_TCL
-  Tcl_SetVar(tcl_interp,name2,value2,TCL_GLOBAL_ONLY);
-#else
+  int d1,d2;
+  double res[16];
   int i;
   char name[VAR_MAX_NAME_SIZE];
   char value[VAR_MAX_VALUE_SIZE];
+  
+  // special variables
+  if(clStrcmp(name2,"CP")) {
+    if(matExtractMatrix(value2,&d1,&d2,res)==0) {
+      if(d1==3 && d2==1) {
+	comSetCP(res[0],res[1],res[2]);
+      } else {
+	comMessage("value for CP must be a vector\n");
+	return -1;
+      }
+    } else {
+      comMessage("value for CP must be a vector\n");
+      return -1;
+    }
+  }
+
+#ifdef USE_TCL
+  Tcl_SetVar(tcl_interp,name2,value2,TCL_GLOBAL_ONLY);
+#else
   
   clStrncpy(name,name2,VAR_MAX_NAME_SIZE-1);
   clStrncpy(value,value2,VAR_MAX_VALUE_SIZE-1);
@@ -292,10 +310,13 @@ int shellSetVar(const char *name2, const char *value2, int level)
   if(i<shell_var.max) {
     clStrcpy(shell_var.entry[i].name,name);
     clStrcpy(shell_var.entry[i].value,value);
+
+    if(i==shell_var.count) shell_var.count++;
   }
 
-  if(i==shell_var.count) shell_var.count++;
+
 #endif
+
   return 0;
 }
 
@@ -320,7 +341,22 @@ int shellUnsetVar(const char *name, int level)
 #ifdef USE_TCL
   Tcl_UnsetVar(tcl_interp,name,TCL_GLOBAL_ONLY);
 #else
-  // TODO
+  int i,j;
+
+  for(i=0;i<shell_var.count;i++) {
+    if(clStrcmp(shell_var.entry[i].name,name)) {
+      break;
+    }
+  }
+
+  if(i<shell_var.count) {
+    for(j=i+1;j<shell_var.count;j++) {
+      clStrcpy(shell_var.entry[j-1].name,shell_var.entry[j].name);
+      clStrcpy(shell_var.entry[j-1].value,shell_var.entry[j].value);
+    }
+    shell_var.count--;
+  }
+
   return 0;
 #endif
 }

@@ -1,3 +1,25 @@
+render is called after struct.obj renew
+
+surf reset parameters work
+
+added scene param "splitmode"
+
+scene spin working again
+
+setting CP via shell works now
+
+unalias working
+
+unset working
+
+fixed eyedist not allowing negative value
+
+moved to version 0.9.0
+
+-----
+
+added surface curvature property
+
 aded GROMACS xtz trj format
 
 added spider format

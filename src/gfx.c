@@ -196,6 +196,7 @@ int gfxInit()
   gfx.stereo_mode=GFX_STEREO_OFF;
   gfx.eye_dist=150.0;
   gfx.eye_offset=10.0;
+  gfx.split_mode=0;
 
   gfx.show=1;
 
@@ -469,11 +470,19 @@ int gfxRedraw()
 #endif
     gfx.aspect=0.5*(double)gfx.win_width/(double)gfx.win_height;
     glViewport(0,0,gfx.win_width/2, gfx.win_height);
-    gfxSetProjection(GFX_RIGHT);
+    if(gfx.split_mode==0) {
+      gfxSetProjection(GFX_LEFT);
+    } else {
+      gfxSetProjection(GFX_RIGHT);
+    }
     gfxSceneRedraw(1);
     comDBRedraw();
     glViewport(gfx.win_width/2+1,0,gfx.win_width/2, gfx.win_height);
-    gfxSetProjection(GFX_LEFT);
+    if(gfx.split_mode==0) {
+      gfxSetProjection(GFX_RIGHT);
+    } else {
+      gfxSetProjection(GFX_LEFT);
+    }
     gfxSceneRedraw(0);
     comDBRedraw();
     gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;

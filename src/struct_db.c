@@ -263,6 +263,10 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
 	  structRecenter(node);
 	} else if(clStrcmp(wl[i],"center")) {
 	  structRecenter(node);
+	} else if(clStrcmp(wl[i],"rot")) {
+	  transResetRot(&node->transform);
+	} else if(clStrcmp(wl[i],"trans")) {
+	  transResetTra(&node->transform);
 	}
       }
     }

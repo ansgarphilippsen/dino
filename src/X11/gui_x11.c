@@ -312,7 +312,7 @@ int guiInit(int argc, char **argv)
       stereo_available=SGI_STEREO_LOW;
     }
 #endif
-    
+
     gui.visinfo=vi;
     
     if(!gui.visinfo) {
@@ -754,6 +754,9 @@ static int set_stereo(int m)
   return SGIStereoIsActive();
 #else
   // HACK - TODO proper stereo mode setting
+  /*
+    set gl context to mono or stereo one
+  */
   return m;
 #endif
 }
@@ -794,10 +797,7 @@ void guiCMICallback(const cmiToken *t)
 
 int guiSetStereo(int m)
 {
-  int r;
-  r=set_stereo(m);
-  //fprintf(stderr,"set_stereo: %d\n",r);
-  return r;
+  return set_stereo(m);
 }
 
 

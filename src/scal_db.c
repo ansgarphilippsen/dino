@@ -110,7 +110,7 @@ int scalCommand(dbmScalNode *node, int wc, char **wl)
     comRedraw();
   } else if(!strcmp(wl[0],"reset")) {
     if(wc>1)
-      comMessage("warning: ignored superfluous words after reset\n");
+      comMessage("scalar-field reset does not take additional parameters\n");
 
     memcpy(&node->transform, &node->transform_save,sizeof(transMat));
     comRedraw();

@@ -148,7 +148,7 @@ int surfDrawObj(surfObj *obj)
     glClear(GL_STENCIL_BUFFER_BIT);
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(GL_ALWAYS,0x0,0x1);
-    glStencilOp(GL_INVERT,GL_INVERT,GL_INVERT);
+    glStencilOp(GL_KEEP,GL_INVERT,GL_INVERT);
   }
 
   glDrawElements(GL_TRIANGLES,obj->facec*3,GL_UNSIGNED_INT,obj->face);
@@ -161,7 +161,7 @@ int surfDrawObj(surfObj *obj)
   glDisable(GL_CULL_FACE);
 
   if(obj->render.solid && t==1.0) {
-    glStencilFunc(GL_NOTEQUAL,0x0,0x1);
+    glStencilFunc(GL_EQUAL,0x1,0x1);
     glPushMatrix();
     glLoadIdentity();
 
