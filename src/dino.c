@@ -31,9 +31,10 @@
 extern struct GUI gui;
 
 const char usage[]={"Usage: dino [-debug] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
-const char welcome[]={"\nWelcome to dino v0.8.4a    (http://www.bioz.unibas.ch/~xray/dino)\n\n"};
 
-int debug_mode,gfx_mode,stereo_mode;
+char welcome[]={"\nWelcome to dino v%s    (http://www.bioz.unibas.ch/~xray/dino)\n\n"};
+
+int debug_mode,gfx_mode,stereo_mode,video_mode;
 
 #ifdef EXPO
 extern struct AUTOPLAY ap;
@@ -78,12 +79,12 @@ int main(int argc,char **argv)
   gfx_mode=1;
   stereo_mode=1;
   debug_mode=0;
-
+  video_mode=0;
 
 
   strcpy(startup,"dinorc");
   strcpy(logfile,"logfile.dino");
-  fprintf(stderr,welcome);
+  fprintf(stderr,welcome,VERSION);
 #ifdef EXPO
   fprintf(stderr,"EXPO 2000 SPECIAL VERSION\n\n");
 #endif
@@ -117,6 +118,13 @@ int main(int argc,char **argv)
 	gfx_mode=0;
       } else if(!strcmp(argv[i],"-nostereo")) {
 	stereo_mode=0;
+      } else if(!strcmp(argv[i],"-vidmode")) {
+	if(i+1>=argc) {
+	  fprintf(stderr,"error: expected argument after -vidmode\n");
+	  exit(1);
+	}
+	i++;
+	video_mode=atoi(argv[i]);
       }
     }
     i++;
@@ -166,6 +174,9 @@ int main(int argc,char **argv)
 	/* already had this */
       } else if(!strcmp(argv[i],"-nostereo")) {
 	/* already had this */
+      } else if(!strcmp(argv[i],"-vidmode")) {
+	/* already had this */
+	i++;
       } else if(!strcmp(argv[i],"-nostartup")) {
 	startup_flag=0;
       } else if(!strcmp(argv[i],"-log")) {

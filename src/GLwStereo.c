@@ -34,12 +34,9 @@
 #include <X11/GLw/GLwMDrawA.h>
 #endif
 
-#ifdef SGI
-#include <X11/extensions/SGIStereo.h>
-#include <X11/extensions/XSGIvc.h>
-#endif
 
 #include "dino.h"
+#include "com.h"
 #include "GLwStereo.h"
 #include "gfx.h"
 #include "rex.h"
@@ -50,17 +47,10 @@
 #endif
 
 extern struct GUI gui;
+extern int debug_mode,video_mode;
 
-static struct GLW_STEREO {
-  Display *display;
-  GLXDrawable drawable;
-  int mode;
-#ifdef SGI
-  XSGIvcVideoFormatInfo vc_stereo,vc_mono;
-#endif
-  long mask;
-  char stereo_high[256];
-} GLwStereo;
+struct GLW_STEREO GLwStereo;
+
 
 char *glw_monitor_cmd[]=
 {
@@ -70,6 +60,8 @@ char *glw_monitor_cmd[]=
 };
 
 extern struct GFX gfx;
+
+static int GLwStereoExtractResolution(const char *s, int *x, int *y);
 
 int GLwStereoInit(Display *display, GLXDrawable drawable)
 {
@@ -86,6 +78,7 @@ int GLwStereoInit(Display *display, GLXDrawable drawable)
   int vc;
   char **vl;
   char stereo_command[256];
+  char message[256];
 #endif
 
 
@@ -94,29 +87,58 @@ int GLwStereoInit(Display *display, GLXDrawable drawable)
   GLwStereo.mode=GLW_STEREO_NONE;
 
 #ifdef SGI
-  sgi_video_get_list(&vc,&vl);
-
   strcpy(stereo_command,"");
 
-  for(i=0;i<vc;i++) {
-    if(rex("1024x768_96s*",vl[i])) {
-      sprintf(stereo_command,"/usr/gfx/setmon -n 1024x768_96s");
-      gui.stereo_y_offset=0;
-      break;
-    }
-
-    if(rex("1025x768_96s*",vl[i])) {
-      sprintf(stereo_command,"/usr/gfx/setmon -n 1025x768_96s");
-      gui.stereo_y_offset=256;
-      break;
-    }
-
-  }
- 
-  strcpy(GLwStereo.stereo_high,stereo_command);
-
-  if(strlen(stereo_command)==0)
+  if(sgi_video_get_list(&vc,&vl)!=0) {
     return -1;
+  }
+
+  debmsg("Detected Stereo Video Modes:\n");
+  for(i=0;i<vc;i++) {
+    sprintf(message,"%d: %s",i+1,vl[i]);
+    debmsg(message);
+  }
+
+  if(video_mode!=0) {
+    /*
+      take the user supplied video mode
+    */
+    if(video_mode<1 || video_mode>i) {
+      comMessage("\nwarning: supplied stereo video mode not found, using default");
+      video_mode=0;
+    } else {
+      sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[video_mode-1]);
+      GLwStereoExtractResolution(vl[video_mode-1],\
+				 &GLwStereo.resx,&GLwStereo.resy);
+    }
+  }
+
+  if(video_mode==0) {
+    for(i=0;i<vc;i++) {
+      if(rex("102*x768*",vl[i])) {
+	sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[i]);
+	GLwStereoExtractResolution(vl[i],\
+				   &GLwStereo.resx,&GLwStereo.resy);
+	break;
+      }
+    }
+    if(i==vc) {
+      /*
+	video mode with 102*x768* not found, take first one
+      */
+      sprintf(stereo_command,"/usr/gfx/setmon -n %s",vl[0]);
+      GLwStereoExtractResolution(vl[0],\
+				 &GLwStereo.resx,&GLwStereo.resy);
+    }
+  }
+  sprintf(message,"using stereo command: %s",stereo_command);
+  strcpy(GLwStereo.stereo_high,stereo_command);
+  debmsg(message);
+
+  if(GLwStereo.resx==1025)
+    GLwStereo.y_offset=256;
+  else
+    GLwStereo.y_offset=0;
 
 #endif
 
@@ -131,7 +153,7 @@ int GLwStereoCommand(int mode)
     XSGISetStereoMode(GLwStereo.display,GLwStereo.drawable,
 		      492,532,
 		      STEREO_OFF);
-    XSync( GLwStereo.display, False);
+    XSync(GLwStereo.display, False);
 
     switch(mode) {
     case GLW_STEREO_NONE:
@@ -283,7 +305,28 @@ int GLwStereoOrtho(GLdouble left, GLdouble right,
   return 0;
 }
 
+static int GLwStereoExtractResolution(const char *s, int *x, int *y)
+{
+  char buf[512],*p;
+  strncpy(buf,s,512);
 
+  (*x)=0;
+  (*y)=0;
 
+  p=strrchr(buf,'_');
+  if(p==NULL)
+    return -1;
 
+  p[0]='\0';
 
+  p=strrchr(buf,'x');
+  if(p==NULL)
+    return -1;
+
+  p[0]='\0';
+
+  (*x)=atoi(buf);
+  (*y)=atoi(p+1);
+  
+  return 0;
+}

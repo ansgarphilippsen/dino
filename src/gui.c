@@ -8,8 +8,6 @@ user menu
 
 *************************************************/
 
-const char version_string[]="0.8.4a";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,6 +60,7 @@ struct GUI gui;
 extern struct GFX gfx;
 extern struct OBJECT_MENU om;
 extern struct USER_MENU um;
+extern struct GLW_STEREO GLwStereo;
 
 extern int debug_mode,gfx_mode,stereo_mode;
 
@@ -225,7 +224,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 #ifdef EXPO
   strcpy(gui.message_string2,"Powered by Linux");
 #else
-  strcpy(gui.message_string2,version_string);
+  strcpy(gui.message_string2,VERSION);
 #endif
   xms= XmStringCreateLtoR(gui.message_string2, XmSTRING_DEFAULT_CHARSET);
   XtSetArg(arg[0],XmNlabelString,xms);
@@ -1318,10 +1317,10 @@ int guiStereo(int m)
       XtGetValues(gui.top,arg,4);
     }
     
-    sx=256;
-    sy=gui.stereo_y_offset;
-    sw=768;
-    sh=768;
+    sx=GLwStereo.resx-GLwStereo.resy+17;
+    sy=GLwStereo.y_offset;
+    sw=GLwStereo.resy-20;
+    sh=GLwStereo.resy-20;
     
     switch(m) {
     case GUI_STEREO_OFF: /* off */
@@ -1348,6 +1347,10 @@ int guiStereo(int m)
       GLwStereoCommand(GLW_STEREO_HIGH);
       gui.stereo_mode=GUI_STEREO_NORMAL;
       
+      /*
+	maybe it would be adviseable to 
+	get the new values from the display
+      */
       XtSetArg(arg[1],XmNx,sx);
       XtSetArg(arg[0],XmNy,sy);
       XtSetArg(arg[2],XmNwidth,sw);
