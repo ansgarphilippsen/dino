@@ -7,30 +7,17 @@
 #include <OpenGL/glext.h>
 #include <OpenGL/CGLRenderers.h>
 
+#include "gui_osx.h"
+
 @interface DinoGLView : NSOpenGLView
 {
     NSOpenGLPixelFormatAttribute	pfAttribs[32];
     NSOpenGLPixelFormat			*nsglFormat;
     NSOpenGLContext			*glContext;
 
-/*
-    // Pixel format & context stuff
-    long				renderID;
-    unsigned long			bitsPerPixel, depthSize, stencilSize, numAuxBuffs;
-    BOOL 				enableDepth, packedPixels, pause;
-    BOOL				useDblBuffer, useAccel, useNoRecover, useAux, useStencil, useAllRender;
-    
-    // Timer & framerate info
-    NSTimer				*renderTimer, *frameTimer, *frameRateTimer;
-    NSTimeInterval			frameTimeInterval, timeInterval, frameRateTimeInterval;
-    double 				fps, bufferSwaps, frMin, frMax, frAvg, elapseTime, delta, time;
-    unsigned long 			start, totalFrames;
-*/
 }
 
 // Overrides
-//+ (id)dinoGL;
-//- (void)awakeFromNib;
 - (id)initWithFrame:(NSRect) frameRect;
 - (id)swapBuffers;
 - (void)drawRect:(NSRect)rect;

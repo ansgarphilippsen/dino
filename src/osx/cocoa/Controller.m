@@ -22,14 +22,11 @@ static id dinoController;
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     [dinoCLI setCommandHandler:dinoController];
-    
-    guiInitGL();
 
-    
+    cmiInitGL();
+    cmiResize([dinoGL frame].size.width,[dinoGL frame].size.height);
 
     gui_reshape([dinoGL frame].size.width,[dinoGL frame].size.height);
-    
-
     
     controlTimer=[[NSTimer timerWithTimeInterval: 0.01 target: self selector: @selector(timerControl) userInfo: nil repeats: YES ] retain];
  [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
@@ -57,9 +54,8 @@ static id dinoController;
 // CLI interaction
 
 - (void)command:(NSString *)theCommand from:(id)sender
-{    
-    if(shellWorkPrompt([theCommand cString],-1,NULL)==0){
-	}
+{
+    shellParseRaw([theCommand cString],0);
 }
 
 - (void) putText:(unsigned char *)tmp
@@ -85,7 +81,6 @@ static id dinoController;
 {
     [dinoGL swapBuffers];
 }
-
 
 - (void)updateStatusBox:(NSString *)text
 {

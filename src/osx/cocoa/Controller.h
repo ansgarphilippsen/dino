@@ -6,7 +6,8 @@
 #import "CLIView.h"
 #import "gui_osx.h"
 
-#include "shell.h"
+#include "cmi.h"
+#include "shell_raw.h"
 
 @interface Controller : NSObject
 {
