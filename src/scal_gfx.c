@@ -11,7 +11,7 @@
 
 extern struct GFX gfx;
 
-#define OLD_SCAL_CONTOUR_DRAWING
+#define OLD_SCAL_CONTOUR_DRAWING 1
 
 int scalDraw(dbmScalNode *node, int f)
 {
@@ -139,6 +139,7 @@ int scalDrawObj(scalObj *obj)
 
       glPopAttrib();
 #else
+      // OLD_SCAL_CONTOUR_DRAWING
       // RENDER IN CHICKEN WIRE MODE
       glDisable(GL_LIGHTING);
       glDisable(GL_COLOR_MATERIAL);
@@ -197,7 +198,7 @@ int scalDrawObj(scalObj *obj)
 
       glDisable(GL_BLEND);
       glDisable(GL_FOG);
-#ifdef LINUX
+#if defined(LINUX) || defined(OSX)
       glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 #else
       glDrawBuffer(GL_NONE);
@@ -216,7 +217,7 @@ int scalDrawObj(scalObj *obj)
 	//glArrayElement(obj->line[i].pi1);
       }
       glEnd();
-#ifdef LINUX
+#if defined(LINUX) || defined(OSX)
       glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 #endif      
       glPopAttrib();
@@ -275,7 +276,7 @@ int scalDrawObj(scalObj *obj)
 	glDisable(GL_NORMALIZE);
 
 	glDepthMask(GL_TRUE);
-#ifdef LINUX
+#if defined(LINUX) || defined(OSX)
 	glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 #else
 	glDrawBuffer(GL_NONE);
@@ -290,7 +291,7 @@ int scalDrawObj(scalObj *obj)
 	  glVertex3fv(obj->face[i].v3);
 	}
 	glEnd();
-#ifdef LINUX
+#if defined (LINUX) || defined(OSX)
 	glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 #endif      
 	glPopAttrib();
