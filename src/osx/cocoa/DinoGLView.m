@@ -1,5 +1,9 @@
 #import "DinoGLView.h"
 
+#import  "Controller.h"
+#include "cmi.h"
+#include "gui_osx.h"
+
 @implementation DinoGLView
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -22,6 +26,9 @@
 
 - (void)drawRect:(NSRect)rect
 {
+    [sliderX setMaxValue:(double)rect.size.width];
+    [sliderY setMaxValue:(double)rect.size.height];
+//    [[Controller dinoController] updateStatusBox:[NSString stringWithFormat:@"%f",[sliderX maxValue]]];  
     cmiResize((int)rect.size.width,(int)rect.size.height);
     cmiRedraw();
 }
@@ -40,11 +47,11 @@
 
     eventType = CMI_BUTTON_PRESS;
     mask = CMI_BUTTON1_MASK;
-    if(flags & NSAlternateKeyMask) mask = CMI_BUTTON2_MASK;
+    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
     if(flags & NSControlKeyMask) mask = CMI_BUTTON3_MASK;
-    if(flags & NSCommandKeyMask) mask += CMI_BUTTON2_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
-    
+    if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
+
     pt = [self convertPoint:pt fromView:nil];
     px = pt.x;
     py = frame.size.height - pt.y;
@@ -63,10 +70,10 @@
 
     eventType = CMI_BUTTON_RELEASE;
     mask = CMI_BUTTON1_MASK;
-    if(flags & NSAlternateKeyMask) mask = CMI_BUTTON2_MASK;
+    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
     if(flags & NSControlKeyMask) mask = CMI_BUTTON3_MASK;
-    if(flags & NSCommandKeyMask) mask += CMI_BUTTON2_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
+    if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
     pt = [self convertPoint:pt fromView:nil];
     px = pt.x;
@@ -86,10 +93,10 @@
 
     eventType = CMI_MOTION;
     mask = CMI_BUTTON1_MASK;
-    if(flags & NSAlternateKeyMask) mask = CMI_BUTTON2_MASK;
+    if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
     if(flags & NSControlKeyMask) mask = CMI_BUTTON3_MASK;
-    if(flags & NSCommandKeyMask) mask += CMI_BUTTON2_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
+    if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
     pt = [self convertPoint:pt fromView:nil];
     px = pt.x;

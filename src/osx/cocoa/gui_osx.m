@@ -105,14 +105,14 @@ void guiCMICallback(const cmiToken *t)
 	    case CMI_REFRESH: gui.redraw++; break;
 	    case CMI_MESSAGE: guiMessage((char *)t->value); break;
 	    case CMI_CHECKR: check_redraw(); break;
-	    case CMI_DS_NEW:  break;
-	    case CMI_DS_DEL:  break;
+	    case CMI_DS_NEW: omAddDB(cp[0]); break;
+	    case CMI_DS_DEL: omDelDB(cp[0]); break;
 	    case CMI_DS_REN: /*TODO*/ break;
-	    case CMI_OBJ_NEW:  break;
-	    case CMI_OBJ_DEL:  break;
+	    case CMI_OBJ_NEW: omAddObj(cp[0],cp[1]); break;
+	    case CMI_OBJ_DEL: omDelObj(cp[0],cp[1]); break;
 	    case CMI_OBJ_REN: /*TODO*/ break;
-	    case CMI_OBJ_SHOW:  break;
-	    case CMI_OBJ_HIDE:  break;
+	    case CMI_OBJ_SHOW: omShowObj(cp[0],cp[1]); break;
+	    case CMI_OBJ_HIDE: omHideObj(cp[0],cp[1]); break;
 	}
     }
 }
@@ -160,7 +160,7 @@ int guiMessage(char *m)
 
 void guitWrite(const char *s)
 {
-    [[Controller dinoController] showCommandResult:s];
+    [[Controller dinoController] showCommandResult:[NSString stringWithCString:s]];
 }
 
 
@@ -169,7 +169,6 @@ void guitWrite(const char *s)
   Input Events
 
 ****************************************/
-
 
 void gui_mouse_input(int eventType, int mask, int x, int y)
 {
@@ -190,262 +189,45 @@ void gui_mouse_input(int eventType, int mask, int x, int y)
     cmiSubmit(&t);
 }
 
+/***************************************
 
+Object Menu
 
+****************************************/
 
-
-
-
-
-
-
-
-
-
-
-/*****************************
-
-  glx_input
-  -----------
-
-  called after the GLX window
-  has received an input
-  event, like  mouse or keyb
-  event.
-
-*****************************/
-/*
-static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
+int omAddDB(const char *name)
 {
-  cmiToken t;
-  int val[5];
-  int i;
-  int dx,dy;
-  //  double val;
-  //struct timeval tp;
-  //struct timezone tzp;
-  //long dt;
-  char kbuf[32];
-  int kcount;
-  KeySym key;
-
-
-//    reading pointer
-
-     XmDrawingAreaCallbackStruct *cd =
-    (XmDrawingAreaCallbackStruct *) call;
-
-  //gettimeofday(&tp,&tzp);
-
-//     switch depending on event type
-
-  switch(cd->event->type){
-
-  case KeyPress:
-    t.target=CMI_TARGET_COM;
-    t.command=CMI_INPUT;
-    t.value=val;
-    
-    val[0]=CMI_INPUT_KEYBOARD;
-    val[1]=CMI_BUTTON_PRESS;
-
-    kcount=XLookupString(&(cd->event->xkey),kbuf,sizeof(kbuf),&key,NULL);
-    kbuf[kcount]='\0';
-    for(i=0;i<kcount;i++) {
-      val[2]=(int)kbuf[i];
-      cmiSubmit(&t);
-      //comWriteCharBuf(kbuf[i]);
-    }
-    break;
-  case KeyRelease:
-    t.target=CMI_TARGET_COM;
-    t.command=CMI_INPUT;
-    t.value=val;
-    
-    val[0]=CMI_INPUT_KEYBOARD;
-    val[1]=CMI_BUTTON_RELEASE;
-
-    kcount=XLookupString(&(cd->event->xkey),kbuf,sizeof(kbuf),&key,NULL);
-    kbuf[kcount]='\0';
-    switch(key) {
-    case XK_Return:
-    case XK_Linefeed:
-    case XK_KP_Enter:
-      val[2]=CMI_KEY_RETURN;
-      cmiSubmit(&t);
-      //      comWriteCharBuf(13);
-      break;
-    case XK_Delete:
-      val[2]=CMI_KEY_DELETE;
-      cmiSubmit(&t);
-      //comWriteCharBuf(8);
-      break;
-    case XK_Up:
-      val[2]=CMI_KEY_UP;
-      cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('A');
-      break;
-    case XK_Down:
-      val[2]=CMI_KEY_DOWN;
-      cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('B');
-      break;
-    case XK_Left:
-      val[2]=CMI_KEY_LEFT;
-      cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('D');
-      break;
-    case XK_Right:
-      val[2]=CMI_KEY_RIGHT;
-      cmiSubmit(&t);
-      //comWriteCharBuf(27);
-      //comWriteCharBuf('[');
-      //comWriteCharBuf('C');
-      break;
-    }
-    break;
-
-  case ButtonPress:
-    t.target=CMI_TARGET_COM;
-    t.command=CMI_INPUT;
-    t.value=val;
-
-    val[0]=CMI_INPUT_MOUSE;
-    val[1]=CMI_BUTTON_PRESS;
-    val[2]=0;
-    if(cd->event->xmotion.state & GUI_BUTTON1_MASK)
-      val[2] += CMI_BUTTON1_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON2_MASK)
-      val[2] += CMI_BUTTON2_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
-      val[2] += CMI_BUTTON3_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON4_MASK)
-      val[2] += CMI_BUTTON4_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON5_MASK)
-      val[2] += CMI_BUTTON5_MASK;
-    if(cd->event->xmotion.state & GUI_SHIFT_MASK)
-      val[2] += CMI_SHIFT_MASK;
-    if(cd->event->xmotion.state & GUI_CNTRL_MASK)
-      val[2] += CMI_CNTRL_MASK;
-    val[3]=cd->event->xbutton.x;
-    val[4]=cd->event->xbutton.y;
-
-    cmiSubmit(&t);
-
-    gui.last_x=cd->event->xbutton.x;
-    gui.last_y=cd->event->xbutton.y;
-    //    memcpy(&gui.tp_button,&tp,sizeof(struct timezone));
-    if(cd->event->xbutton.button==3) {
-
-      om.pwin=gui.user_menu;
-      om.pflag=1;
-      XMoveWindow(gui.dpy,gui.user_menu,
-		  cd->event->xbutton.x_root,cd->event->xbutton.y_root);
-      XMapRaised(gui.dpy,gui.user_menu);
-
-    }
-    break;
-  case ButtonRelease:
-    t.target=CMI_TARGET_COM;
-    t.command=CMI_INPUT;
-    t.value=val;
-
-    val[0]=CMI_INPUT_MOUSE;
-    val[1]=CMI_BUTTON_RELEASE;
-    val[2]=0;
-    if(cd->event->xmotion.state & GUI_BUTTON1_MASK)
-      val[2] += CMI_BUTTON1_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON2_MASK)
-      val[2] += CMI_BUTTON2_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
-      val[2] += CMI_BUTTON3_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON4_MASK)
-      val[2] += CMI_BUTTON4_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON5_MASK)
-      val[2] += CMI_BUTTON5_MASK;
-    if(cd->event->xmotion.state & GUI_SHIFT_MASK)
-      val[2] += CMI_SHIFT_MASK;
-    if(cd->event->xmotion.state & GUI_CNTRL_MASK)
-      val[2] += CMI_CNTRL_MASK;
-    val[3]=cd->event->xbutton.x;
-    val[4]=cd->event->xbutton.y;
-
-    cmiSubmit(&t);
-
-    dx=gui.last_x-cd->event->xbutton.x;
-    dy=gui.last_y-cd->event->xbutton.y;
-
-//	      dt=(long)(tp.tv_sec-gui.tp_button.tv_sec)*1000000+(tp.tv_usec-gui.tp_button.tv_usec);
-//	      if(dt<200000 ||
-//	      (dx==0 && dy==0 && dt<300000)) {
-//	      if(cd->event->xbutton.state & Button1Mask) {
-//	      if(cd->event->xbutton.state & ShiftMask)
-//	      comPick(cd->event->xmotion.x,cd->event->xmotion.y,1);
-//	      else
-//	      comPick(cd->event->xmotion.x,cd->event->xmotion.y,0);
-//	      }
-//	      }
-
-    if(cd->event->xbutton.button==3) {
-      om.pflag=0;
-      XUnmapWindow(gui.dpy,gui.user_menu);
-    }
-
-    break;
-  case MotionNotify:
-    t.target=CMI_TARGET_COM;
-    t.command=CMI_INPUT;
-    t.value=val;
-    
-    val[0]=CMI_INPUT_MOUSE;
-    val[1]=CMI_MOTION;
-    val[2]=0;
-
-    if(cd->event->xmotion.state & GUI_BUTTON1_MASK)
-      val[2] += CMI_BUTTON1_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON2_MASK)
-      val[2] += CMI_BUTTON2_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
-      val[2] += CMI_BUTTON3_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON4_MASK)
-      val[2] += CMI_BUTTON4_MASK;
-    if(cd->event->xmotion.state & GUI_BUTTON5_MASK)
-      val[2] += CMI_BUTTON5_MASK;
-    if(cd->event->xmotion.state & GUI_SHIFT_MASK)
-      val[2] += CMI_SHIFT_MASK;
-    if(cd->event->xmotion.state & GUI_CNTRL_MASK)
-      val[2] += CMI_CNTRL_MASK;
-
-    val[3]=cd->event->xbutton.x;
-    val[4]=cd->event->xbutton.y;
-
-    cmiSubmit(&t);
-
-    dx=gui.last_x-cd->event->xmotion.x;
-    dy=gui.last_y-cd->event->xmotion.y;
-    gui.last_x=cd->event->xmotion.x;
-    gui.last_y=cd->event->xmotion.y;
-
-    //comTransform(TRANS_MOUSE,cd->event->xmotion.state,0,dx);
-    //comTransform(TRANS_MOUSE,cd->event->xmotion.state,1,dy);
-    
-    break;
-  case EnterNotify:
-    gui.inside=1;
-    break;
-  case LeaveNotify: 
-    gui.inside=0;
-    break;
-  }
+    [[Controller dinoController]  omAddDB:[NSString stringWithCString:name]];
+    return 0;
 }
 
-*/
+int omDelDB(const char *name)
+{
+    [[Controller dinoController]  omDelDB:[NSString stringWithCString:name]];
+    return 0;
+}
 
+int omAddObj(const char *db, const char *name)
+{
+    [[Controller dinoController]  omAddObj:[NSString stringWithCString:name] inDB:[NSString stringWithCString:db]];
+    return 0;
+}
 
+int omDelObj(const char *db, const char *name)
+{
+    [[Controller dinoController]  omDelObj:[NSString stringWithCString:name] inDB:[NSString stringWithCString:db]];
+    return 0;
+}
+
+int omHideObj(const char *db, const char *name)
+{
+    [[Controller dinoController]  omHideObj:[NSString stringWithCString:name] ofDB:[NSString stringWithCString:db]];
+    return 0;
+}
+
+int omShowObj(const char *db, const char *name)
+{
+    [[Controller dinoController]  omShowObj:[NSString stringWithCString:name] ofDB:[NSString stringWithCString:db]];
+    return 0;
+}
 

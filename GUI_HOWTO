@@ -170,7 +170,7 @@ v[2]=value that has bit set for each mouse button and modifier key set, can
 be assembled from the mask values CMI_BUTTON1_MASK ... CMI_BUTTON5_MASK as
 well ass CMI_SHIFT_MASK and CMI_CNTRL_MASK
 v[3]=value of mouse x coordinate (gfx window relativ, not absolute)
-v[4]=value of mouse y coordinate (             "                  )
+v[4]=value of mouse y coordinate (gfx window relativ, not absolute)
 
 c) Mouse Button Release
 same as b), with
@@ -182,7 +182,7 @@ v[0]=CMI_INPUT_MOUSE
 v[1]=CMI_MOTION
 v[2]=mask as for b) or c)
 v[3]=x-value of movement event (not change relativ to last event!)
-v[4]=y-value    "
+v[4]=y-value of movement event (not change relativ to last event!)   
 
 
 TIMER ROUTINE

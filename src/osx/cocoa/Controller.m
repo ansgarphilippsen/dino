@@ -17,24 +17,35 @@ static id dinoController;
 - (void)awakeFromNib
 {
     dinoController=self;
+    [dinoCLI setCommandHandler:dinoController];
+
+    NSDrawer *CLIDrawer = [[[dinoGL window] drawers] objectAtIndex:0];
+
+    [CLIDrawer setContentSize:NSMakeSize(0,160)];	
+    [CLIDrawer openOnEdge:NSMinYEdge];
+
+    dataSetList = [[NSMutableDictionary alloc] initWithCapacity:2];
+//    [dinoOM setVerticalMotionCanBeginDrag:YES];
+    [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:[toggleButton cell]];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
-{    
-    [dinoCLI setCommandHandler:dinoController];
-    
+{
     [self notifyUser:[NSString stringWithFormat:@"Welcome to dino v%s (http://www.dino3d.org)\n",VERSION]];
     [self updateVersionBox:[NSString stringWithFormat:@"dino v%s",VERSION]];
-    
+
+    [self notifyUser:[@"Current directory: " stringByAppendingString:[[NSFileManager defaultManager] currentDirectoryPath]]];
+	
     guiInit(0,0);
     cmiInitGL();
     cmiResize([dinoGL frame].size.width,[dinoGL frame].size.height);
-    
+     
     controlTimer=[[NSTimer timerWithTimeInterval: 0.01 target: self selector: @selector(timerControl) userInfo: nil repeats: YES ] retain];
 
     [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
     
     [self updateStatusBox:@"Ready"];
+
 }
 
 - (void)timerControl
@@ -50,9 +61,9 @@ static id dinoController;
     shellParseRaw([theCommand cString],0);
 }
 
-- (void)showCommandResult:(const char *)tmp
+- (void)showCommandResult:(NSString *)tmp
 {
-    [dinoCLI putText:[NSString stringWithCString:tmp]];
+    [dinoCLI putText:tmp];
 }
 
 - (void)notifyUser:(NSString *)message
@@ -61,7 +72,7 @@ static id dinoController;
 }
 
 //------------------------------------------------------
-// Update Display
+// Update GFX window
 
 - (void)swapBuffers
 {
@@ -84,9 +95,9 @@ static id dinoController;
 }
 
 //------------------------------------------------------
-// Main Menu Item
+// Main menu: File items
 
-- (IBAction)setWorkingDirectory:(id)sender
+- (IBAction)setCurrentDirectory:(id)sender
 {
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
     [oPanel setAllowsMultipleSelection:NO];
@@ -117,38 +128,228 @@ static id dinoController;
 }
 
 //------------------------------------------------------
-// Custom Menu Item
+// Main menu: Scene items (And GFX popup menu items)
 
-- (IBAction)autoslab:(id)sender
-{
+- (IBAction)autoslab:(id)sender{
    [self command:@"scene autoslab" from:(id)sender]; 
 }
 
-- (IBAction)centerCP:(id)sender
-{
+- (IBAction)centerCP:(id)sender{
    [self command:@"scene center [$CP]" from:(id)sender]; 
 }
 
-- (IBAction)centerCS:(id)sender
-{
+- (IBAction)centerCS:(id)sender{
     [self command:@"scene center [$CS]" from:(id)sender]; 
 }
 
-- (IBAction)calcDist:(id)sender
-{
+- (IBAction)calcDist:(id)sender{
     [self command:@"push [[scene pop]] [[scene pop]]; opr dist; scene message Distance: [pop]" from:(id)sender]; 
 }
 
-- (IBAction)calcAngle:(id)sender
-{
+- (IBAction)calcAngle:(id)sender{
     [self command:@"push [[scene pop]] [[scene pop]] [[scene pop]]; opr angle; scene message Angle:[pop]" from:(id)sender]; 
 }
 
-- (IBAction)calcTorsion:(id)sender
-{
+- (IBAction)calcTorsion:(id)sender{
     [self command:@"push [[scene pop]] [[scene pop]] [[scene pop]] [[scene pop]]; opr torsion; scene message Torsion: [pop]" from:(id)sender]; 
 }
 
+- (IBAction)showCPMarker:(id)sender{
+    [self command:@"scene showcp" from:(id)sender];
+}
+
+- (IBAction)hideCPMarker:(id)sender{
+    [self command:@"scene hidecp" from:(id)sender];  
+}
+
+- (IBAction)toggleDepthCueing:(id)sender{
+    [self command:@"scene depthc" from:(id)sender];  
+}
+
+- (IBAction)viewLeft:(id)sender{
+    [self command:@"scene set view=left" from:(id)sender];
+}
+
+- (IBAction)viewRight:(id)sender{
+    [self command:@"scene set view=right" from:(id)sender];
+}
+
+- (IBAction)viewCenter:(id)sender{
+    [self command:@"scene set view=center" from:(id)sender];
+}
+
+- (IBAction)showAxis:(id)sender{
+    [self command:@"scene set axis=1" from:(id)sender];
+}
+
+- (IBAction)hideAxis:(id)sender{
+    [self command:@"scene set axis=0" from:(id)sender];
+}
+
+- (IBAction)resetAll:(id)sender{
+    [self command:@"scene reset all" from:(id)sender];
+}
+
+//------------------------------------------------------
+// Object menu
+
+- (void)omAddDB:(NSString *)name
+{
+    DinoDataSet *aDataSet =[[DinoDataSet alloc] initWithName:name];
+    [dataSetList setObject:aDataSet forKey:name];
+    [dinoOM reloadData];
+    [aDataSet autorelease];
+}
+
+- (void)omDelDB:(NSString *)name
+{
+    [dataSetList removeObjectForKey:name];
+    [dinoOM reloadData];
+}
+
+- (void)omAddObj:(NSString *)name inDB:(NSString *)db 
+{
+    DinoObject *anObject = [[DinoObject alloc] initWithName:name inDataSet:db];
+    [[dataSetList objectForKey:db] addChildren:anObject withKey:name];
+    [dinoOM reloadData];
+    [dinoOM expandItem:[dataSetList objectForKey:db]];
+    [anObject autorelease];
+}
+
+- (void)omDelObj:(NSString *)name inDB:(NSString *)db
+{
+    [[dataSetList objectForKey:db] removeChildren:name];
+    [dinoOM reloadData];
+}
+
+- (void)omHideObj:(NSString *)name ofDB:(NSString *)db
+{
+    [[[dataSetList objectForKey:db] childrenForKey:name] setDisplayFlag:NO];
+    [dinoOM reloadData];
+}
+
+- (void)omShowObj:(NSString *)name ofDB:(NSString *)db
+{
+    [[[dataSetList objectForKey:db] childrenForKey:name] setDisplayFlag:YES];
+    [dinoOM reloadData];
+}
+
+- (IBAction)toggleDinoObject:(id)sender
+{
+    NSString *obj,*parent;
+    int row = [sender selectedRow];
+    obj = [[dinoOM itemAtRow:row] name];
+    parent = [[dinoOM itemAtRow:row] parentDataSet];
+
+    if(![parent isEqual:@"None"]){
+	if([[[dataSetList objectForKey:parent] childrenForKey:obj] displayFlag]){
+	    NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ hide",parent,obj];
+	    [self command:theCommand from:(id)sender];
+	}else if(![[[dataSetList objectForKey:parent] childrenForKey:obj] displayFlag]){
+	    NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ show",parent,obj];
+	    [self command:theCommand from:(id)sender];
+	}
+    }else if([parent isEqual:@"None"]){
+	NSString *dataSet = obj;
+	NSEnumerator *enumerator = [[[dataSetList objectForKey:dataSet] childrenList] keyEnumerator];
+	id key;
+	if([[dataSetList objectForKey:dataSet] displayFlag]){
+	    [[dataSetList objectForKey:dataSet] setDisplayFlag:NO];
+	    while ((key = [enumerator nextObject])) {
+		NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ hide",dataSet,key];
+		[self command:theCommand from:(id)sender];
+	    }
+	}else if(![[dataSetList objectForKey:dataSet] displayFlag]){
+	    [[dataSetList objectForKey:dataSet] setDisplayFlag:YES];
+	    while ((key = [enumerator nextObject])) {
+		NSString *theCommand = [NSString localizedStringWithFormat:@".%@.%@ show",dataSet,key];
+		[self command:theCommand from:(id)sender];
+	    }
+	}
+    }
+}
+
+//------------------------------------------------------
+// OutlineView data source (for Object menu)
+
+- (int)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item{
+    if(item == nil){
+	return [dataSetList count];
+    }else{
+	return [[item childrenList] count];
+    }
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item{
+    if(item == nil){
+	return YES;
+    }else{
+	return ([[item childrenList] count] >= 1) ? YES : NO;
+    }
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(int)index ofItem:(id)item{
+    if(item == nil){
+	return [[dataSetList allValues] objectAtIndex:index];
+    }else{
+	if ([item childrenList] != nil) return [[[item childrenList] allValues] objectAtIndex:index];
+    }
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item{
+    if ([[tableColumn identifier] isEqual:@"dataSetColumn"]){
+	return [item name];
+    }else if ([[tableColumn identifier] isEqual:@"displayFlagColumn"]) {
+	return [NSNumber numberWithBool:[item displayFlag]];
+    } 	
+}
+
+- (BOOL)tableView:(NSTableView *)tableView writeRows:(NSArray*)rows toPasteboard:(NSPasteboard*)pboard{
+    
+}
+
+- (NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation{
+    
+}
+
+- (BOOL)tableView:(NSTableView*)tableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation{
+    
+}
+
+// Delegate methods
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldEditTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+    if ([[tableColumn identifier] isEqual:@"dataSetColumn"]){
+	return NO;
+    }else if ([[tableColumn identifier] isEqual:@"displayFlagColumn"]) {
+	return YES;
+    } 	
+}
+
+//------------------------------------------------------
+// Graphical Control
+
+- (IBAction)rotFromSliderX:(id)sender
+{
+/*
+    int eventType, mask;
+    float px, py;
+
+    px = [sender intValue];
+    py = 1;
+
+    eventType = CMI_BUTTON_PRESS;
+    mask = CMI_BUTTON1_MASK;
+    
+    eventType = CMI_MOTION;
+    mask = CMI_BUTTON1_MASK;
+
+    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+*/
+}
+
+- (IBAction)rotFromSliderY:(id)sender
+{
+}
 
 //------------------------------------------------------
 // OffScreen OpenGL Context
@@ -160,8 +361,6 @@ static id dinoController;
     NSOpenGLPixelFormat *pixFmt;
     NSOpenGLPixelFormatAttribute attrs[] = {
 	NSOpenGLPFAOffScreen,
-//	NSOpenGLPFAStencilSize, 8,
-//	NSOpenGLPFAAccumSize, pixDepth,
 	nil };
 
     pixFmt = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];

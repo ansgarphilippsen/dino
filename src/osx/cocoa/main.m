@@ -23,7 +23,7 @@ int main(int argc, const char *argv[])
     if([[[NSFileManager defaultManager] currentDirectoryPath] isEqual:@"/"]){
 	[[NSFileManager defaultManager] changeCurrentDirectoryPath: NSHomeDirectory()];
     }
-       
+
     dinoParseArgs(argc,argv);
     cmiInit();
     gfxInit();

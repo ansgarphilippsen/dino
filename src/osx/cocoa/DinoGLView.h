@@ -7,12 +7,10 @@
 #include <OpenGL/glext.h>
 #include <OpenGL/CGLRenderers.h>
 
-#include "cmi.h"
-#include "gui_osx.h"
-
 @interface DinoGLView : NSOpenGLView
 {
-
+    IBOutlet NSSlider *sliderX;
+    IBOutlet NSSlider *sliderY;
 }
 
 // Overrides

@@ -2,15 +2,12 @@
 TODO list specific to the Cocoa distribution:
 _____________________________________________
 
--Object menu.
 
--Keyboard input in Dino's OpenGL windows should be sent to the CLI.
+- X,Y rotation slider
 
--X,Y rotation slider
+- Implement the "Copy" function in the menu to directly copy/paste the gfx into photoshop or the like
+
+- Improve write function.
 
 
--Implement the "Copy" function in the menu to directly copy/paste the gfx into photoshop or the like
 
--Improve write function.
-
--Show output of system command in the CLI
