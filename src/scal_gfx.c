@@ -62,6 +62,15 @@ int scalDraw(dbmScalNode *node, int f)
 int scalDrawObj(scalObj *obj)
 {
   int i,detail;
+  int corner[][3]={
+    {0,0,0},{1,0,0},{0,1,0},{1,1,0},
+    {0,0,1},{1,0,1},{0,1,1},{1,1,1}
+  };
+  int edge[][2]={
+    {0,1},{0,2},{2,3},{1,3},
+    {0,4},{2,6},{3,7},{1,5},
+    {4,5},{4,6},{6,7},{5,7}
+  };
 
   detail=obj->render.detail;
 
@@ -265,6 +274,53 @@ int scalDrawObj(scalObj *obj)
       glVertex3fv(obj->vect[i].v2);
     }
     glEnd();
+    break;
+  case SCAL_SLAB:
+    glDisable(GL_LIGHTING);
+    glDisable(GL_COLOR_MATERIAL);
+
+    glBegin(GL_LINES);
+
+    glColor3f(0.0,1.0,1.0);
+    glVertex3dv(obj->slab.bound[0]);
+    glVertex3dv(obj->slab.bound[1]);
+    glVertex3dv(obj->slab.bound[1]);
+    glVertex3dv(obj->slab.bound[2]);
+    glVertex3dv(obj->slab.bound[2]);
+    glVertex3dv(obj->slab.bound[3]);
+    glVertex3dv(obj->slab.bound[3]);
+    glVertex3dv(obj->slab.bound[0]);
+
+    glColor3f(1.0,0.0,1.0);
+    glVertex3d(obj->slab.center[0],
+	       obj->slab.center[1],
+	       obj->slab.center[2]);
+    glVertex3d(obj->slab.center[0]+obj->slab.dir[0]*10.0,
+	       obj->slab.center[1]+obj->slab.dir[1]*10.0,
+	       obj->slab.center[2]+obj->slab.dir[2]*10.0);
+
+    glColor3f(1.0,1.0,1.0);
+    for(i=0;i<12;i++) {
+      glVertex3d(obj->slab.corner[corner[edge[i][0]][0]][0],
+		 obj->slab.corner[corner[edge[i][0]][1]][1],
+		 obj->slab.corner[corner[edge[i][0]][2]][2]);
+      glVertex3d(obj->slab.corner[corner[edge[i][1]][0]][0],
+		 obj->slab.corner[corner[edge[i][1]][1]][1],
+		 obj->slab.corner[corner[edge[i][1]][2]][2]);
+    }
+    glEnd();
+
+    glBegin(GL_LINES);
+    for(i=0;i<obj->slab.linec;i++) {
+      glColor3f(1.0,1.0,0.0);
+      glVertex3fv(obj->slab.point[obj->slab.line[i][0]]);
+      glVertex3fv(obj->slab.point[obj->slab.line[i][1]]);
+    }
+
+    glEnd();
+
+
+
     break;
 #ifdef VR
   case SCAL_VR:

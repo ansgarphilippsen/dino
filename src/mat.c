@@ -1458,3 +1458,18 @@ double matCalcTorsion(double *v1, double *v2,double *v3, double *v4)
 
   return r*180.0/M_PI;
 }
+
+double matCalcDistancePointToLine(double *l0, double *l1, double *p)
+{
+  int i;
+  double diff1[3],diff2[3],cross[3];
+
+  for(i=0;i<3;i++) {
+    diff1[i]=l1[i]-l0[i];
+    diff2[i]=p[i]-l0[i];
+  }
+
+  matCalcCross(diff1,diff2,cross);
+
+  return matCalcLen(cross)/matCalcLen(diff1);
+}

@@ -216,6 +216,8 @@ int comInit()
   com.joyflag=0;     
 #endif  
 
+  comGenCubeLookup();
+
   return 0;
 }
 
@@ -1734,4 +1736,34 @@ int comWriteModelview(FILE *f)
 	  transGetAll(&gfx.transform));
 
   return 0;
+}
+
+/*
+  generate lookup table for
+  intersection of a plane with
+  a cube
+*/
+
+int comGenCubeLookup()
+{
+  int list[][2]={
+    {1,5},{1,2},{1,3},{1,4},
+    {2,5},{2,3},{3,4},{4,5},
+    {5,6},{2,6},{3,6},{4,6}
+  };
+  int i,j;
+
+  for(i=0;i<12;i++) {
+    for(j=0;j<12;j++) {
+      if(list[i][0]==list[j][0] ||
+	 list[i][0]==list[j][1] ||
+	 list[i][1]==list[j][0] ||
+	 list[i][1]==list[j][1]) {
+	com.cube_lookup[i*12+j]=1;
+      } else {
+	com.cube_lookup[i*12+j]=0;
+      }
+    }
+
+  }
 }

@@ -67,6 +67,7 @@ double matCalcDistance(double *,double *);
 double matCalcAngle(double *, double *,double *, double *);
 double matCalcTorsion(double *, double *,double *, double *);
 
+double matCalcDistancePointToLine(double *l0, double *l1, double *p);
 #endif
 
 

@@ -43,6 +43,7 @@ struct GLOBAL_COM {
   int benchmark;
   long t,t2;
 
+  unsigned char cube_lookup[144];
 };
 
 enum  {COM_PLAY_ON,
@@ -92,6 +93,8 @@ int comWriteModelview(FILE *f);
 int comSetDefMat(struct RENDER_MATERIAL *mat);
 
 int comTestTex3D(int, int, int);
+
+int comGenCubeLookup();
 
 #endif
 

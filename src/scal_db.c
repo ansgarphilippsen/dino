@@ -1362,11 +1362,6 @@ int scalSetDefault(scalObj *obj)
   obj->vr.end=1.0;
 #endif
 
-  obj->slab.a=0.0;
-  obj->slab.b=0.0;
-  obj->slab.c=1.0;
-  obj->slab.d=0.0;
-
   obj->slab.usize=32;
   obj->slab.vsize=32;
   obj->slab.size=obj->slab.usize*obj->slab.vsize;

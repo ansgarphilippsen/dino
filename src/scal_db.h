@@ -96,10 +96,7 @@ typedef struct DBM_SCAL_NODE {
   float def_level;
 
   double center[3];
-  /*
-  double rmat[16];
-  double trans[3];
-  */
+
   int swap_flag;
   transMat transform,transform_save;
 }dbmScalNode;

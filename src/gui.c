@@ -8,7 +8,7 @@ user menu
 
 *************************************************/
 
-const char version_string[]="0.8.3b";
+const char version_string[]="0.8.3d";
 
 #include <stdio.h>
 #include <stdlib.h>

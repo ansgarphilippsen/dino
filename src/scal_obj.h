@@ -71,11 +71,16 @@ struct SCAL_VR {
 #endif
 
 struct SCAL_SLAB {
-  double a,b,c,d;
   int usize,vsize,size;
   float *data;
   unsigned char *tex;
   double dir[3],center[3];
+  double corner[2][3];
+  float point[13][3];
+  int pointc;
+  int line[144][2];
+  int linec;
+  double bound[4][3];
 };
 
 typedef struct SCAL_OBJ {
@@ -133,6 +138,7 @@ int scalAddVect(struct SCAL_VECT **f, int *c, int *m, double *v, double *n);
 int scalGrid(scalObj *obj, Select *sel);
 
 int scalSlab(scalObj *obj, Select *sel);
+int scalSlabIntersect(scalObj *obj);
 
 #ifdef VR
 int scalVR(scalObj *obj, Select *sel);

@@ -20,6 +20,8 @@
 
 //static char scal_obj_return[256];
 
+extern struct GLOBAL_COM com;
+
 int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
 {
   char message[256];
@@ -562,6 +564,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  comMessage("\nerror: set: expected operator = for property center");
 	  return -1;
 	}
+	scalSlabIntersect(obj);
       } else {
 	scalXYZtoUVW(obj->field,vd1,vd2);
 	if(op==POV_OP_EQ) {
@@ -657,6 +660,7 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	comMessage("\nerror: expected operator '='");
 	return -1;
       }
+      scalSlabIntersect(obj);
       break;
     case SCAL_PROP_LEVEL:
       strncpy(nv,val->val1,15);
@@ -956,5 +960,176 @@ int scalVR(scalObj *obj, Select *sel)
 
 int scalSlab(scalObj *obj, Select *sel)
 {
+  int u,v;
+  int p,q,r;
+  double uvw[3];
+
+  /*
+    create space for the data and texture
+  */
+  /*
+    obj->slab.size=obj->slab.usize*obj->slab.vsize;
+
+    obj->slab.data=Ccalloc(obj->slab.size,sizeof(float));
+    obj->slab.tex=Ccalloc(obj->slab.size,3*sizeof(unsigned char));
+  */
+  /*
+    fill data with values from the scalar dataset
+  */
+
+  uvw[0]=(float)obj->field->u1;
+  uvw[1]=(float)obj->field->v1;
+  uvw[2]=(float)obj->field->w1;
+  scalUVWtoXYZ(obj->field,uvw,obj->slab.corner[0]);
+  uvw[0]=(float)obj->field->u2;
+  uvw[1]=(float)obj->field->v2;
+  uvw[2]=(float)obj->field->w2;
+  scalUVWtoXYZ(obj->field,uvw,obj->slab.corner[1]);
+
+  scalSlabIntersect(obj);
+
   return 0;
 }
+
+int scalSlabIntersect(scalObj *obj)
+{
+  int corner[][3]={
+    {0,0,0},{1,0,0},{0,1,0},{1,1,0},
+    {0,0,1},{1,0,1},{0,1,1},{1,1,1}
+  };
+  int edge[][2]={
+    {0,1},{0,2},{2,3},{1,3},
+    {0,4},{2,6},{3,7},{1,5},
+    {4,5},{4,6},{6,7},{5,7}
+  };
+  int i,j,pc,flag[12],indx[2];
+  double r[12],point[12][3];
+  double a,b,c,d,x0,y0,z0,x1,y1,z1,x2,y2,z2,q1,q2;
+  double dir[3],dist,axis1[3],axis2[3],mindist[2],maxdist[2],diff[3];
+
+  matNormalize(obj->slab.dir,dir);
+
+  a=obj->slab.dir[0];
+  b=obj->slab.dir[1];
+  c=obj->slab.dir[2];
+  
+  if(a==0.0 && b==0.0 && c==0.0) {
+    obj->slab.linec=0;
+    return -1;
+  }
+
+  d=-(a*obj->slab.center[0]+
+      b*obj->slab.center[1]+
+      c*obj->slab.center[2]);
+
+  pc=0;
+
+  for(i=0;i<12;i++) {
+    x0=obj->slab.corner[corner[edge[i][0]][0]][0];
+    y0=obj->slab.corner[corner[edge[i][0]][1]][1];
+    z0=obj->slab.corner[corner[edge[i][0]][2]][2];
+    x1=obj->slab.corner[corner[edge[i][1]][0]][0];
+    y1=obj->slab.corner[corner[edge[i][1]][1]][1];
+    z1=obj->slab.corner[corner[edge[i][1]][2]][2];
+    x2=x1-x0;
+    y2=y1-y0;
+    z2=z1-z0;
+
+    q2=a*x2+b*y2+c*z2;
+    if(q2==0.0) {
+      r[i]=-1.0;
+      point[i][0]=0.0;
+      point[i][1]=0.0;
+      point[i][2]=0.0;
+      flag[i]=0;
+    } else {
+      q1=-(d+a*x0+b*y0+c*z0);
+      r[i]=q1/q2;
+      if(r[i]>=0.0 && r[i]<1.0) {
+	flag[i]=1;
+	point[i][0]=x0+r[i]*x2;
+	point[i][1]=y0+r[i]*y2;
+	point[i][2]=z0+r[i]*z2;
+      } else {
+	flag[i]=0;
+      }
+    }
+  }
+
+  obj->slab.linec=0;
+  for(i=0;i<12;i++) {
+    obj->slab.point[i][0]=point[i][0];
+    obj->slab.point[i][1]=point[i][1];
+    obj->slab.point[i][2]=point[i][2];
+    for(j=i+1;j<12;j++) {
+      if(flag[i] && flag[j]) {
+	if(com.cube_lookup[i*12+j]) {
+	  obj->slab.line[obj->slab.linec][0]=i;
+	  obj->slab.line[obj->slab.linec][1]=j;
+	  obj->slab.linec++;
+	}	
+      }
+    }
+  }
+
+  /*
+    algorithm for minimal square including all points
+    a) find axis1 (longest line from above)
+    b) find axis2 (crossproduct of axis1 with plane normal)
+    c) find minimal and maximal extend of both axis from center
+   */
+
+  maxdist[0]=0.0;
+  for(i=0;i<obj->slab.linec;i++) {
+    diff[0]=point[obj->slab.line[i][0]][0]-point[obj->slab.line[i][1]][0];
+    diff[1]=point[obj->slab.line[i][0]][1]-point[obj->slab.line[i][1]][1];
+    diff[2]=point[obj->slab.line[i][0]][2]-point[obj->slab.line[i][1]][2];
+    dist=diff[0]*diff[0]+diff[1]*diff[1]+diff[2]*diff[2];
+    if(dist>maxdist[0]) {
+      maxdist[0]=dist;
+      indx[0]=obj->slab.line[i][0];
+      indx[1]=obj->slab.line[i][1];
+    }
+  }
+
+
+  axis1[0]=point[indx[0]][0]-point[indx[1]][0];
+  axis1[1]=point[indx[0]][1]-point[indx[1]][1];
+  axis1[2]=point[indx[0]][2]-point[indx[1]][2];
+
+  matCalcCross(axis1,dir,axis2);
+
+  maxdist[0]=maxdist[1]=0.0;
+  mindist[0]=mindist[1]=0.0;
+
+  for(i=0;i<12;i++)
+    if(flag[i]) {
+      dist=matCalcDistancePointToLine(obj->slab.center,axis1,point[i]);
+      if(dist<mindist[0])
+	mindist[0]=dist;
+      if(dist>maxdist[0])
+	maxdist[0]=dist;
+      dist=matCalcDistancePointToLine(obj->slab.center,axis2,point[i]);
+      if(dist<mindist[1])
+	mindist[1]=dist;
+      if(dist>maxdist[1])
+	maxdist[1]=dist;
+    }
+
+  fprintf(stderr,"\n%f %f   %f %f",
+	  mindist[0],maxdist[0],mindist[1],maxdist[1]);
+  
+  matNormalize(axis1,axis1);
+  matNormalize(axis2,axis2);
+
+
+  for(i=0;i<3;i++) {
+    obj->slab.bound[0][i]=obj->slab.center[i]-maxdist[0]*axis2[i]-maxdist[1]*axis1[i];
+    obj->slab.bound[1][i]=obj->slab.center[i]-maxdist[0]*axis2[i]+maxdist[1]*axis1[i];
+    obj->slab.bound[2][i]=obj->slab.center[i]+maxdist[0]*axis2[i]+maxdist[1]*axis1[i];
+    obj->slab.bound[3][i]=obj->slab.center[i]+maxdist[0]*axis2[i]-maxdist[1]*axis1[i];
+  }
+
+  return 0;
+}
+
