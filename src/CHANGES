@@ -1,3 +1,11 @@
+rtc added to struct ds
+
+rot trans center rtc added to surf ds
+
+.geom.geom set color=x  sets default obj color
+
+render tube tube for geom points
+
 rewrote POVray section, improved output, renamed '-new' to '-patch', added
 '-nocolor', better megapov support
 

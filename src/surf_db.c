@@ -389,9 +389,101 @@ int surfNew(dbmSurfNode *node, char *name, int type, Set *set, Select *sel,int v
   return surfObjRenew(obj, set, sel,vflag);
 }
 
-int surfSet(dbmSurfNode *node, Set *set)
+int surfSet(dbmSurfNode *node, Set *s)
 {
-  // smode
+  int pc;
+  struct POV_VALUE *val;
+  int i,rt,op;
+  Select *sel;
+  float r,g,b,v1[6];
+
+  if(s->pov_count==0) {
+    return 0;
+  }
+
+  if(s->range_flag) {
+    comMessage("error: set: range not expected for struct dataset");
+    return -1;
+  }
+
+  if(s->select_flag)
+    sel=&s->select;
+  else
+    sel=NULL;
+
+  for(pc=0;pc<s->pov_count;pc++) {
+    if (clStrcmp(s->pov[pc].prop,"rot")) {
+      s->pov[pc].id=SURF_PROP_ROT;
+    } else if (clStrcmp(s->pov[pc].prop,"trans")) {
+      s->pov[pc].id=SURF_PROP_TRANS;
+    } else if (clStrcmp(s->pov[pc].prop,"rtc")) {
+      s->pov[pc].id=SURF_PROP_RTC;
+    } else if (clStrcmp(s->pov[pc].prop,"center")) {
+      s->pov[pc].id=SURF_PROP_RCEN;
+    } else {
+      comMessage("\nerror: set: unknown property ");
+      comMessage(s->pov[pc].prop);
+      return -1;
+    }
+    if(s->pov[pc].op!=POV_OP_EQ) {
+      comMessage("\nerror: set: expected operator = for property ");
+      comMessage(s->pov[pc].prop);
+      return -1;
+    }
+    op=s->pov[pc].op;
+    if(s->pov[pc].val_count>1) {
+      comMessage("\nerror: set: expected only one value for property ");
+      comMessage(s->pov[pc].prop);
+      return -1;
+    }
+  }
+
+  for(pc=0;pc<s->pov_count;pc++) {
+    val=povGetVal(&s->pov[pc],0);
+    switch(s->pov[pc].id) {
+    case SURF_PROP_ROT:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property rot");
+	return -1;
+      }
+      if(transSetRot(&node->transform,val->val1)<0)
+	return -1;
+      break;
+    case SURF_PROP_TRANS:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property trans");
+	return -1;
+      }
+      if(transSetTra(&node->transform,val->val1)<0)
+	return -1;
+      break;
+    case SURF_PROP_RTC:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property trans");
+	return -1;
+      }
+      if(transSetAll(&node->transform,val->val1)<0)
+	return -1;
+
+      break;
+    case SURF_PROP_RCEN:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property trans");
+	return -1;
+      }
+      if(matExtract1Df(val->val1,3,v1)!=0) {
+	comMessage("\nerror in vector: ");
+	comMessage(val->val1);
+	return -1;
+      }   
+      transApplyIf(&node->transform, v1);
+      node->transform.cen[0]=v1[0];
+      node->transform.cen[1]=v1[1];
+      node->transform.cen[2]=v1[2];
+      node->transform.cen[3]=1.0;
+      break;
+    }
+  }
   return 0;
 }
 
@@ -426,6 +518,8 @@ int surfGet(dbmSurfNode *node, char *prop)
     comReturn(transGetRot(&node->transform));
   } else if(!strcmp(prop,"trans")) {
     comReturn(transGetTra(&node->transform));
+  } else if(!strcmp(prop,"rtc")) {
+    comReturn(transGetAll(&node->transform));
   } else {
     sprintf(message,"\n%s: unknown property %s",node->name, prop);
     comMessage(message);

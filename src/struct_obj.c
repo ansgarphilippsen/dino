@@ -593,7 +593,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
   obj->va.count=0;
 
   // go through each segment
-       bc=0;
+  bc=0;
 
   while(bc<obj->bond_count) {
     

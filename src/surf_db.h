@@ -39,7 +39,11 @@ enum {SURF_SEL_ANUM,
       SURF_SEL_Y,
       SURF_SEL_Z};
 
-enum {SURF_PROP_COLOR};
+enum {SURF_PROP_COLOR,
+      SURF_PROP_ROT,
+      SURF_PROP_TRANS,
+      SURF_PROP_RTC,
+      SURF_PROP_RCEN};
 
 typedef struct DBM_SURF_NODE {
   int type;

@@ -587,6 +587,8 @@ int structSet(dbmStructNode *node, Set *s)
       s->pov[pc].id=STRUCT_PROP_ROT;
     } else if (clStrcmp(s->pov[pc].prop,"trans")) {
       s->pov[pc].id=STRUCT_PROP_TRANS;
+    } else if (clStrcmp(s->pov[pc].prop,"rtc")) {
+      s->pov[pc].id=STRUCT_PROP_RTC;
     } else if (clStrcmp(s->pov[pc].prop,"center")) {
       s->pov[pc].id=STRUCT_PROP_RCEN;
     } else if(clStrcmp(s->pov[pc].prop,"tfast")) {
@@ -645,6 +647,15 @@ int structSet(dbmStructNode *node, Set *s)
       }
       if(transSetTra(&node->transform,val->val1)<0)
 	return -1;
+      break;
+    case STRUCT_PROP_RTC:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property trans");
+	return -1;
+      }
+      if(transSetAll(&node->transform,val->val1)<0)
+	return -1;
+
       break;
     case STRUCT_PROP_RCEN:
       if(val->range_flag) {
@@ -890,6 +901,8 @@ int structGet(dbmStructNode *node, char *prop)
 	    node->transform.cen[1],
 	    node->transform.cen[2]);
     comReturn(message);
+  } else if(!strcmp(prop,"rtc")) {
+    comReturn(transGetAll(&node->transform));
   } else if(!strcmp(prop,"cell")){
     if(node->xtal==NULL) {
       sprintf(message,"\n%s: no cell defined",node->name);

@@ -48,6 +48,7 @@ enum {STRUCT_PROP_COLOR,
       STRUCT_PROP_COLOR3,
       STRUCT_PROP_ROT,
       STRUCT_PROP_TRANS,
+      STRUCT_PROP_RTC,    // rot trans cen all in one
       STRUCT_PROP_RCEN,   // center of rotation
       STRUCT_PROP_RTYPE,  // residue type
       STRUCT_PROP_NCI,    // non-covalent-interaction
