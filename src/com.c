@@ -1290,7 +1290,7 @@ int comWrite(int wc,char **wl)
   }
 
   if(!strcmp(type,"raster")) {
-    comMessage("\nWARNING: deprecated format! Use POVray instead");
+    comMessage("\nWARNING: deprecated format! Please use POVray instead");
     comMessage("\nWriting Raster3D (version 2.4 or above) file...");
     writeRaster(f);
     fclose(f);
@@ -1314,18 +1314,20 @@ int comWrite(int wc,char **wl)
     writePS(f);
     fclose(f);
   } else if(!strcmp(type,"rgb")) {
-    comMessage("\nRGB output not supported");
+    comMessage("\nRGB output no longer supported");
     fclose(f);
   } else if(!strcmp(type,"png")) {
     comMessage("\nWriting png file...");
     fclose(f);
     writeFile(file,WRITE_TYPE_PNG,accum,scale,dump);
   } else if(!strcmp(type,"tiff")) {
+    comMessage("\nWARNING: deprecated format ! Please use png instead");
     comMessage("\nWriting tiff file...");
     fclose(f);
     writeFile(file,WRITE_TYPE_TIFF,accum,scale,dump);
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {
+    comMessage("\nWARNING: not in a workable state!");
     comMessage("\nWriting VRML scene...");
     writeVRML(f);
     fclose(f);

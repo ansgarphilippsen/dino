@@ -169,11 +169,6 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
   if(dump) {
     visinfo=gui.visinfo;
 
-    /* Create X pixmap */
-    sprintf(message,"writeFile: creating 1:1 (%dx%dx%d) Pixmap",
-	    gui.win_width, gui.win_height,visinfo->depth);
-    debmsg(message);
-
     debmsg("writeFile: converting window to XImage");
     image=XGetImage(gui.dpy,gui.glxwindow,
 		    0,0,gui.win_width,gui.win_height,
@@ -208,7 +203,6 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
     gui.win_width=(int)(scale*(float)gui.win_width);
     gui.win_height=(int)(scale*(float)gui.win_height);
     gfxResizeEvent();
-
 
     visinfo=writeGetVis();
     if(visinfo==NULL) {

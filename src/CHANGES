@@ -1,3 +1,9 @@
+motif lib (lesstif 1.2) linked statically
+
+corrected .struct write for hydrogen names >3 chars
+
+added clipping planes 1-5
+
 added -dump flag to write
 
 added experimental feature render solid

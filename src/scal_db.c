@@ -167,6 +167,7 @@ int scalCommand(dbmScalNode *node, int wc, char **wl)
       return -1;
     }
     scalSub(node,wl[1]);
+    // TODO add mul
   } else {
     sprintf(message,"\n%s: unknown command %s",node->name,wl[0]);
     comMessage(message);

@@ -94,24 +94,6 @@ int meadRead(FILE *f, dbmScalNode *sn)
     fread((char*)dim,sizeof(float),6,f);
   }
 
-  /*
-  fprintf(stderr,"\n%d %d",ret,size);
-  for(i=0; i<size;i++) {
-    fprintf(stderr,"%g ",sn->field->data[i]);
-    if(i%6==0)
-      fprintf(stderr,"\n");
-  }
-  */
-
-  /***
-  dim[0]=min_ext[0];
-  dim[1]=min_ext[1];
-  dim[2]=min_ext[2];
-  dim[3]=max_ext[0];
-  dim[4]=max_ext[1];
-  dim[5]=max_ext[2];
-  ***/
-
   sn->field->u_size=dim1;
   sn->field->v_size=dim2;
   sn->field->w_size=dim3;
@@ -145,15 +127,6 @@ int meadRead(FILE *f, dbmScalNode *sn)
 		  fx,fy,fz);
 
 
-  /*
-  min=max=sn->field->data[0];
-  for(i=1;i<size;i++) {
-    if(sn->field->data[i]>max)
-      max=sn->field->data[i];
-    if(sn->field->data[i]<min)
-      min=sn->field->data[i];
-  }
-  */
   return 0;
 }
 

@@ -808,7 +808,7 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
       fprintf(f,"  pigment {color rgbft <0,0,0,1,1>}\n");
     fprintf(f,"  normal {granite 0.0 scale 1}\n");
     writePOVFinish(f,def_amb,def_diff,def_bri,def_spec,def_rough);
-    fprintf(f," }\n}\n");
+    fprintf(f," }\n");
     fprintf(f,"#declare %s = material {texture {%s}}\n",mat_name,tex_name);
     if(obj->type!=SCAL_CONTOUR) {
       fprintf(f,"#declare %s = %.4f;\n",tp_name,1.0-obj->render.transparency);
@@ -1184,7 +1184,6 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
   }
 
   fprintf(f,"#if (%s)\n",obj_name);
-  fprintf(f,"union {\n");
   if(obj->render.mode==RENDER_TUBE) {
     if(write_pov_mode==WRITE_POV_MEGA) {
       writePOVGenMegaTex(f,obj_name,tex_name,tp_name,fi_name);
@@ -1226,7 +1225,7 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
 	fprintf(f,"sphere {<%.4f,%.4f,%.4f>,%.3f\n",
 		v1[0],v1[1],v1[2],obj->point[i].r);
       fprintf(f,"material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s*%.3f,%s*%.3f>}",
-	      tex_name, obj->point[i].c[0], 
+	      mat_name, obj->point[i].c[0], 
 	      obj->point[i].c[1],
 	      obj->point[i].c[2], 
 	      fi_name,1.0-obj->point[i].c[3],
@@ -1325,7 +1324,7 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
       }
     }
     fprintf(f,"material {%s} pigment {color rgbft<%.3f,%.3f,%.3f,%s*%.3f,%s*%.3f>}",
-	    tex_name, obj->line[i].c[0], 
+	    mat_name, obj->line[i].c[0], 
 	    obj->line[i].c[1],
 	    obj->line[i].c[2], 
 	    fi_name,1.0-obj->line[i].c[3],

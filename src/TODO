@@ -1,0 +1,35 @@
+add warning about wrong file format when error occurs, try to automatize 
+byte swapping
+
+relink against static motif on linux
+
+property (null) error when omitting prop in range
+
+.pqr format gives only white colors
+
+[.fld] gives wrong center
+
+check accum buffer for offscreen rendering
+
+non-square topo file
+
+rewrite POV output to accept cgfx VA
+
+write image file from scalar-field slab
+
+!intpol broken
+
+automatize call to 'render' after 'set' command
+
+struct restrc affects surf after attachment -> bug or feature ???
+
+struct obj transparency broken
+
+scal contour back-to-front detection buggy
+
+surface restriction not taken into account
+
+NMR load hangs at ......
+
+Postscript crash with labels
+

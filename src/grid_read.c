@@ -28,6 +28,10 @@ int tiffRead(int fd, char *fn, dbmGridNode *node)
   uint32 *data;
   int i,j,p1,p2;
   char message[256];
+  char emsg[1024];
+  float scale;
+  TIFFRGBAImage ti;
+
   t=TIFFFdOpen(fd,fn,"r");
   if(t==NULL) {
     sprintf(message,"\nreadGrid: error opening file");
@@ -38,9 +42,22 @@ int tiffRead(int fd, char *fn, dbmGridNode *node)
   TIFFGetField(t,TIFFTAG_IMAGEWIDTH,&h);
   TIFFGetField(t,TIFFTAG_BITSPERSAMPLE,&b);
 
+  if(b==8) {
+    scale=256.0;
+
+    /*  } else if(b==16) {
+	scale=65536.0;*/
+  } else {
+    sprintf(message,"\nreadGrid: BITSPERSAMPLE is %d and this is not supported",b);
+    comMessage(message);
+    TIFFClose(t);
+    return -1;
+  }
+
   if((w*h)>(4096*4096)) {
     sprintf(message,"\nsize exceeded or invalid file format");
     comMessage(message);
+    TIFFClose(t);
     return -1;
   }
 
@@ -49,14 +66,26 @@ int tiffRead(int fd, char *fn, dbmGridNode *node)
     comMessage(message);
     return -1;
   }
-  TIFFReadRGBAImage(t,w,h,data,-1);   
 
-  /* phantom points on the edge */
+  //  TIFFReadRGBAImage(t,w,h,data,-1);   
+  if(!TIFFRGBAImageOK(t, emsg)) {
+    comMessage(emsg);
+    TIFFClose(t);
+    return -1;
+  }
+  if(!TIFFRGBAImageBegin(&ti, t, 1, emsg)) {
+    comMessage(emsg);
+    TIFFClose(t);
+    return -1;
+  }
+  TIFFRGBAImageGet(&ti, data, w, h);
+  TIFFRGBAImageEnd(&ti);
+
   node->field.width=(int)w; 
   node->field.height=(int)h;
   node->field.scale_x=10.0/(float)w;
   node->field.scale_y=10.0/(float)h;
-  node->field.scale_z=1.0/256.0;
+  node->field.scale_z=1.0/scale;
   node->field.offset_x=(float)w/2.0;
   node->field.offset_y=(float)h/2.0;
   node->field.offset_z=0;

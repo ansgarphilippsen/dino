@@ -147,7 +147,11 @@ int transCommand(transMat *trans, int command, double value)
 #else
       trans->tra[0]+=d1[0];
       trans->tra[1]+=d1[1];
-      trans->tra[2]+=d1[2];
+      if(gfx.mode==GFX_PERSP) {
+	trans->tra[2]+=d1[2];
+      } else {
+	gfx.scale*=(1.0+d1[2]/100.0);
+      }
 #endif
     } else {
       matMultMV(gfx.transform.rot,d1,d2);

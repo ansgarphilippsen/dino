@@ -4,7 +4,7 @@
 struct STRUCT_ATOM_PROP {
   float r,g,b;
   float radius;
-  float c[3][3];
+  float c[3][4];
 };
 
 struct STRUCT_DB_MIN_MAX {

@@ -315,10 +315,12 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       s->pov[pc].id=SCAL_PROP_CENTER;
     } else if(clStrcmp(s->pov[pc].prop,"size")) {
       s->pov[pc].id=SCAL_PROP_SIZE;
+#ifdef VR
     } else if(clStrcmp(s->pov[pc].prop,"start")) {
       s->pov[pc].id=SCAL_PROP_START;
     } else if(clStrcmp(s->pov[pc].prop,"end")) {
       s->pov[pc].id=SCAL_PROP_END;
+#endif
     } else if(clStrcmp(s->pov[pc].prop,"level")) {
       if(obj->type==SCAL_CONTOUR) {
 	s->pov[pc].id=SCAL_PROP_LEVEL;

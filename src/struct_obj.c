@@ -476,9 +476,35 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      frac2/=frac1;
 	    }
 	    if(frac2>=0.0 && frac2<=1.0) {
-	      obj->atom[ac].prop.r=(r2-r)*frac2+r;
-	      obj->atom[ac].prop.g=(g2-g)*frac2+g;
-	      obj->atom[ac].prop.b=(b2-b)*frac2+b;
+	      r+=(r2-r)*frac2;
+	      g+=(g2-g)*frac2;
+	      b+=(b2-b)*frac2;
+	      if(set->pov[pc].id==STRUCT_PROP_COLOR) {
+		obj->atom[ac].prop.r=r;
+		obj->atom[ac].prop.g=g;
+		obj->atom[ac].prop.b=b;
+		obj->atom[ac].prop.c[0][0]=r;
+		obj->atom[ac].prop.c[0][1]=g;
+		obj->atom[ac].prop.c[0][2]=b;
+		obj->atom[ac].prop.c[1][0]=r;
+		obj->atom[ac].prop.c[1][1]=g;
+		obj->atom[ac].prop.c[1][2]=b;
+		obj->atom[ac].prop.c[2][0]=r;
+		obj->atom[ac].prop.c[2][1]=g;
+		obj->atom[ac].prop.c[2][2]=b;
+	      } else if(set->pov[pc].id==STRUCT_PROP_COLOR1) {
+		obj->atom[ac].prop.c[0][0]=r;
+		obj->atom[ac].prop.c[0][1]=g;
+		obj->atom[ac].prop.c[0][2]=b;
+	      } else if(set->pov[pc].id==STRUCT_PROP_COLOR2) {
+		obj->atom[ac].prop.c[1][0]=r;
+		obj->atom[ac].prop.c[1][1]=g;
+		obj->atom[ac].prop.c[1][2]=b;
+	      } else if(set->pov[pc].id==STRUCT_PROP_COLOR3) {
+		obj->atom[ac].prop.c[2][0]=r;
+		obj->atom[ac].prop.c[2][1]=g;
+		obj->atom[ac].prop.c[2][2]=b;
+	      }
 	    }
 	  } else {
 	    if(comGetColor(val->val1,&r,&g,&b)<0) {
@@ -604,10 +630,16 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	point_list[pc].v[0]=obj->bond[bc].atom1->p->x;
 	point_list[pc].v[1]=obj->bond[bc].atom1->p->y;
 	point_list[pc].v[2]=obj->bond[bc].atom1->p->z;
+#ifdef HSC_NEWCOL
+	point_list[pc].colp[0]=obj->bond[bc].prop1->c[0];
+	point_list[pc].colp[1]=obj->bond[bc].prop1->c[1];
+	point_list[pc].colp[2]=obj->bond[bc].prop1->c[2];
+#else
 	point_list[pc].c[0]=obj->bond[bc].prop1->r;
 	point_list[pc].c[1]=obj->bond[bc].prop1->g;
 	point_list[pc].c[2]=obj->bond[bc].prop1->b;
 	point_list[pc].c[3]=obj->render.transparency;
+#endif
 	point_list[pc].rad=obj->bond[bc].prop1->radius;
 	switch(obj->bond[bc].atom1->residue->type) {
 	case STRUCT_RTYPE_COIL: point_list[pc].id=CGFX_COIL; break;
@@ -634,12 +666,6 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	  }
 	}
 	point_list[pc].rad=obj->bond[bc].prop1->radius;
-	// TODO
-	/*
-	  the DNA can have different rendering types, e.g.
-	  the schematic sugar-base representation or
-	  just a cylinder across each basepair
-	*/ 
 	point_list[pc].id=CGFX_NA;
 	point_list[pc].v1=obj->bond[bc].atom1->residue->v1;
 	point_list[pc].v2=obj->bond[bc].atom1->residue->v2;
@@ -651,6 +677,11 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	else
 	  point_list[pc].v6=obj->bond[bc].atom1->residue->v7;
 	point_list[pc].res_id=obj->bond[bc].atom1->residue->res_id;
+#ifdef HSC_NEWCOL
+	point_list[pc].colp[0]=obj->bond[bc].prop1->c[0];
+	point_list[pc].colp[1]=obj->bond[bc].prop1->c[1];
+	point_list[pc].colp[2]=obj->bond[bc].prop1->c[2];
+#else
 	point_list[pc].c[0]=obj->bond[bc].prop1->c[0][0];
 	point_list[pc].c[1]=obj->bond[bc].prop1->c[0][1];
 	point_list[pc].c[2]=obj->bond[bc].prop1->c[0][2];
@@ -664,6 +695,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	point_list[pc].c3[1]=obj->bond[bc].prop1->c[2][1];
 	point_list[pc].c3[2]=obj->bond[bc].prop1->c[2][2];
 	point_list[pc].c3[3]=obj->render.transparency;
+#endif
 	pc++;
       } else {
 	//	point_list[pc].id=CGFX_COIL;
@@ -686,10 +718,19 @@ int structSmooth(struct STRUCT_OBJ *obj)
       point_list[pc].v[0]=obj->bond[bc-1].atom2->p->x;
       point_list[pc].v[1]=obj->bond[bc-1].atom2->p->y;
       point_list[pc].v[2]=obj->bond[bc-1].atom2->p->z;
+#ifdef HSC_NEWCOL
+      point_list[pc].colp[0]=obj->bond[bc-1].prop2->c[0];
+      point_list[pc].colp[1]=obj->bond[bc-1].prop2->c[1];
+      point_list[pc].colp[2]=obj->bond[bc-1].prop2->c[2];
+      point_list[pc].colp[0][3]=obj->render.transparency;
+      point_list[pc].colp[1][3]=obj->render.transparency;
+      point_list[pc].colp[2][3]=obj->render.transparency;
+#else
       point_list[pc].c[0]=obj->bond[bc-1].prop2->r;
       point_list[pc].c[1]=obj->bond[bc-1].prop2->g;
       point_list[pc].c[2]=obj->bond[bc-1].prop2->b;
       point_list[pc].c[3]=obj->render.transparency;
+#endif
       point_list[pc].rad=obj->bond[bc-1].prop2->radius;
       switch(obj->bond[bc-1].atom2->residue->type) {
       case STRUCT_RTYPE_COIL: point_list[pc].id=CGFX_COIL; break;
@@ -704,9 +745,15 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	point_list[pc].v[1]=obj->bond[bc-1].atom2->p->y;
 	point_list[pc].v[2]=obj->bond[bc-1].atom2->p->z;
       } else {
-	point_list[pc].v[0]=obj->bond[bc-1].atom2->residue->v0[0];
-	point_list[pc].v[1]=obj->bond[bc-1].atom2->residue->v0[1];
-	point_list[pc].v[2]=obj->bond[bc-1].atom2->residue->v0[2];
+	if(obj->render.na_method==0) {
+	  point_list[pc].v[0]=obj->bond[bc-1].atom2->residue->v0[0];
+	  point_list[pc].v[1]=obj->bond[bc-1].atom2->residue->v0[1];
+	  point_list[pc].v[2]=obj->bond[bc-1].atom2->residue->v0[2];
+	} else {
+	  point_list[pc].v[0]=obj->bond[bc-1].atom2->p->x;
+	  point_list[pc].v[1]=obj->bond[bc-1].atom2->p->y;
+	  point_list[pc].v[2]=obj->bond[bc-1].atom2->p->z;
+	}
       }
       point_list[pc].rad=obj->bond[bc-1].prop2->radius;
       point_list[pc].id=CGFX_NA;
@@ -715,8 +762,19 @@ int structSmooth(struct STRUCT_OBJ *obj)
       point_list[pc].v3=obj->bond[bc-1].atom2->residue->v3;
       point_list[pc].v4=obj->bond[bc-1].atom2->residue->v4;
       point_list[pc].v5=obj->bond[bc-1].atom2->residue->v5;
-      point_list[pc].v6=obj->bond[bc-1].atom2->residue->v6;
+      if(obj->render.na_method==0)
+	point_list[pc].v6=obj->bond[bc-1].atom2->residue->v6;
+      else
+	point_list[pc].v6=obj->bond[bc-1].atom2->residue->v7;
       point_list[pc].res_id=obj->bond[bc-1].atom2->residue->res_id;
+#ifdef HSC_NEWCOL
+      point_list[pc].colp[0]=obj->bond[bc-1].prop2->c[0];
+      point_list[pc].colp[1]=obj->bond[bc-1].prop2->c[1];
+      point_list[pc].colp[2]=obj->bond[bc-1].prop2->c[2];
+      point_list[pc].colp[0][3]=obj->render.transparency;
+      point_list[pc].colp[1][3]=obj->render.transparency;
+      point_list[pc].colp[2][3]=obj->render.transparency;
+#else
       point_list[pc].c[0]=obj->bond[bc-1].prop2->c[0][0];
       point_list[pc].c[1]=obj->bond[bc-1].prop2->c[0][1];
       point_list[pc].c[2]=obj->bond[bc-1].prop2->c[0][2];
@@ -730,6 +788,7 @@ int structSmooth(struct STRUCT_OBJ *obj)
       point_list[pc].c3[1]=obj->bond[bc-1].prop2->c[2][1];
       point_list[pc].c3[2]=obj->bond[bc-1].prop2->c[2][2];
       point_list[pc].c3[3]=obj->render.transparency;
+#endif
     } else {
       point_list[pc].id=CGFX_COIL;
     }

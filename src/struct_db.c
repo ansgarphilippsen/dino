@@ -1207,7 +1207,6 @@ int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_AT
   if((f1&STRUCT_HBA && f2&STRUCT_HBD) ||
      (f1&STRUCT_HBD && f2&STRUCT_HBA)) {
 
-
     /* 
        second criteria:
        distance
@@ -1223,6 +1222,7 @@ int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_AT
 	      third criteria:
 	      angle
 	    */
+
 	    
 	    if(f1&STRUCT_HBA && f2&STRUCT_HBD) {
 	      a3=a1;
@@ -1233,7 +1233,7 @@ int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_AT
 	    }
 	    
 	    ret=1;
-	    
+
 	    // a3 is acceptor, a4 donor
 	    
 	    // check angle for acceptor
@@ -1243,13 +1243,13 @@ int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_AT
 	      } else {
 		a5=node->bond[a3->bondi[bc]].atom1;
 	      }
-	      
+
 	      if(matfCalcAngle(a3->p,a4->p,a3->p,a5->p)<alimit) {
 		ret=0;
 		break;
 	      }
 	    }
-	    
+
 	    // check angle for donor
 	    if(a4->bondc>0 && ret==1) {
 	      pos[0]=0.0;
@@ -1278,7 +1278,7 @@ int structCheckNCB(dbmStructNode *node, struct STRUCT_ATOM *a1, struct STRUCT_AT
 	      */
 	      if(matfCalcAngle(a4->p,pos,a3->p,pos)<alimit) {
 		ret=0;
-	      }
+	      } 
 	    }
 	  }
 	}
@@ -2711,10 +2711,17 @@ int structWrite(struct DBM_STRUCT_NODE *node, structObj *obj, int wc, char **wl)
       sprintf(aname,"%s",ap->name);
     } else {
       if(!strcmp(ap->chem.element,"H")) {
-	if(isdigit(ap->name[0]))
+	if(isdigit(ap->name[0])) {
 	  sprintf(aname,"%s",ap->name);
-	else
+	} else if(strlen(ap->name)>3) {
+	  aname[0]=ap->name[3];
+	  aname[1]=ap->name[0];
+	  aname[2]=ap->name[1];
+	  aname[3]=ap->name[2];
+	  aname[4]='\0';
+	} else {
 	  sprintf(aname," %s",ap->name);
+	}
       } else {
 	sprintf(aname," %s",ap->name);
       }

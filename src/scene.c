@@ -440,6 +440,7 @@ int sceneCommand(int wc, char **wl)
 	if(gfx.mode==GFX_ORTHO) {
 	  sceneOrtho2Persp();
 	  gfx.mode=GFX_PERSP;
+	  glDisable(GL_NORMALIZE);
 	}
 	gfxSetProjection(gfx.stereo_display);
 	gfxSetFog();
@@ -448,6 +449,7 @@ int sceneCommand(int wc, char **wl)
 	if(gfx.mode==GFX_PERSP) {
 	  scenePersp2Ortho();
 	  gfx.mode=GFX_ORTHO;
+	  glEnable(GL_NORMALIZE);
 	}
 	gfxSetProjection(gfx.stereo_display);
 	gfxSetFog();
@@ -1247,6 +1249,29 @@ int sceneSubCommand(char *sub, int wc, char **wl)
   } else if(!strncmp(sub,"clip",4)) {
     if(rex(sub,"clip0"))
       ret=sceneSubClipCom(0,wc,wl);
+    if(ret<0)
+      return -1;
+    if(rex(sub,"clip1"))
+      ret=sceneSubClipCom(1,wc,wl);
+    if(ret<0)
+      return -1;
+    if(rex(sub,"clip2"))
+      ret=sceneSubClipCom(2,wc,wl);
+    if(ret<0)
+      return -1;
+    if(rex(sub,"clip3"))
+      ret=sceneSubClipCom(3,wc,wl);
+    if(ret<0)
+      return -1;
+    if(rex(sub,"clip4"))
+      ret=sceneSubClipCom(4,wc,wl);
+    if(ret<0)
+      return -1;
+    if(rex(sub,"clip5"))
+      ret=sceneSubClipCom(5,wc,wl);
+    if(ret<0)
+      return -1;
+
   } else {
     sprintf(message,"\nerror: scene: unknown sub expression %s",sub);
     comMessage(message);
@@ -1576,7 +1601,7 @@ int sceneSubClipSet(int c, int wc, char **wl)
       gfx.clip[c].pos[2]=v[2];
     } else if(clStrcmp(set.pov[pc].prop,"dir")) {
       if(val->val1[0]!='{') {
-	comMessage("\nerror: expected {x,y,z} for pos");
+	comMessage("\nerror: expected {x,y,z} for dir");
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v)<0) {

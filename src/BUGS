@@ -1,5 +1,12 @@
-known problems for DINO v0.8.3
+known problems for DINO v0.8.4
 ------------------------------
+
+- surface solid rendering can be VERY slow on linux machines using only a 
+  software stencil buffer
+
+- orthographic rendering broken
+
+- PostScript outout crashes when using labels
 
 - .struct.obj render hsc,detail=1 will coredump (use detail > 1)
 
@@ -16,7 +23,7 @@ known problems for DINO v0.8.3
 - TIFF not compressed (use PNG)
 
 - offscreen rendering on linux missmatches graphics display, use
-  ImageMagick program 'import' to get a screendump
+  -dump option of write
 
 - POVray output only partial for geom objects
 
