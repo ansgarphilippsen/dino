@@ -1180,8 +1180,8 @@ int scalSetMinMax(dbmScalNode *node)
     vp=data[i]*vm+vc;
     vt2 += (vp-vt)*(vp-vt);
   }
-  vt2/=(double)(node->field->size-1);
-
+  vt2 = sqrt(vt2/(double)(node->field->size-1));
+  
   sprintf(dbmesg,"min: %g  max: %g  stdev: %g\n",
 	  node->min_max.v1, node->min_max.v2, vt2);
   comMessage(dbmesg);
