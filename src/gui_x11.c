@@ -48,6 +48,10 @@ user menu
 #include "glw.h"
 #include "AppPlus.h"
 
+#ifdef INTERNAL_COLOR
+#include "colors.h"
+#endif
+
 #ifdef EXPO
 #include "autoplay.h"
 #endif
@@ -1301,63 +1305,6 @@ int guiMainLoop()
 }
 
 
-/************************
-
-  guiResolveColor
-  ---------------
-
-  translates a string
-  into rgb
-
-************************/
-
-int guiResolveColor(const char *oname, float *r, float *g, float *b)
-{
-  int i;
-  datum key, content;
-  unsigned short rr,gg,bb;
-  unsigned short usp[6];
-  char name[256];
-
-  strncpy(name,oname,255);
-
-  for(i=0;i<strlen(name);i++)
-    if(name[i]=='_') name[i]=' ';
-
-  key.dptr=name;
-  key.dsize=strlen(name);
- 
-  if(gui.cdbm==NULL)
-    return -1;
-
-#ifdef LINUX
-  content=gdbm_fetch(gui.cdbm,key);
-#endif
-#ifdef SGI
-  content=dbm_fetch(gui.cdbm,key);
-#endif
-#ifdef DEC
-  content=dbm_fetch(gui.cdbm,key);
-#endif
-#ifdef SUN
-  content=dbm_fetch(gui.cdbm,key);
-#endif
-
-  if(content.dptr==NULL)
-    return -1;
-
-  memcpy(usp,content.dptr,6);
-
-  rr=usp[0];
-  gg=usp[1];
-  bb=usp[2];
-
-  (*r)=(float)rr/65535.0;
-  (*g)=(float)gg/65535.0;
-  (*b)=(float)bb/65535.0;
-
-  return 0;
-}
 
 /***********************************
 
@@ -1557,3 +1504,65 @@ void guiSwapBuffers()
 {
   glXSwapBuffers(gui.dpy, gui.glxwindow);
 }
+
+#ifndef INTERNAL_COLOR
+
+/************************
+
+  guiResolveColor
+  ---------------
+
+  translates a string
+  into rgb
+
+************************/
+
+int guiResolveColor(const char *oname, float *r, float *g, float *b)
+{
+  int i;
+  datum key, content;
+  unsigned short rr,gg,bb;
+  unsigned short usp[6];
+  char name[256];
+
+  strncpy(name,oname,255);
+
+  for(i=0;i<strlen(name);i++)
+    if(name[i]=='_') name[i]=' ';
+
+  key.dptr=name;
+  key.dsize=strlen(name);
+ 
+  if(gui.cdbm==NULL)
+    return -1;
+
+#ifdef LINUX
+  content=gdbm_fetch(gui.cdbm,key);
+#endif
+#ifdef SGI
+  content=dbm_fetch(gui.cdbm,key);
+#endif
+#ifdef DEC
+  content=dbm_fetch(gui.cdbm,key);
+#endif
+#ifdef SUN
+  content=dbm_fetch(gui.cdbm,key);
+#endif
+
+  if(content.dptr==NULL)
+    return -1;
+
+  memcpy(usp,content.dptr,6);
+
+  rr=usp[0];
+  gg=usp[1];
+  bb=usp[2];
+
+  (*r)=(float)rr/65535.0;
+  (*g)=(float)gg/65535.0;
+  (*b)=(float)bb/65535.0;
+
+  return 0;
+}
+
+#endif

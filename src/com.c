@@ -50,6 +50,10 @@
 #include "gui.h"
 #endif
 
+#ifdef INTERNAL_COLOR
+#include "colors.h"
+#endif
+
 #ifdef EXPO
 #include "autoplay.h"
 #endif
@@ -299,6 +303,9 @@ int comWorkPrompt(int word_count, const char ** word_list)
 #ifdef USE_CMI
   cmiToken t;
 #endif
+#ifdef INTERNAL_COLOR
+  struct COLOR_ENTRY *coltab;
+#endif
 
   comReturn(NULL);
 
@@ -443,6 +450,27 @@ int comWorkPrompt(int word_count, const char ** word_list)
       guiMessage(" ");
 
       com.benchmark=0;
+    }
+  } else if(!strcmp(word_list[0],"showrgb")) {
+    if(word_count>2) {
+      comMessage("error: at most one argument after showrgb\n");
+    } else {
+      i=0;
+      coltab=colorGetTab();
+      if(word_count==2) {
+	sprintf(obj,"*%s*",word_list[1]);
+      } else {
+	clStrcpy(obj,"*");
+      }
+
+      while(clStrlen(coltab[i].name)>0) {
+	if(rex(obj,coltab[i].name)) {
+	  sprintf(message,"%s:\t%3d %3d %3d\n",
+		  coltab[i].name,coltab[i].r,coltab[i].g,coltab[i].b); 
+	  comMessage(message);
+	}
+	i++;
+      }
     }
   } else {
     sprintf(message,"\nunknown command: %s",word_list[0]);
@@ -1128,12 +1156,16 @@ int comGetColor(const char *val, float *r, float *g, float *b)
 	(*b)=(float)v[2];
   } else {
     // TODO FOR CMI !!
+#ifdef INTERNAL_COLOR
+    return colorResolveF(val,r,g,b);
+#else
     if(guiResolveColor(val,r,g,b)!=0) {
 	(*r)=0.0;
 	(*g)=0.0;
 	(*b)=0.0;
 	return -1;
     }
+#endif
   }
   return 0;
 }

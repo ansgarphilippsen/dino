@@ -573,8 +573,9 @@ int gfxSceneRedraw(int clear)
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(-100,100,-100,100,-100,100);
+    glOrtho(-50,50,-50,50,-50,50);
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
     glTranslated(0,0,0);
     
@@ -583,16 +584,17 @@ int gfxSceneRedraw(int clear)
     glDisable(GL_LIGHTING);
     glBegin(GL_LINES);
     glColor3f(1,0,0);
-    glVertex3f(0,0,0);
+    glVertex3f(-1,0,0);
     glVertex3f(10,0,0);
     glColor3f(0,1,0);
-    glVertex3f(0,0,0);
+    glVertex3f(0,-1,0);
     glVertex3f(0,10,0);
     glColor3f(0,0,1);
-    glVertex3f(0,0,0);
+    glVertex3f(0,0,-1);
     glVertex3f(0,0,10);
     glEnd();
     glEnable(GL_LIGHTING);
+    glPopMatrix();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
@@ -674,10 +676,11 @@ int gfxSetSlab(float near, float far)
 
 int gfxSetFog(void)
 {
-  int slab_near_far_dist=gfx.transform.slabf-gfx.transform.slabn;
+  //  int slab_near_far_dist=gfx.transform.slabf-gfx.transform.slabn;
 
   gfx.fog_near=gfx.transform.slabn;
-  gfx.fog_far=slab_near_far_dist*gfx.fog_dist+gfx.transform.slabf;
+  //  gfx.fog_far=slab_near_far_dist*gfx.fog_dist+gfx.transform.slabf;
+  gfx.fog_far=gfx.fog_dist+gfx.transform.slabf;
 
   glFogf(GL_FOG_START,gfx.fog_near);
   glFogf(GL_FOG_END,gfx.fog_far);

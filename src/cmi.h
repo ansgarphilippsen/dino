@@ -1,6 +1,10 @@
 #ifndef _CMI_H
 #define _CMI_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void * cmiTokenPtr;
 
 // non-graphical backend
@@ -97,5 +101,9 @@ void cmiQuery(const cmiToken *t);
 
 void cmiRegisterCallback(int mask, cmiCallbackFunc f);
 void cmiRegisterTimer(cmiTimerFunc f);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

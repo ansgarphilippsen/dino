@@ -14,14 +14,19 @@ struct OBJECT_MENU om;
 static struct OM_POPUP_LIST om_scene_list[]={
   {"label",""},
   {"separator",""},
-  {"center CS","% center [$CS get xyz]"},
   {"center CP","% center $CP"},
   {"auto slab","% autoslab"},
+  {"show CP marker","% showcp"},
+  {"hide CP marker","% hidecp"},
+  {"separator",""},
   {"toggle stereo","% stereo"},
   {"view left","% set view=left"},
   {"view right","% set view=right"},
   {"view center","% set view=center"},
-  {"reset","% reset"},
+  {"separator",""},
+  {"show axis","% set axis=1"},
+  {"hide axis","% set axis=0"},
+  {"reset all","% reset all"},
   {NULL,NULL}
 };
 
@@ -686,7 +691,7 @@ int omCreatePopup(struct OM_POPUP *popup,struct OM_POPUP_LIST *list)
   boxh=om.texth+4;
   boxw=lm+12;
   
-  height=(lc-lc2)*(boxh+2)+(lc2*4)+6;
+  height=(lc-lc2)*(boxh+2)+(lc2*4)+10;
   width=boxw+6;
   popup->height=height;
   popup->width=width;

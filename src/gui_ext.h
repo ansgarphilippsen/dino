@@ -12,6 +12,11 @@
 #include "cmi.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #ifdef USE_CMI
 int guiInit(int *, char ***);
 #else
@@ -22,7 +27,6 @@ int guiMainLoop(void);
 
 int guiMessage(char *m);
 
-int guiResolveColor(const char *name, float *r, float *g, float *b);
 
 void guiSwapBuffers(void);
 
@@ -30,5 +34,15 @@ void guiSwapBuffers(void);
 #ifdef USE_CMI
 void guiCMICallback(const cmiToken *t);
 #endif
+
+#ifndef INTERNAL_COLOR
+int guiResolveColor(const char *name, float *r, float *g, float *b);
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+
 
 #endif

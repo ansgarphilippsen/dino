@@ -15,8 +15,8 @@
 # TCL_SHELL
 # USE_CMI   use _only_ with GUI_GLUT !!
 
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF #-DUSE_CMI
-OPTIONS += -DNEW_SHELL
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF
+OPTIONS += -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI
 
 # use tcl as interpreter
 #OPTIONS += -DTCL_SHELL
@@ -25,9 +25,11 @@ OPTIONS += -DNEW_SHELL
 # SDL_GLUT
 # GLUT_GUI (and USE_FREEGLUT)
 # X11_GUI
+# WX_GUI
 
 #OPTIONS += -DGLUT_GUI #-DUSE_FREEGLUT
-OPTIONS += -DX11_GUI
+#OPTIONS += -DX11_GUI
+OPTIONS += -DWX_GUI
 
 MALLOCLIB=
 
@@ -36,7 +38,7 @@ MALLOCLIB=
 
 SRC= dino.c main.c \
      dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
-     startup.c cl.c set.c bspline.c transform.c prop.c\
+     startup.c cl.c set.c bspline.c transform.c prop.c colors.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
      scal_mc_new.c \
@@ -55,10 +57,6 @@ sinclude makedef.$(HOSTTYPE)
 # add more stuff depending on OPTIONS
 
 # which shell to use
-ifneq (,$(findstring USE_CMI,$(OPTIONS)))
-SRC += cmi.c input.c
-endif
-
 ifneq (,$(findstring NEW_SHELL,$(OPTIONS)))
 SRC += gui_terminal.c shell_raw.c shell_command.c
 #LOPT += 
@@ -71,17 +69,29 @@ SRC += shell.c
 endif
 endif
 
-# one of the three GUIs: X11, GLUT or SDL
+# one of the four GUIs: WX, X11, GLUT or SDL
+ifneq (,$(findstring WX_GUI,$(OPTIONS)))
+SRC += gui_wx.cpp
+OPTIONS += -DUSE_CMI
+COPT += -I/usr/lib/wx/include/gtk-2.2
+LOPT += -lwx_gtk_gl-2.2 -lwx_gtk-2.2
+endif
 ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
 SRC += gui_glut.c om_glut.c
 endif
 ifneq (,$(findstring SDL_GUI,$(OPTIONS)))
-SRC += gui_sdl.c om_sdl.c
+SRC += main.c gui_sdl.c om_sdl.c
 LOPT += -lSDL
 endif
 ifneq (,$(findstring X11_GUI,$(OPTIONS)))
 SRC += extension.c gui_x11.c om_x11.c AppPlus.c
 endif
+
+
+ifneq (,$(findstring USE_CMI,$(OPTIONS)))
+SRC += cmi.c input.c
+endif
+
 
 # special EXPO functionality
 ifneq (,$(findstring EXPO,$(OPTIONS)))
@@ -116,9 +126,10 @@ endif
 
 #sinclude makedef.java
 
-OBJ := $(SRC:.c=.o)
+TMP := $(SRC:.c=.o) 
+OBJ := $(TMP:.cpp=.o)
 
-.SUFFIXES: .c
+.SUFFIXES: .c .cpp
 
 # for profiling
 #COPT += -pg
@@ -134,6 +145,9 @@ jci: jci.c
 
 .c.o:
 	$(CC) $(COPT) -c $<
+
+.cpp.o:
+	$(CPP) $(COPT) -c $<
 
 clean:
 	rm -f *.o dino *~ core #* .depend

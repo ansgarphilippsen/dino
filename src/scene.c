@@ -134,14 +134,18 @@ int sceneCommand(int wc, const char **wl)
     else
       help(scene_help,"scene",wl[1]);
   } else if(!strcmp(wl[0],"write")) {
+    // write
     comWrite(wc-1,wl+1);
   } else if(!strcmp(wl[0],"show")) {
+    // show
     gfx.show=1;
     comRedraw();
   } else if(!strcmp(wl[0],"hide")) {
+    // hide
     gfx.show=0;
     comRedraw();
   } else if(!strcmp(wl[0],"reset")) {
+    // TODO parameters center rot all, etc
     transReset(&gfx.transform);
     gfx.transform.tra[2]=-100.0;
     gfx.transform.slabn=1.0;
@@ -426,6 +430,7 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage(message);
 	  return -1;
 	}
+	/****
 	if(gfx.fog_dist<-1.0) {
 	  comMessage("\nfogo clamped to -1.0");
 	  gfx.fog_dist=-1.0;
@@ -434,6 +439,7 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage("\nfogo clamped to 1.0");
 	  gfx.fog_dist=1.0;
 	}
+	*****/
 	gfxSetFog();
 	comRedraw();
       } else if(!strcmp(prop,"persp")) {

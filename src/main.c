@@ -21,7 +21,11 @@
 #include "cmi.h"
 #endif
 
+#ifdef WX_GUI
+int main2(int argc, char **argv)
+#else
 int main(int argc, char **argv)
+#endif
 {
   int ret;
 

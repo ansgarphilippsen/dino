@@ -23,7 +23,7 @@
 #include "startup.h"
 
 #ifdef NEW_SHELL
-#include "shell_raw.h"
+#include "shell_command.h"
 #include "gui_terminal.h"
 #else
 #include "shell.h"
@@ -181,7 +181,9 @@ int dinoMain(int argc,char **argv)
 void dinoExit(int n)
 {
 #ifdef NEW_SHELL
+#ifndef WX_GUI
   guitOutit();
+#endif
 #else
   shellOutit();
 #endif
