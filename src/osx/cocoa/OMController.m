@@ -150,10 +150,10 @@ static id dinoOMController;
         NSString *theCommand = [NSString localizedStringWithFormat:@"scene center [.%@.%@]",parent,obj];
         [[Controller dinoController] command:theCommand from:(id)sender];
     }else if([parent isEqual:@"None"]){
-        NSString *dataSet = obj;
-        NSString *theCommand = [NSString localizedStringWithFormat:@"scene center [.%@]",dataSet];
+        NSString *theCommand = [NSString localizedStringWithFormat:@"scene center [.%@]",obj];
         [[Controller dinoController] command:theCommand from:(id)sender];
-    }	
+    }
+    
 }
 
 
