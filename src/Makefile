@@ -155,7 +155,7 @@ sinclude $(GUI)/make.addon
 
 dino: $(OBJ) gui
 	$(CC) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT) -o $@
-	strip -K png_libpng_ver -o ../bin/$@ $@
+	strip -x -g -o ../bin/$@ $@
 
 gui:
 	cd $(GUI) && $(MAKE) gui
