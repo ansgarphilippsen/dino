@@ -2,7 +2,21 @@
 \lyxformat 220
 \textclass dino
 \begin_preamble
-\setlength{\textwidth}{140mm}
+\usepackage{graphics}
+%%\setlength{\textwidth}{150mm}
+\pagestyle{fancyplain}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.0pt}
+\newcommand{\reflogo}{\resizebox{5mm}{!}{\raisebox{-1.1mm}{\includegraphics{logo.eps}}}\hspace{-0.75mm}\em ino Reference Manual}
+\setlength{\headwidth}{\textwidth}
+\lhead{\fancyplain{}{\reflogo}}
+\rhead{\fancyplain{}{\thesection\ \leftmark\  - \rightmark}}
+\chead{\fancyplain{\reflogo}{}}
+\lfoot{\fancyplain{}{}}
+\cfoot{\fancyplain{}{}}
+\rfoot{\fancyplain{\bf Page\  \thepage}{\bf Page\  \thepage}}
 \end_preamble
 \language english
 \inputencoding auto
@@ -12,21 +26,28 @@
 \paperfontsize 10
 \spacing single 
 \papersize a4paper
-\paperpackage a4wide
-\use_geometry 0
+\paperpackage a4
+\use_geometry 1
 \use_amsmath 1
 \use_natbib 0
 \use_numerical_citations 0
 \paperorientation portrait
-\secnumdepth 2
+\leftmargin 3.5cm
+\topmargin 2.5cm
+\rightmargin 2.5cm
+\bottommargin 2cm
+\headheight 1cm
+\headsep 1cm
+\footskip 2cm
+\secnumdepth 3
 \tocdepth 2
 \paragraph_separation skip
-\defskip medskip
+\defskip smallskip
 \quotes_language english
 \quotes_times 2
 \papercolumns 1
 \papersides 1
-\paperpagestyle plain
+\paperpagestyle fancy
 
 \layout Title
 
@@ -53,6 +74,19 @@ status Collapsed
 
 \backslash 
 today
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+pagestyle{plain}
 \end_inset 
 
 
@@ -96,10 +130,6 @@ arrayrulewidth{0.05mm}
 setlength
 \backslash 
 tabcolsep{1mm}
-\newline 
-
-\newline 
-
 \end_inset 
 
 
@@ -119,6 +149,19 @@ property: 'a characteristic of something'
 \layout Standard
 
 attribute: 'a quality or feature regarded as characterisitic or inherent'
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+pagestyle{fancyplain}
 \end_inset 
 
 
@@ -258,7 +301,7 @@ Upon startup, the file
  The syntax of this startup file is as follows:
 \layout Chapter
 
-Shell, Scene and GUI
+Shell and GUI
 \layout Section
 
 Shell Navigation
@@ -840,16 +883,16 @@ Lists all currently defined variables with their values.
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-\line_top 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="18" columns="2">
 <features>
-<column alignment="left" valignment="center" leftline="true" width="18mm">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="114mm">
+<column alignment="left" valignment="center" leftline="true" width="25mm">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="115mm">
 <row topline="true">
 <cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
@@ -876,6 +919,8 @@ value
 
 \layout Standard
 
+
+\family typewriter 
 PI
 \end_inset 
 </cell>
@@ -884,6 +929,8 @@ PI
 
 \layout Standard
 
+
+\family typewriter 
 3.14159
 \end_inset 
 </cell>
@@ -894,6 +941,8 @@ PI
 
 \layout Standard
 
+
+\family typewriter 
 protein
 \end_inset 
 </cell>
@@ -902,6 +951,8 @@ protein
 
 \layout Standard
 
+
+\family typewriter 
 (rname=ALA, CYS, ASP, GLU, PHE, GLY, HIS, ILE, LYS, LEU, MET, ASN, PRO,
  GLN, ARG, SER, THR, VAL, TRP, TYR)
 \end_inset 
@@ -913,6 +964,8 @@ protein
 
 \layout Standard
 
+
+\family typewriter 
 dna
 \end_inset 
 </cell>
@@ -921,6 +974,8 @@ dna
 
 \layout Standard
 
+
+\family typewriter 
 (rname=A,ADE,C,CYT,G,GUA,T,THY)
 \end_inset 
 </cell>
@@ -931,6 +986,8 @@ dna
 
 \layout Standard
 
+
+\family typewriter 
 rna
 \end_inset 
 </cell>
@@ -939,6 +996,8 @@ rna
 
 \layout Standard
 
+
+\family typewriter 
 (rname=A,ADE,C,CYT,G,GUA,U, URA)
 \end_inset 
 </cell>
@@ -949,6 +1008,8 @@ rna
 
 \layout Standard
 
+
+\family typewriter 
 aliphatic
 \end_inset 
 </cell>
@@ -957,6 +1018,8 @@ aliphatic
 
 \layout Standard
 
+
+\family typewriter 
 (rname=ALA,GLY,ILE,LEU,MET,PRO,VAL)
 \end_inset 
 </cell>
@@ -967,6 +1030,8 @@ aliphatic
 
 \layout Standard
 
+
+\family typewriter 
 aromatic
 \end_inset 
 </cell>
@@ -975,6 +1040,8 @@ aromatic
 
 \layout Standard
 
+
+\family typewriter 
 (rname=PHE,TYR,TRP)
 \end_inset 
 </cell>
@@ -985,6 +1052,8 @@ aromatic
 
 \layout Standard
 
+
+\family typewriter 
 basic
 \end_inset 
 </cell>
@@ -993,6 +1062,8 @@ basic
 
 \layout Standard
 
+
+\family typewriter 
 (rname=ARG,LYS)
 \end_inset 
 </cell>
@@ -1003,6 +1074,8 @@ basic
 
 \layout Standard
 
+
+\family typewriter 
 basic2
 \end_inset 
 </cell>
@@ -1011,6 +1084,8 @@ basic2
 
 \layout Standard
 
+
+\family typewriter 
 ((rname=LYS and aname=NZ) or (rname=ARG and aname=NH1,NH2))
 \end_inset 
 </cell>
@@ -1021,6 +1096,8 @@ basic2
 
 \layout Standard
 
+
+\family typewriter 
 acidic
 \end_inset 
 </cell>
@@ -1029,6 +1106,8 @@ acidic
 
 \layout Standard
 
+
+\family typewriter 
 (rname=ASP,GLU)
 \end_inset 
 </cell>
@@ -1039,6 +1118,8 @@ acidic
 
 \layout Standard
 
+
+\family typewriter 
 acidic2
 \end_inset 
 </cell>
@@ -1047,6 +1128,8 @@ acidic2
 
 \layout Standard
 
+
+\family typewriter 
 ((rname=GLU and aname=OE1,OE2) or (rname=ASP and aname=OD1,OD2))
 \end_inset 
 </cell>
@@ -1057,6 +1140,8 @@ acidic2
 
 \layout Standard
 
+
+\family typewriter 
 polar
 \end_inset 
 </cell>
@@ -1065,16 +1150,20 @@ polar
 
 \layout Standard
 
+
+\family typewriter 
 (rname=SER,THR,TYR,HIS,CYS,ASN,GLN)
 \end_inset 
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \layout Standard
 
+
+\family typewriter 
 polar2
 \end_inset 
 </cell>
@@ -1083,6 +1172,8 @@ polar2
 
 \layout Standard
 
+
+\family typewriter 
 ((rname=SER and aname=OG) or (rname=THR and aname=OG1) or (rname=TYR and
  aname=OH) or (rname=HIS and aname=ND1,NE2) or (rname=CYS and aname=SG)
  or (rname=ASN and aname=OD1,ND1) or (rname=GLN and aname=OE1,NE1) or (rname=TRP
@@ -1096,6 +1187,8 @@ polar2
 
 \layout Standard
 
+
+\family typewriter 
 hydrophobic
 \end_inset 
 </cell>
@@ -1104,6 +1197,8 @@ hydrophobic
 
 \layout Standard
 
+
+\family typewriter 
 (rname=ALA,VAL,PHE,PRO,MET,ILE,LEU,TRP)
 \end_inset 
 </cell>
@@ -1133,6 +1228,8 @@ Aliases
 
 \layout Standard
 
+
+\family typewriter 
 stereo
 \end_inset 
 </cell>
@@ -1141,6 +1238,8 @@ stereo
 
 \layout Standard
 
+
+\family typewriter 
 scene stereo
 \end_inset 
 </cell>
@@ -1151,6 +1250,8 @@ scene stereo
 
 \layout Standard
 
+
+\family typewriter 
 mono
 \end_inset 
 </cell>
@@ -1159,6 +1260,8 @@ mono
 
 \layout Standard
 
+
+\family typewriter 
 scene mono
 \end_inset 
 </cell>
@@ -1169,6 +1272,8 @@ scene mono
 
 \layout Standard
 
+
+\family typewriter 
 write
 \end_inset 
 </cell>
@@ -1177,6 +1282,8 @@ write
 
 \layout Standard
 
+
+\family typewriter 
 scene write
 \end_inset 
 </cell>
@@ -1203,16 +1310,17 @@ Predefined Variables and Aliases
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-\line_top 
+\line_top \align center 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="20" columns="2">
+<lyxtabular version="3" rows="20" columns="3">
 <features>
 <column alignment="left" valignment="center" leftline="true" width="25mm">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="107mm">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="90mm">
+<column alignment="left" valignment="center" rightline="true" width="25mm">
 <row topline="true" bottomline="true">
 <cell multicolumn="1" alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
@@ -1231,6 +1339,16 @@ unary operators
 
 \end_inset 
 </cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+valid types
+\end_inset 
+</cell>
 </row>
 <row topline="true">
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1238,6 +1356,8 @@ unary operators
 
 \layout Standard
 
+
+\family typewriter 
 +-
 \end_inset 
 </cell>
@@ -1249,6 +1369,14 @@ unary operators
 changes the sign on scalars, elements of vector or matrix
 \end_inset 
 </cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+SVM
+\end_inset 
+</cell>
 </row>
 <row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1256,6 +1384,8 @@ changes the sign on scalars, elements of vector or matrix
 
 \layout Standard
 
+
+\family typewriter 
 inc, dec
 \end_inset 
 </cell>
@@ -1268,6 +1398,14 @@ increases, resp.
  decreases scalar, elements of vector or matrix by one
 \end_inset 
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+SVM
+\end_inset 
+</cell>
 </row>
 <row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1275,6 +1413,8 @@ increases, resp.
 
 \layout Standard
 
+
+\family typewriter 
 abs
 \end_inset 
 </cell>
@@ -1283,7 +1423,15 @@ abs
 
 \layout Standard
 
-return absolute of scalar or length of vector, invalid for matrices
+return absolute of scalar or length of vector
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+SV
 \end_inset 
 </cell>
 </row>
@@ -1293,6 +1441,8 @@ return absolute of scalar or length of vector, invalid for matrices
 
 \layout Standard
 
+
+\family typewriter 
 inv
 \end_inset 
 </cell>
@@ -1301,7 +1451,15 @@ inv
 
 \layout Standard
 
-inverse of scalar, invalid for vectors and matrices
+inverse
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+S
 \end_inset 
 </cell>
 </row>
@@ -1311,6 +1469,8 @@ inverse of scalar, invalid for vectors and matrices
 
 \layout Standard
 
+
+\family typewriter 
 log, ln, exp, sqrt
 \end_inset 
 </cell>
@@ -1320,19 +1480,7 @@ log, ln, exp, sqrt
 \layout Standard
 
 calculates the decimal resp natural logarithm, exponential function or square
- root of scalar, invalid for vector or matrix
-\end_inset 
-</cell>
-</row>
-<row topline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-sin, cos, tan, 
-\newline 
-asin, acos, atan
+ root 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -1340,7 +1488,7 @@ asin, acos, atan
 
 \layout Standard
 
-trigonometric functions for scalars, invalid for vector or matrix
+S
 \end_inset 
 </cell>
 </row>
@@ -1350,6 +1498,36 @@ trigonometric functions for scalars, invalid for vector or matrix
 
 \layout Standard
 
+
+\family typewriter 
+sin, cos, tan, asin, acos, atan
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+trigonometric functions
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+S
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
 int, float
 \end_inset 
 </cell>
@@ -1361,6 +1539,14 @@ int, float
 returns the integer part or float, or forces return of float
 \end_inset 
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+S
+\end_inset 
+</cell>
 </row>
 <row topline="true" bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1368,6 +1554,8 @@ returns the integer part or float, or forces return of float
 
 \layout Standard
 
+
+\family typewriter 
 det
 \end_inset 
 </cell>
@@ -1377,6 +1565,14 @@ det
 \layout Standard
 
 returns determinant of matrix, invalid for scalar and vector
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+S
 \end_inset 
 </cell>
 </row>
@@ -1398,6 +1594,16 @@ binary operators
 
 \end_inset 
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+valid types
+\end_inset 
+</cell>
 </row>
 <row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1405,6 +1611,8 @@ binary operators
 
 \layout Standard
 
+
+\family typewriter 
 +, -
 \end_inset 
 </cell>
@@ -1417,6 +1625,14 @@ basic addition and subtraction, vectors and matrices must have identical
  elements
 \end_inset 
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+SS VV MM
+\end_inset 
+</cell>
 </row>
 <row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1424,6 +1640,8 @@ basic addition and subtraction, vectors and matrices must have identical
 
 \layout Standard
 
+
+\family typewriter 
 *
 \end_inset 
 </cell>
@@ -1432,8 +1650,15 @@ basic addition and subtraction, vectors and matrices must have identical
 
 \layout Standard
 
-multiplication, valid combinations: scalar*scalar, scalar*vector, scalar*matrix,
- vector*vector (dot product), vector*matrix, matrix*matrix
+multiplication or scalar product
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+SS SV SM VV VM MM
 \end_inset 
 </cell>
 </row>
@@ -1443,6 +1668,8 @@ multiplication, valid combinations: scalar*scalar, scalar*vector, scalar*matrix,
 
 \layout Standard
 
+
+\family typewriter 
 /
 \end_inset 
 </cell>
@@ -1451,7 +1678,15 @@ multiplication, valid combinations: scalar*scalar, scalar*vector, scalar*matrix,
 
 \layout Standard
 
-simple division, valid combinations: scalar/scalar, vector/scalar, matrix/scalar
+simple division
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+SS SV SM
 \end_inset 
 </cell>
 </row>
@@ -1461,6 +1696,8 @@ simple division, valid combinations: scalar/scalar, vector/scalar, matrix/scalar
 
 \layout Standard
 
+
+\family typewriter 
 pow
 \end_inset 
 </cell>
@@ -1472,6 +1709,14 @@ pow
 power of x (1st position) to y (2nd position)
 \end_inset 
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+S
+\end_inset 
+</cell>
 </row>
 <row topline="true" bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1479,6 +1724,8 @@ power of x (1st position) to y (2nd position)
 
 \layout Standard
 
+
+\family typewriter 
 x
 \end_inset 
 </cell>
@@ -1488,6 +1735,14 @@ x
 \layout Standard
 
 calculates cross product between two vectors
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+VV
 \end_inset 
 </cell>
 </row>
@@ -1509,6 +1764,16 @@ special
 
 \end_inset 
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+valid types
+\end_inset 
+</cell>
 </row>
 <row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1524,6 +1789,15 @@ dist
 
 \layout Standard
 
+calculates distance between two vectors
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+VV
 \end_inset 
 </cell>
 </row>
@@ -1541,6 +1815,15 @@ angle
 
 \layout Standard
 
+calculates angle between two lines formed by three vectors
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+VVV
 \end_inset 
 </cell>
 </row>
@@ -1558,6 +1841,15 @@ torsion
 
 \layout Standard
 
+calculates torsion as defined by four vectors
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+VVVV
 \end_inset 
 </cell>
 </row>
@@ -1579,6 +1871,14 @@ Requires a direction vector V and a scalar value S, returns the rotation
  matrix of a S degree rotation around axis V
 \end_inset 
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+WV
+\end_inset 
+</cell>
 </row>
 </lyxtabular>
 
@@ -1596,9 +1896,9 @@ Shell RPN Stack Operators
 \end_inset 
 
 
-\layout Subsection
+\layout Section
 
-Introduction to 
+Brief Introduction to 
 \family typewriter 
 tcl
 \layout Standard
@@ -1629,8 +1929,585 @@ clearpage
 
 \layout Section
 
+
+\begin_inset LatexCommand \label{gui}
+
+\end_inset 
+
+GUI
+\layout Standard
+
+All keypresses occuring in the graphics window are routed directly to the
+ DINO shell prompt.
+ 
+\layout Standard
+
+The following input devices are available, if installed:
+\layout Itemize
+
+
+\family typewriter 
+mouse
+\family default 
+ (& 
+\family typewriter 
+mouse2
+\family default 
+)
+\layout Itemize
+
+
+\family typewriter 
+dialbox
+\family default 
+ (& 
+\family typewriter 
+dialbox2
+\family default 
+)
+\layout Itemize
+
+
+\family typewriter 
+spaceball
+\family default 
+ (& 
+\family typewriter 
+spaceball2
+\family default 
+)
+\layout Standard
+
+The 
+\family typewriter 
+*2
+\family default 
+ variants are in combination with the 
+\emph on 
+Ctrl
+\emph default 
+ modifier key.
+ The transformations caused by these input devices are per default routed
+ to the scene, modifying the camera view.
+ The dataset command 
+\family typewriter 
+grab
+\family default 
+ (see section 
+\begin_inset LatexCommand \vref{gen_ds_com}
+
+\end_inset 
+
+) can be used to re-route the transformations to a dataset.
+\layout Paragraph
+
+Mouse 
+\layout Standard
+
+Clicking
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+time between mouse button press and release < 200ms
+\end_inset 
+
+ the left mouse button in the graphics window has the following effects:
+\layout Enumerate
+
+A line 
+\begin_inset Formula $\mathcal{L}$
+\end_inset 
+
+ is constructed that is perpendicular to the xy plane and goes through the
+ current mouse position.The middle point of the intersection of line 
+\begin_inset Formula $\mathcal{L}$
+\end_inset 
+
+ with the near and far clipping plane is stored in the variable 
+\family typewriter 
+CP
+\family default 
+ (for current point)
+\layout Enumerate
+
+Of all atoms of 
+\emph on 
+shown
+\emph default 
+ structure objects that are within 0.2 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+AA
+\backslash 
+
+\end_inset 
+
+ of line 
+\begin_inset Formula $\mathcal{L}$
+\end_inset 
+
+ and that are between the near and far clipping plane, the one closest to
+ the near clipping plane is selected:
+\begin_deeper 
+\layout Enumerate
+
+its numeric form (.ds:#number) is stored in the variable 
+\family typewriter 
+CS
+\family default 
+ (current selection) and pushed onto the scene stack
+\layout Enumerate
+
+its position is stored in the variable 
+\family typewriter 
+CP
+\family default 
+, overriding the calculated point above
+\layout Enumerate
+
+its name is displayed in the status bar
+\layout Enumerate
+
+its label is toggled if the shift key was pressed during the mouse click
+\end_deeper 
+\layout Standard
+
+Depressing the right mouse button in the graphics window will cause the
+ user menu to appear.
+ 
+\layout Standard
+\align left 
+The table below lists the effects of mouse movement in the graphics window,
+ depending on the mouse button(s) and modifier keys pressed.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="9" columns="2">
+<features>
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" leftline="true" width="0pt">
+<row>
+<cell multicolumn="1" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Default Mouse Input Settings
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Left MB
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+rotate x+y
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Middle MB
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+translate z (slow and fast)
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Left MB & Middle MB
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+rotate z
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Left MB & Shift
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+translate x+y
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Middle MB & Shift
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+slab width
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+Left MB & Middle MB & Shift
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+slab translation
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+MouseWheel
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+translate z (slow)
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+MouseWheel & Shift
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+translate z (fast)
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Paragraph
+
+Dialbox 
+\layout Standard
+
+The table below lists the settings of the eight dials on a standard dialbox.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features>
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row topline="true" bottomline="true">
+<cell multicolumn="1" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\emph on 
+Default Dialbox Settings
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+slab width
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+slab translate
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+rotate z
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+translate z
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+rotate y
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+translate y
+\end_inset 
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+rotate x
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\odot $
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+translate x
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Paragraph
+
+Spaceball 
+\layout Standard
+
+A spaceball combines the three translational and rotational axes into one
+ device, and hence is much better suited for 3D navigation than the mouse
+ or dialbox.
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+clearpage
+\end_inset 
+
+
+\layout Chapter
+
 Scene
-\layout Subsection
+\layout Section
 
 Scene Commands
 \layout Standard
@@ -2006,18 +2883,18 @@ AA
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-\line_top 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="20" columns="4">
 <features>
-<column alignment="left" valignment="center" leftline="true" width="15mm">
+<column alignment="left" valignment="center" width="15mm">
 <column alignment="left" valignment="center" leftline="true" width="84mm">
 <column alignment="left" valignment="center" leftline="true" width="15mm">
-<column alignment="left" valignment="center" leftline="true" rightline="true" width="20mm">
+<column alignment="left" valignment="center" leftline="true" width="20mm">
 <row topline="true" bottomline="true">
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -2744,7 +3621,7 @@ Scene Properties
 \end_inset 
 
 
-\layout Subsection
+\layout Section
 
 
 \begin_inset LatexCommand \label{light}
@@ -3318,7 +4195,7 @@ Light Properties
 \end_inset 
 
 
-\layout Subsection
+\layout Section
 
 Additional Clipping Planes
 \layout Standard
@@ -3504,583 +4381,6 @@ Clipping Plane Properties
 \end_inset 
 
 
-\layout Standard
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-clearpage
-\end_inset 
-
-
-\layout Section
-
-
-\begin_inset LatexCommand \label{gui}
-
-\end_inset 
-
-GUI
-\layout Standard
-
-All keypresses occuring in the graphics window are routed directly to the
- DINO shell prompt.
- 
-\layout Standard
-
-The following input devices are available, if installed:
-\layout Itemize
-
-
-\family typewriter 
-mouse
-\family default 
- (& 
-\family typewriter 
-mouse2
-\family default 
-)
-\layout Itemize
-
-
-\family typewriter 
-dialbox
-\family default 
- (& 
-\family typewriter 
-dialbox2
-\family default 
-)
-\layout Itemize
-
-
-\family typewriter 
-spaceball
-\family default 
- (& 
-\family typewriter 
-spaceball2
-\family default 
-)
-\layout Standard
-
-The 
-\family typewriter 
-*2
-\family default 
- variants are in combination with the 
-\emph on 
-Ctrl
-\emph default 
- modifier key.
- The transformations caused by these input devices are per default routed
- to the scene, modifying the camera view.
- The dataset command 
-\family typewriter 
-grab
-\family default 
- (see section 
-\begin_inset LatexCommand \vref{gen_ds_com}
-
-\end_inset 
-
-) can be used to re-route the transformations to a dataset.
-\layout Paragraph
-
-Mouse 
-\layout Standard
-
-Clicking
-\begin_inset Foot
-collapsed true
-
-\layout Standard
-
-time between mouse button press and release < 200ms
-\end_inset 
-
- the left mouse button in the graphics window has the following effects:
-\layout Enumerate
-
-A line 
-\begin_inset Formula $\mathcal{L}$
-\end_inset 
-
- is constructed that is perpendicular to the xy plane and goes through the
- current mouse position.The middle point of the intersection of line 
-\begin_inset Formula $\mathcal{L}$
-\end_inset 
-
- with the near and far clipping plane is stored in the variable 
-\family typewriter 
-CP
-\family default 
- (for current point)
-\layout Enumerate
-
-Of all atoms of 
-\emph on 
-shown
-\emph default 
- structure objects that are within 0.2 
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-AA
-\backslash 
-
-\end_inset 
-
- of line 
-\begin_inset Formula $\mathcal{L}$
-\end_inset 
-
- and that are between the near and far clipping plane, the one closest to
- the near clipping plane is selected:
-\begin_deeper 
-\layout Enumerate
-
-its numeric form (.ds:#number) is stored in the variable 
-\family typewriter 
-CS
-\family default 
- (current selection) and pushed onto the scene stack
-\layout Enumerate
-
-its position is stored in the variable 
-\family typewriter 
-CP
-\family default 
-, overriding the calculated point above
-\layout Enumerate
-
-its name is displayed in the status bar
-\layout Enumerate
-
-its label is toggled if the shift key was pressed during the mouse click
-\end_deeper 
-\layout Standard
-
-Depressing the right mouse button in the graphics window will cause the
- user menu to appear.
- 
-\layout Standard
-\align left 
-The table below lists the effects of mouse movement in the graphics window,
- depending on the mouse button(s) and modifier keys pressed.
-\layout Standard
-\align center 
-
-\begin_inset  Tabular
-<lyxtabular version="3" rows="9" columns="2">
-<features>
-<column alignment="center" valignment="top" leftline="true" width="0pt">
-<column alignment="center" valignment="top" leftline="true" rightline="true" width="0pt">
-<row topline="true">
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\emph on 
-Default Mouse Input Settings
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Left MB
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-rotate x+y
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Middle MB
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-translate z (slow and fast)
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Left MB & Middle MB
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-rotate z
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Left MB & Shift
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-translate x+y
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Middle MB & Shift
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-slab width
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-Left MB & Middle MB & Shift
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-slab translation
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-MouseWheel
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-translate z (slow)
-\end_inset 
-</cell>
-</row>
-<row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-MouseWheel & Shift
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-translate z (fast)
-\end_inset 
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset 
-
-
-\layout Paragraph
-
-Dialbox 
-\layout Standard
-
-The table below lists the settings of the eight dials on a standard dialbox.
-\layout Standard
-\align center 
-
-\begin_inset  Tabular
-<lyxtabular version="3" rows="5" columns="4">
-<features>
-<column alignment="right" valignment="top" leftline="true" width="0pt">
-<column alignment="center" valignment="top" width="0pt">
-<column alignment="center" valignment="top" width="0pt">
-<column alignment="left" valignment="top" rightline="true" width="0pt">
-<row topline="true" bottomline="true">
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\emph on 
-Default Dialbox Settings
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-\end_inset 
-</cell>
-</row>
-<row topline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-slab width
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-slab translate
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-rotate z
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-translate z
-\end_inset 
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-rotate y
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-translate y
-\end_inset 
-</cell>
-</row>
-<row bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-rotate x
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-
-\begin_inset Formula $\odot $
-\end_inset 
-
-
-\end_inset 
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\layout Standard
-
-translate x
-\end_inset 
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset 
-
-
-\layout Paragraph
-
-Spaceball 
-\layout Standard
-
-A spaceball combines the three translational and rotational axes into one
- device, and hence is much better suited for 3D navigation than the mouse
- or dialbox.
 \layout Standard
 
 
@@ -6282,6 +6582,11 @@ center The center of rotation is set to the geometric center of the dataset.
 \layout RefEntry
 
 restrict
+\begin_inset LatexCommand \label{gen_restrict}
+
+\end_inset 
+
+
 \layout Syntax
 
 .DS restrict SELECT_EXPR
@@ -6694,13 +6999,13 @@ wide true
 collapsed false
 
 \layout Standard
-\align center 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="5" columns="2">
 <features>
-<column alignment="left" valignment="center" width="20mm">
-<column alignment="left" valignment="center" leftline="true" width="83mm">
+<column alignment="left" valignment="center" leftline="true" width="0pt">
+<column alignment="left" valignment="center" leftline="true" rightline="true" width="0pt">
 <row topline="true" bottomline="true">
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -6803,7 +7108,7 @@ Emmission, either a scalar of explicit rgb color
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{material_prop}
 
@@ -7043,9 +7348,9 @@ Loads a trajectory file as an addon to the structure.
 \begin_inset  Tabular
 <lyxtabular version="3" rows="4" columns="3">
 <features>
-<column alignment="left" valignment="center" width="15mm">
-<column alignment="left" valignment="center" leftline="true" width="15mm">
-<column alignment="left" valignment="center" leftline="true" width="50mm">
+<column alignment="left" valignment="center" width="0pt">
+<column alignment="left" valignment="center" leftline="true" width="0pt">
+<column alignment="left" valignment="center" leftline="true" width="0pt">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -7316,9 +7621,9 @@ unrestricted
 \begin_inset  Tabular
 <lyxtabular version="3" rows="4" columns="3">
 <features>
-<column alignment="left" valignment="center" width="15mm">
-<column alignment="left" valignment="center" leftline="true" width="15mm">
-<column alignment="left" valignment="center" leftline="true" width="50mm">
+<column alignment="left" valignment="center" width="0pt">
+<column alignment="left" valignment="center" leftline="true" width="0pt">
+<column alignment="left" valignment="center" leftline="true" width="0pt">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -7363,7 +7668,7 @@ pdb
 
 
 \family typewriter 
-.pdb
+.pdb 
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -7383,7 +7688,7 @@ PDB coordinate file
 
 
 \family typewriter 
-cnsc xplorc
+csc xplorc
 \end_inset 
 </cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -7851,10 +8156,10 @@ detail
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-\align center 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="13" columns="4">
@@ -8421,7 +8726,7 @@ G
 \family typewriter 
 get
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{struct_ds_prop}
 
@@ -8440,7 +8745,7 @@ wide true
 collapsed false
 
 \layout Standard
-\align center 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="26" columns="6">
@@ -10036,7 +10341,7 @@ R
 
 )
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{struct_du_prop}
 
@@ -10052,10 +10357,10 @@ Structure Data-Unit Properties
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-\align center 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="26" columns="3">
@@ -11017,7 +11322,7 @@ off
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{struct_render_prop}
 
@@ -11371,7 +11676,7 @@ wide true
 collapsed true
 
 \layout Standard
-\align center 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="25" columns="4">
@@ -12435,7 +12740,7 @@ G
 \family typewriter 
 get
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{scal_ds_prop}
 
@@ -12451,10 +12756,10 @@ Scalar Field Dataset and Object Properties
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-\align center 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="11" columns="6">
@@ -13120,7 +13425,7 @@ R
 
 )
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{scal_du_prop}
 
@@ -13136,10 +13441,10 @@ Scalar Field Data-Unit Properties
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-\align center 
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="5" columns="3">
@@ -13291,7 +13596,7 @@ transparency for object types contour and slab
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{scal_render_prop}
 
@@ -13333,7 +13638,7 @@ This dataset has a surface point as its basic data-unit, each characterized
 Object Types
 \layout Standard
 
-The surface dataset does not have several object types.
+The surface dataset has only the default object type.
 \layout Subsection
 
 Dataset Commands
@@ -13411,14 +13716,27 @@ parameter was not preceded with a dot, yet here it is.
 .DS attach .STRUCT [-co DIST] | .DS attach none
 \layout Standard
 
-Surface to structure attachment: For each surface point, the atom of the
- structure dataset .STRUCT that is
+Attaches atomic information of a structure dataset to the surface: For each
+ surface point, the atom of the structure dataset 
+\family typewriter 
+.STRUCT
+\family default 
+ will be assigned to it - using the following rules:
 \layout Enumerate
 
-unrestricted
+The atom is unrestricted (see 
+\begin_inset LatexCommand \vref{gen_restrict}
+
+\end_inset 
+
+)
 \layout Enumerate
 
-closest in space but within DIST 
+It is closer in space than any other atom but not farther away than 
+\family typewriter 
+DIST
+\family default 
+ 
 \begin_inset ERT
 status Collapsed
 
@@ -13430,7 +13748,7 @@ AA
  
 \end_inset 
 
-(default 3
+ (default 3
 \begin_inset ERT
 status Collapsed
 
@@ -13440,19 +13758,23 @@ status Collapsed
 AA
 \end_inset 
 
-) 
+).
 \layout Standard
 
-will be assigned to to the surface point, extending its properties for selection
- and range statements.
- If no atom fulfills the above criteria, the assignment is not modified;
- as a result, multiple attachment commands are cumulative.
+If no atom fulfills the above criteria, the assignment is not modified;
+ as a result, multiple attachment commands are cumulative, and it should
+ be noted that mixing different structure datasets it possible.
  The assignements are removed by specifying the parameter 
 \family typewriter 
 none
 \family default 
  instead of a structure dataset.
  
+\layout Standard
+
+As a consequence of the attachment, the properties of each surface point
+ are extended to contain its attached atom properties, which in turn may
+ be used for selection and range statements.
 \layout Subsection
 
 Object Commands
@@ -13501,7 +13823,8 @@ reverse
 .DS.OBJ reverse
 \layout Standard
 
-Swaps inside and outside for this surface object.
+Inverses all surface normals.
+ As a consequence, inside and outside for this surface object are swapped.
 \layout Subsection
 
 Dataset, Object and Data-Unit Properties
@@ -13534,56 +13857,23 @@ get
 \end_inset 
 
 ).
-\layout Subsection
-
-Render Modes and Properties
-\layout Standard
-
-The render properties (in 
-\family typewriter 
-typewriter
-\family default 
- font) mentioned below are listed in table 
-\begin_inset LatexCommand \vref{scal_render_prop}
-
-\end_inset 
-
-.
-\layout Description
-
-fill (default) The faces are rendered as filled and lit triangles.
-\layout Description
-
-lines Only the outlines of the triangular faces are drawn as lines of width
- 
-\family typewriter 
-lw
-\family default 
-.
-\layout Description
-
-dots Only the vertices are draw as points of size 
-\family typewriter 
-ps
-\family default 
-.
 \layout Standard
 
 
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="10" columns="4">
 <features>
 <column alignment="left" valignment="center" leftline="true" width="20mm">
-<column alignment="left" valignment="center" leftline="true" width="0pt" special="c">
-<column alignment="left" valignment="center" leftline="true" width="0pt" special="c">
+<column alignment="center" valignment="center" leftline="true" width="0pt">
+<column alignment="center" valignment="center" leftline="true" width="0pt">
 <column alignment="left" valignment="center" leftline="true" rightline="true" width="104mm">
 <row topline="true" bottomline="true">
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -13599,11 +13889,9 @@ Property
 
 \layout Standard
 
+
+\emph on 
 S
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none" width="1ex">
@@ -13611,11 +13899,9 @@ S
 
 \layout Standard
 
+
+\emph on 
 G
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -13998,24 +14284,27 @@ Geometric center of object
 \layout Standard
 
 
-\begin_inset Formula $^{\ast }$
-\end_inset 
+\emph on 
+\SpecialChar ~
 
-S: Property can be modified with 
+\newline 
+S
+\emph default 
+: Property can be modified with 
 \family typewriter 
 set
 \family default 
 
 \newline 
 
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-G: Property can be obtained with 
+\emph on 
+G
+\emph default 
+: Property can be obtained with 
 \family typewriter 
 get
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{surf_ds_prop}
 
@@ -14031,19 +14320,19 @@ Surface Dataset and Object Properties
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="8" columns="6">
 <features>
 <column alignment="left" valignment="center" leftline="true" width="20mm">
-<column alignment="left" valignment="center" leftline="true" width="0pt" special="c">
-<column alignment="left" valignment="center" leftline="true" width="0pt" special="c">
-<column alignment="left" valignment="center" leftline="true" width="0pt" special="c">
-<column alignment="left" valignment="center" leftline="true" width="0pt" special="c">
+<column alignment="center" valignment="center" leftline="true" width="0pt">
+<column alignment="center" valignment="center" leftline="true" width="0pt">
+<column alignment="center" valignment="center" leftline="true" width="0pt">
+<column alignment="center" valignment="center" leftline="true" width="0pt">
 <column alignment="left" valignment="center" leftline="true" rightline="true" width="92mm">
 <row topline="true" bottomline="true">
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -14059,11 +14348,9 @@ Property
 
 \layout Standard
 
+
+\emph on 
 S
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -14071,11 +14358,9 @@ S
 
 \layout Standard
 
+
+\emph on 
 G
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -14083,11 +14368,9 @@ G
 
 \layout Standard
 
+
+\emph on 
 L
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -14095,11 +14378,9 @@ L
 
 \layout Standard
 
+
+\emph on 
 R
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-
 \end_inset 
 </cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -14504,30 +14785,42 @@ Color of surface point
 \layout Standard
 
 
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-S Property can be modified with set
+\emph on 
+S
+\emph default 
+: Property can be modified with set
 \newline 
 
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-G Property can be retrieved with get
+\emph on 
+G:
+\emph default 
+ Property can be retrieved with get
 \newline 
 
-\begin_inset Formula $^{\ast }$
-\end_inset 
-
-L Property can be used in a selection statement
+\emph on 
+L:
+\emph default 
+ Property can be used in a selection statement
 \newline 
 
-\begin_inset Formula $^{\ast }$
+\emph on 
+R:
+\emph default 
+ Property can be used in a range statement after 
+\family typewriter 
+-range
+\family default 
+ (
+\begin_inset Formula $\bullet $
 \end_inset 
 
-R Property can be used in a range statement
+) or as the property to be set (
+\begin_inset Formula $\times $
+\end_inset 
+
+)
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{surf_du_prop}
 
@@ -14537,16 +14830,49 @@ Surface Data-Unit Properties
 \end_inset 
 
 
+\layout Subsection
+
+Render Modes and Properties
+\layout Standard
+
+The render properties (in 
+\family typewriter 
+typewriter
+\family default 
+ font) mentioned below are listed in table 
+\begin_inset LatexCommand \vref{scal_render_prop}
+
+\end_inset 
+
+.
+\layout Description
+
+fill (default) The faces are rendered as filled and lit triangles.
+\layout Description
+
+lines Only the outlines of the triangular faces are drawn as lines of width
+ 
+\family typewriter 
+lw
+\family default 
+.
+\layout Description
+
+dots Only the vertices are draw as points of size 
+\family typewriter 
+ps
+\family default 
+.
 \layout Standard
 
 
 \begin_inset Float table
 placement htbp
 wide true
-collapsed true
+collapsed false
 
 \layout Standard
-
+\line_top \align center 
 
 \begin_inset  Tabular
 <lyxtabular version="3" rows="7" columns="3">
@@ -14767,7 +15093,7 @@ transparency: 1.0 is fully opaque, 0.0 is fully transparent
 
 
 \layout Caption
-
+\line_bottom 
 
 \begin_inset LatexCommand \label{surf_render_prop}
 
@@ -16617,9 +16943,15 @@ scene
 scene
 \family default 
  can be ommitted.
-\layout Subsubsection*
+\layout Section
 
-PNG Raster Image
+Raster Image
+\layout Syntax
+
+write FILE.png [-s (SIZE | WxH | VAL%)] [-a ACC] [-dump]
+\layout Standard
+
+Creates a raster image in png format
 \begin_inset Foot
 collapsed true
 
@@ -16631,13 +16963,7 @@ PNG provides a open-source, royalty-free, efficient graphics format.
 http://www.libpng.org/
 \end_inset 
 
-
-\layout Syntax
-
-write FILE.png [-s (SIZE | WxH | VAL%)] [-a ACC] [-dump]
-\layout Standard
-
-Creates a raster image.
+.
  Unless 
 \family typewriter 
 -dump
@@ -16692,7 +17018,7 @@ If the option
  good offline-rendering context.
  The size is fixed to the graphics window size, and scene antialiasing using
  the accumulation buffer is not available.
-\layout Subsubsection
+\layout Section
 
 PostScript
 \layout Syntax
@@ -16749,7 +17075,7 @@ The BoundingBox is crudely set to the the window dimensions and might need
 
 PostScript export has been largely superseded by the POVray format (see
  below).
-\layout Subsubsection
+\layout Section
 
 POVray
 \layout Syntax
@@ -16776,76 +17102,4 @@ www.dino3d.org
 \family default 
 ) is devoted to POVray output and a duplication here would exceed the scope
  of this reference manual.
-\layout Chapter
-\start_of_appendix 
-Glossary
-\layout Paragraph*
-
-3D Primitive
-\layout Paragraph*
-
-Antialiasing
-\layout Standard
-
-point and line aa
-\layout Standard
-
-full scene aa
-\layout Paragraph*
-
-Attachment
-\layout Paragraph*
-
-Circular Subdivisions
-\newline 
-
-\layout Paragraph*
-
-Depth Cueing
-\layout Paragraph*
-
-Lighting
-\layout Standard
-
-ambient diffuse specular
-\layout Standard
-
-attenuation
-\layout Paragraph*
-
-Isocontouring
-\layout Paragraph*
-
-Material
-\layout Paragraph*
-
-Polygon Offset
-\layout Paragraph*
-
-Solid Surface
-\layout Paragraph*
-
-Spline
-\layout Paragraph*
-
-Transparency
-\layout Standard
-
-
-\begin_inset ERT
-status Collapsed
-
-\layout Standard
-
-\backslash 
-clearpage
-\end_inset 
-
-
-\layout Chapter
-
-Bibliography
-\layout Standard
-
-IUPAC nomenclature http://www.chem.qmw.ac.uk/iupac/misc/biop.html
 \the_end
