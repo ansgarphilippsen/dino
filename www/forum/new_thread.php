@@ -1,7 +1,5 @@
 <?php
-include "settings.inc.php";
-include "db_connect.inc.php";
-include "check_tags.inc.php";
+include "init.inc.php";
 
 if($id<1) {
   header("Location: $base_link");

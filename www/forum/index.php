@@ -1,6 +1,7 @@
 <?php
-include "settings.inc.php";
-include "db_connect.inc.php";
+include "init.inc.php";
+
+$title = "<b>Categories Overview</b>";
 
 include "f_header.inc.php";
 

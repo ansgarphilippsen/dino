@@ -1,6 +1,7 @@
 <?php
-include "settings.inc.php";
-include "db_connect.inc.php";
+include "init.inc.php";
+
+$title = "<B>Viewing thread</B>\n";
 
 include "f_header.inc.php";
 

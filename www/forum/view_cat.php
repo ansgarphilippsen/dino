@@ -1,17 +1,17 @@
 <?php
-include "settings.inc.php";
-include "db_connect.inc.php";
+include "init.inc.php";
+
+$query = "SELECT * FROM category WHERE id=$id";
+$result = mysql_query($query) or die(mysql_error());
+$line=mysql_fetch_array($result);
+
+$title = "<b>Category $line[name]</b><BR><SMALL>$line[desc]</SMALL\n";
 
 include "f_header.inc.php";
 
 echo "<TABLE BORDER=0 CELLPADDING=10 CELLSPACING=0 WIDTH=100%>\n";
 
-$query = "SELECT * FROM category WHERE id=$id";
-$result = mysql_query($query) or die(mysql_error());
-$line=mysql_fetch_array($result);
-echo "<TR BGCOLOR=$col_cview1><TD>\n";
-echo "<b>$line[name]</b><BR><FONT SIZE=-1>$line[desc]</FONT>\n";
-echo "</TD></TR><TR BGCOLOR=$col_cview2><TD ALIGN=CENTER>\n";
+echo "<TR BGCOLOR=$col_cview2><TD ALIGN=CENTER>\n";
 
 echo "<A HREF='new_thread.php?id=$id'>Add New Thread</A>\n";
 echo "&nbsp;|&nbsp;\n";

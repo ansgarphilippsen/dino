@@ -5,6 +5,7 @@ $db_host = "cobra.mih.unibas.ch";
 $db_user = "dino";
 $db_pass = "dino13";
 $db_name = "dino_forum";
+$dbu_name = "dino";
 
 $col_page_bg = "#cfcfdf";
 $col_table = "#ffffff";
