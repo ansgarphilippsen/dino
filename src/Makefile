@@ -88,10 +88,10 @@ sinclude $(GUI)/make.addon
 
 
 devel: $(OBJ) gui
-	$(CPP) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o dino_devel_$(GUI)
+	$(CC) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o dino_devel_$(GUI)
 
 dino: $(OBJ) gui
-	$(CPP) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o $@
+	$(CC) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o $@
 	cp $@ ../bin/
 	$(STRIP) ../bin/$@
 
@@ -102,7 +102,7 @@ gui:
 	$(CC) $(COPT) -c $<
 
 .cpp.o:
-	$(CPP) $(COPT) -c $<
+	$(CPLUSPLUS) $(COPT) -c $<
 
 clean:
 	rm -f *.o dino *~ core #* .depend

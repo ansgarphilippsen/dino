@@ -34,7 +34,7 @@ LIBMOTIF = /usr/X11R6/lib/libXm.a
 endif
 
 CC   = gcc
-CPP  = g++
+CPLUSPLUS  = g++
 # add -pg to both for profiling
 COPT =  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(LIBGLW) $(LIBSTATIC)

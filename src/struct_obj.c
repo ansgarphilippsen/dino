@@ -288,8 +288,6 @@ int structObjComRenew(structObj *obj, int wc, char **wl)
     memcpy(&obj->select,&sel,sizeof(Select));
   }
 
-  structObjRecalcCenter(obj);
-
   com_render(obj,0,NULL);
   
   setDelete(&set);
@@ -366,6 +364,8 @@ int structObjRenew(structObj *obj, Set *set, Select *sel)
 
   sprintf(message,"%d atoms with %d bonds\n",obj->atom_count, obj->bond_count);
   comMessage(message);
+
+  structObjRecalcCenter(obj);
 
   // set object properties after renewing
   if(structObjSet(obj,set,1)<0)
@@ -677,11 +677,15 @@ int structObjGet(structObj *obj, char *prop)
 {
   int i;
   char message[256];
-  float x,y,z,v[3];
+  float x,y,z,v[4];
   dbmStructNode *node=obj->node;
 
   if(!strcmp(prop,"center")) {
-    sprintf(message,"{%.5f,%.5f,%.5f}",obj->center[0],obj->center[1],obj->center[2]);
+    v[0]=obj->center[0];
+    v[1]=obj->center[1];
+    v[2]=obj->center[2];
+    transApplyf(&obj->node->transform,v);
+    sprintf(message,"{%.5f,%.5f,%.5f}",v[0],v[1],v[2]);
     comReturn(message);
   } else {
     sprintf(message,"%s: get: unknown parameter %s\n", obj->name,prop);
@@ -2124,7 +2128,7 @@ void structObjRecalcCenter(structObj* obj)
     v[1]=0.0;
     v[2]=0.0;
   }
-  transApplyf(&obj->node->transform,v);
+  //transApplyf(&obj->node->transform,v);
   obj->center[0]=v[0];
   obj->center[1]=v[1];
   obj->center[2]=v[2];

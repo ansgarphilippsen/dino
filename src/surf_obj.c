@@ -468,7 +468,8 @@ int surfObjRenew(surfObj *obj, Set *set, Select *sel, int vflag)
     sprintf(message,"area: %.4f A^2\n",area);
     comMessage(message);
   }
-  
+
+  surfObjRecalcCenter(obj);
 
   comRedraw();
 
