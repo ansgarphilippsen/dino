@@ -396,9 +396,7 @@ int comWorkPrompt(int word_count, const char ** word_list)
     }
   } else if(!strcmp(word_list[0],"save")) {
     comMessage("save not implemted\n");
-    /*
-      comSave(word_count-1,word_list+1);
-    */
+    //comSave(word_count-1,word_list+1);
   } else if(!strcmp(word_list[0],"list")) {
     for(i=0;i<dbm.nodec_max;i++)
       if(dbm.node[i].common.type!=DBM_NODE_EMPTY) {
@@ -1575,6 +1573,12 @@ int comSave(int wc,const char **wl)
     comMessage(message);
     return -1;
   }
+
+  /*
+    generate XML description of complete DINO database
+     - link or embed datasets
+     - objects must probably be stored explicitely
+  */
 
 
   fclose(f);

@@ -2,8 +2,8 @@
 
 ARCH=LINUX
 MACH=i386
-#STRIP = strip -x -g
-STRIP = echo
+STRIP = strip -x -g
+#STRIP = echo
 
 OPTIONS += -DLINUX_STEREO
 
