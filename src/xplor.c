@@ -28,7 +28,11 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
   char message[256];
   char da[13],db[13],dc[13],dalpha[13],dbeta[13],dgamma[13];
   int a,b,c,section,sectionc;
+#ifdef XPLOR_OLD_ASCII
   char val[6][13];
+#else
+  float val[6];
+#endif
   int u,v,w;
   float value;
   int vc;
@@ -47,13 +51,13 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
   while(!strcmp(line,"\n"))
     fgets(line,1024,f);
   
-  if(strstr(line,"!NTITLE")!=NULL) {
-    sscanf(line,"%8d",&titlec);
-    for(i=0;i<titlec;i++)
-      fgets(line,1024,f);
-  }  else {
-    titlec=0;
-  }
+  //if(strstr(line,"!NTITLE")!=NULL) {
+  sscanf(line,"%8d",&titlec);
+  for(i=0;i<titlec;i++)
+    fgets(line,1024,f);
+  //}  else {
+  //  titlec=0;
+  //}
   fgets(line,1024,f);
   sscanf(line,"%8d%8d%8d%8d%8d%8d%8d%8d%8d",
 	 &header.na,
@@ -143,6 +147,8 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
     b=header.bmin;
     while(sectionc<section) {
       fgets(line,1024,f);
+
+#ifdef XPLOR_OLD_ASCII
       sscanf(line,"%12c%12c%12c%12c%12c%12c",
 	     val[0],val[1],val[2],val[3],val[4],val[5]);
       for(vc=0;vc<6;vc++)
@@ -153,6 +159,7 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
 	  v=b;
 	  w=c;
 	  
+	  /*
 	  while(u<0)
 	    u+=an;
 	  while(v<0)
@@ -163,7 +170,7 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
 	  u%=an;
 	  v%=bn;
 	  w%=cn;
-	  
+	  */
 	  scalWriteField(sn->field,u,v,w,value);
 	  
 	  sectionc++;
@@ -176,22 +183,26 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
 	    a=header.amin;
 	  }
 	}
+#else
+      sscanf(line,
+	     "%12f%12f%12f%12f%12f%12f",
+	     val+0,val+1,val+2,val+3,val+4,val+5);
+      for(vc=0;vc<6;vc++) {
+	scalWriteField(sn->field,a,b,c,val[vc]);
+	sectionc++;
+	a++;
+	if(a>header.amax) {
+	  b++;
+	  if(b>header.bmax) {
+	    break;
+	  }
+	  a=header.amin;
+	}
+      }
+#endif
     }
   }
   
-  /*
-  sprintf(message,
-	  "titlec: %d\na: %d %d %d\nb: %d %d %d\nc: %d %d %d\ncell: %f %f %f %f %f %f\nformat: %s\n",
-	  titlec,
-	  header.na,header.amin,header.amax,
-	  header.nb,header.bmin,header.bmax,
-	  header.nc,header.cmin,header.cmax,
-	  header.a, header.b, header.c,
-	  header.alpha, header.beta, header.gamma,
-	  header.format);
-
-  comMessage(message);
-  */
 
   /* transformation vectors */
 
@@ -202,6 +213,8 @@ int xplorMapARead(FILE *f, dbmScalNode *sn)
   scalCELLtoVECT(sn->field,header.a, header.b, header.c,
 		 header.alpha, header.beta, header.gamma,
 		 fx,fy,fz);
+
+  //fprintf(stderr,"%f\n",scalRMSD(sn->field));
 
   return 0;
 }
