@@ -3,15 +3,14 @@
 #include "glw.h"
 
 #ifdef SGI_STEREO
-#include "sgi_stereo.h"
-#include "gui.h"
-extern struct GUI gui;
+//#include "sgi_stereo.h"
 #endif
 
 #include "gfx.h"
 
 extern struct GFX gfx;
 
+/*
 int glwStereoInit()
 {
 #ifdef SGI_STEREO
@@ -34,7 +33,7 @@ void glwStereoSwitch(int mode)
   SGISwitchStereo(mode);
 #endif
 }
-
+*/
 
 void glwDrawBuffer(GLenum mode)
 {

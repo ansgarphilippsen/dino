@@ -197,7 +197,7 @@ int gfxInit()
   gfx.b=0.0;
   
   gfx.axisflag=1;
-  gfx.stereo_view=GFX_CENTER;
+  gfx.current_view=GFX_CENTER;
   gfx.slab_flag=0;
   gfx.spin=0;
 
@@ -394,7 +394,8 @@ int gfxGLInit(void)
   glfGenFont();
 
   // set projection matrix
-  gfxSetProjection(gfx.stereo_view);
+  gfxSetProjection(gfx.current_view);
+
   // set fog
   gfxSetFog();
 
@@ -466,7 +467,7 @@ int gfxRedraw()
   } else {
 #endif
     glwDrawBuffer(GLW_STEREO_CENTER);
-    gfxSetProjection(gfx.stereo_view);
+    gfxSetProjection(gfx.current_view);
     gfxSceneRedraw(1);
     
     comDBRedraw();
@@ -599,7 +600,7 @@ int gfxSetViewport(void)
   glViewport(0,0,gui.win_width, gui.win_height);
   gfx.aspect=(double)gui.win_width/(double)gui.win_height;
 #endif
-  gfxSetProjection(gfx.stereo_view);
+  gfxSetProjection(gfx.current_view);
   return 0;
 }
 
@@ -655,7 +656,7 @@ int gfxSetSlab(float near, float far)
   gfx.transform.slabn2=near;
   gfx.transform.slabf2=far;
 
-  gfxSetProjection(gfx.stereo_view);
+  gfxSetProjection(gfx.current_view);
   gfxSetFog();
   return 0;
 }
@@ -966,7 +967,7 @@ static void do_jitter(int accum)
   }
   f=1.0/(float)accum;
   for(i=0;i<accum;i++) {
-    gfxSetAccProjection(gfx.stereo_view, jitter[i*2+0], jitter[i*2+1]);
+    gfxSetAccProjection(gfx.current_view, jitter[i*2+0], jitter[i*2+1]);
     gfxSetFog();
     gfxSceneRedraw(flag);
     comDBRedraw();

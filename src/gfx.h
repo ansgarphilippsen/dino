@@ -48,6 +48,7 @@ struct GFX
   int stereo_mode, stereo_available;
   float eye_dist, eye_offset;
 #endif
+  int current_view;
 
   GLfloat fog_color[4];
   int fog,fog_mode;
@@ -55,7 +56,6 @@ struct GFX
 
   int axisflag;
   int cpflag;
-  int stereo_view;
   int slab_flag;
   int fixz;
   int spin,sx,sy,sdx,sdy;

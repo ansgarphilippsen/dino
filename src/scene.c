@@ -151,7 +151,7 @@ int sceneCommand(int wc, const char **wl)
     gfx.transform.slabn=1.0;
     gfx.transform.slabf=1000.0;
     gfxSetViewport();
-    gfxSetProjection(gfx.stereo_view);
+    gfxSetProjection(gfx.current_view);
     gfxSetFog();
     comRedraw();
   } else if(!strcmp(wl[0],"center")) {
@@ -448,7 +448,7 @@ int sceneCommand(int wc, const char **wl)
 	  gfx.mode=GFX_PERSP;
 	  glDisable(GL_NORMALIZE);
 	}
-	gfxSetProjection(gfx.stereo_view);
+	gfxSetProjection(gfx.current_view);
 	gfxSetFog();
 	comRedraw();
       } else if(!strcmp(prop,"ortho")) {
@@ -458,7 +458,7 @@ int sceneCommand(int wc, const char **wl)
 	  gfx.mode=GFX_ORTHO;
 	  glEnable(GL_NORMALIZE);
 	}
-	gfxSetProjection(gfx.stereo_view);
+	gfxSetProjection(gfx.current_view);
 	gfxSetFog();
 	comRedraw();
       } else if(!strcmp(prop,"eyedist")) {
@@ -508,7 +508,7 @@ int sceneCommand(int wc, const char **wl)
 	if(gui.eye_dist<0.0)
 	  gui.eye_dist=0.0;
 #endif
-	gfxSetProjection(gfx.stereo_view);
+	gfxSetProjection(gfx.current_view);
 	comRedraw();
       } else if(!strcmp(prop,"fov")) {
 	/**********************
@@ -541,7 +541,7 @@ int sceneCommand(int wc, const char **wl)
 	  gfx.fovy=5.0;
 	if(gfx.fovy>85.0)
 	  gfx.fovy=85.0;
-	gfxSetProjection(gfx.stereo_view);
+	gfxSetProjection(gfx.current_view);
 	comRedraw();
       } else if(!strcmp(prop,"fixz")) {
 	/**********************
@@ -814,17 +814,17 @@ int sceneCommand(int wc, const char **wl)
 	  return -1;
 	}
 	if(!strcmp(val,"center"))
-	  gfx.stereo_view=GFX_CENTER;
+	  gfx.current_view=GFX_CENTER;
 	else if(!strcmp(val,"left"))
-	  gfx.stereo_view=GFX_LEFT;
+	  gfx.current_view=GFX_LEFT;
 	else if(!strcmp(val,"right"))
-	  gfx.stereo_view=GFX_RIGHT;
+	  gfx.current_view=GFX_RIGHT;
 	else {
 	  sprintf(message,"invalid value for view\n");
 	  comMessage(message);
 	  return -1;
 	}
-	gfxSetProjection(gfx.stereo_view);
+	gfxSetProjection(gfx.current_view);
 	comRedraw();
       } else if(!strcmp(prop,"transmat") ||
 		!strcmp(prop,"trans")) {
@@ -1036,9 +1036,9 @@ int sceneCommand(int wc, const char **wl)
     } else if(!strcmp(wl[1],"bg")) {
       sprintf(message,"{%.3f,%.3f,%.3f}",gfx.r,gfx.g,gfx.b);
     } else if(!strcmp(wl[1],"view")) {
-      if(gfx.stereo_view==GFX_RIGHT)
+      if(gfx.current_view==GFX_RIGHT)
 	sprintf(message,"right");
-      else if(gfx.stereo_view==GFX_LEFT)
+      else if(gfx.current_view==GFX_LEFT)
 	sprintf(message,"left");
       else
 	sprintf(message,"center");
@@ -1085,7 +1085,7 @@ int sceneCommand(int wc, const char **wl)
   } else if(!strcmp(wl[0],"autoslab")) {
     comGetMinMaxSlab();
     gfxSetFog();
-    gfxSetProjection(gfx.stereo_view);
+    gfxSetProjection(gfx.current_view);
     comRedraw();
   } else if(!strcmp(wl[0],"split")) {
 #ifdef USE_CMI

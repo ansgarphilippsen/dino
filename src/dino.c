@@ -148,7 +148,7 @@ int dinoMain(int argc,char **argv)
   debmsg("calling dbmInit");
 #ifdef USE_CMI
   debmsg("calling guiInit");
-  if(guiInit(&argc, &argv)<0)  return -1;
+  if(guiInit(argc, argv)<0)  return -1;
 #endif
   if(dbmInit()<0) return -1;
   debmsg("calling sceneInit");
@@ -199,8 +199,7 @@ void dinoExit(int n)
 #endif
 
 #ifdef SGI
-  if(gui.stereo_mode==GUI_STEREO_NORMAL)
-    system("/usr/gfx/setmon -n 72HZ");
+  cmiStereo(0);
 #endif
 #ifdef LINUX
 #ifndef USE_CMI

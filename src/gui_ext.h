@@ -20,7 +20,7 @@ extern "C" {
 
 
 #ifdef USE_CMI
-int guiInit(int *, char ***);
+int guiInit(int , char **);
 #else
 int guiInit(void (*)(int, char **), int*, char ***);
 #endif

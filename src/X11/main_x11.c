@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 
   dinoMain(argc, argv);
 
-  if(guiInit(&argc, &argv)<0) {
+  if(guiInit(argc, argv)<0) {
     return -1;
   }
 

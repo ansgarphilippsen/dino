@@ -35,6 +35,7 @@ enum {
   // TARGET_GUI
   CMI_MESSAGE,  // send message (char *)
   CMI_REFRESH,  // request refresh (NULL)
+  CMI_STEREO,   // stereo mode (int)
   CMI_DS_NEW,   // new ds  (char *name, *char type)
   CMI_DS_DEL,   // del ds  (char *name)
   CMI_DS_REN,   // ren ds  (char *old, char *new)
@@ -126,6 +127,7 @@ void cmiResize(int w, int h);
 void cmiMessage(const char *s);
 void cmiCommand(const char *s);
 void cmiRedraw(void);
+void cmiStereo(int m);
 
 #ifdef __cplusplus
 }

@@ -17,16 +17,14 @@
 #include "glw.h"
 #include "dino.h"
 #include "com.h"
-#include "gfx.h"
 #include "rex.h"
-#include "gui.h"
+#include "gui_x11.h"
 #include "om_x11.h"
 
 extern struct GUI gui;
-extern struct GFX gfx;
 extern struct OBJECT_MENU om;
 
-extern int debug_mode,video_mode;
+extern int debug_mode,video_mode, stereo_available;
 
 struct SGI_STEREO_INFO SGIStereo;
 
@@ -65,7 +63,7 @@ static int SGIStereoExtractResolution(const char *s, int *x, int *y)
 }
 
 
-int SGIStereoInit(Display *display, GLXDrawable drawable)
+int SGIStereoInit(Display *display, GLXDrawable drawable, int am)
 {
   XSGIvcVideoFormatInfo *vc_info;
   XSGIvcVideoFormatInfo vc_pattern;
@@ -83,11 +81,16 @@ int SGIStereoInit(Display *display, GLXDrawable drawable)
 
   SGIStereo.display = display;
   SGIStereo.drawable = drawable;
-  SGIStereo.mode=0;
+  SGIStereo.available_mode=am;
+  SGIStereo.active=0;
 
   strcpy(stereo_command,"");
 
+  if(am==SGI_STEREO_LOW)
+    return 0;
+  
   if(sgi_video_get_list(&vc,&vl)!=0) {
+    SGIStereo.available_mode=SGI_STEREO_LOW;
     return -1;
   }
 
@@ -151,14 +154,108 @@ int SGISwitchStereo(int m)
   Dimension sw,sh;
   XWindowChanges xwc;
 
+  
+  if(SGIStereo.active && m==SGI_STEREO_OFF) {
+    // turn active stereo off;
+    SGIStereo.active=0;
 
-  switch(gui.stereo_available) {
+    SGIStereoCommand(SGI_STEREO_NONE);
+    
+    XtSetArg(arg[1],XmNx,gui.win_xs);
+    XtSetArg(arg[0],XmNy,gui.win_ys);
+    XtSetArg(arg[2],XmNwidth,gui.win_widths);
+    XtSetArg(arg[3],XmNheight,gui.win_heights);
+    XtSetValues(gui.top,arg,4);
+    
+    if(gui.om_flag) {
+      xwc.y=gui.win_ys;
+      XReconfigureWMWindow(om.dpy,om.top,om.scrn,
+			   CWY, &xwc);
+    }      
+    
+    // notify about resize;
+    cmiResize(gui.win_width,gui.win_height);
+  }
+
+  if(!SGIStereo.active && m==SGI_STEREO_ON) {
+    // turn stereo on;
+
+    XtSetArg(arg[0],XmNx,&gui.win_xs);
+    XtSetArg(arg[1],XmNy,&gui.win_ys);
+    XtSetArg(arg[2],XmNwidth,&gui.win_widths);
+    XtSetArg(arg[3],XmNheight,&gui.win_heights);
+    XtGetValues(gui.top,arg,4);
+    wh=gui.win_height;
+    rh=HeightOfScreen(DefaultScreenOfDisplay(gui.dpy));
+
+    if(SGIStereo.available_mode==SGI_STEREO_HIGH) {
+      
+      sx=SGIStereo.resx-SGIStereo.resy+17;
+      sy=SGIStereo.y_offset;
+      sw=SGIStereo.resy-20;
+      sh=SGIStereo.resy-20;
+      
+      SGIStereoCommand(SGI_STEREO_HIGH);
+      SGIStereo.active=1;
+      
+      /*
+	maybe it would be adviseable to 
+	get the new values from the display
+      */
+      XtSetArg(arg[1],XmNx,sx);
+      XtSetArg(arg[0],XmNy,sy);
+      XtSetArg(arg[2],XmNwidth,sw);
+      XtSetArg(arg[3],XmNheight,sh);
+      XtSetValues(gui.top,arg,4);
+
+      if(gui.om_flag) {
+	xwc.y=sy+30;
+	XReconfigureWMWindow(om.dpy,om.top,om.scrn,
+			     CWY, &xwc);
+      }      
+
+      // notify about size change;
+      cmiResize(sw,sh);
+
+    } else if(SGIStereo.available_mode==SGI_STEREO_LOW) {
+
+      // turn on stereo mode;
+      SGIStereoCommand(SGI_STEREO_LOW);
+      SGIStereo.active=1;
+
+      // modify window for stereo display;
+      sx=gui.win_xs;
+      sy=(Position)rh/2;
+      sw=gui.win_widths;
+      sh=gui.win_heights/2;
+      XtSetArg(arg[1],XmNx,sx);
+      XtSetArg(arg[0],XmNy,sy);
+      XtSetArg(arg[2],XmNwidth,sw);
+      XtSetArg(arg[3],XmNheight,sh);
+      XtSetValues(gui.top,arg,4);
+
+      if(gui.om_flag) {
+	xwc.y=sy+30;
+	XReconfigureWMWindow(om.dpy,om.top,om.scrn,
+			     CWY, &xwc);
+      }
+      
+      // notify about resize;
+      cmiResize(gui.win_width,gui.win_height/2);
+
+    }
+
+  }
+
+  /*************************** OLD
+
+  switch(SGIStereo.available_mode) {
 
   case SGI_STEREO_LOW:
     wh=gui.win_height;
     rh=HeightOfScreen(DefaultScreenOfDisplay(gui.dpy));
     
-    if(gui.stereo_mode==GUI_STEREO_OFF) {
+    if(!SGIStereo.active) {
       XtSetArg(arg[0],XmNx,&gui.win_xs);
       XtSetArg(arg[1],XmNy,&gui.win_ys);
       XtSetArg(arg[2],XmNwidth,&gui.win_widths);
@@ -172,7 +269,7 @@ int SGISwitchStereo(int m)
     sh=gui.win_heights/2;
     
     switch(m) {
-    case GUI_STEREO_OFF: /* off */
+    case GUI_STEREO_OFF:
       SGIStereoCommand(SGI_STEREO_NONE);
       gui.stereo_mode=GUI_STEREO_OFF;
 
@@ -194,7 +291,7 @@ int SGISwitchStereo(int m)
       gfxSetFog();
 
       break;
-    case GUI_STEREO_NORMAL: /* on */
+    case GUI_STEREO_NORMAL:
       SGIStereoCommand(SGI_STEREO_LOW);
       gui.stereo_mode=GUI_STEREO_NORMAL;
       
@@ -232,7 +329,7 @@ int SGISwitchStereo(int m)
     sh=SGIStereo.resy-20;
     
     switch(m) {
-    case GUI_STEREO_OFF: /* off */
+    case GUI_STEREO_OFF:
       SGIStereoCommand(SGI_STEREO_NONE);
       gui.stereo_mode=GUI_STEREO_OFF;
 
@@ -252,14 +349,10 @@ int SGISwitchStereo(int m)
       gfxSetProjection(gfx.stereo_view);
       gfxSetFog();
       break;
-    case GUI_STEREO_NORMAL: /* on */
+    case GUI_STEREO_NORMAL:
       SGIStereoCommand(SGI_STEREO_HIGH);
       gui.stereo_mode=GUI_STEREO_NORMAL;
       
-      /*
-	maybe it would be adviseable to 
-	get the new values from the display
-      */
       XtSetArg(arg[1],XmNx,sx);
       XtSetArg(arg[0],XmNy,sy);
       XtSetArg(arg[2],XmNwidth,sw);
@@ -276,60 +369,53 @@ int SGISwitchStereo(int m)
     }
     break;
   }
+
+*****************/
+  return 0;
 }
 
 int SGIStereoCommand(int mode)
 {
-  // attach to different context
-  if(SGIStereo.mode!=mode) {
+  switch(mode) {
+  case SGI_STEREO_NONE:
+    system(glw_monitor_cmd[mode]);
+    break;
+  case SGI_STEREO_LOW:
     XSGISetStereoMode(SGIStereo.display,SGIStereo.drawable,
 		      492,532,
-		      STEREO_OFF);
-    XSync(SGIStereo.display, False);
-
-    switch(mode) {
-    case SGI_STEREO_NONE:
-      system(glw_monitor_cmd[mode]);
-      break;
-    case SGI_STEREO_LOW:
-      XSGISetStereoMode(SGIStereo.display,SGIStereo.drawable,
-			492,532,
-			STEREO_BOTTOM);
-      system(glw_monitor_cmd[mode]);
-      break;
-    case SGI_STEREO_HIGH:
-      system(SGIStereo.stereo_high);
-      break;
-    }
-    XSync(SGIStereo.display, False);
-    SGIStereo.mode=mode;
+		      STEREO_BOTTOM);
+    system(glw_monitor_cmd[mode]);
+    break;
+  case SGI_STEREO_HIGH:
+    system(SGIStereo.stereo_high);
+    break;
   }
+  XSync(SGIStereo.display, False);
 
   return 0;
 }
 
 void SGIStereoDrawBuffer(GLenum view)
 {
-  switch(SGIStereo.mode) {
-  case SGI_STEREO_NONE:
+  if(SGIStereo.active) {
+    if(SGIStereo.available_mode==SGI_STEREO_HIGH) {
+      if(view==GLW_STEREO_LEFT) {
+	glDrawBuffer(GL_BACK_LEFT);
+      } else {
+	glDrawBuffer(GL_BACK_RIGHT);
+      }
+    } else {
+      if(view==GLW_STEREO_LEFT) {
+	XSGISetStereoBuffer(SGIStereo.display,SGIStereo.drawable,
+			    STEREO_BUFFER_LEFT);
+      } else { 
+	XSGISetStereoBuffer(SGIStereo.display,SGIStereo.drawable,
+			    STEREO_BUFFER_RIGHT);
+      }
+      XSync(SGIStereo.display,False);
+    }
+  } else {
     glDrawBuffer(GL_BACK);
-    break;
-  case SGI_STEREO_LOW:
-    glDrawBuffer(GL_BACK);
-    if(view==GLW_STEREO_LEFT)
-      XSGISetStereoBuffer(SGIStereo.display,SGIStereo.drawable,
-			  STEREO_BUFFER_LEFT);
-    else 
-      XSGISetStereoBuffer(SGIStereo.display,SGIStereo.drawable,
-			  STEREO_BUFFER_RIGHT);
-    XSync(SGIStereo.display,False);
-    break;
-  case SGI_STEREO_HIGH:
-    if(view==GLW_STEREO_LEFT)
-      glDrawBuffer(GL_BACK_LEFT);
-    else
-      glDrawBuffer(GL_BACK_RIGHT);
-    break;
   }
 }
 

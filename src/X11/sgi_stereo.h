@@ -13,12 +13,15 @@ enum {SGI_STEREO_NONE=0,
       SGI_STEREO_LOW=1,
       SGI_STEREO_HIGH=2};
 
+#define SGI_STEREO_ON  1
+#define SGI_STEREO_OFF 0
 
 struct SGI_STEREO_INFO {
   Display *display;
   GLXDrawable drawable;
 
-  int mode;
+  int active;
+  int available_mode;
 
   XSGIvcVideoFormatInfo vc_stereo,vc_mono;
 
@@ -28,7 +31,7 @@ struct SGI_STEREO_INFO {
 };
 
 
-int SGIStereoInit(Display *display, GLXDrawable drawable);
+int SGIStereoInit(Display *display, GLXDrawable drawable, int m);
 int SGIStereoCommand(int mode);
 void SGIStereoDrawBuffer(GLenum mode);
 

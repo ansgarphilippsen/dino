@@ -139,3 +139,10 @@ void cmiCommand(const char *s)
   cmiSubmit(&t_command);
 }
 
+static cmiToken t_stereo={CMI_TARGET_GUI, CMI_STEREO, NULL};
+void cmiStereo(int m)
+{
+  t_stereo.value=&m;
+  cmiSubmit(&t_stereo);
+}
+

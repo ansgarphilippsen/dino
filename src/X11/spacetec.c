@@ -1,8 +1,6 @@
 #include <stdio.h>
 
 #include "spacetec.h"
-#include "transform.h"
-#include "com.h"
 
 SPW_InputDispatchStruct spacetec_dispatch;
 
@@ -43,9 +41,9 @@ void spacetecMotion(Display *dpy, float data[7], void *appdata)
 //	  data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]); 
 
   for(i=0;i<6;i++)
-    if(data[i]!=0.0)
-      comTransform(TRANS_SPACEBALL,0, i, data[i]); 
-   
+    if(data[i]!=0.0) {
+      //comTransform(TRANS_SPACEBALL,0, i, data[i]); 
+    }   
 }
 
 void spacetecButtonPress(Display *dpy, int button, void *appdata) 

@@ -1744,6 +1744,8 @@ static int check_face_neigh(struct SCAL2SURF_FACE *f1, struct SCAL2SURF_FACE *f2
   float *p1,*p2,*p3;
   int t1,t2;
 
+  // TODO init t1 and t2, use |= instead of &= ???
+
   if(f1->i1==f2->i1) {
     t1&=0x1; t2&=0x1;
     c++;

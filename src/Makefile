@@ -171,7 +171,7 @@ clean:
 	cd $(GUI) && $(MAKE) clean
 
 depend:
-	$(CC) -MM $(INCLUDE) $(OPTIONS) $(SRC) > .depend
+	gcc -MM $(INCLUDE) $(OPTIONS) $(SRC) > .depend
 	cd $(GUI) && $(MAKE) depend
 
 
