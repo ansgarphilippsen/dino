@@ -372,9 +372,12 @@ int gfxGLInit(void)
   else
     glShadeModel(GL_FLAT);
   
-#ifndef EXPO
   glEnable(GL_LINE_SMOOTH);
   glEnable(GL_POINT_SMOOTH);
+
+  // MULTISAMPLING
+#ifdef GL_SAMPLE_BUFFERS_ARB
+  glEnable(GL_SAMPLE_BUFFERS_ARB);
 #endif
 
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -476,9 +479,15 @@ int gfxRedraw()
     gfxSceneRedraw(1);
     comDBRedraw();
   }
+
 #else
+
   if(gfx.stereo_mode==GFX_STEREO_SPLIT) {
+#ifdef SGI_STEREO
     glwDrawBuffer(GLW_STEREO_CENTER);
+#else
+    glDrawBuffer(GL_BACK);
+#endif
     gfx.aspect=0.5*(double)gfx.win_width/(double)gfx.win_height;
     glViewport(0,0,gfx.win_width/2, gfx.win_height);
     gfxSetProjection(GFX_RIGHT);
@@ -490,19 +499,31 @@ int gfxRedraw()
     comDBRedraw();
     gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;
     glViewport(0,0,gfx.win_width, gfx.win_height);
-#ifdef SGI_STEREO
+
   } else if(gfx.stereo_mode==GFX_STEREO_HW) {
+#ifdef SGI_STEREO
     glwDrawBuffer(GLW_STEREO_RIGHT);
+#else
+    glDrawBuffer(GL_BACK_RIGHT);
+#endif
     gfxSetProjection(GFX_RIGHT);
     gfxSceneRedraw(1);
     comDBRedraw();
+#ifdef SGI_STEREO
     glwDrawBuffer(GLW_STEREO_LEFT);
+#else
+    glDrawBuffer(GL_BACK_LEFT);
+#endif
     gfxSetProjection(GFX_LEFT);
     gfxSceneRedraw(1);
     comDBRedraw();
-#endif
+
   } else {
+#ifdef SGI_STEREO
     glwDrawBuffer(GLW_STEREO_CENTER);
+#else
+    glDrawBuffer(GL_BACK);
+#endif
     gfxSetProjection(gfx.current_view);
     gfxSceneRedraw(1);
     comDBRedraw();

@@ -1176,6 +1176,11 @@ int sceneCommand(int wc, const char **wl)
 	else
 	  gfx.stereo_mode=GFX_STEREO_OFF;
       }
+      if(gfx.stereo_active) {
+	comMessage("stereo mode is ON\n");
+      } else {
+	comMessage("stereo mode is OFF\n");
+      }
     } else {
       comMessage("hardware stereo not available\n");
     }

@@ -36,7 +36,7 @@
 extern struct GUI gui;
 #endif
 
-const char usage[]={"Usage: dino [-debug] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
+const char usage[]={"Usage: dino [-debug] [-stereo] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
 
 char welcome[]={"Welcome to dino v%s    (http://www.dino3d.org)\n\n"};
 
@@ -70,7 +70,11 @@ int dinoParseArgs(int argc, char **argv)
   char expr[256];
 
   gfx_mode=1;
+#ifdef SGI
   stereo_mode=1;
+#else
+  stereo_mode=0;
+#endif
   debug_mode=0;
   video_mode=0;
   shell_mode=0;
@@ -102,6 +106,9 @@ int dinoParseArgs(int argc, char **argv)
       } else if(!strcmp(argv[i],"-nostereo")) {
         stereo_mode=0;
 	gfx_flags+=DINO_FLAG_NOSTEREO;
+      } else if(!strcmp(argv[i],"-stereo")) {
+        stereo_mode=1;
+	gfx_flags+=DINO_FLAG_STEREO;
       } else if(!strcmp(argv[i],"-nostencil")) {
 	gfx_flags+=DINO_FLAG_NOSTENCIL;
       } else if(!strcmp(argv[i],"-nogfx")) {

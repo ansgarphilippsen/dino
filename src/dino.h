@@ -13,7 +13,8 @@ typedef char* string;
 
 #define DINO_FLAG_NOGFX     1<<0
 #define DINO_FLAG_NOSTENCIL 1<<1
-#define DINO_FLAG_NOSTEREO  1<<2
+#define DINO_FLAG_STEREO    1<<2
+#define DINO_FLAG_NOSTEREO  1<<3
 
 #ifdef __cplusplus
 extern "C" {

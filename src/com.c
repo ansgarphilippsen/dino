@@ -2082,8 +2082,8 @@ void comBench(void)
 
 void comOutit()
 {     
-  comWriteModelview();
   com.benchmark=0;
+  comWriteModelview();
 }
 
 const float *comGetCP()

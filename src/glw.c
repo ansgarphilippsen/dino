@@ -44,7 +44,14 @@ void glwDrawBuffer(GLenum mode)
     glDrawBuffer(GL_BACK);
   }
 #else
-  glDrawBuffer(GL_BACK);
+  // deprecated, since ifdef SGI_STEREO in gfxRedraw
+  if(mode==GLW_STEREO_LEFT) {
+    glDrawBuffer(GL_BACK_LEFT);
+  } else if(mode==GLW_STEREO_RIGHT) {
+    glDrawBuffer(GL_BACK_RIGHT);
+  } else {
+    glDrawBuffer(GL_BACK);
+  }
 #endif
 }
 

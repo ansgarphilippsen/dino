@@ -52,6 +52,7 @@ user menu
 #include "gui_terminal.h"
 #endif
 
+static void gl_info();
 static int init_main();
 static XVisualInfo *init_visual(int df, int sf,int st, int af);
 static Colormap get_colormap(XVisualInfo *vinfo);
@@ -125,10 +126,13 @@ int guiInit(int argc, char **argv)
   int i,j,ret;
   EventMask em;
   Arg arg[10];
-  char major[8],minor[8];
+  int glxmajor,glxminor;
+  char message[256];
   int nostereo=0;
   int use_stereo=0;
+#ifdef SGI
   int stereo_available=0;
+#endif
   XVisualInfo *vi;
   int icf=0;
 #ifdef SGI
@@ -148,8 +152,18 @@ int guiInit(int argc, char **argv)
     if(clStrcmp(argv[i],"-iconic"))
       icf=1;
   
-  if(gfx_flags & DINO_FLAG_NOSTEREO)
+#ifdef SGI
+  // TODO remove duplicated stereo flags
+  if(gfx_flags & DINO_FLAG_NOSTEREO) {
     nostereo=1;
+    use_stereo=0;
+  }
+#else
+  if(gfx_flags & DINO_FLAG_STEREO) {
+    use_stereo=1;
+    nostereo=0;
+  }
+#endif
 
   // register cmi callbacks for GUI
   cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback);
@@ -158,6 +172,7 @@ int guiInit(int argc, char **argv)
   // Initialize the RGB color database
   init_colordb();
 #endif
+
 
   if(gfx_flags & DINO_FLAG_NOGFX) {
     gui.dpy=XOpenDisplay(NULL);
@@ -180,8 +195,18 @@ int guiInit(int argc, char **argv)
     fprintf(stderr,"GLX extension is not available\n");
     gui.om_flag=0;
     return -1;
+  } else {
+    glXQueryVersion(gui.dpy,&glxmajor,&glxminor);
+    if(glxmajor==1 && glxminor>=2) {
+      sprintf(message,"guiInit: found GLX Version %d.%d\n",glxmajor,glxminor);
+      debmsg(message);
+    } else {
+      fprintf(stderr,"GLX Version must be 1.2 or above, but found %d.%d\n",
+	      glxmajor,glxminor);
+      return -1;
+    }
   }
-  
+
   if(gfx_flags & DINO_FLAG_NOGFX) {
     debmsg("creating offscreen rendering context");
     gui.glxwindow=RootWindow(gui.dpy,DefaultScreen(gui.dpy));
@@ -198,11 +223,18 @@ int guiInit(int argc, char **argv)
     gui.om_flag=1;
 
     //  pad_init();
+
+
+
+
     
     debmsg("guiInit: searching for visual");
     /* 
        Find the best visual
     */
+
+    // set to 0 per default
+    gui.stereo_available=0;
     
 #ifdef SGI_STEREO
     if(nostereo==0 && XSGIStereoQueryExtension(gui.dpy,&ev,&er) ) {
@@ -215,8 +247,9 @@ int guiInit(int argc, char **argv)
 #endif
 
 #ifdef LINUX_STEREO
-    use_stereo=1;
-    debmsg("trying stereo visual");
+    if(use_stereo) {
+      debmsg("trying stereo visual");
+    }
 #endif
     
     // try with stencil buffer
@@ -228,20 +261,21 @@ int guiInit(int argc, char **argv)
 
 #ifdef LINUX_STEREO    
     // try again without stereo support
-    if(!vi) {
-      debmsg("no stereo visual found, trying without");
-      use_stereo=0;
-      vi=init_visual(1,use_stereo,1,0);
+    if(use_stereo) {
       if(!vi) {
-	gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
-	vi=init_visual(1,use_stereo,0,0);
+	fprintf(stderr,"No stereo visual found, using mono\n");
+	use_stereo=0;
+	vi=init_visual(1,use_stereo,1,0);
+	if(!vi) {
+	  gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
+	  vi=init_visual(1,use_stereo,0,0);
+	}
+	gui.stereo_available=0;
+      } else {
+	fprintf(stderr,"Stereo visual found!\n");
+	gui.stereo_available=1;
       }
-      gui.stereo_available=1;
-    } else {
-      fprintf(stderr,"Stereo visual found!\n");
-      gui.stereo_available=0;
     }
-
 #endif
 
 #ifdef SGI_STEREO
@@ -273,8 +307,6 @@ int guiInit(int argc, char **argv)
     } else {
       gui.stereo_available=0;
     }
-#else
-    gui.stereo_available=0;
 #endif
     
     
@@ -343,30 +375,8 @@ int guiInit(int argc, char **argv)
   */
   gui.redraw=0;
   
-  /*
-    print info about graphics subsystem
-  */
-  debmsg("guiInit: info");
-  fprintf(stderr,"Graphics Subsystem ID: %s %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER));
-  sprintf(major,"%c",glGetString(GL_VERSION)[0]);
-  major[1]='\0';
-  sprintf(minor,"%c",glGetString(GL_VERSION)[2]);
-  minor[1]='\0';
+  gl_info();
 
-  if(atoi(major)<1 || (atoi(major)==1 && atoi(minor)<1)) {
-    fprintf(stderr,"OpenGL version %d.%d or above required, found %s.%s instead\n",
-	    1,1,major,minor);
-    gui.om_flag=0;
-    return -1;
-  } else {
-    fprintf(stderr,"OpenGL Version %s.%s\n",major,minor);
-  }
-
-  /*
-    check OpenGL extensions 
-  */
-  debmsg("Extensions:");
-  debmsg(glGetString(GL_EXTENSIONS));
   
   /*
     as a last step, grab the error handler
@@ -378,6 +388,36 @@ int guiInit(int argc, char **argv)
     initialization completed
   */
   return 0;
+}
+
+/*
+  print info about graphics subsystem
+*/
+static void gl_info()
+{
+  char major[8],minor[8];
+
+  debmsg("guiInit: info");
+  fprintf(stderr,"Graphics Subsystem ID: %s %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER));
+  sprintf(major,"%c",glGetString(GL_VERSION)[0]);
+  major[1]='\0';
+  sprintf(minor,"%c",glGetString(GL_VERSION)[2]);
+  minor[1]='\0';
+  
+  if(atoi(major)<1 || (atoi(major)==1 && atoi(minor)<1)) {
+    fprintf(stderr,"OpenGL version %d.%d or above required, found %s.%s instead\n",
+	    1,1,major,minor);
+    gui.om_flag=0;
+    exit(-1);
+  } else {
+    fprintf(stderr,"OpenGL Version %s.%s\n",major,minor);
+  }
+  
+  /*
+    check OpenGL extensions 
+  */
+  debmsg("Extensions:");
+  debmsg(glGetString(GL_EXTENSIONS));
 }
 
 /*
@@ -686,7 +726,8 @@ static int set_stereo(int m)
   }
   return SGIStereoIsActive();
 #else
-  return 0;
+  // HACK - TODO proper stereo mode setting
+  return m;
 #endif
 }
 

@@ -7,7 +7,7 @@ STRIP = echo
 
 OPTIONS += -DLINUX_STEREO
 
-LIBDIR = -L../lib -L/usr/X11R6/lib
+LIBDIR = -L../extras/lib -L/usr/X11R6/lib
 #LIBDIR = -L/usr/X11R6/lib
 
 
@@ -22,12 +22,12 @@ LIBTCL = -ltcl
 ifdef STATIC
 # static version
 LIBGL=
-INCLUDE = -I../extra/include -I/usr/X11R6/include
+INCLUDE = -I../extras/include -I/usr/X11R6/include
 ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
-LIBGL += ../extra/lib/libglut.a
+LIBGL += ../extras/lib/libglut.a
 endif
-LIBGL += ../extra/lib/libGL.a ../extra/lib/libGLU.a
-LIBGLW = ../extra/lib/libGLw.a
+LIBGL += ../extras/lib/libGL.a ../extras/lib/libGLU.a
+LIBGLW = ../extras/lib/libGLw.a
 LIBMOTIF = /usr/X11R6/lib/libXm.a
 
 else
@@ -47,7 +47,9 @@ else
 LIBGL += -lglut
 endif
 endif
-INCLUDE = -I../include -I/usr/X11R6/include
+
+#INCLUDE = -I../extras/include -I/usr/X11R6/include
+INCLUDE = -I/usr/X11R6/include
 LIBGL += -lGLU -lGL
 #LIBGLW = /usr/X11R6/lib/libGLw.a
 #LIBGLW = ../lib/libGLw.a
