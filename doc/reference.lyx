@@ -1,0 +1,609 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 218
+\textclass dino
+\language english
+\inputencoding auto
+\fontscheme newcent
+\graphics default
+\paperfontsize 11
+\spacing single 
+\papersize a4paper
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 2
+\paperpagestyle fancy
+
+\layout Title
+
+DINO v0.9 Reference Manual
+\layout Author
+
+
+\begin_inset Formula \( \copyright  \)
+\end_inset 
+
+ 1998-2001 Ansgar Philippsen
+\layout Date
+
+Manual Version 
+\latex latex 
+
+\backslash 
+today
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
+\layout Chapter
+
+Syntax Definitions
+\layout Section
+
+Basics
+\layout Standard
+
+Object oriented: target command parameters
+\layout Section
+
+Properties
+\layout Standard
+
+set prop=value, prop2=value2
+\layout Section
+
+Selection
+\layout Standard
+
+EXPR := PROP OP VAL[,VAL2]
+\layout Standard
+
+VAL := VAL1[:VAL2]
+\layout Chapter
+
+Command Reference
+\layout Section
+
+Shell
+\layout RefEntry
+
+!
+\layout Syntax
+
+!SHELLCOMMAND
+\layout Standard
+
+Abbreviation for the shell command 
+\family typewriter 
+system
+\family default 
+.
+\layout RefEntry
+
+@
+\layout Syntax
+
+@FILE
+\layout Standard
+
+Causes to specified 
+\family typewriter 
+FILE
+\family default 
+ to be parsed, each line interpreted as a command.
+\layout RefEntry
+
+$
+\layout Syntax
+
+$VAR
+\layout Standard
+
+Expands variable 
+\family typewriter 
+VAR
+\family default 
+ to its value.
+\layout RefEntry
+
+//
+\layout Syntax
+
+// COMMENT
+\layout Standard
+
+Ignores the rest of the line up to a newline.
+ 
+\layout RefEntry
+
+
+\backslash 
+
+\layout Syntax
+
+
+\backslash 
+X
+\layout Standard
+
+Protects character 
+\family typewriter 
+X
+\family default 
+ from being interpreted, e.g.
+ a newline in a script.
+\layout RefEntry
+
+[]
+\layout Syntax
+
+[SUBCOMMAND]
+\layout Standard
+
+Nested commands.
+ The expression contained in 
+\family typewriter 
+SUBCOMMAND
+\family default 
+ is first evaluated as a command by itself, and then, if no error occured,
+ the result replaces the expression with the brackets.
+\layout RefEntry
+
+alias
+\layout Syntax
+
+alias ABBR EXPR
+\layout Standard
+
+If
+\family typewriter 
+ ABBR
+\family default 
+ appears as the first word on a line or in a subcommand, it is replaced
+ by 
+\family typewriter 
+EXPR
+\family default 
+.
+ 
+\family typewriter 
+ABBR
+\family default 
+ must be a single word, 
+\family typewriter 
+EXPR
+\family default 
+ can be several words.
+\layout RefEntry
+
+bench
+\layout Syntax
+
+bench
+\layout Standard
+
+Continuously forces graphics updates and writes out how many frames per
+ second can be displayed (FPS).
+ Can be used to qualitatively benchmark DINO's / OpenGL's graphics capabilities.
+ Calling 
+\family typewriter 
+bench
+\family default 
+ a second time will turn it off again.
+\layout RefEntry
+
+break
+\layout Syntax
+
+break
+\layout Standard
+
+Stops script execution and returns to the caller.
+ Has no effect interactively.
+\layout RefEntry
+
+cd
+\layout Syntax
+
+cd PATH
+\layout Standard
+
+Changes the working directory to PATH
+\layout RefEntry
+
+clear
+\layout Syntax
+
+clear
+\layout Standard
+
+Removes all entries from the RPN stack
+\layout RefEntry
+
+dup
+\layout Syntax
+
+dup
+\layout Standard
+
+Duplicates the topmost RPN stack entry
+\layout RefEntry
+
+echo
+\layout Syntax
+
+echo EXPRESSION [> file]
+\layout Standard
+
+prints 
+\family typewriter 
+EXPRESSION
+\family default 
+, evaluating all subcommands and expanding all variables first.
+ Output can be optionally redirected to a 
+\family typewriter 
+FILE
+\family default 
+.
+\layout RefEntry
+
+exit
+\layout Syntax
+
+exit
+\layout Standard
+
+See 
+\family typewriter 
+quit
+\layout RefEntry
+
+opr
+\layout Syntax
+
+opr OP1 [OP2 ...]
+\layout Standard
+
+Applies one or several operators to the RPN stack.
+ See Table X for a list of all operators.
+\layout RefEntry
+
+pause
+\layout Syntax
+
+pause
+\layout Standard
+
+Halts script execution until a key is pressed.
+ If the key is 
+\family typewriter 
+ESC
+\family default 
+, script execution will be aborted.
+ Has no effect interactively.
+\layout RefEntry
+
+peek
+\layout Syntax
+
+peek
+\layout Standard
+
+Returns the topmost value from the RPN stack without removing it.
+\layout RefEntry
+
+pop
+\layout Syntax
+
+pop [VAR1 [VAR2] ...]
+\layout Standard
+
+Returns and removes the topmost value(s) from the RPN stack, optionally
+ writing them in the variables given after the 
+\family typewriter 
+pop
+\family default 
+ command.
+ If no variable is given, returns and removes only the topmost value.
+\layout RefEntry
+
+push
+\layout Syntax
+
+push W1 [W2 ...]
+\layout Standard
+
+Pushes all words (from left to right) onto the RPN stack, the rightmost
+ word will be on top.
+\layout RefEntry
+
+pwd
+\layout Syntax
+
+pwd
+\layout Standard
+
+Displays current working directory
+\layout RefEntry
+
+quit
+\layout Syntax
+
+quit
+\layout Standard
+
+See exit
+\layout RefEntry
+
+set
+\layout Syntax
+
+set VAR EXPR
+\layout Standard
+
+Assigns EXPR to the variable VAR
+\layout RefEntry
+
+show
+\layout Syntax
+
+show
+\layout Standard
+
+Lists the current RPN stack on the terminal.
+\layout RefEntry
+
+swap
+\layout Syntax
+
+swap
+\layout Standard
+
+Swaps the two topmost entries on the RPN stack
+\layout RefEntry
+
+system
+\layout Syntax
+
+system EXPR
+\layout Standard
+
+Executes 
+\family typewriter 
+EXPR
+\family default 
+ as a shell command and returns after it has completed.
+\layout RefEntry
+
+unalias
+\layout Syntax
+
+unalias ABBR
+\layout Standard
+
+Removes the alias entry for 
+\family typewriter 
+ABBR
+\family default 
+.
+\layout RefEntry
+
+unset
+\layout Syntax
+
+unset VAR
+\layout Standard
+
+Removes the variable VAR.
+\layout RefEntry
+
+var
+\layout Syntax
+
+var
+\layout Standard
+
+Lists all currently defined variables.
+\layout Section
+
+Scene
+\layout RefEntry
+
+autoslab
+\layout Syntax
+
+scene autoslab
+\layout Standard
+
+Adjusts the front and back clipping plane to the minimal and maximal z value
+ of the currently displayed objects.
+\layout RefEntry
+
+center
+\layout Syntax
+
+scene center {x,y,z}
+\layout Standard
+
+Centers the global rotation on the coordinates provided by 
+\family typewriter 
+{x,y,z}
+\layout RefEntry
+
+get
+\layout Syntax
+
+scene get PROP
+\layout Standard
+
+Returns the scene property PROP.
+\layout RefEntry
+
+grab
+\layout Syntax
+
+scene grab INPUTDEVICE
+\layout Standard
+
+Grabs INPUTDEVICE.
+\layout RefEntry
+
+hide
+\layout Syntax
+
+scene hide
+\layout Standard
+
+Turns display off.
+ 
+\layout RefEntry
+
+hidecp
+\layout Syntax
+
+scene hidecp
+\layout Standard
+
+Hides the marker for the current position stored in 
+\family typewriter 
+$CP
+\family default 
+.
+\layout RefEntry
+
+message
+\layout RefEntry
+
+mono
+\layout RefEntry
+
+peek
+\layout RefEntry
+
+pop
+\layout RefEntry
+
+push
+\layout RefEntry
+
+reset
+\layout RefEntry
+
+rot
+\layout RefEntry
+
+set
+\layout RefEntry
+
+show
+\layout RefEntry
+
+showcp
+\layout RefEntry
+
+spin
+\layout RefEntry
+
+split
+\layout RefEntry
+
+stereo
+\layout RefEntry
+
+trans
+\layout RefEntry
+
+write
+\layout Section
+
+Database Manager
+\layout RefEntry
+
+delete
+\layout RefEntry
+
+list
+\layout RefEntry
+
+load
+\layout RefEntry
+
+new
+\layout RefEntry
+
+rename
+\layout RefEntry
+
+save
+\layout Section
+
+General Dataset and Object Commands
+\layout Subsection
+
+General Dataset Commands
+\layout RefEntry
+
+new
+\layout RefEntry
+
+del
+\layout RefEntry
+
+transform
+\layout RefEntry
+
+grab
+\layout Subsection
+
+General Object Commands
+\layout RefEntry
+
+set
+\layout RefEntry
+
+renew
+\layout RefEntry
+
+render
+\layout RefEntry
+
+material
+\layout Section
+
+Structure Dataset and Objects
+\layout Section
+
+Scalar Field Dataset and Objects
+\layout Section
+
+Surface Dataset and Objects
+\layout Section
+
+Topograph Dataset and Objects
+\layout Section
+
+Geometric Primitives and Objects
+\layout Chapter*
+
+Index
+\layout Standard
+
+
+\begin_inset LatexCommand \printindex{}
+
+\end_inset 
+
+
+\the_end
