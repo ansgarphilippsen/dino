@@ -1,32 +1,44 @@
 known problems for DINO v0.8.4
 ------------------------------
 
+- surface dataset restriction not working
+
+- NMR multi-model files take too long to load
+
+- scalar-field type contour transparency has problems detecting front-to-back
+
+- struct obj transparency not working
+
+- alternate model char in PDB format not working
+
+- picking in split scene does not work
+
+- MEAD coordinate file does not recognize atom types, ie all atoms white
+
+- render !intpol coredumps
+
 - surface solid rendering can be VERY slow on linux machines using only a 
   software stencil buffer
 
 - orthographic rendering broken
 
-- PostScript outout crashes when using labels
+- PostScript output crashes when using labels
 
 - .struct.obj render hsc,detail=1 will coredump (use detail > 1)
-
-- rigid body transformation properties not uniquely named (eg center + rcen)
 
 - occasional crashes on the SGIs when moving the scene with the mouse. This
   seems to be a bug in the X-windows event handling. FIX: turn off all object
   before moving, rotate the scene (left-click and move mouse some), then turn
   objects back on
 
-- writing pics larger than the current screen size will not scale
+- writing pics larger than the current screen size might not scale
   correctly under linux
 
-- TIFF not compressed (use PNG)
-
-- offscreen rendering on linux missmatches graphics display, use
-  -dump option of write
+- offscreen rendering on linux might missmatches graphics display, use
+  -dump option of write as workaround
 
 - POVray output only partial for geom objects
 
 - POVray output only renders filled triangles for surface and topo objects
 
-- accumulation (-a) flag of write does not work 
+- on weird scalar fields insane memory usage possible

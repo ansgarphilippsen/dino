@@ -38,7 +38,6 @@ INCLUDE = -I/usr/X11R6/include
 LIBGL += -lGLU -lGL
 LIBGLW = /usr/X11R6/lib/libGLw.a
 LIBMOTIF = /usr/X11R6/lib/libXm.a
-
 endif
 
 

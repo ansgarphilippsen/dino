@@ -313,7 +313,8 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
        clStrcmp(s->pov[pc].prop,"colour") ||
        clStrcmp(s->pov[pc].prop,"col")) {
       s->pov[pc].id=SCAL_PROP_COLOR;
-    } else if(clStrcmp(s->pov[pc].prop,"center")) {
+    } else if(clStrcmp(s->pov[pc].prop,"center") ||
+	      clStrcmp(s->pov[pc].prop,"cen")) {
       if(s->pov[pc].op!=POV_OP_EQ) {
 	comMessage("\nerror: set: expected operator = for property ");
 	comMessage(s->pov[pc].prop);

@@ -1,3 +1,7 @@
+render is called for struct obj after set
+
+added round caps to HSC and tube ends
+
 fixed bug in accum routine (enabled front buffer for reading), workaround 
 for NVIDIA clearing accum buffer bug
 

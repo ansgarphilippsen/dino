@@ -543,8 +543,8 @@ int scalGet(dbmScalNode *node, char *prop)
 
     sprintf(message,"{%.5f,%.5f,%.5f}",v1[0],v1[1],v1[2]);
     comReturn(message);
-  } else if(!strcmp(prop,"rcenter") ||
-	    !strcmp(prop,"rcen")) {
+  } else if(clStrcmp(prop,"rcenter") ||
+	    clStrcmp(prop,"rcen")) {
     sprintf(message,"{%.5f,%.5f,%.5f}",
 	    node->transform.cen[0],
 	    node->transform.cen[1],

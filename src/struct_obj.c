@@ -191,6 +191,16 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
   return 0;
 }
 
+static void structObjRefresh(structObj *obj)
+{
+  if(obj->render.mode==RENDER_TUBE ||
+     obj->render.mode==RENDER_HSC ||
+     obj->render.mode==RENDER_SLINE) {
+    structSmooth(obj);
+  } else if(obj->render.mode==RENDER_CUSTOM) {
+    structObjGenVA(obj);
+  }
+}
 
 int structObjComRenew(structObj *obj, int wc, char **wl)
 {
@@ -283,6 +293,8 @@ int structObjComSet(structObj *obj, int wc, char **wl)
   ret=structObjSet(obj, &set,1);
 
   setDelete(&set);
+
+  structObjRefresh(obj);
 
   comRedraw();
 

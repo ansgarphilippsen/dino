@@ -1,43 +1,23 @@
-accumulation write ?
+new picking not working -> back to old
+
+scene:lightN grab INPUTDEVICE
 
 set labels on/off with command plus selection possible
-
-alternate model char broken
-
-picking with scene split (e.g. $CP) wrong
 
 use '-arch XXX' flag for load to identify architecture and to 
 automatically decide wether to swap or not (MIPS ALPHA PPC INTEL and MSB 
 and LSB)
  
-INSANE MEMORY USAGE BY SCALAR FIELDS !
-
 add warning about wrong file format when error occurs, try to automatize 
 byte swapping
 
 relink against static motif on linux
 
-.pqr format gives only white colors
-
-check accum buffer for offscreen rendering
-
 rewrite POV output to accept cgfx VA
 
 write image file from scalar-field slab
 
-!intpol broken
-
-automatize call to 'render' after 'set' command
-
 struct restrc affects surf after attachment -> bug or feature ???
 
-struct obj transparency broken
-
-scal contour back-to-front detection buggy
-
-surface restriction not taken into account
-
-NMR load hangs at ......
-
-Postscript crash with labels
-
+use -sel -select -selection
+(add more abbrev in general ?)

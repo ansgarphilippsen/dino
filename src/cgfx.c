@@ -1146,6 +1146,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
     va->max=maxp*(detail2+1)*4*6;
     va->count=0;
     va->p=Crecalloc(NULL,va->max, sizeof(cgfxVAField));
+
     
     for(i=0;i<pc-1;i++) {
       if(render->mode==RENDER_HSC) {
@@ -1211,6 +1212,9 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       
     }
 
+    cgfxSphereVA(sp[0].rad,sp[0].v,sp[0].colp[0],va,detail);
+    cgfxSphereVA(sp[pc-1].rad,sp[pc-1].v,sp[pc-1].colp[0],va,detail);
+
     if(render->mode==RENDER_HSC) {
       for(i=0;i<pc;i++) {
 	if(sp[i].id==CGFX_NA) {
@@ -1222,6 +1226,7 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 	}
       }    
     }
+
   } else if(render->mode==RENDER_SLINE) {
     va->max=maxp*2;
     va->count=0;
@@ -1530,11 +1535,14 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     z=0.0;
     for(i=0;i<detail*4;i++) {
 #ifdef HSC_NEWCOL
+      /*
       if(i<detail || i>=detail*3) {
 	pro->p[i].fc=0;
       } else {
 	pro->p[i].fc=1;
       }
+      */
+      pro->p[i].fc=0;
 #endif
       angle=frac*(double)i;
       r1=rad1;
@@ -1590,11 +1598,14 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     z=0.0;
     for(i=0;i<detail*4;i++) {
 #ifdef HSC_NEWCOL
+      /*
       if(i<detail || i>=detail*3) {
 	pro->p[i].fc=0;
       } else {
 	pro->p[i].fc=1;
       }
+      */
+      pro->p[i].fc=0;
 #endif
       angle=frac*(double)i;
       r1=rad1;

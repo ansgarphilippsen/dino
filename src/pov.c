@@ -1211,7 +1211,6 @@ static int writePOVGeomObj(FILE *f, geomObj *obj, int k,float *lim)
        write_pov_mode==WRITE_POV_NOCOLOR) {
       fprintf(f,"material {%s}\n",mat_name);
     }
-    fprintf(f,"}\n");
   } else {
     fprintf(f,"union {\n");
     for(i=0;i<obj->point_count;i++) {

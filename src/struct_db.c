@@ -589,7 +589,8 @@ int structSet(dbmStructNode *node, Set *s)
       s->pov[pc].id=STRUCT_PROP_TRANS;
     } else if (clStrcmp(s->pov[pc].prop,"rtc")) {
       s->pov[pc].id=STRUCT_PROP_RTC;
-    } else if (clStrcmp(s->pov[pc].prop,"center")) {
+    } else if (clStrcmp(s->pov[pc].prop,"center") ||
+	       clStrcmp(s->pov[pc].prop,"rcen")) {
       s->pov[pc].id=STRUCT_PROP_RCEN;
     } else if(clStrcmp(s->pov[pc].prop,"tfast")) {
       s->pov[pc].id=STRUCT_PROP_TFAST;
@@ -650,7 +651,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_RTC:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property trans");
+	comMessage("\nerror: set: unexpected range in property rtc");
 	return -1;
       }
       if(transSetAll(&node->transform,val->val1)<0)
@@ -659,7 +660,7 @@ int structSet(dbmStructNode *node, Set *s)
       break;
     case STRUCT_PROP_RCEN:
       if(val->range_flag) {
-	comMessage("\nerror: set: unexpected range in property trans");
+	comMessage("\nerror: set: unexpected range in property rcen");
 	return -1;
       }
       if(matExtract1Df(val->val1,3,v1)!=0) {
@@ -895,7 +896,8 @@ int structGet(dbmStructNode *node, char *prop)
 
     sprintf(message,"{%.5f,%.5f,%.5f}",v1[0],v1[1],v1[2]);
     comReturn(message);
-  } else if(!strcmp(prop,"rcenter")) {
+  } else if(clStrcmp(prop,"rcenter") ||
+	    clStrcmp(prop,"rcen")) {
     sprintf(message,"{%.5f,%.5f,%.5f}",
 	    node->transform.cen[0],
 	    node->transform.cen[1],

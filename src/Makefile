@@ -12,12 +12,12 @@
 # FORMAT_VRML
 # GLUT_GUI
 
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DPICK_NEW
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL 
 
 MALLOCLIB=
 
 # only for linux versions
-STATIC = 1
+#STATIC = 1
 
 SRC= dino.c \
      dbm.c shell.c com.c gfx.c gui.c help.c conn.c scene.c glf.c\

@@ -418,7 +418,8 @@ int surfSet(dbmSurfNode *node, Set *s)
       s->pov[pc].id=SURF_PROP_TRANS;
     } else if (clStrcmp(s->pov[pc].prop,"rtc")) {
       s->pov[pc].id=SURF_PROP_RTC;
-    } else if (clStrcmp(s->pov[pc].prop,"center")) {
+    } else if ( clStrcmp(s->pov[pc].prop,"center") ||
+		clStrcmp(s->pov[pc].prop,"rcen")) {
       s->pov[pc].id=SURF_PROP_RCEN;
     } else {
       comMessage("\nerror: set: unknown property ");
