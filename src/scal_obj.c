@@ -1234,9 +1234,9 @@ int scalSlabIntersect(scalObj *obj)
   }
 
   for(i=0;i<obj->slab.size;i++) {
-    obj->slab.tex[i*4+0]=255;
-    obj->slab.tex[i*4+1]=255;
-    obj->slab.tex[i*4+2]=255;
+    obj->slab.tex[i*4+0]=127;
+    obj->slab.tex[i*4+1]=127;
+    obj->slab.tex[i*4+2]=127;
     obj->slab.tex[i*4+3]=(unsigned char)(obj->render.transparency*255);
   }
 

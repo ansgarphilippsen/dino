@@ -280,7 +280,11 @@ int scalDrawObj(scalObj *obj)
 
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
     glBindTexture(GL_TEXTURE_2D, obj->slab.texname);
+
+//    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    glDisable(GL_LIGHTING);
 
     glBegin(GL_QUADS);
     glColor4f(1.0,1.0,1.0,1.0);
@@ -293,6 +297,8 @@ int scalDrawObj(scalObj *obj)
     glTexCoord2f(0.0,1.0);
     glVertex3dv(obj->slab.bound[3]);
     glEnd();
+
+    glEnable(GL_LIGHTING);
 
     glDisable(GL_TEXTURE_2D);
 

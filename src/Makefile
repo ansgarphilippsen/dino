@@ -56,7 +56,7 @@ clean:
 	rm -f *.o dino *~ core #* .depend
 
 depend:
-	gcc -MM $(COPT) $(SRC) > .depend
+	gcc -MM $(IOPT) $(SRC) > .depend
 
 all: clean depend dino
 
