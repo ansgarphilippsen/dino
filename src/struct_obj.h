@@ -6,6 +6,7 @@
 #include "struct_common.h"
 #include "cgfx.h"
 #include "set.h"
+#include "transform.h"
 
 #ifdef LINUX
 extern struct DBM_SET _DBM_SET;
@@ -64,7 +65,12 @@ typedef struct STRUCT_OBJ {
   cgfxVA sphere; // generic sphere for CPK speedup
 
   unsigned int sphere_list;
-  
+
+  int uco_flag;
+  float uco[3];
+
+  int transform_flag;
+  transMat transform;
 }structObj;
 
 

@@ -547,7 +547,7 @@ int structSet(dbmStructNode *node, Set *s)
   struct POV_VALUE *val;
   int i,rt,op;
   Select *sel;
-  float r,g,b,v1[4];
+  float r,g,b,v1[6];
 
   if(s->pov_count==0) {
     return 0;
@@ -582,6 +582,10 @@ int structSet(dbmStructNode *node, Set *s)
 	      clStrcmp(s->pov[pc].prop,"colour") ||
 	      clStrcmp(s->pov[pc].prop,"col")) {
       s->pov[pc].id=STRUCT_PROP_COLOR;
+    } else if(clStrcmp(s->pov[pc].prop,"cell")) {
+      s->pov[pc].id=STRUCT_PROP_CELL;
+    } else if(clStrcmp(s->pov[pc].prop,"sg")) {
+      s->pov[pc].id=STRUCT_PROP_SG;
     } else {
       comMessage("\nerror: set: unknown property ");
       comMessage(s->pov[pc].prop);
@@ -727,6 +731,44 @@ int structSet(dbmStructNode *node, Set *s)
 	comMessage("\nsyntax error with property tfast");
 	return -1;
       }
+      break;
+    case STRUCT_PROP_CELL:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property cell");
+	return -1;
+      }
+      if(matExtract1Df(val->val1,6,v1)==-1) {
+	comMessage("\nerror in cell expression, expected {a,b,c,alpha,beta,gamma}");
+	return -1;
+      }
+      if(node->xtal==NULL) {
+	node->xtal=Cmalloc(sizeof(struct XTAL));
+	strcpy(node->xtal->space_group_name,"P1");
+      }
+      node->xtal->a=v1[0];
+      node->xtal->b=v1[1];
+      node->xtal->c=v1[2];
+      node->xtal->alpha=v1[3];
+      node->xtal->beta=v1[4];
+      node->xtal->gamma=v1[5];
+      dbmCalcXtal(node->xtal);
+      break;
+    case STRUCT_PROP_SG:
+      if(val->range_flag) {
+	comMessage("\nerror: set: unexpected range in property cell");
+	return -1;
+      }
+      if(node->xtal==NULL) {
+	node->xtal=Cmalloc(sizeof(struct XTAL));
+	node->xtal->a=1.0;
+	node->xtal->b=1.0;
+	node->xtal->c=1.0;
+	node->xtal->alpha=90.0;
+	node->xtal->beta=90.0;
+	node->xtal->gamma=90.0;
+      }
+      strcpy(node->xtal->space_group_name,val->val1);
+      dbmCalcXtal(node->xtal);
       break;
     }
   }
@@ -1920,6 +1962,9 @@ int structSetDefault(structObj *obj)
   comNewDisplayList(obj->sphere_list);
   cgfxSphere(1.0,obj->render.detail);
   comEndDisplayList();
+
+  obj->uco_flag=0;
+  obj->transform_flag=0;
 
   return 0;
 }

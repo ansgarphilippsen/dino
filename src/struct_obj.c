@@ -330,6 +330,8 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      clStrcmp(set->pov[pc].prop,"radius") ||
 	      clStrcmp(set->pov[pc].prop,"rad")) {
       set->pov[pc].id=STRUCT_PROP_RAD;
+    } else if(clStrcmp(set->pov[pc].prop,"uco")) {
+      set->pov[pc].id=STRUCT_PROP_UCO;
     } else {
       comMessage("\nerror: set: unknown property ");
       comMessage(set->pov[pc].prop);
@@ -344,6 +346,44 @@ int structObjSet(structObj *obj, Set *set, int flag)
       comMessage("\nerror: set: expected only one value for property ");
       comMessage(set->pov[pc].prop);
       return -1;
+    }
+  }
+
+  /* 
+     object properties
+  */
+  for(pc=0;pc<set->pov_count;pc++) {
+    val=povGetVal(&set->pov[pc],0);
+    switch(set->pov[pc].id) {
+    case STRUCT_PROP_UCO:
+      if(val->range_flag) {
+	comMessage("\nerror: unexpected range for uco");
+	return -1;
+      }
+      if(matExtract1Df(val->val1,3,p)==-1) {
+	comMessage("\nerror: expected uco={x,y,z}");
+	return -1;
+      }
+      obj->uco[0]=p[0];
+      obj->uco[1]=p[1];
+      obj->uco[2]=p[2];
+      if(obj->node->xtal==NULL) {
+	comMessage("\nerror: uco requires cell for dataset");
+      } else {
+	if(p[0]==0.0 && p[1]==0.0 && p[2]==0.0) {
+	  obj->uco_flag=0;
+	  obj->transform_flag=0;
+	} else {
+	  obj->uco_flag=1;
+	  obj->transform_flag=1;
+	  dbmUCOTransform(obj->node->xtal,&obj->transform,p);
+	  fprintf(stderr,"\n%f %f %f",
+		  obj->transform.tra[0],
+		  obj->transform.tra[1],
+		  obj->transform.tra[2]);
+	}
+      }
+      break;
     }
   }
 

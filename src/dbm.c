@@ -958,6 +958,27 @@ int dbmCalcXtal(struct XTAL *xtal)
   return 0;
 }
 
+int dbmUCOTransform(struct XTAL *xtal,transMat *transform, float uco[3])
+{
+  float va[3],vb[3],vc[3];
+
+  transReset(transform);
+
+  va[0]=xtal->va[0]*xtal->a*xtal->a;
+  va[1]=xtal->va[1]*xtal->b*xtal->b;
+  va[2]=xtal->va[2]*xtal->c*xtal->c;
+  vb[0]=xtal->vb[0]*xtal->a*xtal->a;
+  vb[1]=xtal->vb[1]*xtal->b*xtal->b;
+  vb[2]=xtal->vb[2]*xtal->c*xtal->c;
+  vc[0]=xtal->vc[0]*xtal->a*xtal->a;
+  vc[1]=xtal->vc[1]*xtal->b*xtal->b;
+  vc[2]=xtal->vc[2]*xtal->c*xtal->c;
+
+  transform->tra[0]=va[0]*uco[0]+vb[0]*uco[1]+vc[0]*uco[2];
+  transform->tra[1]=va[1]*uco[0]+vb[1]*uco[1]+vc[1]*uco[2];
+  transform->tra[2]=va[2]*uco[0]+vb[2]*uco[1]+vc[2]*uco[2];
+  return 0;
+}
 
 int dbmSplitPOV(char *oexpr, char *prop, char *op, char *val)
 {

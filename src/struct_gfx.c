@@ -23,6 +23,7 @@ extern struct GFX gfx;
 int structDraw(dbmStructNode *node, int f)
 {
   int j;
+  structObj *obj;
   //double c[3];
 
   glPushMatrix();
@@ -36,6 +37,58 @@ int structDraw(dbmStructNode *node, int f)
     gfxDrawCell(node->xtal);
   }
 
+  /*
+    first draw objects with transform
+  */
+
+  for(j=0;j<node->obj_max;j++)
+    if(node->obj_flag[j]!=0)
+      if(node->obj[j].render.show)
+	if(node->obj[j].transform_flag) {
+	  obj=&node->obj[j];
+	  /*
+	    apply obj transform BEFORE dataset transform
+	  */
+
+	  glPushMatrix();
+	  glTranslated(obj->transform.cen[0],
+		       obj->transform.cen[1],
+		       obj->transform.cen[2]);
+	  
+	  glTranslated(obj->transform.tra[0],
+		       obj->transform.tra[1],
+		       obj->transform.tra[2]);
+	  
+	  glMultMatrixd(obj->transform.rot);
+	  
+	  glTranslated(-obj->transform.cen[0],
+		       -obj->transform.cen[1],
+		       -obj->transform.cen[2]);
+	  
+	  glTranslated(node->transform.cen[0],
+		       node->transform.cen[1],
+		       node->transform.cen[2]);
+	  
+	  glTranslated(node->transform.tra[0],
+		       node->transform.tra[1],
+		       node->transform.tra[2]);
+	  
+	  glMultMatrixd(node->transform.rot);
+	  
+	  glTranslated(-node->transform.cen[0],
+		       -node->transform.cen[1],
+		       -node->transform.cen[2]);
+
+	  if((f==0 && node->obj[j].render.transparency==1.0) ||
+	     (f!=0 && node->obj[j].render.transparency<1.0)) {
+	    structDrawObj(&node->obj[j]);
+	  }
+
+	  glPopMatrix();
+	  
+	}
+  
+  
   glTranslated(node->transform.cen[0],
 	       node->transform.cen[1],
 	       node->transform.cen[2]);
@@ -54,14 +107,16 @@ int structDraw(dbmStructNode *node, int f)
     for(j=0;j<node->obj_max;j++)
       if(node->obj_flag[j]!=0)
 	if(node->obj[j].render.show)
-	  if(node->obj[j].render.transparency==1.0)
-	    structDrawObj(&node->obj[j]);
+	  if(!node->obj[j].transform_flag)
+	    if(node->obj[j].render.transparency==1.0)
+	      structDrawObj(&node->obj[j]);
   } else {
     for(j=0;j<node->obj_max;j++)
       if(node->obj_flag[j]!=0)
 	if(node->obj[j].render.show)
-	  if(node->obj[j].render.transparency<1.0)
-	    structDrawObj(&node->obj[j]);
+	  if(!node->obj[j].transform_flag)
+	    if(node->obj[j].render.transparency<1.0)
+	      structDrawObj(&node->obj[j]);
   }
 
   glPopMatrix();
@@ -79,6 +134,7 @@ int structDrawObj(structObj *obj)
   char label[256];
   float sd=0.2;
   int cyl_type;
+
 
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, obj->render.mat.amb);
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, obj->render.mat.spec);

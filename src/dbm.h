@@ -8,6 +8,7 @@
 #include "grid_db.h"
 #include "geom_db.h"
 #include "xtal.h"
+#include "transform.h"
 
 enum {DBM_NODE_EMPTY=0,
       DBM_NODE_STRUCT=1,
@@ -177,6 +178,8 @@ float dbmSurfGetProperty(dbmSurfNode *node, float *pos, const char *prop);
 int dbmGridCheckDist(gridObj *, double *v, double d);
 
 int dbmCalcXtal(struct XTAL *xtal);
+int dbmUCOTransform(struct XTAL *xtal,transMat *transform, float uco[3]);
+
 int dbmSplit(char *exp, char c, int *wc, char ***wl);
 int dbmSplitPOV(char *expr, char *prop, char *op, char *val);
 int dbmGetColorHash(char *expr, double *r, double *g, double *b);
