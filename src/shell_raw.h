@@ -11,9 +11,9 @@ int shellParseRaw(const char *s, int hf);
 int shellCallScript(const char *f, int argc, const char **argv);
 #endif
 
-int shellSetVar(const char *name, const char *value);
-const char *shellGetVar(const char *name);
-int shellUnsetVar(const char *name);
+int shellSetVar(const char *name, const char *value, int level);
+const char *shellGetVar(const char *name, int level);
+int shellUnsetVar(const char *name, int level);
 void shellListVars(const char *rg);
 
 void shellTimeProc(void);

@@ -236,8 +236,10 @@ int guiInit(int argc, char **argv)
 	gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
 	vi=init_visual(1,use_stereo,0,0);
       }
+      gui.stereo_available=1;
     } else {
       fprintf(stderr,"Stereo visual found!\n");
+      gui.stereo_available=0;
     }
 
 #endif
@@ -696,7 +698,7 @@ int guiQueryStereo(void)
   else
     return 1;
 #else
-  return 0;
+  return gui.stereo_available;
 #endif
 }
 

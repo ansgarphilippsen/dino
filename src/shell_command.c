@@ -168,9 +168,10 @@ int shellParseCommand(const char **wl, int wc)
       if(i+1<wc)
 	clStrcat(subexp," ");
     }
-    shellSetVar(wl[1],subexp);
+    // TODO: set var in actual script level
+    shellSetVar(wl[1],subexp,0);
 
-    if(atoi(shellGetVar("echo"))) {
+    if(atoi(shellGetVar("echo",0))) {
       echo_script_flag=1;
     } else {
       echo_script_flag=0;
@@ -178,9 +179,10 @@ int shellParseCommand(const char **wl, int wc)
 
   } else if(clStrcmp(wl[0],"unset")) {
     // remove variable
-    for(i=1;i<wc;i++)
-      shellUnsetVar(wl[i]);
-    
+    for(i=1;i<wc;i++) {
+      // TODO: unset var in current level
+      shellUnsetVar(wl[i],0);
+    }
   } else if(clStrcmp(wl[0],"var")) {
     shellListVars(NULL);
 
@@ -195,8 +197,10 @@ int shellParseCommand(const char **wl, int wc)
   } else if(clStrcmp(wl[0],"pop")) {
     // pop values from the stack, possibly into supplied vars
     if(wc>1) {
-      for(i=1;i<wc;i++)
-	shellSetVar(wl[i],rpn_pop());
+      for(i=1;i<wc;i++) {
+	// TODO: set var in actual script level
+	shellSetVar(wl[i],rpn_pop(),0);
+      }
     } else {
       rpn_pop();
     }
@@ -333,6 +337,8 @@ static int call_script(const char *filename, const char **wl, int wc)
   FILE *f;
   char *b;
   int s,t;
+  int vc;
+  char vv[64];
 
   if(scrlvl>=MAXSCRIPTLEVEL) {
     shellOut("error: maximum script nesting level reached\n");
@@ -362,6 +368,12 @@ static int call_script(const char *filename, const char **wl, int wc)
   scrbuf[scrlvl].buf=b;
   scrbuf[scrlvl].max=s;
   scrbuf[scrlvl].count=0;
+
+  // set variables in local scope
+  for(vc=0;vc<wc;vc++) {
+    sprintf(vv,"%d",vc+1);
+    shellSetVar(vv,wl[vc],scrlvl);
+  }
 
   fclose(f);
 #endif
@@ -1282,8 +1294,7 @@ static void init_vars(void)
 {
   int i;
   for(i=0;varlist[i]!=NULL;i+=2)
-    shellSetVar(varlist[i],varlist[i+1]);
-
+    shellSetVar(varlist[i],varlist[i+1],0);
 }
 
 static char *aliaslist[]={

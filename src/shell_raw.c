@@ -60,6 +60,7 @@ static struct SHELL_VAR {
   struct SHELL_VAR_ENTRY {
     char name[VAR_MAX_NAME_SIZE];
     char value[VAR_MAX_VALUE_SIZE];
+    int level;
   } *entry;
   int count, max;
 } shell_var;
@@ -268,7 +269,10 @@ void shellLog(const char *s)
   }
 }
 
-int shellSetVar(const char *name2, const char *value2)
+/*
+  TODO: use local scope for variables
+*/
+int shellSetVar(const char *name2, const char *value2, int level)
 {
 #ifdef USE_TCL
   Tcl_SetVar(tcl_interp,name2,value2,TCL_GLOBAL_ONLY);
@@ -295,12 +299,13 @@ int shellSetVar(const char *name2, const char *value2)
   return 0;
 }
 
-const char *shellGetVar(const char *name)
+const char *shellGetVar(const char *name, int level)
 {
 #ifdef USE_TCL
   return Tcl_GetVar(tcl_interp,name,TCL_GLOBAL_ONLY);
 #else
   int i;
+
   for(i=0;i<shell_var.count;i++) {
     if(clStrcmp(shell_var.entry[i].name,name)) {
       return shell_var.entry[i].value;
@@ -310,7 +315,7 @@ const char *shellGetVar(const char *name)
 #endif
 }
 
-int shellUnsetVar(const char *name)
+int shellUnsetVar(const char *name, int level)
 {
 #ifdef USE_TCL
   Tcl_UnsetVar(tcl_interp,name,TCL_GLOBAL_ONLY);
@@ -324,7 +329,7 @@ void shellListVars(const char *rg)
 {
 #ifndef USE_TCL
   int i;
-  // TODO use regexp
+  // TODO use regexp for var listing
   for(i=0;i<shell_var.count;i++) {
     shellOut(shell_var.entry[i].name);
     shellOut(" ");
@@ -602,7 +607,8 @@ static int parse(const char *raw_prompt2)
 	      var[var_c++]=raw_prompt[c++];
 	    }
 	    var[var_c]='\0';
-	    res=shellGetVar(var);
+	    // TODO: get var in current level
+	    res=shellGetVar(var,0);
 	    if(res!=NULL) {
 	      // var found
 	      for(j=0;j<clStrlen(res);j++) {
