@@ -1,3 +1,8 @@
+
+fixed bug in XPLORA/CNSA read routine
+
+---
+
 added render flag 'cap' to turn on/off hsc end capping
 
 new .pqr format is actually pdb (so use -type pdb when loading new .pqr files)

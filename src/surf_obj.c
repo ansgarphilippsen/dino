@@ -233,7 +233,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
       if(surfGetMinMax(obj->node, s->range.prop,&vmin,&vmax)<0) {
 	if(obj->node->attach_flag) {
 	  if(dbmGetMinMax(obj->node->last_attach,s->range.prop,&vmin,&vmax)<0) {
-	    sprintf(message,"error: unknown range property %s\n",s->range.prop);
+	    sprintf(message,"error: unknown range property %s (tried attached ds also)\n",s->range.prop);
 	    comMessage(message);
 	    return -1;
 	  }
@@ -245,7 +245,7 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
       }
     } else {
       if(dbmGetMinMax(s->range.src,s->range.prop,&vmin,&vmax)<0) {
-	sprintf(message,"error: unknown range property %s\n",s->range.prop);
+	sprintf(message,"error: unknown range property %s for given dataset\n",s->range.prop);
 	comMessage(message);
 	return -1;
       }

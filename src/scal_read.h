@@ -10,7 +10,9 @@
 #include "mead.h"
 #include "delphi.h"
 #include "charmm.h"
+#ifdef USE_BRIX_FORMAT
 #include "brix.h"
+#endif
 
 enum                {SCAL_READ_DINO,
 		     SCAL_READ_XPLOR_ASCII,
@@ -22,7 +24,9 @@ enum                {SCAL_READ_DINO,
 		     SCAL_READ_CCP4_BINARY,
 		     SCAL_READ_CHARMM_BINARY,
 		     SCAL_READ_MEAD,
+#ifdef USE_BRIX_FORMAT
 		     SCAL_READ_BRIX,
+#endif
 		     SCAL_READ_DELPHI,
 		     SCAL_READ_DELPHIG};
 

@@ -66,7 +66,9 @@ static struct EXT_DEF {
   {"dgrd","dgrid"},
   {"grasp","grasp"},
   {"bdtrj","bdtrj"},
+#ifdef USE_BRIX_FORMAT
   {"brk","brix"},
+#endif
   {"omap","brix"},
   {"",""}
 };
@@ -513,6 +515,7 @@ int dbmLoad(int wc, const char **wl)
     }
 
     if(cmp) pclose(f); else fclose(f);
+#ifdef USE_BRIX_FORMAT
   } else if(!strcmp(type,"brix")) {
     /*
       brix / o-map format
@@ -528,6 +531,7 @@ int dbmLoad(int wc, const char **wl)
     }
 
     if(cmp) pclose(f); else fclose(f);
+#endif
   } else if(!strcmp(type,"msms")) {
     /* MSMS surface format */
 
@@ -1668,6 +1672,7 @@ int dbmGetMinMax(dbmNode *node, const char *prop, float *min, float *max)
     if(prop==NULL || clStrcmp(prop,"v")) {
       (*min)=node->scalNode.min_max.v1;
       (*max)=node->scalNode.min_max.v2;
+      return 0;
     } else {
       return -1;
     }

@@ -50,7 +50,7 @@ SRC= dino.c \
      surf_db.c surf_obj.c surf_read.c surf_write.c surf_gfx.c \
      geom_db.c geom_obj.c geom_gfx.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
-     ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c brix.c\
+     ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
      write.c render.c mat.c rex.c Cmalloc.c cgfx.c pov.c \
      cubearray.c writePS.c \
      sglib.c symm.c
@@ -94,6 +94,10 @@ ifneq (,$(findstring USE_CMI,$(OPTIONS)))
 SRC += cmi.c input.c
 endif
 
+# brix format
+ifneq (,$(findstring USE_BRIX_FORMAT,$(OPTIONS)))
+SRC += brix.c
+endif
 
 # test code for imagick image library support
 ifneq (,$(findstring IMAGICK,$(OPTIONS)))
