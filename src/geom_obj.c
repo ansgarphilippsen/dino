@@ -716,7 +716,7 @@ int geomObjSet(geomObj *obj, struct DBM_SET *s, int flag)
   char **sl;
   int sc;
   char sel[2048];
-  string selp[2048];
+  char* selp[2048];
 
   /* no precreation properties */
   if(flag==0)

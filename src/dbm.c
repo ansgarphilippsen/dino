@@ -1936,7 +1936,7 @@ int dbmGetRangeVal(Range *range, float *p, float *r)
   return 0;
 }
 
-static string dbm_wl[2048];
+static char* dbm_wl[2048];
 
 int dbmSplit(char *expr, char split_char, int *nwc, char ***wl)
 {

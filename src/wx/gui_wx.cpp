@@ -1,195 +1,108 @@
+#include <iostream>
+using namespace std;
+
 #include <stdio.h>
 
 #include "gui_wx.h"
-#include "Shell.h"
 
 #include "dino.h"
+#include "gfx.h"
 
-MyFrame *frame = NULL;
-MyTimer *timer=NULL;
-DinoGLCanvas *gl_canvas=NULL;
+#include "glix/app.h"
+#include "glix/glcanvas.h"
+#include "glix/glview.h"
+#include "glix/shell.h"
 
-Shell *shell=NULL;
+using namespace glix;
 
-static int refresh_flag=1;
+extern int debug_mode;
 
+IMPLEMENT_APP(App);
 
-IMPLEMENT_APP(MyApp)
+// implementation of GLView
+class DinoGLView: public GLView {
+public:
+  DinoGLView(wxWindow* p, wxWindowID id, GLCanvas* c):
+    GLView(p,id,c) {}
 
-// this is the equivalent to main
+  virtual void InitGL() {
+    cmiInitGL();
+  }
 
-bool MyApp::OnInit()
+  virtual void Render() {
+    cmiRedraw();
+  }
+
+  virtual void Resize(int w, int h) {
+    cmiResize(w,h);
+  }
+
+  virtual void OnMouse(wxMouseEvent& e) {
+  }
+
+  virtual void OnChar(int kc) {
+  }
+
+  virtual void OnTimer() {
+    cmiTimer();
+  }
+};
+
+Shell* dino_shell=0;
+DinoGLView* dino_glview=0;
+
+bool App::OnInit()
 {
+  dinoParseArgs(argc,argv);
+
+  cout << "startup" << endl;
   // initialize dino
+  cout << "initializing CMI" << endl;
   cmiInit();
-  dinoMain(argc,argv);
 
+  cout << "initializing gfx" << endl;
+  gfxInit();
+
+  cout << "initializing GUI" << endl;
+
+  debmsg("opening shell window");
   // create the shell window
-  shell=new Shell(NULL,"DINO Shell", 
-		  wxPoint(10,100),wxSize(500,300));
+  dino_shell=new Shell("DINO Shell", "dino> ", 0, 
+		       wxPoint(10,100),wxSize(500,300));
   
-  shell->Show(True);
+  dino_shell->Show(True);
 
-    // Create the main frame window
-  frame = new MyFrame(NULL, "DINO", 
-		      wxPoint(100, 100), wxSize(500, 500));
+  // Create the gl window
+  GLConfig c;
 
-  // Make a menubar
-  /*
-  wxMenu *fileMenu = new wxMenu;
+  debmsg("opening top level frame");
+  wxFrame* top = new wxFrame(0,-1, "dino");
 
-  fileMenu->Append(wxID_EXIT, "E&xit");
-  wxMenuBar *menuBar = new wxMenuBar;
-  menuBar->Append(fileMenu, "&File");
-  frame->SetMenuBar(menuBar);
-  */
+  debmsg("searching best OpenGL config");
+  FindBestConfig(c);
 
-#ifdef __WXMSW__
-  int *gl_attrib = NULL;
-#else
-  int gl_attrib[20] = { GLX_RGBA, GLX_RED_SIZE, 8, GLX_GREEN_SIZE, 8,
-			GLX_BLUE_SIZE, 8, GLX_DEPTH_SIZE, 16,
-			GLX_DOUBLEBUFFER, None };
-#endif
+  debmsg("creating OpenGL Canvas");
+  GLCanvas* glcanvas = new GLCanvas(top,-1,c,wxDefaultPosition,wxSize(500,500));
 
-  gl_canvas = new DinoGLCanvas(frame, -1, 
-			       wxPoint(0, 0), wxSize(200, 200),
-			       0, "DinoGLCanvas", gl_attrib);
-  
-  // Show the frame
-  frame->Show(TRUE);
+  debmsg("creating actual OpenGL view");
+  dino_glview=new DinoGLView(top,-1,glcanvas);
 
-  gl_canvas->SetCurrent();
+  top->Show(TRUE);
 
+  debmsg("registering callbacks");
   cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback); 
   cmiResize(500,500);
-  cmiInitGL();
 
-  timer=new MyTimer();
-  timer->Start(100, True);
-  
+  cout << "initializing Main" << endl;
+  dinoMain(argc,argv);
+
+  cout << "init done, proceeding to main loop" << endl;
   return TRUE;
 }
 
-void MyTimer::Notify()
-{
-  if(refresh_flag) {
-    refresh_flag=0;
-    fprintf(stderr,"redraw\n");
-    cmiRedraw();
-  }
-  cmiTimer();
 
-  this->Start(50,True);
-}
+/* frontend/backend communication */
 
-BEGIN_EVENT_TABLE(MyFrame, wxFrame)
-    EVT_MENU(wxID_EXIT, MyFrame::OnExit)
-END_EVENT_TABLE()
-
-
-// Frame Stuff
-MyFrame::MyFrame(wxFrame *frame, const wxString& title, const wxPoint& pos,
-		 const wxSize& size, long style):
-  wxFrame(frame, -1, title, pos, size, style)
-{
-  gl_canvas = NULL;
-}
-
-void MyFrame::OnExit(wxCommandEvent& event)
-{
-  Destroy();
-}
-
-
-// Timer Stuff
-
-
-// DinoGLCanvas Stuff
-
-BEGIN_EVENT_TABLE(DinoGLCanvas, wxGLCanvas)
-    EVT_SIZE(DinoGLCanvas::OnSize)
-    EVT_PAINT(DinoGLCanvas::OnPaint)
-    EVT_CHAR(DinoGLCanvas::OnChar)
-    EVT_MOUSE_EVENTS(DinoGLCanvas::OnMouseEvent)
-    EVT_ERASE_BACKGROUND(DinoGLCanvas::OnEraseBackground)
-END_EVENT_TABLE()
-
-DinoGLCanvas::DinoGLCanvas(wxWindow *parent, wxWindowID id,
-			   const wxPoint& pos, const wxSize& size, 
-			   long style, const wxString& name,
-			   int* gl_attrib):
-  wxGLCanvas(parent, id, pos, size, style, name, gl_attrib)
-{
-  parent->Show(TRUE);
-  SetCurrent();
-}
-
-
-DinoGLCanvas::~DinoGLCanvas(void)
-{
-}
-
-void DinoGLCanvas::OnPaint( wxPaintEvent& event )
-{
-  // This is a dummy, to avoid an endless succession of paint messages.
-  // OnPaint handlers must always create a wxPaintDC.
-  wxPaintDC dc(this);
-  
-#ifndef __WXMOTIF__
-  if (!GetContext()) return;
-#endif
-  
-  cmiRefresh();
-}
-
-void DinoGLCanvas::OnSize(wxSizeEvent& event)
-{
-#ifndef __WXMOTIF__
-  if (!GetContext()) return;
-#endif
-  
-  SetCurrent();
-  int width, height;
-  GetClientSize(&width, &height);
-  cmiResize(width, height);
-}
-
-void DinoGLCanvas::OnChar(wxKeyEvent& event)
-{
-  switch(event.KeyCode()) {
-  case WXK_LEFT:
-    break;
-  case WXK_RIGHT:
-    break;
-  case WXK_UP:
-    break;
-  case WXK_DOWN:
-    break;
-  default:
-    {
-      event.Skip();
-      return;
-    }
-  }
-  
-  Refresh(FALSE);
-}
-
-void DinoGLCanvas::OnMouseEvent(wxMouseEvent& event)
-{
-}
-
-void DinoGLCanvas::OnEraseBackground(wxEraseEvent& event)
-{
-    // Do nothing, to avoid flashing.
-}
-
-
-
-/*
-  external entry functions
-*/
 
 int guiInit(int *argc, char ***argv)
 {
@@ -206,18 +119,16 @@ int guiMessage(char *m)
   return 0;
 }
 
-
 void guiSwapBuffers(void)
 {
-  gl_canvas->SwapBuffers();
 }
 
 void guiCMICallback(const cmiToken *t)
 {
   if(t->target==CMI_TARGET_GUI) {
     switch(t->command) {
-    case CMI_REFRESH: refresh_flag++; break;
-    case CMI_MESSAGE: guiMessage((char *)t->value); break;
+    case CMI_REFRESH: dino_glview->Refresh(false); break;
+      //case CMI_MESSAGE: guiMessage((char *)t->value); break;
     }
   }
 }
@@ -227,3 +138,24 @@ int guiGetImage(struct WRITE_IMAGE *i)
   i=NULL;
   return -1;
 }
+
+int guiCreateOffscreenContext(int w, int h, int af)
+{
+  return -1;
+}
+
+int guiDestroyOffscreenContext(int n)
+{
+  return -1;
+}
+
+int guiQueryStereo(void)
+{
+  return 0;
+}
+
+int guiSetStereo(int m)
+{
+  return 0;
+}
+

@@ -1,1 +1,2 @@
-GUILIBS = -lwx_gtk_gl-2.2 -lwx_gtk-2.2
+GUILIBS = $(shell wx-config --libs --gl-libs) $(HOME)/sft/lib/libglix.a
+

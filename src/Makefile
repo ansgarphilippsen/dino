@@ -21,7 +21,7 @@ OPTIONS += -DCONTOUR_COLOR
 
 #OPTIONS += -DNDEBUG
 
-GUI = X11
+GUI = wx
 
 # only for linux versions
 #STATIC = 1
@@ -87,7 +87,7 @@ DATE = `date +"%Y%m%d"`
 sinclude $(GUI)/make.addon
 
 dino: $(OBJ) gui
-	$(CC) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT) -o $@
+	$(CPP) $(OBJ) $(GUI)/gui.a $(GUILIBS) $(LOPT)  -o $@
 	cp $@ ../bin/
 	$(STRIP) ../bin/$@
 

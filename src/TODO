@@ -3,5 +3,7 @@ deprecate t flag for render, introduce alpha for property
 
 add "scene autofit"
 
-scalar type grid not exported correctly to POVray
+add command "source" for "@" functionality
+
+read 5 chars for chain in CHARMM .crd file format
 

@@ -91,7 +91,12 @@ struct GFX
 
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int gfxInit(void);
+
 int gfxCMIInit(void);
 int gfxGLInit(void);
 
@@ -131,6 +136,9 @@ int gfxAccPerspective(GLdouble fovy, GLdouble aspect,
 
 void gfxCMICallback(const cmiToken *t);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -3,8 +3,6 @@
 #ifndef _DINO_H
 #define _DINO_H
 
-typedef char* string;
-
 #define debmsg(m) if(debug_mode) fprintf(stderr,"[DEBUG] %s\n",m)
 
 #define VERSION "0.9.0-rc3"
