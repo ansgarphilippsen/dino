@@ -12,7 +12,7 @@ if($submit=="login") {
 	// user and password given
 	if($p_email!="" && $p_passw!="") {
 		$crpt=md5($p_passw);
-		$query = "SELECT * FROM reguser";
+		$query = "SELECT * FROM $tb_usr";
 		$result = mysql_query($query) or die(mysql_error());
 			
 		while ($line = mysql_fetch_array($result)) {
@@ -42,7 +42,7 @@ include "f_header.inc.php";
 echo "<CENTER>\n";
 
 if($submit=="send new password") {
-  $query = "SELECT id FROM reguser WHERE email='$p_email'";
+  $query = "SELECT id FROM $tb_usr WHERE email='$p_email'";
 	$result = mysql_query($query) or die(mysql_error());
 	$res = mysql_num_rows($result);
 	if(!ereg("(.+)@(.+)\.(..+)",$p_email) || $res==0) {
@@ -58,12 +58,13 @@ if($submit=="send new password") {
 		$m_mesg  = "You (or someone entering your email) have requested a\n";
 		$m_mesg .= "new password to be generated for your account at \n";
 		$m_mesg .= "www.dino3d.org. It was reset to $new_pw\n\n";
-    $m_mesg .= "You may login and change it in the user preferences section\n";
+    $m_mesg .= "You may login and change it in the manage account\n";
+		$m_mseg .= "section\n";
 		$m_head  = "From: dino@dino3d.org\r\n";
 
 		if(mail($m_to,$m_subj,$m_mesg,$m_head)) {
 		  $new_crypt = md5($new_pw);
-		  $query = "UPDATE reguser SET passw='$new_crypt' WHERE email='$p_email'";
+		  $query = "UPDATE $tb_usr SET passw='$new_crypt' WHERE email='$p_email'";
 			$result = mysql_query($query) or die(mysql_error());
   	  echo "<P>A new password has been send to <tt>$p_email</tt>";
 			echo "<P><A HREF='login.php'>Back to login page</A>\n";

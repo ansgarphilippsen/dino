@@ -16,7 +16,7 @@ echo "</TD><TD ALIGN=RIGHT>\n";
 if(validate()) {
   $u=auth_name();
   echo "Logged in as $u<BR>";
-	echo "<A HREF='edit_user.php'>edit user data</A>\n";
+	echo "<A HREF='edit_user.php'>manage account</A>\n";
 	echo "&nbsp;|&nbsp;";
 	echo "<A HREF='auth.php?action=logout'>logout</A>\n";
 } else {

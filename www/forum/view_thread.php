@@ -5,7 +5,7 @@ $title = "<B>Viewing thread</B>\n";
 
 include "f_header.inc.php";
 
-$query = "SELECT * FROM entry WHERE thread_id=$id ORDER BY ts_create ASC";
+$query = "SELECT * FROM $tb_ent WHERE thread_id=$id ORDER BY ts_create ASC";
 $result = mysql_query($query) or die(mysql_error());
 
 echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=10 WIDTH=100% BGCOLOR=$col_thread_line>\n";
@@ -27,7 +27,7 @@ while($line=mysql_fetch_array($result)) {
 echo "</TABLE>\n";
 echo "<HR NOSHADE SIZE=1>\n";
 echo "<CENTER>\n";
-$query = "SELECT state FROM thread WHERE id=$id";
+$query = "SELECT state FROM $tb_thr WHERE id=$id";
 $result = mysql_query($query);
 $line = mysql_fetch_array($result);
 if($line[state]=="open") {

@@ -17,10 +17,10 @@ if($submit=="Cancel") {
   } else {
     if($submit=="Submit") {
       // add to db
-      $query = "INSERT INTO entry VALUES ('','$id','0',NOW(),NOW(),'$e_content2')";
+      $query = "INSERT INTO $tb_ent VALUES ('','$id','0',NOW(),NOW(),'$e_content2')";
       $result = mysql_query($query) or die(mysql_error());
       
-      $query = "UPDATE thread SET ts_update=NOW() WHERE id=$id LIMIT 1";
+      $query = "UPDATE $tb_thr SET ts_update=NOW() WHERE id=$id LIMIT 1";
       $result = mysql_query($query) or die(mysql_error());
 
       header("Location: view_thread.php?id=$id&cid=$cid");

@@ -1,12 +1,12 @@
 <?php
-  $query = "SELECT * FROM category";
+  $query = "SELECT * FROM $tb_cat";
   $result = mysql_query($query) or die(mysql_error());
 
   echo "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=5 WIDTH=100%>\n";
 
   while($line=mysql_fetch_array($result)) {
     // get number of threads in category
-    $query = "SELECT id FROM thread WHERE cat_id=$line[id]";
+    $query = "SELECT id FROM $tb_thr WHERE cat_id=$line[id]";
     $r=mysql_query($query);
     $tc=mysql_num_rows($r);
 

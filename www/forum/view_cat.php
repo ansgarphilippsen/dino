@@ -1,7 +1,7 @@
 <?php
 include "init.inc.php";
 
-$query = "SELECT * FROM category WHERE id=$id";
+$query = "SELECT * FROM $tb_cat WHERE id=$id";
 $result = mysql_query($query) or die(mysql_error());
 $line=mysql_fetch_array($result);
 
@@ -18,7 +18,7 @@ echo "&nbsp;|&nbsp;\n";
 echo "<A HREF='$base_link'>Back to Category Overview</A>\n";
 
 
-$query = "SELECT * FROM thread WHERE cat_id=$id ORDER BY ts_update DESC";
+$query = "SELECT * FROM $tb_thr WHERE cat_id=$id ORDER BY ts_update DESC";
 $result = mysql_query($query) or die(mysql_error());
 
 echo "<TR BGCOLOR=$col_cview3><TD>\n";
@@ -37,7 +37,7 @@ if(mysql_num_rows($result)<1) {
   echo "</TR>\n";
   while($line=mysql_fetch_array($result)) {
     // get number of entries in thread
-    $query = "SELECT id FROM entry WHERE thread_id=$line[id]";
+    $query = "SELECT id FROM $tb_ent WHERE thread_id=$line[id]";
     $r=mysql_query($query);
     $te=mysql_num_rows($r);
     // formating

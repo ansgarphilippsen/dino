@@ -4,7 +4,7 @@ mysql_select_db($dbu_name) or die(mysql_error());
 
 if(validate()) {
   $id = auth_id();
-  $query = "SELECT * FROM reguser WHERE id=$id";
+  $query = "SELECT * FROM $tb_usr WHERE id=$id";
   $result = mysql_query($query,$db_link) or die(mysql_error());
   $cuser = mysql_fetch_array($result);
 } else {
@@ -20,7 +20,7 @@ if($action=="new_pw") {
         $err_mesg = "New password is too short (min 6 char)!";
         unset($action);
       } else {
-        $query = "UPDATE reguser SET passw='$crypt1' WHERE id=$id LIMIT 1";        $result = mysql_query($query,$db_link) or die(mysql_error());
+        $query = "UPDATE $tb_usr SET passw='$crypt1' WHERE id=$id LIMIT 1";        $result = mysql_query($query,$db_link) or die(mysql_error());
         echo "<b>Password successfully updated</b>";
       }
     } else {
@@ -36,13 +36,13 @@ if($action=="new_pw") {
     $err_mesg = "you must supply a name";
 		unset($action);	
 	} else {
-	  $query = "UPDATE reguser SET name='$p_name' WHERE id=$id";
+	  $query = "UPDATE $tb_usr SET name='$p_name' WHERE id=$id";
 		mysql_query($query) or die(mysql_error());
-	  $query = "UPDATE reguser SET restype='$p_restype' WHERE id=$id";
+	  $query = "UPDATE $tb_usr SET restype='$p_restype' WHERE id=$id";
 		mysql_query($query) or die(mysql_error());
-	  $query = "UPDATE reguser SET org='$p_org' WHERE id=$id";
+	  $query = "UPDATE $tb_usr SET org='$p_org' WHERE id=$id";
 		mysql_query($query) or die(mysql_error());
-	  $query = "UPDATE reguser SET country='$p_country' WHERE id=$id";
+	  $query = "UPDATE $tb_usr SET country='$p_country' WHERE id=$id";
 		mysql_query($query) or die(mysql_error());
 
 	  header("Location: edit_user.php");
@@ -52,11 +52,11 @@ if($action=="new_pw") {
 	  header("Location: edit_user.php");
 	} else {
     if(ereg("(.+)@(.+)\.(..+)",$p_email)) {
-			$query = "UPDATE reguser SET email='$p_email' WHERE id=$id";
+			$query = "UPDATE $tb_usr SET email='$p_email' WHERE id=$id";
 			$result = mysql_query($query) or die(mysql_error());
 		  header("Location: edit_user.php");
 		} else {
-		  $err_mesg = "The new email adress is malformated";
+		  $err_mesg = "The new email adress is malformed";
 			unset($action);
 		}	
 	}

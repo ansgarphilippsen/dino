@@ -21,11 +21,11 @@ if($submit=="Cancel") {
   } else {
     if($submit=="Submit") {
       // add to db
-      $query = "INSERT INTO thread VALUES ('','$id','$t_name','0',NOW(),NOW(),'open')";
+      $query = "INSERT INTO $tb_thr VALUES ('','$id','$t_name','0',NOW(),NOW(),'open')";
       $result = mysql_query($query) or die(mysql_error());
       $tid = mysql_insert_id();
       
-      $query = "INSERT INTO entry VALUES ('','$tid','0',NOW(),NOW(),'$e_content2')";
+      $query = "INSERT INTO $tb_ent VALUES ('','$tid','0',NOW(),NOW(),'$e_content2')";
       $result = mysql_query($query) or die(mysql_error());
 
       header("Location: view_cat.php?id=$id");

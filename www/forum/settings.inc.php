@@ -1,11 +1,22 @@
 <?php
 $base_link="index.php";
 
+// mysql access
 $db_host = "cobra.mih.unibas.ch";
 $db_user = "dino";
 $db_pass = "dino13";
+
+// database for the forum
 $db_name = "dino_forum";
+
+// table names
+$tb_cat = "category";
+$tb_thr = "thread";
+$tb_ent = "entry";
+
+// database for the user account
 $dbu_name = "dino";
+$tb_usr = "reguser";
 
 $col_page_bg = "#cfcfdf";
 $col_table = "#ffffff";
