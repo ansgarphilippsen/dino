@@ -36,10 +36,30 @@ int gridNewNode(dbmGridNode *node)
   return 0;
 }
 
+static void split_path(char *path, char *file, char *base, char* ext)
+{
+  char *bp;
+  if((bp=strrchr(path,'/'))!=NULL)
+    clStrcpy(file,bp+1);
+  else
+    clStrcpy(file,base);
+  
+  bp=strrchr(file,'.');
+  if(bp!=NULL) {
+    bp[0]='\0';
+    clStrcpy(ext,bp+1);
+    clStrcpy(base,file);
+  } else {
+    clStrcpy(base,file);
+    clStrcpy(ext,"");
+  }
+}
+
 int gridCommand(struct DBM_GRID_NODE *node,int wc, char **wl)
 {
   char message[256];
   char *empty_com[]={"get","center"};
+  char file[256],base[256],ext[256];
 
   if(wc<=0) {
     wc=2;
@@ -130,7 +150,23 @@ int gridCommand(struct DBM_GRID_NODE *node,int wc, char **wl)
       comMessage("error: missing filename\n");
       return -1;
     }
-    return gridLoad(node, wl[1],"texture1");
+    if(wc<3) {
+      split_path(wl[1],file,base,ext);
+      return gridLoad(node, wl[1],base);
+    } else {
+      if(clStrcmp(wl[2],"-name")) {
+	if(wc>3) {
+	  return gridLoad(node, wl[1],wl[3]);
+	} else {
+	  comMessage("expected value after parameter -name\n");
+	  return -1;
+	}
+      } else {
+	sprintf(message,"unknown parameter %s, only -name allowed\n",wl[3]);
+	comMessage(message);
+	return -1;
+      }
+    }
   } else {
     sprintf(message,"unknown command: %s\n", wl[0]);
     comMessage(message);
@@ -750,9 +786,8 @@ int gridEvalPOV(dbmGridNode *node, gridPoint *point, POV *pov)
 	  }
 	}
 	if(!f) {
-	  comMessage("error: object \n");
-	  comMessage(v1);
-	  comMessage(" not found");
+	  sprintf(message,"error: object %s not found\n",v1);
+	  comMessage(message);
 	  return -1;
 	}
       }
@@ -1052,6 +1087,7 @@ int gridLoad(dbmGridNode *node, char *fn, char *tn)
 {
   int i;
   gridTexture *tex;
+  char mesg[256];
   
   for(i=0;i<node->texture_count;i++) {
     if(node->texture[i].flag)
@@ -1071,10 +1107,13 @@ int gridLoad(dbmGridNode *node, char *fn, char *tn)
   if(gridLoadTexture(fn,tex)==0) {
     tex->flag=1;
     strcpy(tex->name,tn);
+    sprintf(mesg,"loaded texture as %s\n",tn);
+    comMessage(mesg);
     return 0;
   } else {
     tex->flag=0;
     strcpy(tex->name,"");
+    //comMessage("error loading texture\n");
     return -1;
   }
 }

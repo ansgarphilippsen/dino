@@ -130,7 +130,7 @@ int gridTiffRead(int fd, char *fn, dbmGridNode *node)
   
   TIFFClose(t);
 
-  sprintf(message," %ldx%ld pixels\n",w,h);
+  sprintf(message,"read %ldx%ld pixels\n",w,h);
   comMessage(message);
 
   return 0;
@@ -190,7 +190,7 @@ int gridTiffReadTex(char *fn, gridTexture *tex)
 
   TIFFClose(t);
 
-  sprintf(message," %ldx%ld pixels",w,h);
+  sprintf(message,"read texture of %ldx%ld pixels\n",w,h);
   comMessage(message);
 
   return 0;
