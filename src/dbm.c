@@ -91,12 +91,12 @@ int dbmLoad(int wc, const char **wl)
   char file2[256];
   char file3[256];
   char message[256];
-  FILE *f,*f2;
-  int n;
+  FILE *f,*f1,*f2;
+  int i,n;
   dbmNode *node;
   struct stat st;
   char gunzip[256],gunzip2[256];
-  int cmp,ret,dbm_flag,rn_flag,conn_flag;
+  int cmp,ret,dbm_flag,rn_flag,conn_flag,cmp1,cmp2;
   
   if(wc<1) {
     comMessage("filename missing\n");
@@ -168,10 +168,10 @@ int dbmLoad(int wc, const char **wl)
     n++;
   }
 
-  if(strcmp(type,"msms")) {
+  if(!clStrcmp(type,"msms")) {
     if(stat(file,&st)!=0) {
       clStrcpy(file2,file);
-      strcat(file,".gz");
+      clStrcat(file,".gz");
       if(stat(file,&st)!=0) {
 	sprintf(message,"error accessing %s\n",file2);
 	comMessage(message);
@@ -510,31 +510,58 @@ int dbmLoad(int wc, const char **wl)
 
   } else if(!strcmp(type,"msms")) {
     /* MSMS surface format */
-    clStrcpy(file2,file);
-    strcat(file2,".vert");
-    if((f=fopen(file2,"r"))==NULL) {
-      sprintf(message,"Error opening %s\n",file2);
-      comMessage(message);
-      return -1;
+
+    for(i=0;i<2;i++) {
+      clStrcpy(file2,file);
+      if(i==0) {
+	clStrcat(file2,".vert");
+      } else {
+	clStrcat(file2,".face");
+      }
+      if(stat(file2,&st)==0) {
+	if((f=fopen(file2,"r"))==NULL) {
+	  sprintf(message,"Error opening %s\n",file2);
+	  comMessage(message);
+	  return -1;
+	}
+      } else {
+	clStrcat(file2,".gz");
+	if(stat(file2,&st)==0) {
+	  sprintf(gunzip,"gunzip < %s",file2);
+	  if((f=popen(gunzip,"r"))==NULL) {
+	    comMessage("Error opening pipe to gunzip");
+	    return -1;
+	  } else {
+	    cmp=1;
+	  }
+	} else {
+	  sprintf(message,"Error opening %s\n",file2);
+	  comMessage(message);
+	  return -1;
+	}
+      }
+      if(i==0) {
+	f1=f;
+	cmp1=cmp;
+      } else {
+	f2=f;
+	cmp2=cmp;
+      }
     }
-    clStrcpy(file3,file);
-    strcat(file3,".face");
-    if((f2=fopen(file3,"r"))==NULL) {
-      sprintf(message,"Error opening %s\n",file3);
-      comMessage(message);
-      return -1;
-    }
+
+
     node=dbmNewNode(DBM_NODE_SURF, name);
     sprintf(message,"loading %s, type msms ...\n",name);
     comMessage(message);
-    if(msmsRead(f,f2,node,dbm_flag)!=0) {
-      fclose(f);
-      fclose(f2);
+    if(msmsRead(f1,f2,node,dbm_flag)!=0) {
+      if(cmp1) pclose(f1); else fclose(f1);
+      if(cmp2) pclose(f2); else fclose(f2);
       dbmDeleteNode(name);
       return -1;
     }
-    fclose(f);
-    fclose(f2);
+    if(cmp1) pclose(f1); else fclose(f1);
+    if(cmp2) pclose(f2); else fclose(f2);
+
     sprintf(message," %d vertices, %d faces",
 	    node->surfNode.vc, node->surfNode.fc);
     comMessage(message);
