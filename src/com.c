@@ -94,6 +94,10 @@ static char init_command[1024];
 static int init_command_flag=0;
 
 static void init_transform(struct COM_PARAMS *params);
+static void com_idle_reset();
+static int com_idle_step();
+static void com_idle_rotate();
+
 
 int comInit(struct COM_PARAMS *params)
 {
@@ -112,10 +116,13 @@ int comInit(struct COM_PARAMS *params)
   comGenCubeLookup();
 
   if(params->demo_flag) {
-    //com.demo_flag=1;
+    com.demo_flag=1;
   } else {
-    //com.demo_flag=0;
+    com.demo_flag=0;
   }
+
+  com_idle_reset();
+  com.idle.itimeout=2*1e6;
 
   return 0;
 }
@@ -715,16 +722,22 @@ void comTimeProc()
       }
   }
 
-  if(gfx.anim==1) { // spin along last movement
-    transCommand(&gfx.transform,TRANS_ROTX,0,com.mouse_spin_x);
-    transCommand(&gfx.transform,TRANS_ROTY,0,com.mouse_spin_y);
-    comRedraw();
-  } else if(gfx.anim==2) { // rock around y-axis
-    rock_motion+=0.3;
-    transCommand(&gfx.transform,TRANS_ROTY,0,sin(0.5*rock_motion));
-    comRedraw();
+  if(com.demo_flag) {
+    if(com_idle_step()) {
+      com_idle_rotate();
+    }
+  } else {
+    if(gfx.anim==1) { // spin along last movement
+      transCommand(&gfx.transform,TRANS_ROTX,0,com.mouse_spin_x);
+      transCommand(&gfx.transform,TRANS_ROTY,0,com.mouse_spin_y);
+      comRedraw();
+    } else if(gfx.anim==2) { // rock around y-axis
+      rock_motion+=0.3;
+      transCommand(&gfx.transform,TRANS_ROTY,0,sin(0.5*rock_motion));
+      comRedraw();
+    }
   }
-
+  
   if(com.benchmark) {
     gettimeofday(&tv,&tz);
     tt=tv.tv_sec*1000000L+tv.tv_usec;
@@ -1879,6 +1892,9 @@ int comTransform(int device, int mask, int axis, int ivalue)
 
   mask &= CMI_BUTTON1_MASK | CMI_BUTTON2_MASK | CMI_BUTTON3_MASK | CMI_BUTTON4_MASK | CMI_BUTTON5_MASK | CMI_SHIFT_MASK | CMI_CNTRL_MASK | CMI_LOCK_MASK;
 
+  if(com.demo_flag) {
+    com_idle_reset();
+  }
 
   for(i=0;i<com.tlist_count;i++) {
     if(com.tlist[i].device==device && 
@@ -2078,3 +2094,60 @@ void comCMICallback(const cmiToken *t)
 
 }
 
+static void com_idle_reset()
+{
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv,&tz);
+  com.idle.itime = tv.tv_sec*1000000L+tv.tv_usec;
+  com.idle.flag=0;
+}
+
+static int com_idle_step()
+{
+  struct timeval tv;
+  struct timezone tz;
+  if(com.idle.flag) {
+    return 1;
+  } else {
+    gettimeofday(&tv,&tz);
+    if(tv.tv_sec*1000000L+tv.tv_usec-com.idle.itime>com.idle.itimeout) {
+      com.idle.flag=1;
+      return 1;
+    }
+  }
+  return 0;
+}
+
+#define IDLE_ROT_LIM 2
+#define IDLE_COUNT_LIM 20
+
+static void com_idle_rotate()
+{
+  static int xs=IDLE_ROT_LIM,ys=0,zs=0;
+  static int count=0;
+
+  if(++count>IDLE_COUNT_LIM) {
+    if(random()<RAND_MAX/500)
+      xs+= 1-(random()+1)/(RAND_MAX/3);
+    if(random()<RAND_MAX/500)
+      ys+= 1-(random()+1)/(RAND_MAX/3);
+    if(random()<RAND_MAX/500)
+      zs+= 1-(random()+1)/(RAND_MAX/3);
+    
+    xs = (xs<-IDLE_ROT_LIM) ? -IDLE_ROT_LIM : xs;
+    xs = (xs>IDLE_ROT_LIM) ? IDLE_ROT_LIM : xs;
+    ys = (ys<-IDLE_ROT_LIM) ? -IDLE_ROT_LIM : ys;
+    ys = (ys>IDLE_ROT_LIM) ? IDLE_ROT_LIM : ys;
+    zs = (zs<-IDLE_ROT_LIM) ? -IDLE_ROT_LIM : zs;
+    zs = (zs>IDLE_ROT_LIM) ? IDLE_ROT_LIM : zs;
+
+    //fprintf(stderr,"%d %d %d\n",xs,ys,zs);
+    
+    transCommand(&gfx.transform,TRANS_ROTX,0,xs);
+    transCommand(&gfx.transform,TRANS_ROTY,0,ys);
+    transCommand(&gfx.transform,TRANS_ROTZ,0,zs);
+    
+    comRedraw();
+  }
+}

@@ -52,6 +52,14 @@ struct GLOBAL_COM {
 
   int trans_limit_flag;
   float trans_limit[6];
+
+  int demo_flag;
+
+  struct COM_IDLE {
+    long itime;
+    long itimeout;
+    int flag;
+  } idle;
 };
 
 struct COM_PARAMS {
