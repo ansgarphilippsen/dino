@@ -47,7 +47,8 @@ struct OM_POPUP {
 };
 
 struct OM_POPUP_LIST {
-  char label[64],command[1024];
+  char label[64],command[128];
+  //  char *label,*command;
 };
 
 struct OBJECT_MENU {

@@ -5,9 +5,8 @@
 #include <X11/extensions/XInput.h>
 #include <X11/extensions/XIproto.h>
 
-#include "dino.h"
 #include "extension.h"
-#include "gui.h"
+#include "gui_x11.h"
 #include "cl.h"
 
 extern struct GUI gui;
@@ -111,12 +110,10 @@ XDevice *extDialBoxInit(Display *dpy)
   XFree(version);
   
   deviceInfo=XListInputDevices(dpy,&numDev);
-  debmsg("extensions: ");
   if(deviceInfo){
     for(i=0;i<numDev;i++){
       device=&deviceInfo[i];
       any=(XAnyClassPtr)device->inputclassinfo;
-      debmsg(device->name);
       if(!strncmp(device->name,"dial+buttons",strlen("dial+buttons"))){
 	v=NULL;
 	b=NULL;

@@ -181,9 +181,7 @@ int dinoMain(int argc,char **argv)
 void dinoExit(int n)
 {
 #ifdef NEW_SHELL
-#ifndef WX_GUI
   guitOutit();
-#endif
 #else
   shellOutit();
 #endif
@@ -194,8 +192,10 @@ void dinoExit(int n)
 #endif
 #ifdef LINUX
 #ifndef USE_CMI
+#ifndef INTERNAL_COLOR
   if(strlen(gui.gdbm_tmpfile)>0)
     remove(gui.gdbm_tmpfile);
+#endif
 #endif
 #endif
   exit(n);

@@ -3,8 +3,7 @@
 #include <X11/Xlib.h>
 
 #include "om_x11.h"
-#include "com.h"
-#include "gui.h"
+#include "gui_x11.h"
 #include "Cmalloc.h"
 
 extern struct GUI gui;
@@ -518,10 +517,12 @@ int omButtonEvent(XButtonEvent *event,int mp)
 	      /* toggle the state */
 	      if(om.ds[i].obj[j].show) {
 		sprintf(command,"%s hide",om.pbase);
-		comRawCommand(command);
+		//comRawCommand(command);
+		cmiCommand(command);
 	      } else {
 		sprintf(command,"%s show",om.pbase);
-		comRawCommand(command);
+		//comRawCommand(command);
+		cmiCommand(command);
 	      }
 	    }
 	    if(mp==1 && event->button==3) {
@@ -827,7 +828,8 @@ void omPopupEvent(Window w, XEvent *event, void *ptr)
 	  cp[0]=0;
 	  sprintf(c2,"%s%s%s",c1,om.pbase,cp+1);
 	}
-	comRawCommand(c2);
+	//comRawCommand(c2);
+	cmiCommand(c2);
 	om.pflag=0;
       }
     }

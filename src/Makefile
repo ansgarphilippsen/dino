@@ -22,14 +22,17 @@ OPTIONS += -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI
 #OPTIONS += -DTCL_SHELL
 
 # several GUIs, one must be chosen !
-# SDL_GLUT
+# SDL_GUI
 # GLUT_GUI (and USE_FREEGLUT)
 # X11_GUI
 # WX_GUI
 
+# OBSOLETE, USE VARIABLE GUI NOW
 #OPTIONS += -DGLUT_GUI #-DUSE_FREEGLUT
 #OPTIONS += -DX11_GUI
-OPTIONS += -DWX_GUI
+#OPTIONS += -DWX_GUI
+
+GUI = X11
 
 MALLOCLIB=
 
@@ -50,9 +53,6 @@ SRC= dino.c main.c \
      cubearray.c writePS.c \
      sglib.c symm.c
 
-# include architecture specific settings, including additional SRC files
-# use HOSTTYPE variable
-sinclude makedef.$(HOSTTYPE)
 
 # add more stuff depending on OPTIONS
 
@@ -69,22 +69,23 @@ SRC += shell.c
 endif
 endif
 
+# OBSOLETE, USE VARIABLE GUI NOW
+
 # one of the four GUIs: WX, X11, GLUT or SDL
 ifneq (,$(findstring WX_GUI,$(OPTIONS)))
-SRC += gui_wx.cpp
-OPTIONS += -DUSE_CMI
-COPT += -I/usr/lib/wx/include/gtk-2.2
-LOPT += -lwx_gtk_gl-2.2 -lwx_gtk-2.2
+#GUI = wx
 endif
 ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
-SRC += gui_glut.c om_glut.c
+#SRC += gui_glut.c om_glut.c
+#GUI = glut
 endif
 ifneq (,$(findstring SDL_GUI,$(OPTIONS)))
-SRC += main.c gui_sdl.c om_sdl.c
-LOPT += -lSDL
+#SRC += main.c gui_sdl.c om_sdl.c
+#LOPT += -lSDL
 endif
 ifneq (,$(findstring X11_GUI,$(OPTIONS)))
-SRC += extension.c gui_x11.c om_x11.c AppPlus.c
+#SRC += extension.c gui_x11.c om_x11.c AppPlus.c
+#GUI    = X11
 endif
 
 
@@ -123,6 +124,10 @@ ifneq (,$(findstring JAVA_GUI,$(OPTIONS)))
 SRC += jci.c
 endif
 
+# include architecture specific settings, including additional SRC files
+# use HOSTTYPE variable
+sinclude makedef.$(HOSTTYPE)
+
 
 #sinclude makedef.java
 
@@ -135,25 +140,38 @@ OBJ := $(TMP:.cpp=.o)
 #COPT += -pg
 #LOPT += -pg
 
-dino: $(OBJ)
-	$(CC) $(OBJ) $(LOPT) -o $@
+COPT += -I./$(GUI)
+
+export CC
+export CCP
+export COPT
+export INCLUDE
+export OPTIONS
+export .SUFFIXES
+
+
+dino: $(OBJ) gui
+	$(CC) $(OBJ) $(GUI)/gui.a $(LOPT) -o $@
 	cp $@ ../bin
 	strip ../bin/$@
 
-jci: jci.c
-	$(CC) jci.c $(COPT) $(LOPT) -o jci_test
+gui:
+	cd $(GUI) && $(MAKE) gui
 
 .c.o:
 	$(CC) $(COPT) -c $<
 
 .cpp.o:
-	$(CPP) $(COPT) -c $<
+	$(CCP) $(COPT) -c $<
 
 clean:
 	rm -f *.o dino *~ core #* .depend
+	cd $(GUI) && $(MAKE) clean
 
 depend:
-	$(CC) -MM $(INCLUDE) $(SRC) > .depend
+	$(CC) -MM $(INCLUDE) $(OPTIONS) $(SRC) > .depend
+	cd $(GUI) && $(MAKE) depend
+
 
 all: clean depend dino
 

@@ -70,6 +70,15 @@ enum {
 #define CMI_BUTTON4_MASK (1<<11)
 #define CMI_BUTTON5_MASK (1<<12)
 
+// special keys starting above 0x100
+#define CMI_KEY_SPECIAL 0x100
+#define CMI_KEY_RETURN  0x101
+#define CMI_KEY_BKSPC   0x102
+#define CMI_KEY_DELETE  0x103
+#define CMI_KEY_UP      0x104
+#define CMI_KEY_DOWN    0x105
+#define CMI_KEY_LEFT    0x106
+#define CMI_KEY_RIGHT   0x107
 
 typedef struct CMI_TOKEN {
   int target;         // target
@@ -101,6 +110,15 @@ void cmiQuery(const cmiToken *t);
 
 void cmiRegisterCallback(int mask, cmiCallbackFunc f);
 void cmiRegisterTimer(cmiTimerFunc f);
+
+// some often used functions follow
+
+void cmiInitGL(void);
+void cmiRefresh(void);
+void cmiResize(int w, int h);
+void cmiMessage(const char *s);
+void cmiCommand(const char *s);
+void cmiRedraw(void);
 
 #ifdef __cplusplus
 }

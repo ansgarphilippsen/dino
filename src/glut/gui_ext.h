@@ -16,8 +16,6 @@
 extern "C" {
 #endif
 
-#include "write.h"
-
 
 #ifdef USE_CMI
 int guiInit(int *, char ***);
@@ -29,7 +27,6 @@ int guiMainLoop(void);
 
 int guiMessage(char *m);
 
-int guiGetImage(struct WRITE_IMAGE *img);
 
 void guiSwapBuffers(void);
 

@@ -3,7 +3,6 @@
 
 #include "com.h"
 #include "gfx.h"
-#include "gui.h"
 #include "Cmalloc.h"
 #include "writePS.h"
 

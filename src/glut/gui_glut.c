@@ -12,6 +12,7 @@ Uses GLUT
 #include <string.h>
 #include <sys/time.h>
 
+#ifndef INTERNAL_COLOR
 #ifdef LINUX
 #include <gdbm.h>
 #endif
@@ -24,26 +25,14 @@ Uses GLUT
 #ifdef DEC
 #include <ndbm.h>
 #endif
+#endif
 
 #include "dino.h"
 #include "gui.h"
 #include "om_glut.h"
 #include "cl.h"
 
-#ifdef USE_CMI
-
 #include "cmi.h"
-
-#else
-
-#include "com.h"
-#include "gfx.h"
-#include "glw.h"
-#include "transform.h"
-
-extern struct GFX gfx;
-
-#endif
 
 struct GUI gui;
 
@@ -55,72 +44,52 @@ extern FILE *core_debug;
 
 static void gui_redraw()
 {
-#ifdef USE_CMI
   gui.redraw++;
-#else
-  comRedraw();
-#endif
 }
 
 static void gui_reshape(int width, int height)
 {
-#ifdef USE_CMI
   cmiToken t;
   int val[2];
-#endif
 
   
   gui.win_width=width;
   gui.win_height=height;
 
-#ifdef USE_CMI
   t.target=CMI_TARGET_GFX;
   t.command=CMI_RESIZE;
   t.value=val;
   val[0]=width;
   val[1]=height;
   cmiSubmit(&t);
-#endif
 
   glutSetWindow(gui.glut_status);
   glutReshapeWindow(width,20);
   glutPositionWindow(0,height-20);
   glutSetWindow(gui.glut_main);
   
-#ifndef USE_CMI
-  gfxSetViewport();
-#endif
   gui_redraw();
 }
 
 
 static void gui_timer(int value)
 {
-#ifdef USE_CMI
   cmiToken t;
-#endif
 
   if(gui.redraw) {
     gui.redraw=0;
     glutSetWindow(gui.glut_main);
-#ifdef USE_CMI
     t.target=CMI_TARGET_GFX;
     t.command=CMI_REDRAW;
     t.value=NULL;
     cmiSubmit(&t);
-#else
-    gfxRedraw();
-#endif
   }
-#ifdef USE_CMI
+
   cmiTimer();
-#else
-  comTimeProc();
-#endif
+
   glutTimerFunc(5,gui_timer,0);
 }
 
-#ifdef USE_CMI
 static void gui_mouse_func(int button, int state, int x, int y)
 {
   cmiToken t;
@@ -271,138 +240,6 @@ static void gui_dials_func(int d, int v)
 }
 
 
-#else
-
-static void gui_mouse_func(int button, int state, int x, int y)
-{
-  struct timeval tp;
-  struct timezone tzp;
-  long tc,dt;
-  int dx,dy;
-  int mod=glutGetModifiers();
-
-  gui.modifiers=mod;
-
-  gettimeofday(&tp,&tzp);
-  tc=tp.tv_sec*1000000L+tp.tv_usec;
-
-  dx=gui.last_x-x;
-  dy=gui.last_y-y;
-
-  if(button==GLUT_LEFT_BUTTON) {
-    gui.mbs[0]=state;
-
-    if(state==GLUT_UP && gui.mbs[1]==GLUT_UP && gui.mbs[2]==GLUT_UP) {
-      dt=tc-gui.timecode;
-      if(dt<200000 || 
-	 (dx==0 && dy==0 && dt<300000)) {
-	glutSetWindow(gui.glut_main);
-	comPick(x,y,0);
-      }
-    }
-  }
-
-  gui.timecode=tc;
-  
-  if(button==GLUT_MIDDLE_BUTTON) {
-    gui.mbs[1]=state;
-  }
-
-  if(button==GLUT_RIGHT_BUTTON) {
-    gui.mbs[2]=state;
-  }
-
-  gui.last_x=x;
-  gui.last_y=y;
-  gfx.sx=x;
-  gfx.sy=y;
-  gfx.sdx=0;
-  gfx.sdy=0;
-}
-
-
-static void gui_motion_func(int x, int y)
-{
-  int dx,dy;
-  int mask=0;
-  int val[4];
-  int mod=gui.modifiers;
-
-  dx=gui.last_x-x;
-  dy=gui.last_y-y;
-  gfx.sx=x;
-  gfx.sy=y;
-  gui.last_x=x;
-  gui.last_y=y;
-
-  if(gui.mbs[0]==GLUT_DOWN)
-    mask+=CMI_BUTTON1_MASK;
-  if(gui.mbs[1]==GLUT_DOWN)
-    mask+=CMI_BUTTON2_MASK;
-  if(gui.mbs[2]==GLUT_DOWN)
-    mask+=CMI_BUTTON3_MASK;
-
-  if(mod & GLUT_ACTIVE_SHIFT)
-    mask+=CMI_SHIFT_MASK;
-  if(mod & GLUT_ACTIVE_CTRL)
-    mask+=CMI_CNTRL_MASK;
-  //  if(mod & GLUT_ALT_SHIFT)
-  //  mask+=ShiftMask;
-
-  comTransform(TRANS_MOUSE, mask, 0, dx);
-  comTransform(TRANS_MOUSE, mask, 1, dy);
-}
-
-
-static void gui_keyboard_func(unsigned char key, int x, int y)
-{
-  comWriteCharBuf(key);
-}
-
-static void gui_special_func(int key, int x, int y)
-{
-  gui.modifiers=glutGetModifiers();
-  switch(key) {
-  case GLUT_KEY_UP: 
-    comWriteCharBuf(27);
-    comWriteCharBuf('[');
-    comWriteCharBuf('A');
-    break;
-  case GLUT_KEY_DOWN: 
-    comWriteCharBuf(27);
-    comWriteCharBuf('[');
-    comWriteCharBuf('B');
-    break;
-  case GLUT_KEY_LEFT: 
-    comWriteCharBuf(27);
-    comWriteCharBuf('[');
-    comWriteCharBuf('D');
-    break;
-  case GLUT_KEY_RIGHT:
-    comWriteCharBuf(27);
-    comWriteCharBuf('[');
-    comWriteCharBuf('C');
-    break;
-  }
-}
-
-static void gui_spaceball_motion_func(int x, int y, int z)
-{
-  fprintf(stderr,"\nspaceball motion event: %d %d %d",x,y,z);
-}
-
-static void gui_spaceball_rotation_func(int x, int y, int z)
-{
-  fprintf(stderr,"\nspaceball rotation event: %d %d %d",x,y,z);
-}
-
-static void gui_dials_func(int d, int v)
-{
-  fprintf(stderr,"\nbutton box event: %d %d",d,v);
-}
-
-#endif
-
 static char *um_list[]={
   "  autoslab  ","scene autoslab",
   "  center CP  ","scene center $CP"
@@ -412,20 +249,17 @@ static int um_list_count=2;
 
 static void um_cb(int value)
 {
-#ifdef USE_CMI
+
   cmiToken t;
-#endif
+
   char com[256];
   sprintf(com,"%s",um_list[value*2+1]);
   glutSetWindow(gui.glut_main);
-#ifdef USE_CMI
+
   t.target=CMI_TARGET_COM;
   t.command=CMI_RAW;
   t.value=com;
   cmiSubmit(&t);
-#else
-  comRawCommand(com);
-#endif
 }
 
 static void draw_string(const char *s)
@@ -458,29 +292,24 @@ static void guiStatusExpose()
 }
 
 
-// needs to be implemented for GLUT! previously required X11
+#ifndef INTERNAL_COLOR
 static int guiInitRGB()
 {
   return -1;
 }
+#endif
 
-#ifdef USE_CMI
 int guiInit(int *argc, char ***argv)
-#else
-int guiInit(void (*func)(int, char **), int *argc, char ***argv)
-#endif
 {
-#ifdef USE_CMI
   cmiToken t;
-#endif
   int sw,sh,i;
 
-#ifdef USE_CMI
   cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback);
-#endif
   clStrcpy(gui.message_string,"Ready");
 
+#ifndef INTERNAL_COLOR
   guiInitRGB();
+#endif
 
   debmsg("glutInit()");
   glutInit(argc,(*argv));
@@ -538,9 +367,6 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   /* set back to main gfx */
   glutSetWindow(gui.glut_main);
 
-#ifndef USE_CMI
-  gui.callback=func;
-#endif
   gui.redraw=0;
   gui.stereo_available=0;
   gui.stereo_mode=GUI_STEREO_OFF;
@@ -556,21 +382,16 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   fprintf(stdout,"Using GLUT (c) Mark J. Kilgard\n");
 #endif
 
-#ifdef USE_CMI
   t.target=CMI_TARGET_GFX;
   t.command=CMI_INITGL;
   t.value=NULL;
   cmiSubmit(&t);
-#else
-  gfxGLInit();
-#endif
 
   glutTimerFunc(100,gui_timer,0);
 
   return 0;
 }
 
-#ifdef USE_CMI
 void guiCMICallback(const cmiToken *t)
 {
   if(t->target==CMI_TARGET_GUI) {
@@ -580,34 +401,11 @@ void guiCMICallback(const cmiToken *t)
     }
   }
 }
-#endif
 
 int guiMainLoop()
 {
   glutMainLoop();
   return 0;
-}
-
-
-
-/************************
-
-  guiResolveColor
-  ---------------
-
-  translates a string
-  into rgb
-
-************************/
-
-// ALSO needs to be rewritten to work with GLUT
-
-int guiResolveColor(const char *oname, float *r, float *g, float *b)
-{
-    (*r)=0.0;
-    (*g)=0.0;
-    (*b)=0.0;
-    return -1;
 }
 
 /***********************************
@@ -635,12 +433,30 @@ int guiMessage2(char *m)
   return 0;
 }
 
-int guiMInit(void (*func)(int, char **), int *argc, char ***argv)
-{
-  return -1;
-}
-
 void guiSwapBuffers()
 {
   glutSwapBuffers();
 }
+
+
+#ifndef INTERNAL_COLOR
+/************************
+
+  guiResolveColor
+  ---------------
+
+  translates a string
+  into rgb
+
+************************/
+
+// ALSO needs to be rewritten to work with GLUT
+
+int guiResolveColor(const char *oname, float *r, float *g, float *b)
+{
+    (*r)=0.0;
+    (*g)=0.0;
+    (*b)=0.0;
+    return -1;
+}
+#endif

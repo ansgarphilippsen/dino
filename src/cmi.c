@@ -51,10 +51,12 @@ void cmiSubmit(const cmiToken *t)
   send a query for information
 */
 
-void cmiQuery(const cmiToken *t)
+void cmiQuery(const cmiToken *t2)
 {
-  t->target |= CMI_QUERY;
-  cmiSubmit(t);
+  cmiToken t;
+  memcpy(&t,t2,sizeof(cmiToken));
+  t.target |= CMI_QUERY;
+  cmiSubmit(&t);
 }
 
 /*
@@ -87,3 +89,53 @@ void cmiRegisterTimer(cmiTimerFunc f)
 {
   cmi.tf=f;
 }
+
+// shortcuts
+
+static cmiToken t_init_gl={CMI_TARGET_GFX, CMI_INITGL, NULL};
+
+void cmiInitGL(void)
+{
+  cmiSubmit(&t_init_gl);
+}
+
+static cmiToken t_refresh={CMI_TARGET_GUI, CMI_REFRESH, NULL};
+
+void cmiRefresh(void)
+{
+  cmiSubmit(&t_refresh);
+}
+
+static cmiToken t_resize={CMI_TARGET_GFX, CMI_RESIZE, NULL};
+
+void cmiResize(int w, int h)
+{
+  int v[2];
+  t_resize.value=v;
+  v[0]=w; v[1]=h;
+  cmiSubmit(&t_resize);
+}
+
+static cmiToken t_redraw={CMI_TARGET_GFX, CMI_REDRAW, NULL};
+
+void cmiRedraw(void)
+{
+  cmiSubmit(&t_redraw);
+}
+
+static cmiToken t_message={CMI_TARGET_COM, CMI_MESSAGE, NULL};
+
+void cmiMessage(const char *s)
+{
+  t_message.value=(void *)s;
+  cmiSubmit(&t_message);
+}
+
+static cmiToken t_command={CMI_TARGET_COM, CMI_RAW, NULL};
+
+void cmiCommand(const char *s)
+{
+  t_command.value=s;
+  cmiSubmit(&t_command);
+}
+

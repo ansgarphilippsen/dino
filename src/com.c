@@ -19,7 +19,6 @@
 #include "grid_db.h"
 #include "geom_db.h"
 #include "mat.h"
-#include "om.h"
 #include "write.h"
 #include "writePS.h"
 #include "Cmalloc.h"
@@ -48,6 +47,7 @@
 #include "gui_ext.h"
 #else
 #include "gui.h"
+#include "om.h"
 #endif
 
 #ifdef INTERNAL_COLOR
@@ -710,13 +710,14 @@ void comTimeProc()
   }
 #endif
 
+  // TODO SPIN
   if(gfx.spin) {
 #ifdef USE_CMI
-    comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,0,gfx.sdx);
-    comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,1,gfx.sdy);
+    //comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,0,gfx.sdx);
+    //comTransform(TRANS_MOUSE,CMI_BUTTON1_MASK,1,gfx.sdy);
 #else
-    comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,0,gfx.sdx);
-    comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,1,gfx.sdy);
+    //comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,0,gfx.sdx);
+    //comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,1,gfx.sdy);
 #endif
     comRedraw();
   }
@@ -1863,9 +1864,6 @@ int comTransform(int device, int mask, int axis, int ivalue)
   mask &= GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_BUTTON3_MASK | GUI_BUTTON4_MASK | GUI_SHIFT_MASK | GUI_CNTRL_MASK | GUI_LOCK_MASK;
 #endif
 
-#ifdef EXPO
-  apIdleReset();
-#endif
 
   for(i=0;i<com.tlist_count;i++) {
     if(com.tlist[i].device==device && 

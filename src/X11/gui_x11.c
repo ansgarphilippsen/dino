@@ -13,6 +13,7 @@ user menu
 #include <string.h>
 #include <sys/time.h>
 
+#ifndef INTERNAL_COLOR
 #ifdef LINUX
 #include <gdbm.h>
 #endif
@@ -22,39 +23,24 @@ user menu
 #ifdef DEC
 #include <ndbm.h>
 #endif
+#endif
 
 #include <X11/Xlib.h>
 #include <Xm/XmAll.h>
 #include <X11/Xmu/StdCmap.h>
 #include <X11/Intrinsic.h>
-
 #include <X11/keysym.h>
 #include <X11/extensions/XInput.h>
 #include <Xm/DragDrop.h>
 
-#ifdef EXPO
-#include <Xm/MwmUtil.h>
-#endif
-
-
 #include "dino.h"
-#include "com.h"
-#include "gui.h"
-#include "gfx.h"
+#include "gui_x11.h"
+#include "om_x11.h"
 #include "extension.h"
-#include "om.h"
-#include "transform.h"
-#include "cl.h"
-#include "glw.h"
 #include "AppPlus.h"
+#include "gui_terminal.h"
+#include "cl.h"
 
-#ifdef INTERNAL_COLOR
-#include "colors.h"
-#endif
-
-#ifdef EXPO
-#include "autoplay.h"
-#endif
 #ifdef SPACETEC
 #include "spacetec.h"
 #endif
@@ -64,38 +50,11 @@ user menu
 #endif
 
 struct GUI gui;
-extern struct GFX gfx;
 extern struct OBJECT_MENU om;
 extern struct USER_MENU um;
 
 extern int debug_mode,gfx_mode,stereo_mode;
 
-#ifdef CORE_DEBUG
-extern FILE *core_debug;
-#endif
-#ifdef EXPO
-static String fallback_resources[]={
-  "*Background: #00003f",
-  "*Foreground: #ffffaf",
-  "*geometry: +0+0",
-  "*frame*width: 1024",
-  //  "*frame*height: 1024",
-  "*frame*height: 1008",
-  "*frame*x: 0",
-  "*frame*y: 0",
-  "*frame*topOffset: 0",
-  "*frame*bottomOffset: 0",
-  "*frame*rightOffset: 0",
-  "*frame*leftOffset: 0",
-  "*frame*marginWidth: 0",
-  "*frame*marginHeight: 0",
-  "*frame2*width: 256",
-  "*frame2*height: 1008",
-  "*clientDecoration: 0",
-  "*transientDecoration: 0",
-  NULL
-};
-#else
 static String fallback_resources[]={
   "*sgiMode: True",
   "*useSchemes: all",
@@ -113,93 +72,15 @@ static String fallback_resources[]={
   "*frame*shadowType: SHADOW_IN",
   NULL
 };
-#endif
 
 static struct GUI_KEY_EVENT gui_default_key_event[]={
     {XK_F1,"scene stereo"},
     {0,""}
 };
 
-#ifdef EXPO
-static char *expo_message="DINO by Ansgar Philippsen  -  Special EXPO2000 version  -  http://www.bioz.unibas.ch/~xray/dino";
+#ifndef INTERNAL_COLOR
+static int guiInitRGB(void);
 #endif
-
-/*
-  inline or static functions
-*/
-
-static int guiInitRGB()
-{
-#ifdef LINUX
-  char *rgbfile1;
-  FILE *rgbfile2;
-  char rgb_line[256],*rgb_sep,*rgb_nam;
-  unsigned short usp[6];
-  datum key,content;
-  GDBM_FILE gdbm_f;
-#endif
-
-  debmsg("guiInit: loading rgb database");
-#ifdef LINUX
-  strcpy(gui.gdbm_tmpfile,"");
-  rgbfile1=tmpnam(NULL);
-  rgbfile2=fopen("/usr/lib/X11/rgb.txt","r");
-  if(rgbfile2==NULL) {
-    fprintf(stderr,"cannot find rgb.txt\n");
-    return -1;
-  } else {
-    strcpy(gui.gdbm_tmpfile,rgbfile1);
-    gdbm_f=gdbm_open(rgbfile1,0,GDBM_NEWDB,0600,0);
-    if(gdbm_f==NULL) {
-      fprintf(stderr,"cannot open rgb tmp file %s\n",rgbfile1);
-      return -1;
-    }
-    fgets(rgb_line,256,rgbfile2); /* first line is comment */
-    do {
-      fgets(rgb_line,256,rgbfile2);
-      if (rgb_line[0]!='!' && rgb_line[0]!='\n') {
-	rgb_sep=strchr(rgb_line,'\t');
-	if(rgb_sep!=NULL) {
-	  rgb_sep[0]='\0';
-	  rgb_nam=strrchr(rgb_sep+1,'\t')+1;
-	  if(rgb_nam!=NULL) {
-	    rgb_nam[strlen(rgb_nam)-1]='\0';
-	    rgb_line[3]='\0';
-	    rgb_line[7]='\0';
-	    rgb_line[11]='\0';
-	    usp[0]=(unsigned short)atoi(rgb_line+0)*256;
-	    usp[1]=(unsigned short)atoi(rgb_line+4)*256;
-	    usp[2]=(unsigned short)atoi(rgb_line+8)*256;
-	    key.dptr=rgb_nam;
-	    key.dsize=strlen(rgb_nam);
-	    content.dptr=(char *)usp;
-	    content.dsize=sizeof(usp);
-	    gdbm_store(gdbm_f,key,content,GDBM_REPLACE);
-	  }
-	}
-      }
-    } while(!feof(rgbfile2));
-    gdbm_close(gdbm_f);
-  }
-  gui.cdbm=gdbm_open(rgbfile1,0,GDBM_READER,0,0);
-  
-#endif
-#ifdef SGI
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef DEC
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef SUN
-  gui.cdbm=dbm_open("/usr/openwin/lib/rgb",0,0);
-#endif
-
-  if(gui.cdbm==NULL) {
-    fprintf(stderr,"rgb color database not found\n");
-    return -1;
-  }
-  return 0;
-}
 
 
 int guiInitVisual()
@@ -226,12 +107,7 @@ int guiInitVisual()
   buf[bufc++]=GLX_GREEN_SIZE;
   greeni=bufc++;
   buf[bufc++]=None;
-  /*
-    alpha not required ?
-  buf[bufc++]=GLX_ALPHA_SIZE;
-  alphai=bufc++;
-  buf[alphai]=0;
-  */
+
   for(j=0;j<sizeof(c)/sizeof(int);j++) {
     for(i=0;i<sizeof(d)/sizeof(int);i++) {
       buf[depthi]=d[i];
@@ -365,23 +241,25 @@ static void guiGlxInit(Widget ww, XtPointer clientData, XtPointer call)
      to include OwnerGrab for
      the user popup to work!
   */
-#ifndef EXPO
+
   XGetWindowAttributes(gui.dpy,gui.glxwindow,&xwa);
   xws.event_mask=xwa.your_event_mask | OwnerGrabButtonMask;
   XChangeWindowAttributes(gui.dpy,gui.glxwindow,CWEventMask,&xws);
-#endif  
+
   glXMakeCurrent(gui.dpy, gui.glxwindow, gui.glxcontext);
 
   gui.inside=0;
 
   /* init the GL params */
-  debmsg("guiGlxInit: calling gfxGLInit");
+  //debmsg("guiGlxInit: calling gfxGLInit");
 
 #ifdef LINUX
-  gfxSetViewport();
+  //gfxSetViewport();
 #endif
 
-  gfxGLInit();
+  //  gfxGLInit();
+  cmiResize(gui.win_width, gui.win_height);
+  cmiInitGL();
 }
 
 
@@ -398,9 +276,10 @@ static void guiGlxInit(Widget ww, XtPointer clientData, XtPointer call)
 
 static void guiGlxExpose(Widget ww, XtPointer clientData, XtPointer call)
 {
-  debmsg("redraw request");
-  debmsg("calling Redraw");
-  comRedraw();
+  //  debmsg("redraw request");
+  //debmsg("calling Redraw");
+  //comRedraw();
+  cmiRefresh();
 }
 
 /*****************************
@@ -420,15 +299,17 @@ static void guiGlxResize(Widget ww, XtPointer clientData, XtPointer call)
   callData = (GLwDrawingAreaCallbackStruct*) call;
   gui.win_width=callData->width;
   gui.win_height=callData->height;
-  //  gfxSetup();
+
+  cmiResize(gui.win_width,gui.win_height);
+  cmiRefresh();
+  
+  /*
   gfxSetViewport();
   debmsg("resize request");
   debmsg("calling Redraw");
   gfxResizeEvent();
-  /*
-  gfxRedraw();
-  */
   comRedraw();
+  */
 }
 
 
@@ -447,12 +328,14 @@ static void guiGlxResize(Widget ww, XtPointer clientData, XtPointer call)
 
 static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
 {
+  cmiToken t;
+  int val[5];
   int i;
   int dx,dy;
-  double val;
-  struct timeval tp;
-  struct timezone tzp;
-  long dt;
+  //  double val;
+  //struct timeval tp;
+  //struct timezone tzp;
+  //long dt;
   char kbuf[32];
   int kcount;
   KeySym key;
@@ -464,94 +347,156 @@ static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
   XmDrawingAreaCallbackStruct *cd =
     (XmDrawingAreaCallbackStruct *) call;
 
-  gettimeofday(&tp,&tzp);
+  //gettimeofday(&tp,&tzp);
 
-#ifdef EXPO
-  apIdleReset();
-#endif
- 
   /* 
      switch depending on event type
   */
   switch(cd->event->type){
 
   case KeyPress:
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+    
+    val[0]=CMI_INPUT_KEYBOARD;
+    val[1]=CMI_BUTTON_RELEASE;
+
     kcount=XLookupString(&(cd->event->xkey),kbuf,sizeof(kbuf),&key,NULL);
     kbuf[kcount]='\0';
-    for(i=0;i<kcount;i++)
-      comWriteCharBuf(kbuf[i]);
+    for(i=0;i<kcount;i++) {
+      val[2]=(int)kbuf[i];
+      cmiSubmit(&t);
+      //comWriteCharBuf(kbuf[i]);
+    }
     break;
   case KeyRelease:
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+    
+    val[0]=CMI_INPUT_KEYBOARD;
+    val[1]=CMI_BUTTON_RELEASE;
+
     kcount=XLookupString(&(cd->event->xkey),kbuf,sizeof(kbuf),&key,NULL);
     kbuf[kcount]='\0';
     switch(key) {
     case XK_Return:
     case XK_Linefeed:
     case XK_KP_Enter:
-      comWriteCharBuf(13);
+      val[2]=CMI_KEY_RETURN;
+      cmiSubmit(&t);
+      //      comWriteCharBuf(13);
       break;
     case XK_Delete:
-      comWriteCharBuf(8);
+      val[2]=CMI_KEY_DELETE;
+      cmiSubmit(&t);
+      //comWriteCharBuf(8);
       break;
     case XK_Up:
-      comWriteCharBuf(27);
-      comWriteCharBuf('[');
-      comWriteCharBuf('A');
+      val[2]=CMI_KEY_UP;
+      cmiSubmit(&t);
+      //comWriteCharBuf(27);
+      //comWriteCharBuf('[');
+      //comWriteCharBuf('A');
       break;
     case XK_Down:
-      comWriteCharBuf(27);
-      comWriteCharBuf('[');
-      comWriteCharBuf('B');
+      val[2]=CMI_KEY_DOWN;
+      cmiSubmit(&t);
+      //comWriteCharBuf(27);
+      //comWriteCharBuf('[');
+      //comWriteCharBuf('B');
       break;
     case XK_Left:
-      comWriteCharBuf(27);
-      comWriteCharBuf('[');
-      comWriteCharBuf('D');
+      val[2]=CMI_KEY_LEFT;
+      cmiSubmit(&t);
+      //comWriteCharBuf(27);
+      //comWriteCharBuf('[');
+      //comWriteCharBuf('D');
       break;
     case XK_Right:
-      comWriteCharBuf(27);
-      comWriteCharBuf('[');
-      comWriteCharBuf('C');
+      val[2]=CMI_KEY_RIGHT;
+      cmiSubmit(&t);
+      //comWriteCharBuf(27);
+      //comWriteCharBuf('[');
+      //comWriteCharBuf('C');
       break;
     }
     break;
 
   case ButtonPress:
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+
+    val[0]=CMI_INPUT_MOUSE;
+    val[1]=CMI_BUTTON_PRESS;
+    val[2]=0;
+    if(cd->event->xmotion.state & GUI_BUTTON1_MASK)
+      val[2] += CMI_BUTTON1_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON2_MASK)
+      val[2] += CMI_BUTTON2_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
+      val[2] += CMI_BUTTON3_MASK;
+    if(cd->event->xmotion.state & GUI_SHIFT_MASK)
+      val[2] += CMI_SHIFT_MASK;
+    if(cd->event->xmotion.state & GUI_CNTRL_MASK)
+      val[2] += CMI_CNTRL_MASK;
+    val[3]=cd->event->xbutton.x;
+    val[4]=cd->event->xbutton.y;
+
+    cmiSubmit(&t);
+
     gui.last_x=cd->event->xbutton.x;
     gui.last_y=cd->event->xbutton.y;
-    gfx.sx=gui.last_x;
-    gfx.sy=gui.last_y;
-    gfx.sdx=0;
-    gfx.sdy=0;
-    memcpy(&gui.tp_button,&tp,sizeof(struct timezone));
+    //    memcpy(&gui.tp_button,&tp,sizeof(struct timezone));
     if(cd->event->xbutton.button==3) {
-#ifndef EXPO
+
       om.pwin=gui.user_menu;
       om.pflag=1;
       XMoveWindow(gui.dpy,gui.user_menu,
 		  cd->event->xbutton.x_root,cd->event->xbutton.y_root);
       XMapRaised(gui.dpy,gui.user_menu);
-#endif
+
     }
     break;
   case ButtonRelease:
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+
+    val[0]=CMI_INPUT_MOUSE;
+    val[1]=CMI_BUTTON_RELEASE;
+    val[2]=0;
+    if(cd->event->xmotion.state & GUI_BUTTON1_MASK)
+      val[2] += CMI_BUTTON1_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON2_MASK)
+      val[2] += CMI_BUTTON2_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
+      val[2] += CMI_BUTTON3_MASK;
+    if(cd->event->xmotion.state & GUI_SHIFT_MASK)
+      val[2] += CMI_SHIFT_MASK;
+    if(cd->event->xmotion.state & GUI_CNTRL_MASK)
+      val[2] += CMI_CNTRL_MASK;
+    val[3]=cd->event->xbutton.x;
+    val[4]=cd->event->xbutton.y;
+
+    cmiSubmit(&t);
+
     dx=gui.last_x-cd->event->xbutton.x;
     dy=gui.last_y-cd->event->xbutton.y;
-    dt=(long)(tp.tv_sec-gui.tp_button.tv_sec)*1000000+(tp.tv_usec-gui.tp_button.tv_usec);
-    if(dt<200000 ||  /* 200 milliseconds */
-       (dx==0 && dy==0 && dt<300000)) {
-      if(cd->event->xbutton.state & Button1Mask) {
-	if(cd->event->xbutton.state & ShiftMask)
-	  comPick(cd->event->xmotion.x,cd->event->xmotion.y,1);
-	else
-	  comPick(cd->event->xmotion.x,cd->event->xmotion.y,0);
-      }
-    }
-//    fprintf(stderr,"\n%d %d",dx,dy);
-    if(cd->event->xbutton.state == Button1Mask) {
-      gfx.sdx=gfx.sx-cd->event->xbutton.x;
-      gfx.sdy=gfx.sy-cd->event->xbutton.y;
-    }
+    /*********
+	      dt=(long)(tp.tv_sec-gui.tp_button.tv_sec)*1000000+(tp.tv_usec-gui.tp_button.tv_usec);
+	      if(dt<200000 ||
+	      (dx==0 && dy==0 && dt<300000)) {
+	      if(cd->event->xbutton.state & Button1Mask) {
+	      if(cd->event->xbutton.state & ShiftMask)
+	      comPick(cd->event->xmotion.x,cd->event->xmotion.y,1);
+	      else
+	      comPick(cd->event->xmotion.x,cd->event->xmotion.y,0);
+	      }
+	      }
+    ************/
 
     if(cd->event->xbutton.button==3) {
       om.pflag=0;
@@ -560,16 +505,37 @@ static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
 
     break;
   case MotionNotify:
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+    
+    val[0]=CMI_INPUT_MOUSE;
+    val[1]=CMI_MOTION;
+    val[2]=0;
+
+    if(cd->event->xmotion.state & GUI_BUTTON1_MASK)
+      val[2] += CMI_BUTTON1_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON2_MASK)
+      val[2] += CMI_BUTTON2_MASK;
+    if(cd->event->xmotion.state & GUI_BUTTON3_MASK)
+      val[2] += CMI_BUTTON3_MASK;
+    if(cd->event->xmotion.state & GUI_SHIFT_MASK)
+      val[2] += CMI_SHIFT_MASK;
+    if(cd->event->xmotion.state & GUI_CNTRL_MASK)
+      val[2] += CMI_CNTRL_MASK;
+
+    val[3]=cd->event->xbutton.x;
+    val[4]=cd->event->xbutton.y;
+
+    cmiSubmit(&t);
+
     dx=gui.last_x-cd->event->xmotion.x;
     dy=gui.last_y-cd->event->xmotion.y;
-    gfx.sx=gui.last_x;
-    gfx.sy=gui.last_y;
     gui.last_x=cd->event->xmotion.x;
     gui.last_y=cd->event->xmotion.y;
 
-
-    comTransform(TRANS_MOUSE,cd->event->xmotion.state,0,dx);
-    comTransform(TRANS_MOUSE,cd->event->xmotion.state,1,dy);
+    //comTransform(TRANS_MOUSE,cd->event->xmotion.state,0,dx);
+    //comTransform(TRANS_MOUSE,cd->event->xmotion.state,1,dy);
     
     break;
   case EnterNotify:
@@ -580,57 +546,6 @@ static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
     break;
   }
 }
-
-
-/******************************************
-
-  guiCreateMenu
-  -------------
-
-  Creates the main menu, is not needed now
-
-*******************************************/
-
-static void guiMenuHelp(Widget w, caddr_t d1, caddr_t d2)
-{
-  fprintf(stdout,"Help selected\n");
-}
-
-static void guiCreateMenu()
-{
-  gui.menu_help=XmCreateCascadeButton(gui.menu,"help", NULL, 0);
-  XtVaSetValues(gui.menu_help,
-		XmNlabelString, XmStringCreate("Help",XmSTRING_DEFAULT_CHARSET),
-		NULL);
-  XtAddCallback(gui.menu_help,XmNactivateCallback, (XtCallbackProc)guiMenuHelp, NULL);
-  XtVaSetValues(gui.menu,
-		XmNmenuHelpWidget, (XtArgVal)gui.menu_help);
-  XtManageChild(gui.menu_help);
-
-
-  gui.menu_file=XmCreatePulldownMenu(gui.menu,"file", NULL, 0);
-  XtVaSetValues(gui.menu_file,
-		XmNlabelString, XmStringCreate("File",XmSTRING_DEFAULT_CHARSET),
-		NULL);
-
-  gui.menu_filec=XmCreateCascadeButton(gui.menu, "filec", NULL, 0);
-  XtVaSetValues(gui.menu_filec,
-		XmNsubMenuId, gui.menu_file,
-		XmNlabelString, XmStringCreate("File", XmSTRING_DEFAULT_CHARSET),
-		NULL);
-  XtManageChild(gui.menu_filec);
-
-  gui.menu_fileb[0]=XmCreatePushButtonGadget(gui.menu_file, "button1", NULL, 0);
-  XtVaSetValues(gui.menu_fileb[0],
-		XmNlabelString, XmStringCreate("button 1", XmSTRING_DEFAULT_CHARSET),
-		NULL);
-  gui.menu_fileb[1]=XmCreatePushButtonGadget(gui.menu_file, "button2", NULL, 0);
-  XtVaSetValues(gui.menu_fileb[1],
-		XmNlabelString, XmStringCreate("button 2", XmSTRING_DEFAULT_CHARSET),
-		NULL);
-  XtManageChildren(gui.menu_fileb,2);
-}
-
 
 
 /************************************
@@ -787,18 +702,21 @@ static void guiExtensionHandler(Widget w, XtPointer client_data, XEvent *event)
     for(i=0;i<6;i++)
       fprintf(stderr,"[#%d: %d]",i,device_motion->axis_data[i]);
     */
+    // TODO DIALS
+    /********
     if(gui.dialsDevice!=NULL)
       if(device_motion->deviceid==gui.dialsDevice->device_id) {
 	diff=(int)device_motion->axis_data[0]-gui.last_dial[num];
 	gui.last_dial[num]=(int)device_motion->axis_data[0];
-
-	comTransform(TRANS_DIALS,device_motion->state,num,diff);
       }
-
+    *******/
+    // TODO SPACEBALL
+    /**********
     if(gui.spaceballDevice!=NULL)
       if(device_motion->deviceid==gui.spaceballDevice->device_id)
 	if(device_motion->first_axis==0) {
 	  if(device_motion->axis_data[0]!=0)
+
 	    comTransform(TRANS_SPACEBALL, device_motion->state,
 			 0,device_motion->axis_data[0]);
 	  if(device_motion->axis_data[1]!=0)
@@ -817,6 +735,7 @@ static void guiExtensionHandler(Widget w, XtPointer client_data, XEvent *event)
 	    comTransform(TRANS_SPACEBALL, device_motion->state,
 			 5,device_motion->axis_data[5]);
 	}
+    *********/
   } 
 	  
 }
@@ -876,15 +795,17 @@ void guiTimeProc(XtPointer client_data)
 {
   if(gui.redraw) {
     gui.redraw=0;
-    gfxRedraw();
+    //    gfxRedraw();
+    cmiRedraw();
   }
-  comTimeProc();
+  //comTimeProc();
+  cmiTimer();
+
 #ifdef NEW_SHELL
   guitTimeProc();
 #endif
 
-  XtAppAddTimeOut(gui.app,5,(XtTimerCallbackProc)guiTimeProc,NULL);
-
+  XtAppAddTimeOut(gui.app,10,(XtTimerCallbackProc)guiTimeProc,NULL);
 }
 
 
@@ -908,9 +829,10 @@ void guiTimeProc(XtPointer client_data)
 
 *************************************************/
 
-int guiInit(void (*func)(int, char **), int *argc, char ***argv)
+//int guiInit(void (*func)(int, char **), int *argc, char ***argv)
+int guiInit(int *argc, char ***argv)
 {
-
+  cmiToken t;
   int i,j;
   EventMask em;
   Arg arg[10];
@@ -926,15 +848,15 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   int ev,er;
 #endif
 
+  // register callback
+  cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback);
+
+
+#ifndef INTERNAL_COLOR
   /*
     Initialze the RGB color database
   */
   guiInitRGB();
-
-#ifdef EXPO
-  XtSetArg(arg[0],XmNmwmDecorations,0);
-#else
-
 #endif
 
   /*
@@ -946,11 +868,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 			    fallback_resources,
 			    //			    topLevelShellWidgetClass,
 			    appPlusShellWidgetClass,
-#ifdef EXPO
-			    arg,3
-#else
 			    NULL,0
-#endif
 			    );
   debmsg("guiInit: setting display");
   gui.dpy=XtDisplay(gui.top);
@@ -984,18 +902,11 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
     Create the status bars at the bottom
   */
   debmsg("guiInit: creating message label 1");
-#ifdef EXPO
-  strcpy(gui.message_string,expo_message);
-#else
   strcpy(gui.message_string,"Ready");
-#endif
+
   xms= XmStringCreateLtoR(gui.message_string, XmSTRING_DEFAULT_CHARSET);
   XtSetArg(arg[0],XmNlabelString,xms);
-#ifdef EXPO
-  XtSetArg(arg[1],XmNalignment, XmALIGNMENT_CENTER);
-#else
   XtSetArg(arg[1],XmNalignment, XmALIGNMENT_BEGINNING);
-#endif
   XtSetArg(arg[2],XmNtopAttachment,XmATTACH_FORM);
   XtSetArg(arg[3],XmNleftAttachment,XmATTACH_FORM);
   XtSetArg(arg[4],XmNbottomAttachment,XmATTACH_FORM);
@@ -1007,11 +918,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 //  guiRegisterDnD(gui.message);
 
   debmsg("guiInit: creating message label 2");
-#ifdef EXPO
-  strcpy(gui.message_string2,"Powered by Linux");
-#else
   strcpy(gui.message_string2,VERSION);
-#endif
   xms= XmStringCreateLtoR(gui.message_string2, XmSTRING_DEFAULT_CHARSET);
   XtSetArg(arg[0],XmNlabelString,xms);
   XtSetArg(arg[1],XmNalignment, XmALIGNMENT_END);
@@ -1034,9 +941,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   debmsg("guiInit: creating glx frame");
   gui.frame=XmCreateFrame(gui.form, "frame", NULL, 0);
   XtVaSetValues(gui.frame,
-#ifndef EXPO
                 XmNrightAttachment, XmATTACH_FORM,
-#endif
 		XmNtopAttachment, XmATTACH_FORM,
                 XmNleftAttachment, XmATTACH_FORM,
                 XmNbottomAttachment, XmATTACH_WIDGET,
@@ -1045,10 +950,6 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 		XmNheight,HeightOfScreen(XtScreen(gui.frame))-56,
                 NULL);
   XtManageChild(gui.frame);
-
-#ifdef EXPO
-  apMenuInit();
-#endif
 
   /*
     initialize GLX 
@@ -1060,15 +961,11 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
     return -1;
   }
  
-#ifndef EXPO
+  debmsg("guiInit: initializing om\n");
   omInit();
   gui.om_flag=1;
-#else
-  omInit();
-  gui.om_flag=1;
-#endif
 
-  guiPadInit();
+  //  guiPadInit();
 
   debmsg("guiInit: searching for visual");
   /* 
@@ -1139,11 +1036,6 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   XtAddCallback(gui.glxwin, GLwNresizeCallback, guiGlxResize, NULL);
   XtAddCallback(gui.glxwin, GLwNinputCallback, guiGlxInput, NULL);
 
-#ifdef EXPO
-  XtSetSensitive(gui.glxwin,True);
-#endif
-
-
   /*
     The main window is now ready
   */
@@ -1171,11 +1063,12 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   /*
     assign callback function
   */
-  gui.callback=func;
+  //gui.callback=func;
   
   /*
     check for a dialbox
   */
+
   debmsg("guiInit: checking for extra input devices");
   if(guiDialboxInit()) {
     fprintf(stderr,"Dialbox detected\n");
@@ -1249,24 +1142,14 @@ int guiMainLoop()
   Boolean dummy;
 
   // register timer first
-    debmsg("setting Xtimer");
-    XtAppAddTimeOut(gui.app,100,(XtTimerCallbackProc)guiTimeProc,NULL);
+  debmsg("setting Xtimer");
+  XtAppAddTimeOut(gui.app,100,(XtTimerCallbackProc)guiTimeProc,NULL);
 
   /* endless loop */
   while(1){
     /* get next event */
-#ifdef CORE_DEBUG
-    fprintf(core_debug,"[NextEvent");
-    fflush(core_debug);
-#endif
-    /*
-      TEST
-    glXWaitGL();
-    */
+
     XtAppNextEvent(gui.app,&event);
-#ifdef CORE_DEBUG
-    fprintf(core_debug,"] ");
-#endif
 
     /* check for multiple expose events */
     if(event.type==Expose) {
@@ -1274,13 +1157,13 @@ int guiMainLoop()
 	continue;
     }
 
-
     /*
       if dials are connected and
       a dials device was detected,
       branch to dials event handler
     */
-
+    // TODO
+    /****
     if(gui.dialsDevice!=NULL || gui.spaceballDevice!=NULL)
       if(event.xany.type>gui.xiEventBase)
 	    guiExtensionHandler(XtWindowToWidget(event.xany.display, event.xany.window),NULL,&event);
@@ -1289,15 +1172,9 @@ int guiMainLoop()
       spacetecEventHandler(gui.dpy, &event);
 #endif
     guiCheckCustomEvent(&event);
-#ifdef CORE_DEBUG
-    fprintf(core_debug,"[DispatchEvent %d",event.type);
-    fflush(core_debug);
-#endif
-//    glXWaitX();
+    */
+
     XtDispatchEvent(&event);
-#ifdef CORE_DEBUG
-    fprintf(core_debug,"]\n");
-#endif
   }
   
   /* to make the compiler happy */
@@ -1391,99 +1268,6 @@ void guiRegisterUserMenu(Window w)
 }
 
 
-
-int guiMInit(void (*func)(int, char **), int *argc, char ***argv)
-{
-  int i,j;
-  char major[8],minor[8];
-#ifdef SGI
-  int ev,er;
-#endif
-#ifdef DEC
-  int ev,er;
-#endif
-#ifdef SUN
-  int ev,er;
-#endif
-  int visbuf[]={GLX_RGBA,None};
-  /*
-    Initialze the RGB color database
-  */
-  guiInitRGB();
-
-  /*
-    open top level app
-  */
-  debmsg("guiMInit: opening display");
-  XtToolkitInitialize();
-  gui.app=XtCreateApplicationContext();
-  if((gui.dpy=XtOpenDisplay(gui.app,NULL,NULL,NULL,NULL,0,argc,(*argv)))==NULL){
-    fprintf(stderr,"guiMInit: error opening display\n");
-    return -1;
-  }
-
-
-
-  /*
-    initialize GLX 
-  */
-  debmsg("guiMInit: checking GLX availability");
-  if(!glXQueryExtension(gui.dpy,NULL,NULL)) {
-    fprintf(stderr,"GLX extension not available\n");
-    gui.om_flag=0;
-    return -1;
-  }
-
-  /*
-    assign simple visual
-  */  
-  gui.visinfo=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),visbuf);
- 
-  gui.om_flag=0;
-
-
-  gui.callback=func;
-  
-  gui.redraw=0;
-  
-  /*
-    print info about graphics subsystem
-  */
-  debmsg("guiInit: info");
-  fprintf(stderr,"Graphics Subsystem ID: %s %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER));
-  sprintf(major,"%c",glGetString(GL_VERSION)[0]);
-  major[1]='\0';
-  sprintf(minor,"%c",glGetString(GL_VERSION)[2]);
-  minor[1]='\0';
-
-  if(atoi(major)<1 || (atoi(major)==1 && atoi(minor)<1)) {
-    fprintf(stderr,"OpenGL version %d.%d or above required, found %s.%s instead\n",
-	    1,1,major,minor);
-    gui.om_flag=0;
-    return -1;
-  } else {
-    fprintf(stderr,"OpenGL Version %s.%s\n",major,minor);
-  }
-
-  /*
-    check OpenGL extensions 
-  */
-  debmsg("Extensions:");
-  debmsg(glGetString(GL_EXTENSIONS));
-  
-  /*
-    as a last step, grab the error handler
-  */
-  XSetErrorHandler(guiErrorHandler);
-  XSetIOErrorHandler(guiIOErrorHandler);
-
-  /*
-    initialization completed
-  */
-  return 1;
-}
-
-
 int guiPadInit()
 {
   gui.pad1v=8;
@@ -1504,6 +1288,17 @@ void guiSwapBuffers()
 {
   glXSwapBuffers(gui.dpy, gui.glxwindow);
 }
+
+void guiCMICallback(const cmiToken *t)
+{
+  if(t->target==CMI_TARGET_GUI) {
+    switch(t->command) {
+    case CMI_REFRESH: gui.redraw++; break;
+    case CMI_MESSAGE: guiMessage((char *)t->value); break;
+    }
+  }
+}
+
 
 #ifndef INTERNAL_COLOR
 
@@ -1566,3 +1361,82 @@ int guiResolveColor(const char *oname, float *r, float *g, float *b)
 }
 
 #endif
+
+/*
+  inline or static functions
+*/
+#ifndef INTERNAL_COLOR
+static int guiInitRGB()
+{
+#ifdef LINUX
+  char *rgbfile1;
+  FILE *rgbfile2;
+  char rgb_line[256],*rgb_sep,*rgb_nam;
+  unsigned short usp[6];
+  datum key,content;
+  GDBM_FILE gdbm_f;
+#endif
+
+  debmsg("guiInit: loading rgb database");
+#ifdef LINUX
+  strcpy(gui.gdbm_tmpfile,"");
+  rgbfile1=tmpnam(NULL);
+  rgbfile2=fopen("/usr/lib/X11/rgb.txt","r");
+  if(rgbfile2==NULL) {
+    fprintf(stderr,"cannot find rgb.txt\n");
+    return -1;
+  } else {
+    strcpy(gui.gdbm_tmpfile,rgbfile1);
+    gdbm_f=gdbm_open(rgbfile1,0,GDBM_NEWDB,0600,0);
+    if(gdbm_f==NULL) {
+      fprintf(stderr,"cannot open rgb tmp file %s\n",rgbfile1);
+      return -1;
+    }
+    fgets(rgb_line,256,rgbfile2); /* first line is comment */
+    do {
+      fgets(rgb_line,256,rgbfile2);
+      if (rgb_line[0]!='!' && rgb_line[0]!='\n') {
+	rgb_sep=strchr(rgb_line,'\t');
+	if(rgb_sep!=NULL) {
+	  rgb_sep[0]='\0';
+	  rgb_nam=strrchr(rgb_sep+1,'\t')+1;
+	  if(rgb_nam!=NULL) {
+	    rgb_nam[strlen(rgb_nam)-1]='\0';
+	    rgb_line[3]='\0';
+	    rgb_line[7]='\0';
+	    rgb_line[11]='\0';
+	    usp[0]=(unsigned short)atoi(rgb_line+0)*256;
+	    usp[1]=(unsigned short)atoi(rgb_line+4)*256;
+	    usp[2]=(unsigned short)atoi(rgb_line+8)*256;
+	    key.dptr=rgb_nam;
+	    key.dsize=strlen(rgb_nam);
+	    content.dptr=(char *)usp;
+	    content.dsize=sizeof(usp);
+	    gdbm_store(gdbm_f,key,content,GDBM_REPLACE);
+	  }
+	}
+      }
+    } while(!feof(rgbfile2));
+    gdbm_close(gdbm_f);
+  }
+  gui.cdbm=gdbm_open(rgbfile1,0,GDBM_READER,0,0);
+  
+#endif
+#ifdef SGI
+  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
+#endif
+#ifdef DEC
+  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
+#endif
+#ifdef SUN
+  gui.cdbm=dbm_open("/usr/openwin/lib/rgb",0,0);
+#endif
+
+  if(gui.cdbm==NULL) {
+    fprintf(stderr,"rgb color database not found\n");
+    return -1;
+  }
+  return 0;
+}
+#endif
+

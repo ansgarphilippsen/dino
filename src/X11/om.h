@@ -5,5 +5,5 @@
 #include "om_sdl.h"
 #endif
 #ifdef X11_GUI
-#include "om_x11.h"
+//#include "om_x11.h"
 #endif

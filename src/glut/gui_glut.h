@@ -1,3 +1,6 @@
+#ifndef _GUI_GLUT_H
+#define _GUI_GLUT_H
+
 #include <sys/time.h>
 
 #include "cmi.h"
@@ -8,6 +11,7 @@
 #include <GL/glut.h>
 #endif
 
+#ifndef INTERNAL_COLOR
 #ifdef LINUX
 #include <gdbm.h>
 #endif
@@ -17,13 +21,10 @@
 #ifdef DEC
 #include <ndbm.h>
 #endif
-
 #ifdef SUN
 #include <ndbm.h>
 #endif
-
-#ifndef GUI_H
-#define GUI_H
+#endif
 
 #define GUI_NONE 0
 #define GUI_MOUSE 1

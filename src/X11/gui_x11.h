@@ -28,6 +28,7 @@
 
 
 
+#ifndef INTERNAL_COLOR
 #ifdef LINUX
 #include <gdbm.h>
 #endif
@@ -40,6 +41,10 @@
 #ifdef SUN
 #include <ndbm.h>
 #endif
+#endif
+
+
+#include "gui_ext.h"
 
 
 #define GUI_NONE 0
@@ -49,6 +54,22 @@
 
 #define GUI_MAX_EVENT_MAPS 30
 #define GUI_MAX_KEY_EVENTS 64
+
+// some generic stuff
+#define GUI_SHIFT_MASK   (1<<0)
+#define GUI_LOCK_MASK    (1<<1)
+#define GUI_CNTRL_MASK   (1<<2)
+#define GUI_MOD1_MASK    (1<<3)
+#define GUI_MOD2_MASK    (1<<4)
+#define GUI_MOD3_MASK    (1<<5)
+#define GUI_MOD4_MASK    (1<<6)
+#define GUI_MOD5_MASK    (1<<7)
+#define GUI_BUTTON1_MASK (1<<8)
+#define GUI_BUTTON2_MASK (1<<9)
+#define GUI_BUTTON3_MASK (1<<10)
+#define GUI_BUTTON4_MASK (1<<11)
+#define GUI_BUTTON5_MASK (1<<12)
+
 
 enum {GUI_STEREO_OFF=0, GUI_STEREO_NORMAL=1, GUI_STEREO_SPLIT=2};
 
@@ -137,6 +158,7 @@ struct GUI
   int last_x, last_y;
   struct timeval tp_button;
 
+#ifndef INTERNAL_COLOR
 #ifdef LINUX
   GDBM_FILE cdbm;
   char gdbm_tmpfile[256];
@@ -150,7 +172,7 @@ struct GUI
 #ifdef SUN
   DBM *cdbm;
 #endif
-
+#endif
   struct GUI_CUSTOM_EVENT ce;
 
   struct GUI_KEY_EVENT key_event[GUI_MAX_KEY_EVENTS];
@@ -162,8 +184,6 @@ struct GUI
 
 // other declarations already in gui_ext.h
 
-int guiMInit(void (*)(int, char **), int*, char ***);
-
 int guiMessage2(char *m);
 
 void guiRegisterCustomEvent(Window w, guiCustomFunc f, void *ptr);
@@ -171,9 +191,5 @@ void guiRegisterUserMenu(Window w);
 int guiCheckCustomEvent(XEvent *event);
 
 void guiTimeProc(XtPointer client_data);
-
-void guiSwapBuffers(void);
-
-
 
 #endif

@@ -2,7 +2,8 @@
 
 ARCH=LINUX
 
-LIBDIR = -L../lib -L/usr/X11R6/lib
+#LIBDIR = -L../lib -L/usr/X11R6/lib
+LIBDIR = -L/usr/X11R6/lib
 
 # all of these are static
 LIBSTATIC = /usr/lib/libtiff.a /usr/lib/libjpeg.a /usr/lib/libpng.a /usr/lib/libz.a
@@ -51,7 +52,7 @@ endif
 #JAVA_LIBS = -L/usr/java/jre/lib/i386 -L/usr/java/jre/lib/i386/client -L/usr/java/jre/lib/i386/native_threads -lawt -lmlib_image -ljawt -ljava -lverify -ljvm
 
 CC   = gcc
-CPP  = g++
+CCP  = g++
 COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused $(JAVA_INC)
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(MALLOCLIB) $(LIBGLW) $(LIBSTATIC) $(JAVA_LIBS)
 
