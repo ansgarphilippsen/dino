@@ -196,5 +196,6 @@ void guiRegisterCustomEvent(Window w, guiCustomFunc f, void *ptr);
 void guiRegisterUserMenu(Window w);
 int guiCheckCustomEvent(XEvent *event);
 
+void guiTimeProc(XtPointer client_data);
 
 #endif

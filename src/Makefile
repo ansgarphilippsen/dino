@@ -10,9 +10,14 @@
 # BUILD
 # FORMAT_RGB
 # FORMAT_VRML
-# GLUT_GUI
 
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DGLUT_GUI
+# several GUIs, one must be chose !
+# SDL_GLUT
+# GLUT_GUI
+# X11_GUI
+
+
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DSDL_GUI
 
 MALLOCLIB=
 
@@ -29,10 +34,9 @@ SRC= dino.c \
      geom_db.c geom_obj.c geom_gfx.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
-     write.c render.c mat.c rex.c extension.c Cmalloc.c cgfx.c raster.c pov.c \
+     write.c render.c mat.c rex.c Cmalloc.c cgfx.c raster.c pov.c \
      cubearray.c input.c writePS.c \
-     sglib.c symm.c GLwStereo.c \
-     AppPlus.c
+     sglib.c symm.c GLwStereo.c
 
 ifneq (,$(findstring BUILD,$(OPTIONS)))
 SRC += build.c
@@ -49,7 +53,7 @@ ifneq (,$(findstring SDL_GUI,$(OPTIONS)))
 SRC += gui_sdl.c om_sdl.c
 endif
 ifneq (,$(findstring X11_GUI,$(OPTIONS)))
-SRC += gui_x11.c om_x11.c
+SRC += extension.c gui_x11.c om_x11.c AppPlus.c
 endif
 
 ifneq (,$(findstring EXPO,$(OPTIONS)))

@@ -1,3 +1,5 @@
+#include "gui_sdl.h"
+
 /******************************
 
   GUI based on SDL library

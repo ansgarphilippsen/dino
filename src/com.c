@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -6,13 +7,8 @@
 
 #include <X11/Xlib.h>
 
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#include <MesaGL/glx.h>
-#else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#endif
 
 #include "com.h"
 #include "shell.h"
@@ -27,7 +23,7 @@
 #include "geom_db.h"
 #include "mat.h"
 #include "gui.h"
-//#include "om.h"
+#include "om.h"
 #include "write.h"
 #include "writePS.h"
 #include "Cmalloc.h"

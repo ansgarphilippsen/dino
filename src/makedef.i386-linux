@@ -55,5 +55,7 @@ LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(MALLOCLIB) $(LIBGLW) $(LIBS
 
 SRC += joy.c
 
+ifneq (,$(findstring X11_GUI,$(OPTIONS)))
 SRC +=  GLwDrawA.c  GLwMDrawA.c
+endif
 

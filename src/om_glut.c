@@ -409,7 +409,6 @@ int omInit()
 
   om.ds_count=0;
 
-  om_regenerate();
 
   // generate object menu
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
@@ -431,7 +430,9 @@ int omInit()
   glutMotionFunc(popup_motion);
   glutPassiveMotionFunc(popup_motion);
   glutEntryFunc(popup_entry);
-  glutSetWindow(gui.glut_main);
+
+  om_regenerate();
+
   return 0;
 }
 

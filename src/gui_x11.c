@@ -588,6 +588,11 @@ static void guiGlxInput(Widget ww, XtPointer clientData, XtPointer call)
 
 *******************************************/
 
+static void guiMenuHelp(Widget w, caddr_t d1, caddr_t d2)
+{
+  fprintf(stdout,"Help selected\n");
+}
+
 static void guiCreateMenu()
 {
   gui.menu_help=XmCreateCascadeButton(gui.menu,"help", NULL, 0);
@@ -623,10 +628,6 @@ static void guiCreateMenu()
   XtManageChildren(gui.menu_fileb,2);
 }
 
-static void guiMenuHelp(Widget w, caddr_t d1, caddr_t d2)
-{
-  fprintf(stdout,"Help selected\n");
-}
 
 
 /************************************
@@ -817,6 +818,10 @@ static void guiExtensionHandler(Widget w, XtPointer client_data, XEvent *event)
 	  
 }
 
+static void HandleDrop(Widget w, XtPointer client_data, XtPointer call_data)
+{
+}
+
 static void guiRegisterDnD(Widget site)
 {
   Atom    importList [1];
@@ -836,9 +841,6 @@ static void guiRegisterDnD(Widget site)
   XmDropSiteRegister(site, args, nargs);
 }
 
-static void HandleDrop(Widget w, XtPointer client_data, XtPointer call_data)
-{
-}
 
 
 static int guiErrorHandler(Display *d, XErrorEvent *e)
@@ -867,7 +869,7 @@ static int guiIOErrorHandler(Display *d)
 
 ****************************************/
 
-static void guiTimeProc(XtPointer client_data)
+void guiTimeProc(XtPointer client_data)
 {
   XExposeEvent expose;
 
@@ -1260,6 +1262,10 @@ int guiMainLoop()
 {
   XEvent event;
   Boolean dummy;
+
+  // register timer first
+    debmsg("setting Xtimer");
+    XtAppAddTimeOut(gui.app,100,(XtTimerCallbackProc)guiTimeProc,NULL);
 
   /* endless loop */
   while(1){

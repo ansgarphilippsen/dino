@@ -307,11 +307,13 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 
   guiInitRGB();
 
+  debmsg("glutInit()");
   glutInit(argc,(*argv));
 
   sw=glutGet(GLUT_SCREEN_WIDTH);
   sh=glutGet(GLUT_SCREEN_HEIGHT);
 
+  debmsg("glut: setting up main window");
   /* main gfx window */
   glutInitWindowSize(sh,sh);
   glutInitWindowPosition(sw-sh,0);
@@ -332,6 +334,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
  
   glutTimerFunc(5,guiTimer,0);
 
+  debmsg("glut: setting up user menu");
   // user menu
 
   gui.glut_um=glutCreateMenu(um_cb);
@@ -340,23 +343,20 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
+  debmsg("glut: setting up status bar");
   /* status window */
   gui.glut_status=glutCreateSubWindow(gui.glut_main,0,500-20,500,20);
   glutDisplayFunc(guiStatusExpose);
 
+  debmsg("glut: setting up object menu");
   /* object menu window */
   omInit();
   gui.om_flag=1;
 
+  debmsg("glut: setting main focus");
   /* set back to main gfx */
   glutSetWindow(gui.glut_main);
 
-  /*
-    this does not work because the event processing is hogged by GLUT
-    gui.dpy=XOpenDisplay(":0");
-    omInit();
-    gui.om_flag=1;
-  */
 
   gui.callback=func;
   gui.redraw=0;

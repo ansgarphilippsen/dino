@@ -253,10 +253,6 @@ int main(int argc,char **argv)
 #endif
 
   if(gf==0) {
-#ifndef GLUT_GUI
-    debmsg("setting Xtimer");
-    XtAppAddTimeOut(gui.app,100,(XtTimerCallbackProc)guiTimeProc,NULL);
-#endif
     debmsg("calling guiMainLoop");
     shellPrompt();
     guiMainLoop();
