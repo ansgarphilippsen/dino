@@ -1,14 +1,7 @@
 #include <stdio.h>
 
-#ifdef USE_MESA
-#include <MesaGL/glx.h>
-#include <MesaGL/glu.h>
-#include <MesaGL/gl.h>
-#else
-#include <GL/glx.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
-#endif
 
 #include "struct_db.h"
 #include "struct_obj.h"
@@ -324,7 +317,7 @@ int structDrawObj(structObj *obj)
 
     glVertexPointer(3,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].v[0]);
     glNormalPointer(GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].n[0]);
-    glColorPointer(3,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].c[0]);
+    glColorPointer(4,GL_FLOAT,sizeof(cgfxVAField),&obj->va.p[0].c[0]);
     
 #ifdef SUN
      glBegin(GL_TRIANGLES);

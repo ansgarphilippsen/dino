@@ -1,9 +1,6 @@
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
 #include <string.h>
+
+#include <GL/gl.h>
 
 #ifdef LINUX
 #include <tiff.h>

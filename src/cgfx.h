@@ -3,13 +3,7 @@
 
 #define CGFX_INTPOL_COL 0x1
 
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#include <MesaGL/glx.h>
-#else
 #include <GL/gl.h>
-#include <GL/glx.h>
-#endif
 
 #include "render.h" 
 

@@ -1524,12 +1524,13 @@ int structObjGenVA(structObj *obj)
     sto=0.0;
   }
 
-  if(sr>=bw)
+  // only create explicit spheres if they are larger than the cylinders
+  if(sr>bw)
     for(i=0;i<obj->atom_count;i++) {
       col[0]=obj->atom[i].prop.r;
       col[1]=obj->atom[i].prop.g;
       col[2]=obj->atom[i].prop.b;
-      col[3]=1.0;
+      col[3]=obj->render.transparency;
       cgfxSphereVA(sr,(float *)obj->atom[i].ap->p,col,&obj->va,detail);
   }
 
@@ -1543,11 +1544,12 @@ int structObjGenVA(structObj *obj)
     col[0]=obj->bond[i].prop1->r;
     col[1]=obj->bond[i].prop1->g;
     col[2]=obj->bond[i].prop1->b;
-    col[3]=1.0;
+    col[3]=obj->render.transparency;
     if(sr<=bw)
       cgfxGenCylinder(&obj->va,
 		      (float *)obj->bond[i].atom1->p,mid,
-		      bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
+		      bw,sti,sto,detail,CGFX_BLUNT,col);
+    //bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
     else
       cgfxGenCylinder(&obj->va,
 		      (float *)obj->bond[i].atom1->p,mid,
@@ -1556,7 +1558,7 @@ int structObjGenVA(structObj *obj)
     col[0]=obj->bond[i].prop2->r;
     col[1]=obj->bond[i].prop2->g;
     col[2]=obj->bond[i].prop2->b;
-    col[3]=1.0;
+    col[3]=obj->render.transparency;
     if(sr<=bw)
       cgfxGenCylinder(&obj->va,
 		      mid,(float *)obj->bond[i].atom2->p,
@@ -1572,6 +1574,7 @@ int structObjGenVA(structObj *obj)
     col[0]=obj->s_bond[i].prop->r;
     col[1]=obj->s_bond[i].prop->g;
     col[2]=obj->s_bond[i].prop->b;
+    col[3]=obj->render.transparency;
     cgfxSphereVA(sr,(float *)obj->s_bond[i].atom->p,col,&obj->va,detail);
   }
 

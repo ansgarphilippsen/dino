@@ -1,12 +1,5 @@
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#include <MesaGL/glu.h>
-#include <MesaGL/glx.h>
-#else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glx.h>
-#endif
 
 #ifndef GFX_H
 #define GFX_H

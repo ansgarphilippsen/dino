@@ -1,11 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#else
 #include <GL/gl.h>
-#endif
 
 #include "geom_db.h"
 #include "cgfx.h"

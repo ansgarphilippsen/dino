@@ -1,15 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#ifdef USE_MESA
-#include <MesaGL/glx.h>
-#include <MesaGL/glu.h>
-#include <MesaGL/gl.h>
-#else
-#include <GL/glx.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
-#endif
 
 #include "scal_db.h"
 #include "gfx.h"

@@ -1,12 +1,7 @@
 #include <stdio.h>
 
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#include <MesaGL/glu.h>
-#else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#endif
 
 #include "transform.h"
 #include "com.h"

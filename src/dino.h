@@ -5,7 +5,7 @@ typedef char* string;
 
 #define debmsg(m) if(debug_mode) fprintf(stderr,"\n[DEBUG] %s",m)
 
-#define VERSION "0.8.5-2"
+#define VERSION "0.8.5-3"
 
 void dinoExit(int);
 

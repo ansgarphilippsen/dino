@@ -3,13 +3,8 @@
 #include <string.h>
 #include <math.h>
 
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#include <MesaGL/glu.h>
-#else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#endif
 
 #include "dino.h"
 #include "scene.h"

@@ -1,8 +1,4 @@
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#else
 #include <GL/gl.h>
-#endif
 
 #include <stdlib.h>
 #include <stdio.h>

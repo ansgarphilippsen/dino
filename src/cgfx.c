@@ -1,13 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#ifdef USE_MESA
-#include <MesaGL/gl.h>
-#include <MesaGL/glx.h>
-#else
 #include <GL/gl.h>
 #include <GL/glx.h>
-#endif
 
 #include "cgfx.h"
 #include "Cmalloc.h"
@@ -16,228 +11,9 @@
 
 #define CGFX_D2
 
-/***************************************
-
-  CustomGraphics (CGFX) routines
-
-  the idea is that they will be called
-  first through a display list, so
-  here are only the actual coordinate
-  and normals generation commands,
-  without any optimization to speed it
-  up as much as possible
-
-***************************************
-
-  sphere
-  ------
-
-  takes radius and detail as parameter, 
-  generates such a sphere around the 
-  origin.
-
-*****************************************/
-
-int cgfxSphere(double radius, int detail)
-{
-  double x,y,z,v,w,step,step2;
-  double xn,yn,zn;
-  
-  if(detail<1 || detail>90)
-    return -1;
-  
-  if(radius<=0.0)
-    return -1;
-  
-#ifdef XGFX_D2
-  detail*=2;
-#else
-  detail*=4;
-#endif  
-
-  step=M_PI*2.0/(double)(detail);
-  step2=M_PI*2.0/(double)(detail);
-    
-  for(w=0.0;w<M_PI*2+step;w+=step) {
-    glBegin(GL_TRIANGLE_STRIP);
-    for(v=0.0;v<M_PI_2;v+=step2) {
-      xn=sin(w+step)*cos(v);
-      yn=cos(w+step)*cos(v);
-      zn=sin(v);
-      x=xn*radius;
-      y=yn*radius;
-      z=zn*radius;
-      glNormal3d(xn,yn,zn);
-      glVertex3d(x,y,z);
-      
-      xn=sin(w)*cos(v);
-      yn=cos(w)*cos(v);
-      zn=sin(v);
-      x=xn*radius;
-      y=yn*radius;
-      z=zn*radius;
-      glNormal3d(xn,yn,zn);
-      glVertex3d(x,y,z);
-    }
-    glNormal3d(0,0,1.0);
-    glVertex3d(0,0,radius);
-    glEnd();
-
-    glBegin(GL_TRIANGLE_STRIP);
-    for(v=0.0;v<M_PI_2;v+=step2) {
-      xn=sin(w)*cos(v);
-      yn=cos(w)*cos(v);
-      zn=-sin(v);
-      x=xn*radius;
-      y=yn*radius;
-      z=zn*radius;
-      glNormal3d(xn,yn,zn);
-      glVertex3d(x,y,z);
-      
-      xn=sin(w+step)*cos(v);
-      yn=cos(w+step)*cos(v);
-      zn=-sin(v);
-      x=xn*radius;
-      y=yn*radius;
-      z=zn*radius;
-      glNormal3d(xn,yn,zn);
-      glVertex3d(x,y,z);
-    }
-    glNormal3d(0,0,-1.0);
-    glVertex3d(0,0,-radius);
-    glEnd();
-  }
-  
-
-    
-  return 0;
-}
-
-/****************************************
-
-  cylinder
-  --------
-
-  takes type, length, radius and detail,
-  generates such a cylinder along
-  positive z, negative len will be
-  correctly treated
-
-  types are blunt, rounded at one end or
-  rounded at both ends
-
-*****************************************/
-
-int cgfxCylinder(int type, double len, double radius, int detail)
-{
-  double x,y,z,v,w,step,step4;
-  double xn,yn,zn,fact;
-  double sw1,cw1,sw2,cw2,radius2;
-
-  if(detail<1 || detail>720)
-    return -1;
-
-  if(radius<=0.0)
-    return -1;
-
-  if(len==0.0)
-    return -1;
-
-#ifdef CGFX_D2
-  detail*=2;
-#else
-  detail*=4;
-#endif
-
-  step=M_PI*2.0/(double)detail;
-  step4=step;
-
-  fact=len/fabs(len);
-
-  glBegin(GL_TRIANGLE_STRIP);
-
-  for(w=0.0;w<M_PI*2.0+step;w+=step) {
-    xn=sin(w*fact);
-    yn=cos(w*fact);
-    x=xn*radius;
-    y=yn*radius;
-    z=0.0;
-    glNormal3d(xn,yn,0.0);
-    glVertex3d(x,y,z);
-    z=len;
-    glNormal3d(xn,yn,0.0);
-    glVertex3d(x,y,z);
-  }
-  glEnd();
-
-  if(type==CGFX_CAP) {
-    glBegin(GL_TRIANGLE_FAN);
-
-    glNormal3d(0.0,0.0,-1.0);
-    glVertex3d(0.0,0.0,0.0);
-
-    for(w=0.0;w<M_PI*2.0+step;w+=step) {
-      xn=sin(w*fact);
-      yn=cos(w*fact);
-      x=xn*radius;
-      y=yn*radius;
-      glVertex3d(x,y,0.0);
-    }
-
-    glEnd();
-
-    glBegin(GL_TRIANGLE_FAN);
-
-    glNormal3d(0.0,0.0,1.0);
-    glVertex3d(0.0,0.0,len);
-
-    for(w=0.0;w<M_PI*2.0+step;w+=step) {
-      xn=sin(w*fact);
-      yn=cos(w*fact);
-      x=xn*radius;
-      y=yn*radius;
-      glVertex3d(-x,y,len);
-    }
-
-    glEnd();
-
-  } else if(type==CGFX_SINGLE_ROUND) {
-
-    radius2=radius*fact;
-
-    for(w=0.0;w<M_PI*2+step;w+=step) {
-      glBegin(GL_TRIANGLE_STRIP);
-      sw1=sin((w)*fact);
-      cw1=cos((w)*fact);
-      sw2=sin((w+step)*fact);
-      cw2=cos((w+step)*fact);
-      for(v=0.0;v<M_PI_2;v+=step4) {
-	xn=sw2*cos(v);
-	yn=cw2*cos(v);
-	zn=sin(v);
-	x=xn*radius;
-	y=yn*radius;
-	z=len+zn*radius2;
-	glNormal3d(xn,yn,zn*fact);
-	glVertex3d(x,y,z);
-
-	xn=sw1*cos(v);
-	yn=cw1*cos(v);
-	zn=sin(v);
-	x=xn*radius;
-	y=yn*radius;
-	z=len+zn*radius2;
-	glNormal3d(xn,yn,zn*fact);
-	glVertex3d(x,y,z);
-      }
-      glNormal3d(0,0,fact);
-      glVertex3d(0,0,len+radius2);
-      glEnd();
-    }
-  }
-
-  return 0;
-}
+/*
+  these are the newer, vertex-array based, routines
+*/
 
 /********************************************
 
@@ -649,6 +425,7 @@ int cgfxSphereVA2(float radius, float p[3], float c[4], cgfxVA *va, int detail)
   
   return 0;
 }
+
 /******************
  
    construct a cylinder from beg to end of radius rad
@@ -1261,7 +1038,6 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 	va->p[va->count].c[2]=cp1->c[2];
 	va->p[va->count].c[3]=cp1->c[3];
 #endif
-        //	va->p[va->count].c[3]=1.0; // force sane alpha value
 	va->count++;
 	va->p[va->count].v[0]=cp2->v[0];
 	va->p[va->count].v[1]=cp2->v[1];
@@ -1344,6 +1120,11 @@ int cgfxConnectProfile(cgfxVA *va, cgfxProfile *p1, cgfxProfile *p2, int f)
 
   return 0;
 }
+
+/*
+  utility routines
+ */
+
 
 int cgfxCopyPVa(cgfxPoint *p, cgfxVAField *f)
 {
@@ -1505,6 +1286,8 @@ int cgfxMorphProfile(cgfxProfile *p1, cgfxProfile *p2, cgfxProfile *p3)
 			p2->f*p2->p[i].col[p2->p[i].fc][1]);
     p3->p[i].col[0][2]=(p1->f*p1->p[i].col[p1->p[i].fc][2]+
 			p2->f*p2->p[i].col[p2->p[i].fc][2]);
+    p3->p[i].col[0][3]=(p1->f*p1->p[i].col[p1->p[i].fc][3]+
+			p2->f*p2->p[i].col[p2->p[i].fc][3]);
     p3->p[i].fc=0;
 #else
     p3->p[i].c[0]=(p1->f*p1->p[i].c[0]+p2->f*p2->p[i].c[0]);
@@ -2547,3 +2330,211 @@ double cgfxB(double u)
   return v;
 }
 #endif
+
+/*
+  these are the older, non-vertex-array routines
+*/
+
+int cgfxSphere(double radius, int detail)
+{
+  double x,y,z,v,w,step,step2;
+  double xn,yn,zn;
+  
+  if(detail<1 || detail>90)
+    return -1;
+  
+  if(radius<=0.0)
+    return -1;
+  
+#ifdef XGFX_D2
+  detail*=2;
+#else
+  detail*=4;
+#endif  
+
+  step=M_PI*2.0/(double)(detail);
+  step2=M_PI*2.0/(double)(detail);
+    
+  for(w=0.0;w<M_PI*2+step;w+=step) {
+    glBegin(GL_TRIANGLE_STRIP);
+    for(v=0.0;v<M_PI_2;v+=step2) {
+      xn=sin(w+step)*cos(v);
+      yn=cos(w+step)*cos(v);
+      zn=sin(v);
+      x=xn*radius;
+      y=yn*radius;
+      z=zn*radius;
+      glNormal3d(xn,yn,zn);
+      glVertex3d(x,y,z);
+      
+      xn=sin(w)*cos(v);
+      yn=cos(w)*cos(v);
+      zn=sin(v);
+      x=xn*radius;
+      y=yn*radius;
+      z=zn*radius;
+      glNormal3d(xn,yn,zn);
+      glVertex3d(x,y,z);
+    }
+    glNormal3d(0,0,1.0);
+    glVertex3d(0,0,radius);
+    glEnd();
+
+    glBegin(GL_TRIANGLE_STRIP);
+    for(v=0.0;v<M_PI_2;v+=step2) {
+      xn=sin(w)*cos(v);
+      yn=cos(w)*cos(v);
+      zn=-sin(v);
+      x=xn*radius;
+      y=yn*radius;
+      z=zn*radius;
+      glNormal3d(xn,yn,zn);
+      glVertex3d(x,y,z);
+      
+      xn=sin(w+step)*cos(v);
+      yn=cos(w+step)*cos(v);
+      zn=-sin(v);
+      x=xn*radius;
+      y=yn*radius;
+      z=zn*radius;
+      glNormal3d(xn,yn,zn);
+      glVertex3d(x,y,z);
+    }
+    glNormal3d(0,0,-1.0);
+    glVertex3d(0,0,-radius);
+    glEnd();
+  }
+  
+
+    
+  return 0;
+}
+
+/****************************************
+
+  cylinder
+  --------
+
+  takes type, length, radius and detail,
+  generates such a cylinder along
+  positive z, negative len will be
+  correctly treated
+
+  types are blunt, rounded at one end or
+  rounded at both ends
+
+*****************************************/
+
+int cgfxCylinder(int type, double len, double radius, int detail)
+{
+  double x,y,z,v,w,step,step4;
+  double xn,yn,zn,fact;
+  double sw1,cw1,sw2,cw2,radius2;
+
+  if(detail<1 || detail>720)
+    return -1;
+
+  if(radius<=0.0)
+    return -1;
+
+  if(len==0.0)
+    return -1;
+
+#ifdef CGFX_D2
+  detail*=2;
+#else
+  detail*=4;
+#endif
+
+  step=M_PI*2.0/(double)detail;
+  step4=step;
+
+  fact=len/fabs(len);
+
+  glBegin(GL_TRIANGLE_STRIP);
+
+  for(w=0.0;w<M_PI*2.0+step;w+=step) {
+    xn=sin(w*fact);
+    yn=cos(w*fact);
+    x=xn*radius;
+    y=yn*radius;
+    z=0.0;
+    glNormal3d(xn,yn,0.0);
+    glVertex3d(x,y,z);
+    z=len;
+    glNormal3d(xn,yn,0.0);
+    glVertex3d(x,y,z);
+  }
+  glEnd();
+
+  if(type==CGFX_CAP) {
+    glBegin(GL_TRIANGLE_FAN);
+
+    glNormal3d(0.0,0.0,-1.0);
+    glVertex3d(0.0,0.0,0.0);
+
+    for(w=0.0;w<M_PI*2.0+step;w+=step) {
+      xn=sin(w*fact);
+      yn=cos(w*fact);
+      x=xn*radius;
+      y=yn*radius;
+      glVertex3d(x,y,0.0);
+    }
+
+    glEnd();
+
+    glBegin(GL_TRIANGLE_FAN);
+
+    glNormal3d(0.0,0.0,1.0);
+    glVertex3d(0.0,0.0,len);
+
+    for(w=0.0;w<M_PI*2.0+step;w+=step) {
+      xn=sin(w*fact);
+      yn=cos(w*fact);
+      x=xn*radius;
+      y=yn*radius;
+      glVertex3d(-x,y,len);
+    }
+
+    glEnd();
+
+  } else if(type==CGFX_SINGLE_ROUND) {
+
+    radius2=radius*fact;
+
+    for(w=0.0;w<M_PI*2+step;w+=step) {
+      glBegin(GL_TRIANGLE_STRIP);
+      sw1=sin((w)*fact);
+      cw1=cos((w)*fact);
+      sw2=sin((w+step)*fact);
+      cw2=cos((w+step)*fact);
+      for(v=0.0;v<M_PI_2;v+=step4) {
+	xn=sw2*cos(v);
+	yn=cw2*cos(v);
+	zn=sin(v);
+	x=xn*radius;
+	y=yn*radius;
+	z=len+zn*radius2;
+	glNormal3d(xn,yn,zn*fact);
+	glVertex3d(x,y,z);
+
+	xn=sw1*cos(v);
+	yn=cw1*cos(v);
+	zn=sin(v);
+	x=xn*radius;
+	y=yn*radius;
+	z=len+zn*radius2;
+	glNormal3d(xn,yn,zn*fact);
+	glVertex3d(x,y,z);
+      }
+      glNormal3d(0,0,fact);
+      glVertex3d(0,0,len+radius2);
+      glEnd();
+    }
+  }
+
+  return 0;
+}
+
+
+

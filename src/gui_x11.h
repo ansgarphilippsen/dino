@@ -1,3 +1,6 @@
+#ifndef _GUI_X11_H
+#define _GUI_X11_H
+
 #include <sys/time.h>
 
 #include <X11/Xlib.h>
@@ -8,30 +11,22 @@
 #include <X11/Xmu/StdCmap.h>
 #include <X11/Intrinsic.h>
 
+#include <GL/glx.h>
+
 #ifdef LINUX
-#ifdef USE_MESA
-#include <MesaGL/GLwMDrawA.h>
-#else
 #include "GLwMDrawA.h"
 #endif
-#endif
-
 #ifdef SGI
 #include <X11/GLw/GLwMDrawA.h>
 #endif
 #ifdef DEC
 #include <X11/GLw/GLwMDrawA.h>
 #endif
-
 #ifdef SUN
 #include <GL/GLwMDrawA.h>
 #endif
 
-#ifdef USE_MESA
-#include <MesaGL/glx.h>
-#else
-#include <GL/glx.h>
-#endif
+
 
 #ifdef LINUX
 #include <gdbm.h>
@@ -42,13 +37,10 @@
 #ifdef DEC
 #include <ndbm.h>
 #endif
-
 #ifdef SUN
 #include <ndbm.h>
 #endif
 
-#ifndef GUI_H
-#define GUI_H
 
 #define GUI_NONE 0
 #define GUI_MOUSE 1
