@@ -102,7 +102,7 @@ int geomDelObj(struct DBM_GEOM_NODE *node,char *name);
 
 int geomObjCommand(struct DBM_GEOM_NODE *, struct GEOM_OBJ *, int wc, char **wl);
 
-
+int geomObjGet(geomObj *obj, int wc, char **wl);
 int geomObjAdd(geomObj *obj,int wc, char **wl);
 int geomObjDel(geomObj *obj,int wc, char **wl);
 int geomObjList(geomObj *obj, int wc, char **wl);

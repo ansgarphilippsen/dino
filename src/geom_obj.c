@@ -10,6 +10,7 @@
 #include "Cmalloc.h"
 #include "mat.h"
 #include "bspline.h"
+#include "cl.h"
 
 
 int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, char **wl)
@@ -33,7 +34,8 @@ int geomObjCommand(struct DBM_GEOM_NODE *node, struct GEOM_OBJ *obj, int wc, cha
     geomObjDel(obj,wc-1,wl+1);
     geomObjRegen(obj);
   } else if(!strcmp(wl[0],"get")) {
-  } else if(!strcmp(wl[0],"set")) {
+    geomObjGet(obj,wc-1,wl+1);
+  } else if(obj,!strcmp(wl[0],"set")) {
     strcpy(set,"");
     for(i=1;i<wc;i++) {
       strcat(set,wl[i]);
@@ -217,6 +219,49 @@ int geomDelObj(struct DBM_GEOM_NODE *node,char *name)
   return 0;
 }
 
+int geomObjGet(geomObj *obj, int wc, char **wl)
+{
+  char mesg[256];
+  float v[3];
+  int i,n;
+
+  if(wc<1) {
+    comMessage("missing parameter for get\n");
+    return -1;
+  }
+  if(clStrcmp(wl[0],"center")) {
+    v[0]=0.0; v[1]=0.0; v[2]=0.0;
+    n=0;
+    for(i=0;i<obj->point_count;i++) {
+      v[0]+=obj->point[i].v[0];
+      v[1]+=obj->point[i].v[1];
+      v[2]+=obj->point[i].v[2];
+      n++;
+    }
+    for(i=0;i<obj->line_count;i++) {
+      v[0]+=obj->line[i].v1[0];
+      v[1]+=obj->line[i].v1[1];
+      v[2]+=obj->line[i].v1[2];
+      v[0]+=obj->line[i].v2[0];
+      v[1]+=obj->line[i].v2[1];
+      v[2]+=obj->line[i].v2[2];
+      n+=2;
+    }
+    if(n>0) {
+      v[0]/=(float)n;
+      v[1]/=(float)n;
+      v[2]/=(float)n;
+      sprintf(mesg,"{%.5f,%.5f,%.5f}",v[0],v[1],v[2]);
+      comReturn(mesg);
+    } else {
+      comReturn("{0,0,0}");
+    }
+  } else {
+    sprintf(mesg,"error in get: unknown property %s\n",wl[0]);
+    comMessage(mesg);
+  }
+  return 0;
+}
 
 /******************************
 
