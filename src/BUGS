@@ -1,6 +1,10 @@
 known problems for DINO v0.8.4
 ------------------------------
 
+- surface normals wrong after fix
+
+- offline rendering context textures not working
+
 - surface dataset restriction not working
 
 - NMR multi-model files take too long to load

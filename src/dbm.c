@@ -50,6 +50,8 @@ static struct EXT_DEF {
   {"crd","charmm"},
   {"odb","bones"},
   {"tiff","topo"},
+  {"tif","topo"},
+  {"png","topo"},
   {"msp","msp"},
   {"vet","msp"},
   {"fld","mead"},
@@ -627,7 +629,7 @@ int dbmLoad(int wc, char **wl)
       return -1;
     sprintf(message,"\nloading %s, type topo ...",name);
     comMessage(message);
-    if(tiffRead(fileno(f),file,&node->gridNode)!=0) {
+    if(gridRead(fileno(f),file,&node->gridNode)!=0) {
       if(cmp) pclose(f); else fclose(f);
       dbmDeleteNode(name);
       return -1;

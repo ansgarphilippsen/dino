@@ -130,8 +130,10 @@ int gridSetDefault(dbmGridNode *,gridObj *obj);
 int gridGetRangeVal(dbmGridNode *node, const char *, gridPoint *, float *r);
 int gridGetRangeXYZVal(dbmGridNode *node, const char *prop, float *p, float *r);
 
-int tiffRead(int fd, char *fn, dbmGridNode *node);
-int tiffReadTex(char *fn, gridTexture *tex);
+int gridRead(int fd, char *fn, dbmGridNode *node);
+int gridTiffRead(int fd, char *fn, dbmGridNode *node);
+int gridPngRead(int fd, char *fn, dbmGridNode *node);
+int gridTiffReadTex(char *fn, gridTexture *tex);
 
 int gridLoad(dbmGridNode *node,char *fn, char *tn);
 int gridLoadTexture(char *fn, gridTexture *tex);

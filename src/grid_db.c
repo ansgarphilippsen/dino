@@ -1099,7 +1099,7 @@ int gridLoadTexture(char *file, gridTexture *tex)
   }
 
   if(clStrcmp(ext,"tiff") || clStrcmp(ext,"tif")) {
-    tiffReadTex(file,tex);
+    gridTiffReadTex(file,tex);
   } else {
     sprintf(message,"\nerror: unknown extension %s",ext);
     return -1;

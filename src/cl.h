@@ -24,5 +24,6 @@ int clStrncpy(char *d, const char *s, int m);
 int clStrlen(const char *s);
 int clStrncat(char *d, const char *s, int m);
 const char *clStrchr(const char *s, int c);
+const char *clStrrchr(const char *s, int c);
 
 #endif

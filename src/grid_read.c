@@ -19,8 +19,26 @@
 #include "com.h"
 #include "grid_db.h"
 #include "Cmalloc.h"
+#include "cl.h"
 
-int tiffRead(int fd, char *fn, dbmGridNode *node)
+int gridRead(int fd, char *fn, dbmGridNode *node)
+{
+  const char *ext;
+  
+  ext=clStrrchr(fn,'.');
+  if(clStrcmp(ext,".tiff") ||
+     clStrcmp(ext,".tif")) {
+    return gridTiffRead(fd,fn,node);
+  } else if(clStrcmp(ext,".png")) {
+    return -1;
+  } else {
+    return -1;
+  }
+  return 0;
+}
+
+
+int gridTiffRead(int fd, char *fn, dbmGridNode *node)
 {
   TIFF *t;
   uint32 w,h;
@@ -133,7 +151,7 @@ int tiffRead(int fd, char *fn, dbmGridNode *node)
   return 0;
 }
 
-int tiffReadTex(char *fn, gridTexture *tex)
+int gridTiffReadTex(char *fn, gridTexture *tex)
 {
   TIFF *t;
   uint32 w,h;

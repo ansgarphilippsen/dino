@@ -173,3 +173,18 @@ const char *clStrchr(const char *s, int c)
   return NULL;
 }
 
+const char *clStrrchr(const char *s, int c)
+{
+  int i,l;
+
+  if(s==NULL || c==0)
+    return NULL;
+
+  l=clStrlen(s);
+  for(i=l-1;i>=0;i--) {
+    if(s[i]==c)
+      return &s[i];
+  }
+  return NULL;
+}
+
