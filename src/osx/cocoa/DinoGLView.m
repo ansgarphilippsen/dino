@@ -6,9 +6,9 @@
 {
     NSOpenGLPixelFormatAttribute attrs[] = {
         NSOpenGLPFADoubleBuffer,
-	NSOpenGLPFAAccelerated,
-	NSOpenGLPFAColorSize, 16,
+	NSOpenGLPFAColorSize, 8,
 	NSOpenGLPFADepthSize, 1,
+	NSOpenGLPFAMinimumPolicy,
         nil };
     NSOpenGLPixelFormat *pixFmt;
 
@@ -163,7 +163,6 @@
     int eventType, mask;
     float px, py;
 
-    unsigned int flags = [theEvent modifierFlags];
     NSPoint pt = [theEvent locationInWindow];
     NSRect frame = [self frame];
 
@@ -182,7 +181,6 @@
     int eventType, mask;
     float px, py;
 
-    unsigned int flags = [theEvent modifierFlags];
     NSPoint pt = [theEvent locationInWindow];
     NSRect frame = [self frame];
 
@@ -201,7 +199,6 @@
     int eventType, mask;
     float px, py;
 
-    unsigned int flags = [theEvent modifierFlags];
     NSPoint pt = [theEvent locationInWindow];
     NSRect frame = [self frame];
 

@@ -29,5 +29,6 @@
 // Update Display
 - (void)swapBuffers;
 - (void)updateStatusBox:(NSString *)text;
+- (void)resetCurrentContext;
 
 @end

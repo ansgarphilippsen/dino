@@ -72,4 +72,9 @@ static id dinoController;
     [statusBox setObjectValue:text];
 }
 
+- (void)resetCurrentContext
+{
+    [[dinoGL openGLContext] makeCurrentContext];
+}
+
 @end
