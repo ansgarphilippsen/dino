@@ -17,6 +17,7 @@ static struct OM_POPUP_LIST om_scene_list[]={
   {"auto slab","% autoslab"},
   {"show CP marker","% showcp"},
   {"hide CP marker","% hidecp"},
+  {"toggle depth cueing","% depthc"},
   {"separator",""},
   {"toggle stereo","% stereo"},
   {"view left","% set view=left"},

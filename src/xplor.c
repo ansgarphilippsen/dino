@@ -250,8 +250,8 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   fread(dummy,sizeof(dummy),1,f);
 
   if(node->swap_flag) {
-    swap_4bs((unsigned char *)h1,9);
-    swap_4bs((unsigned char *)h2,12);
+    swap_int(h1,9);
+    swap_double(h2,6);
   }
 
   sprintf(message,
@@ -343,7 +343,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
     fread(dummy,sizeof(dummy),1,f);
     fread(sdata,sizeof(double),section,f);
     if(node->swap_flag)
-      swap_floats((float*)sdata,(float*)sdata,section*2);
+      swap_double(sdata,section);
     fread(dummy,sizeof(dummy),1,f);
     for(b=0;b<bn;b++)
       for(a=0;a<an;a++)

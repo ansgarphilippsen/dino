@@ -1201,6 +1201,14 @@ int sceneCommand(int wc, const char **wl)
       gfx.spin=0;
     else
       gfx.spin=1;
+  } else if(!strcmp(wl[0],"depthc")) {
+    if(gfx.fog) {
+      glDisable(GL_FOG);
+      gfx.fog=0;
+    } else {
+      glEnable(GL_FOG);
+      gfx.fog=1;
+    }
   } else if (!strcmp(wl[0],"showcp")) {
     scene.cpflag=1;
     comRedraw();

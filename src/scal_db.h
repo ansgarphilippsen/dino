@@ -145,10 +145,11 @@ float scalReadFieldO(struct SCAL_FIELD *field, int u, int v, int w, int off);
 
 #endif
 
-void swap_floats(float *src, float *dest, int n);
 void swap_4b(unsigned char *a);
 void swap_4bs(unsigned char *a, int n);
-void swap_double(double *d);
+void swap_int(int *i, int n);
+void swap_float(float *p, int n);
+void swap_double(double *d, int n);
 
 int scalGetRangeXYZVal(dbmScalNode *node, const char *prop, float *p, float *r);
 

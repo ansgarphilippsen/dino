@@ -713,7 +713,7 @@ int graspRead(FILE *f, union DBM_NODE *node, int flag)
   fread(dummy,4,1,f);
 
   if(swap_flag)
-    swap_floats(data,data,3*vertc);
+    swap_float(data,3*vertc);
 
   for(i=0;i<vertc;i++) {
     vert[i].p[0]=data[i*3+0];

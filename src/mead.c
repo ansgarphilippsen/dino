@@ -84,15 +84,15 @@ int meadRead(FILE *f, dbmScalNode *sn)
 
   if(sn->swap_flag) {
     datas=Ccalloc(size,sizeof(float));
-    ret=fread(datas,sizeof(float),size,f);
-    swap_floats(datas,sn->field->data,size);
+    ret=fread(sn->field->data,sizeof(float),size,f);
+    swap_float(sn->field->data,size);
     Cfree(datas);
   } else {
     ret=fread(sn->field->data,sizeof(float),size,f);
   }
   if(sn->swap_flag) {
-    fread((char*)dims,sizeof(float),6,f);
-    swap_floats(dims,dim,6);
+    fread((char*)dim,sizeof(float),6,f);
+    swap_float(dim,6);
   } else {
     fread((char*)dim,sizeof(float),6,f);
   }

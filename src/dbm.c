@@ -119,6 +119,8 @@ int dbmLoad(int wc, const char **wl)
     clStrcpy(ext,"");
   }
 
+  // TODO REPLACE . IN FILENAMES BY _
+
   dbm_flag=0;
   rn_flag=0;
   conn_flag= STRUCT_CONN_EXPL | STRUCT_CONN_IMPL | STRUCT_CONN_DIST;

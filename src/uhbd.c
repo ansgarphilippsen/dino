@@ -129,7 +129,7 @@ int uhbdRead(FILE *f, struct DBM_SCAL_NODE *sn, int cflag)
     fread(dummy, sizeof(dummy),1,f);
     fread(uv,uv_size*sizeof(float),1,f);
     if(sn->swap_flag) {
-      swap_floats(uv,uv,uv_size);
+      swap_float(uv,uv_size);
     }
     fread(dummy, sizeof(dummy),1,f);
 

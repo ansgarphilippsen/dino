@@ -35,16 +35,16 @@ int charmmReadB(FILE *f, dbmScalNode *sn)
     swap_4b((unsigned char *)&header.nclx);
     swap_4b((unsigned char *)&header.ncly);
     swap_4b((unsigned char *)&header.nclz);
-    swap_double(&header.dcel);
-    swap_double(&header.xbcen);
-    swap_double(&header.ybcen);
-    swap_double(&header.zbcen);
-    swap_double(&header.epsw);
-    swap_double(&header.epsp);
-    swap_double(&header.conc);
-    swap_double(&header.tmemb);
-    swap_double(&header.zmemb);
-    swap_double(&header.epsm);
+    swap_double(&header.dcel,1);
+    swap_double(&header.xbcen,1);
+    swap_double(&header.ybcen,1);
+    swap_double(&header.zbcen,1);
+    swap_double(&header.epsw,1);
+    swap_double(&header.epsp,1);
+    swap_double(&header.conc,1);
+    swap_double(&header.tmemb,1);
+    swap_double(&header.zmemb,1);
+    swap_double(&header.epsm,1);
   }
 
   sprintf(message,"%d %d %d\n%g %g %g %g\n%g %g %g %g %g %g\n\n",

@@ -1404,25 +1404,6 @@ int scalSetDefault(scalObj *obj)
   return 0;
 }
 
-void swap_floats(float *src, float *dest, int n)
-{
-  int i;
-  unsigned char *a,b[4],*c;
-
-  for(i=0;i<n;i++) {
-    a=(unsigned char *)&src[i];
-    c=(unsigned char *)&dest[i];
-
-    b[0]=a[3];
-    b[1]=a[2];
-    b[2]=a[1];
-    b[3]=a[0];
-    c[0]=b[0];
-    c[1]=b[1];
-    c[2]=b[2];
-    c[3]=b[3];
-  }
-}
 
 void swap_4b(unsigned char *a)
 {
@@ -1445,18 +1426,66 @@ void swap_4bs(unsigned char *b, int n)
   }
 }
 
-void swap_double(double *d)
+void swap_int(int *p, int n)
 {
-  int i;
-  unsigned char *a,b[8];
+  int k;
+  unsigned char *a,b[4];
+  
+  for(k=0;k<n;k++) {
+    a=(unsigned char *)&p[k];
 
-  a=(unsigned char *)d;
+    b[0]=a[3];
+    b[1]=a[2];
+    b[2]=a[1];
+    b[3]=a[0];
+    a[0]=b[0];
+    a[1]=b[1];
+    a[2]=b[2];
+    a[3]=b[3];
 
-  for(i=0;i<8;i++) {
-    b[7-i]=a[i];
   }
-  for(i=0;i<8;i++)
-    a[i]=b[i];
+}
+
+void swap_float(float *p, int n)
+{
+  int k;
+  unsigned char *a,b[4],*c;
+
+  for(k=0;k<n;k++) {
+    a=(unsigned char *)&p[k];
+
+    b[0]=a[3];
+    b[1]=a[2];
+    b[2]=a[1];
+    b[3]=a[0];
+    a[0]=b[0];
+    a[1]=b[1];
+    a[2]=b[2];
+    a[3]=b[3];
+  }
+}
+
+void swap_double(double *p, int n)
+{
+  int k;
+  unsigned char *a,tmp;
+  
+  for(k=0;k<n;k++) {
+    a=(unsigned char *)&p[k];
+    
+    tmp = a[0];
+    a[0] = a[7];
+    a[7] = tmp;
+    tmp = a[1];
+    a[1] = a[6];
+    a[6] = tmp;
+    tmp = a[2];
+    a[2] = a[5];
+    a[5] =tmp;
+    tmp = a[3];
+    a[3] = a[4];
+    a[4] = tmp;
+  } 
 }
 
 /*

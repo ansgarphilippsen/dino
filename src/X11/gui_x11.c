@@ -1124,6 +1124,7 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
   switch(cd->event->type){
 
   case KeyPress:
+    /*
     t.target=CMI_TARGET_COM;
     t.command=CMI_INPUT;
     t.value=val;
@@ -1136,8 +1137,8 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
     for(i=0;i<kcount;i++) {
       val[2]=(int)kbuf[i];
       cmiSubmit(&t);
-      //comWriteCharBuf(kbuf[i]);
     }
+    */
     break;
   case KeyRelease:
     t.target=CMI_TARGET_COM;
@@ -1190,6 +1191,13 @@ static void glx_input(Widget ww, XtPointer clientData, XtPointer call)
       //comWriteCharBuf('[');
       //comWriteCharBuf('C');
       break;
+    default:
+      {
+	for(i=0;i<kcount;i++) {
+	  val[2]=(int)kbuf[i];
+	  cmiSubmit(&t);
+	}
+      }
     }
     break;
 

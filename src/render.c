@@ -125,7 +125,8 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       }
       render->mode=RENDER_SURFACE;
       comRedraw();
-    } else if(!strcmp(prop,"lines")){
+    } else if(!strcmp(prop,"lines") ||
+	      !strcmp(prop,"line")){
       /********************
           render lines
        ********************/
