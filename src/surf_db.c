@@ -633,6 +633,8 @@ int surfEvalPOV(dbmSurfNode *node, struct SURF_VERTICE *vert, POV *pov)
     prop=SURF_SEL_Y;
   } else if(clStrcmp(pov->prop,"z")) {
     prop=SURF_SEL_Z;
+  } else if(clStrcmp(pov->prop,"curv")) {
+    prop=SURF_SEL_CURV;
   } else if(clStrcmp(pov->prop,"cp0") ||
 	    clStrcmp(pov->prop,"cp1") ||
 	    clStrcmp(pov->prop,"cp2") ||
@@ -841,6 +843,21 @@ int surfEvalPOV(dbmSurfNode *node, struct SURF_VERTICE *vert, POV *pov)
 	case POV_OP_LE: if(vert->p[2]<=atof(v1)) return 1; break;
 	case POV_OP_GT: if(vert->p[2]>atof(v1)) return 1; break;
 	case POV_OP_GE: if(vert->p[2]>=atof(v1)) return 1; break;
+	}
+      }
+      break; 
+    case SURF_SEL_CURV:
+      if(rf) {
+	if(vert->curv>=atof(v1) && vert->curv<=atof(v2))
+	  return 1;
+      } else {
+	switch(op) {
+	case POV_OP_EQ: if(vert->curv==atof(v1)) return 1; break;
+	case POV_OP_NE: if(vert->curv!=atof(v1)) return 1; break;
+	case POV_OP_LT: if(vert->curv<atof(v1)) return 1; break;
+	case POV_OP_LE: if(vert->curv<=atof(v1)) return 1; break;
+	case POV_OP_GT: if(vert->curv>atof(v1)) return 1; break;
+	case POV_OP_GE: if(vert->curv>=atof(v1)) return 1; break;
 	}
       }
       break;
@@ -1093,6 +1110,8 @@ int surfGetRangeVal(dbmSurfNode *node, struct SURF_VERTICE *v, const char *prop,
     (*rval)=v->cprop[8];
   } else if(clStrcmp(prop,"cp9")) {
     (*rval)=v->cprop[9];
+  } else if(clStrcmp(prop,"curv")) {
+    (*rval)=v->curv;
   } else if(clStrcmp(prop,"dist")) {
     (*rval) = sqrtf(
 		    (v->p[0]-cp[0])*(v->p[0]-cp[0])+
@@ -1200,6 +1219,9 @@ int surfGetMinMax(dbmSurfNode *n,const char *p, float *vmin, float *vmax)
     return -1;
   } else if(clStrlen(p)==0) {
     return -1;
+  } else if(clStrcmp(p,"curv")) {
+    (*vmin)=-1.0;
+    (*vmax)=1.0;
   } else if(clStrcmp(p,"cp0")) {
     (*vmin)=n->cprop_min[0];
     (*vmax)=n->cprop_max[0];

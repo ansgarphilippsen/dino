@@ -24,6 +24,7 @@ struct SURF_VERTICE {
   int num;
   float p[3],n[3];
   int id;
+  float curv;
   union DBM_NODE *attach_node;
   int attach_element;
   //  struct STRUCT_ATOM *ap;
@@ -38,7 +39,7 @@ struct SURF_VERTICE {
 };
 
 struct SURF_FACE {
-  int v[3];
+  int v[3],curv;
 };
 
 struct SURF_OBJ_V {

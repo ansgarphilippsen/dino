@@ -17,10 +17,11 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
 {
   char line[256];
   int vn,fn,vc,fc,fcc,i,k;
-  int dummy1,id;
+  int dummy1,id,curv;
   float prober,fdummy1;
   struct DBM_SURF_NODE *sn=&node->surfNode;
   char d1[11],d2[11],d3[11],d4[11],d5[11],d6[11];
+  unsigned char* facecnt;
 
   int swap_flag=(flag&DBM_FLAG_SWAP);
   
@@ -43,32 +44,6 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
   for(vn=0;vn<vc;vn++) {
     fgets(line,256,f1);
     
-    /*
-      for(i=0;i<9;i++)
-      d1[i]=line[i+0];
-      d1[i]='\0';
-
-    for(i=0;i<9;i++)
-      d2[i]=line[i+10];
-    d2[i]='\0';
-
-    for(i=0;i<9;i++)
-      d3[i]=line[i+20];
-    d3[i]='\0';
-
-    for(i=0;i<9;i++)
-      d4[i]=line[i+30];
-    d4[i]='\0';
-
-    for(i=0;i<9;i++)
-      d5[i]=line[i+40];
-    d5[i]='\0';
-
-    for(i=0;i<9;i++)
-      d6[i]=line[i+50];
-    d6[i]='\0';
-    */
-
     sscanf(line,"%10c%10c%10c%10c%10c%10c %d %d",
 	   d1,d2,d3,d4,d5,d6,&dummy1,&id);
     d1[10]='\0';
@@ -92,6 +67,7 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
     matfNormalize(sn->v[vn].n,sn->v[vn].n); 
     sn->v[vn].id=id;
     sn->v[vn].num=vn;
+    sn->v[vn].curv=0.0;
     sn->v[vn].restriction=0;
 
     for(k=0;k<PROP_MAX_VALUES;k++)
@@ -103,6 +79,12 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
   for(fn=0;fn<fc;fn++) {
     fgets(line,256,f2);
 
+    sscanf(line,"%7c%7c%7c %d %d",
+	   d1,d2,d3,&curv,&id);
+    d1[6]='\0';
+    d2[6]='\0';
+    d3[6]='\0';
+    /*
     for(i=0;i<6;i++)
       d1[i]=line[i+0];
     d1[i]='\0';
@@ -114,15 +96,49 @@ int msmsRead(FILE *f1, FILE *f2, union DBM_NODE *node, int flag)
     for(i=0;i<6;i++)
       d3[i]=line[i+14];
     d3[i]='\0';
-    
+    */    
 
     if(atoi(d1)<=vc && atoi(d2)<=vc && atoi(d3)<=vc) {
       sn->f[fcc].v[0]=atoi(d1)-1;
       sn->f[fcc].v[1]=atoi(d2)-1;
       sn->f[fcc].v[2]=atoi(d3)-1;
+      sn->f[fcc].curv=curv;
       fcc++;
     }
   }
+
+  facecnt = malloc(vc);
+  for(vn=0;vn<vc;vn++) {
+    facecnt[vn]=0;
+  }
+
+  // assign curvature
+  for(fn=0;fn<fc;fn++) {
+    if(sn->f[fn].curv==1) {
+      fdummy1 = 1.0;
+    } else if(sn->f[fn].curv==2) {
+      fdummy1 = -1.0;
+    } else {
+      fdummy1 = 0.0;
+    }
+
+    sn->v[sn->f[fn].v[0]].curv+=fdummy1;
+    facecnt[sn->f[fn].v[0]]++;
+    sn->v[sn->f[fn].v[1]].curv+=fdummy1;
+    facecnt[sn->f[fn].v[1]]++;
+    sn->v[sn->f[fn].v[2]].curv+=fdummy1;
+    facecnt[sn->f[fn].v[2]]++;
+  }
+
+  for(vn=0;vn<vc;vn++) {
+    if(facecnt[vn]>0) {
+      sn->v[vn].curv /= (float)facecnt[vn];
+    }
+  }
+
+
+  free(facecnt);
+
   return 0;
 }
 
@@ -162,6 +178,8 @@ int mspRead(FILE *f, union DBM_NODE *node)
     sn->v[vn].n[1]=(float)atof(d5);
     sn->v[vn].n[2]=(float)atof(d6);
     sn->v[vn].num=vn;
+    sn->v[vn].id=0;
+    sn->v[vn].curv=0;
     sn->v[vn].restriction=0;
     for(k=0;k<PROP_MAX_VALUES;k++)
       sn->v[vn].cprop[k]=0.0;
@@ -188,6 +206,7 @@ int mspRead(FILE *f, union DBM_NODE *node)
     sn->f[fn].v[0]=atoi(d4)-1;
     sn->f[fn].v[1]=atoi(d5)-1;
     sn->f[fn].v[2]=atoi(d6)-1;
+    sn->f[fn].curv=0;
   }
   return 0;
 }

@@ -17,6 +17,7 @@
 OPTIONS= -DFORMAT_TIFF -DCPK_NEW
 OPTIONS += -DINTERNAL_COLOR
 OPTIONS += -DCONTOUR_COLOR
+OPTIONS += -DVRML
 
 GUI = X11
 
@@ -44,7 +45,7 @@ SRC= dino.c \
 # add more stuff depending on OPTIONS
 
 # test code for VRML output
-ifneq (,$(findstring FORMAT_VRML,$(OPTIONS)))
+ifneq (,$(findstring VRML,$(OPTIONS)))
 SRC += vrml.c
 endif
 

@@ -1,3 +1,5 @@
+aded GROMACS xtz trj format
+
 added spider format
 
 fixed scalar rcen now default center of dataset (instead of 0,0,0)

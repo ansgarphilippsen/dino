@@ -1542,6 +1542,13 @@ int comWrite(int wc,const char **wl)
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {
     comMessage("WARNING: not in a workable state!\n");
+
+    if((f=fopen(file,"w"))==NULL) {
+      sprintf(message,"Error opening %s\n",file);
+      comMessage(message);
+      return -1;
+    }
+
     comMessage("Writing VRML scene...\n");
     writeVRML(f);
     fclose(f);

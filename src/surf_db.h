@@ -36,6 +36,7 @@ enum {SURF_SEL_ANUM,
       SURF_SEL_WITHIN,
       SURF_SEL_OBJECT,
       SURF_SEL_CP,
+      SURF_SEL_CURV,
       SURF_SEL_X,
       SURF_SEL_Y,
       SURF_SEL_Z};

@@ -326,32 +326,32 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 	  g=g3;
 	  b=b3;
 	  if(s->range_flag) {
-	    /***
-	    if(comGetColor(val->val1,&r,&g,&b)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val1);
-	      return -1;
-	    }
-	    if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
-	      comMessage("error: set: unknown color \n");
-	      comMessage(val->val2);
-	      return -1;
-	    }
-	    ***/
 	    if(s->range.src==NULL) {
 	      // this dataset
-	      if(!obj->node->attach_flag) {
-		if(surfGetRangeVal(obj->node,obj->vert[vc].vp, s->range.prop,&rval)<0)
+	      // first try properties from this dataset
+	      if(surfGetRangeVal(obj->node,obj->vert[vc].vp, s->range.prop,&rval)<0) {
+		// failure, try attached if present
+		if(!obj->node->attach_flag) {
+		  // if nothing attached give up
 		  return -1;
-	      } else if(obj->vert[vc].vp->attach_node!=NULL) {
-		if(structGetRangeVal(&obj->vert[vc].vp->attach_node->structNode,
-				     &obj->vert[vc].vp->attach_node->structNode.atom[obj->vert[vc].vp->attach_element],
-				     s->range.prop,&rval)<0)
-		  return -1;
+		} else if(obj->vert[vc].vp->attach_node!=NULL) {
+		  // vertex is attached, get range element
+		  if(structGetRangeVal(&obj->vert[vc].vp->attach_node->structNode,
+				       &obj->vert[vc].vp->attach_node->structNode.atom[obj->vert[vc].vp->attach_element],
+				       s->range.prop,&rval)<0) {
+		    return -1;
+		  } else {
+		    // ok, struct range found
+		  }
+		} else {
+		  // attachments present, just not for this vertex: try next
+		  continue;
+		}
 	      } else {
-		continue;
+		// ok, surf range found
 	      }
 	    } else {
+	      // src is not self
 	      if(dbmGetRangeVal(&s->range,(float*)obj->vert[vc].p,&rval)<0)
 		return -1;
 	    }
