@@ -418,7 +418,8 @@ int shellWorkInteractive()
   if(bc>0) {
     if(shell.stdinbuf[0]==27) {
       /* escape sequence */
-      if(!strcmp(shell.stdinbuf+1,"[A")) {
+      if(!strcmp(shell.stdinbuf+1,"[A") ||
+	 !strcmp(shell.stdinbuf+1,"OA")) {
 	/* up */
 	if(shell.scrollhistp>0){
 	  shellEraseLine();
@@ -432,7 +433,8 @@ int shellWorkInteractive()
 	  shellWriteLine();
 	}
 
-      }else if(!strcmp(shell.stdinbuf+1,"[B")){
+      }else if(!strcmp(shell.stdinbuf+1,"[B") ||
+	       !strcmp(shell.stdinbuf+1,"OB")){
 	/* down */
 	if(shell.scrollhistp<shell.savehistp){
 	  if(shell.clen>0){
@@ -448,7 +450,8 @@ int shellWorkInteractive()
 	  shellWriteLine();
 	}
 	
-      }else if(!strcmp(shell.stdinbuf+1,"[C")){
+      }else if(!strcmp(shell.stdinbuf+1,"[C") ||
+	       !strcmp(shell.stdinbuf+1,"OC")){
 	/* right */
 	if(shell.cpos<shell.clen) {
 	  shellEraseLine();
@@ -457,7 +460,8 @@ int shellWorkInteractive()
 	    shell.cstart++;
 	  shellWriteLine();
 	}
-      }else if(!strcmp(shell.stdinbuf+1,"[D")){
+      }else if(!strcmp(shell.stdinbuf+1,"[D") ||
+	       !strcmp(shell.stdinbuf+1,"OD")){
 	/* left */
 	if(shell.cpos>0) {
 	  shellEraseLine();
