@@ -43,7 +43,7 @@ arraystretch{1.3}
 setlength
 \backslash 
 arrayrulewidth{0.4pt}
-\layout Chapter
+\layout Chapter*
 
 Introduction
 \layout Standard
@@ -56,39 +56,43 @@ l structural biology methods
 \layout Standard
 
 exploring relationship between data
-\layout Chapter
+\layout Chapter*
 
 Results
+\layout Section
+
+Overview
 \layout Standard
 
-The structural data is compacted/classed/grouped into 5 distinct datasets.
- Each consists of a set of basic data units containing a set of attributes.
- Represented by 3-dimensional objects (table 
+The structural data is compacted/classed/grouped into five distinct 
+\emph on 
+datasets
+\emph default 
+, build of basic data units (See table 
 \begin_inset LatexCommand \ref{datasets}
 
 \end_inset 
 
 ).
  
-\layout Standard
-
-Objects are the visual interface to a dataset.
- 
-\layout Standard
-
-As an object is build from a dataset, a conversion from the data units into
- 3D elements is performed, retaining a link between the 3D elements and
- the data units.
- 
-\layout Standard
-
-Once an object is created, its graphical appearance, such as color or shape,
- can be modified.
+\emph on 
+Objects
+\emph default 
+ serve as the visual interface to a dataset, with several different types
+ of possible representation per dataset implemented as different object
+ types.
 \layout Standard
 
 The procedures to load, create, modify and explore a multitude of datasets
  and object has been implemented in a realtime interactive 3D visualization
  program named DINO.
+\layout Standard
+
+Each data unit consists of a set of attributes.
+\layout Standard
+
+Once an object is created, its graphical appearance, such as color or shape,
+ can be modified.
 \layout Standard
 
 \begin_float wide-tab 
@@ -375,29 +379,40 @@ The five datasets implemented in DINO.
 \layout Standard
 
 - No size limitations
-\layout Standard
-
-DINO can load a wide array of structural data files, storing them as one
- of four different datasets in its database.
- 
-\layout Standard
-
-dataset, object and element properties
-\layout Standard
-
-object is a 3D representation of dataset
-\layout Standard
-
-The data is visualized through objects, which are a conversion / interpretation
- of the dataset into a 3D object.
-\layout Standard
-
-The objects are the visual interface to the datasets.
- Their appearance can be heavily modified based on properties of their or
- another dataset.
 \layout Section
 
-Datasets and Objects
+Objects
+\layout Standard
+
+Objects consists of a set of properties, a collection 3D primitives and
+ object units, acting as a bridge/link between the data units and the 3D
+ primitives.
+\layout Standard
+
+The graphical appearance of an object depends both on the object creation
+ as on the object modification.
+ Creation can be divided into three steps:
+\layout Enumerate
+
+A subset of the data units is choosen based on specified selection criteria,
+ such as data unit attributes or geometric constrains.
+\layout Enumerate
+
+The selected subset is converted into object units, with multiple ways dependent
+ on the dataset type.
+\layout Enumerate
+
+The object units are converted to 3D primitives, based on rendering attributes
+ and the object units.
+\layout Standard
+
+As an object is build from a dataset, a conversion from the data units into
+ 3D elements is performed, retaining a link between the 3D elements and
+ the data units.
+ 
+\layout Section
+
+The Five Datasets
 \layout Subsection
 
 Structure

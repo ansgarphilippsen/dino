@@ -1,0 +1,51 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 218
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Section*
+
+
+\shape smallcaps 
+Glossary
+\layout Description
+
+3D\SpecialChar ~
+primitive Basic element for 3D rendering, build from 1 or more vertices:
+ point (1), line (2), triangle (3), quad (4).
+ Each vertex can additionally be associated with a normal, color and/or
+ texture.
+\layout Description
+
+data\SpecialChar ~
+unit Building block of the dataset, contains attributes describing it.
+\layout Description
+
+dataset Holding a block of structural data, either a structure, scalar field,
+ surface or topograph.
+ In addition, the geom dataset can hold points, lines and triangles.
+ Build up from basic data units, specific to each dataset.
+\layout Description
+
+object Graphical representation of dataset, visual appearance can be heavily
+ modified.
+\the_end
