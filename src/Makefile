@@ -107,7 +107,7 @@ depend:
 	cd $(GUI) && $(MAKE) depend
 
 snapshot: dino
-	gzip < ../bin/dino > ../bin/dino-0.8.6-$(DATE).$(MACH).gz
+	gzip < ../bin/dino > ../bin/dino-snapshot-$(DATE).$(MACH).gz
 
 iso_tab: gen_iso_table.c
 	$(CC) gen_iso_table.c -o gen_iso_table

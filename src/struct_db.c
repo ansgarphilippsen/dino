@@ -923,6 +923,10 @@ int structSet(dbmStructNode *node, Set *s)
 	  v1[2]=1.0;
 	}
       }
+      if(v1[2]<=0.0) {
+	comMessage("value for axialration must be positive\n");
+	return -1;
+      }
       if(node->helical==NULL) {
 	node->helical=(struct HELICAL*)Cmalloc(sizeof(struct HELICAL));
       }
