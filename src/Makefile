@@ -185,6 +185,7 @@ snapshot: dino
 
 gen_mc_table: gen_mc_table.c
 	$(CC) gen_mc_table.c -o gen_mc_table
+	./gen_mc_table > scal_mc_tet_table.h
 
 all: clean depend dino
 

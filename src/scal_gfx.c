@@ -247,6 +247,9 @@ int scalDrawObj(scalObj *obj)
 #endif
       glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
+      // TEMPORARY
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
       glEnable(GL_LIGHTING);
       glEnable(GL_COLOR_MATERIAL);
       glDisable(GL_CULL_FACE);

@@ -15,6 +15,7 @@
 #include "scal_obj.h"
 #include "scal_write.h"
 #include "scal_mc_new.h"
+#include "scal_mc_tet.h"
 #include "cl.h"
 #include "surf_obj.h"
 
@@ -285,7 +286,11 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
     if(scalIsSelected(obj->node,0,0,0,sel)<0)
       return -1;
 
-    ret=scalMCN(obj,sel);
+    if(obj->contour_method==1) {
+      ret=scalMCT(obj,sel);
+    } else {
+      ret=scalMCN(obj,sel);
+    }
   } else if(obj->type==SCAL_GRID) {
     sprintf(message,"Generating grid ...\n");
     comMessage(message);
@@ -419,7 +424,6 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	comMessage(s->pov[pc].prop);
 	return -1;
       }
-      comMessage("warning: set: obsolete property method ignored\n");
       s->pov[pc].id=SCAL_PROP_METHOD;
     } else {
       comMessage("error: set: unknown property \n");
@@ -1059,7 +1063,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	obj->step=os;
       }
       break;
-    case SCAL_PROP_METHOD: break; // ignore
+    case SCAL_PROP_METHOD:
+      if(atoi(val->val1)==1) {
+	obj->contour_method=1;
+      } else {
+	obj->contour_method=0;
+      }
+      break;
     }
   }
 

@@ -143,7 +143,7 @@ typedef struct SCAL_OBJ {
   struct SCAL_OCTREE octree;
 #endif
   struct SCAL_SLAB slab;
-  int method;
+  int contour_method;
 }scalObj;
 
 int scalObjCommand(struct DBM_SCAL_NODE *node,scalObj *obj,int wc,char **wl);

@@ -42,20 +42,20 @@
 static int tet_code[][8] = {    /* 3210 */
   {-1,-1, -1,-1, -1,-1, -1,-1}, /* 0000 0 */
   {0,1, 0,3, 0,2, -1,-1},       /* 0001 1 */
-  {0,1, 1,2, 1,3, -1,-1},       /* 0010 2 */
+  {1,0, 1,2, 1,3, -1,-1},       /* 0010 2 */
   {0,2, 1,2, 1,3, 0,3},         /* 0011 3 */
   {0,2, 2,3, 1,2, -1,-1},       /* 0100 4 */
-  {0,1, 0,3, 2,3, 1,2},         /* 0101 5 */
-  {0,1, 0,2, 2,3, 1,3},         /* 0110 6 */
+  {0,1, 0,3, 2,3, 2,1},         /* 0101 5 */
+  {1,0, 2,0, 2,3, 1,3},         /* 0110 6 */
   {0,3, 2,3, 1,3, -1,-1},       /* 0111 7 */
-  {0,3, 1,3, 2,3, -1,-1},       /* 1000 8 */
-  {0,1, 1,3, 2,3 ,0,2},         /* 1001 9 */
-  {0,1, 1,2, 2,3, 0,3},         /* 1010 10 */
-  {0,2, 1,2, 2,3, -1,-1},       /* 1011 11 */
-  {0,2, 0,3, 1,3, 1,2},         /* 1100 12 */
-  {0,2, 1,2, 2,3, -1,-1},       /* 1101 13 */
-  {0,1, 1,3, 1,2, -1,-1},       /* 1110 14 */
-  {0,1, 0,2, 0,3, -1,-1}        /* 1111 15 */
+  {3,0, 3,1, 3,2, -1,-1},       /* 1000 8 */
+  {0,1, 3,1, 3,2, 0,2},         /* 1001 9 */
+  {1,0, 1,2, 3,2, 3,0},         /* 1010 10 */
+  {0,2, 1,2, 3,2, -1,-1},       /* 1011 11 */
+  {2,0, 3,0, 3,1, 2,1},         /* 1100 12 */
+  {0,1, 3,1, 2,1, -1,-1},       /* 1101 13 */
+  {1,0, 2,0, 3,0, -1,-1},       /* 1110 14 */
+  {-1,-1, -1,-1, -1,-1, -1,-1}  /* 1111 15 */
 };
 
 
@@ -82,7 +82,7 @@ static void print_lentry(char *buf, int a1, int a2, int b1, int b2);
 int main(int argc, char **argv)
 {
   int c;
-  fprintf(stdout,"static struct _MC_EDGE_LOOKUP_TABLE {\n\tint count;\n\tint tab[16][6]\n} mc_edge_lookup_table = {\n");
+  fprintf(stdout,"static struct _MC_EDGE_LOOKUP_TABLE {\n  int count;\n  int tab[16][6];\n} mc_edge_lookup_table[] = {\n");
   for(c=0;c<256;c++) {
     gen_tab(c, 1);
   }
@@ -113,7 +113,7 @@ static void gen_tab(int code, int tflag)
     // generate the hitcode
     for(corc=0;corc<4;corc++) {
       if( code & (1 << (tetrahed[tetc][corc]))) {
-	hit_code += 1 << corc;
+	hit_code += (1 << corc);
       }
     }
 
@@ -126,6 +126,11 @@ static void gen_tab(int code, int tflag)
     /*
       write entries, converting the tetr corners
       back into orig cube corners
+
+      tet_code[hit_code]* contains the tetr corners
+      that form an intersected edge
+      by pluging this number into tetrahed[tetc], the
+      corresponding corner in the cube is obtained
     */
     if(tet_code[hit_code][0]>=0) {
       // valid entry
@@ -182,14 +187,14 @@ static void gen_tab(int code, int tflag)
   }
   buf[strlen(buf)-2]='\0';
 
-  fprintf(stdout,"\t{%d,\n%s\n\t},\n",ecount,buf);
+  fprintf(stdout,"  {%d,{\n%s\n  }},\n",ecount,buf);
 
 }
 
 static void print_tentry(char *buf, int a1,int a2,int b1,int b2,int c1,int c2)
 {
   char tmp[256];
-  sprintf(tmp,"\t\t{%d,%d, %d,%d, %d,%d},\n",a1,a2,b1,b2,c1,c2);
+  sprintf(tmp,"    {%d,%d, %d,%d, %d,%d},\n",a1,a2,b1,b2,c1,c2);
   strcat(buf,tmp);
 }
 
