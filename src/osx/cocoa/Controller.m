@@ -22,7 +22,7 @@ static id dinoController;
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {    
     [dinoCLI setCommandHandler:dinoController];
-
+    
     [self notifyUser:[NSString stringWithFormat:@"Welcome to dino v%s (http://www.dino3d.org)\n",VERSION]];
     [self updateVersionBox:[NSString stringWithFormat:@"dino v%s",VERSION]];
     
@@ -33,8 +33,6 @@ static id dinoController;
     controlTimer=[[NSTimer timerWithTimeInterval: 0.01 target: self selector: @selector(timerControl) userInfo: nil repeats: YES ] retain];
 
     [[NSRunLoop currentRunLoop] addTimer: controlTimer forMode: NSDefaultRunLoopMode];
-
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath: NSHomeDirectory()];
     
     [self updateStatusBox:@"Ready"];
 }
