@@ -37,8 +37,6 @@ static struct STRUCT_ATOM_TABLE struct_atom_table[]={
 
 static int struct_atom_table_len=sizeof(struct_atom_table)/sizeof(struct STRUCT_ATOM_TABLE);
 
-
-
 /******************************************
 
                PDB Section
@@ -66,7 +64,6 @@ int pdbRead(FILE *f,dbmNode *node)
 
   prep_struct_file(&pdb,5000,5000,100);
 
-  
   while(!feof(f)) {
     memset(line,0,256);
     fgets(line,sizeof(line),f);
@@ -165,7 +162,7 @@ int pdbRead(FILE *f,dbmNode *node)
   //pdb.atom_count=atom_count;
   //pdb.connect_count=connect_count;
 
-  structFileEntry2DB(&pdb,&node->structNode);
+  structFileEntry2DB(&pdb,&node->structNode, model_flag);
   //node->structNode.conn_flag=1;
 
   if(pdb_cryst_flag) {
@@ -381,11 +378,12 @@ int xplorPDBRead(FILE *f,dbmNode *node)
   char record[7];
   char line[256];
   struct STRUCT_FILE pdb;
-  int model_count;
+  int model_flag,model_count;
   int atom_count;
   int atom_max;
   
-  model_count=-1;
+  model_flag=0;
+  model_count=0;
   atom_count=0;
   atom_max=5000;
   pdb.atom_entry=0;
@@ -409,8 +407,9 @@ int xplorPDBRead(FILE *f,dbmNode *node)
     }
     record[6]='\0';
     if(clStrcmp(record,"MODEL")) {
-      if(model_count==-1)
-	model_count=0;
+      //if(model_count==-1)
+      //model_count=0;
+      model_flag=1;
       model_count++;
     } else if(clStrcmp(record,"ATOM") ||
 	      clStrcmp(record,"HETATM")) {
@@ -435,7 +434,7 @@ int xplorPDBRead(FILE *f,dbmNode *node)
   pdb.connect_count=0;
   pdb.secs_count=0;
 
-  structFileEntry2DB(&pdb,&node->structNode);
+  structFileEntry2DB(&pdb,&node->structNode,model_flag);
 
   //node->structNode.conn_flag=1;
   node->structNode.xtal=NULL;
@@ -593,7 +592,7 @@ int charmmRead(FILE *f,dbmNode *node)
   charmm.secs_count=0;
 
   debmsg("charmmRead: converting to dataset");
-  structFileEntry2DB(&charmm,&node->structNode);
+  structFileEntry2DB(&charmm,&node->structNode,0);
   //node->structNode.conn_flag=1;
 
   Cfree(charmm.atom_entry);
@@ -981,7 +980,7 @@ int bonesRead(FILE *f, dbmNode *node)
 
   //node->structNode.conn_flag=0;
 
-  structFileEntry2DB(&bones,&node->structNode);
+  structFileEntry2DB(&bones,&node->structNode,0);
 
   return 0;
 }
@@ -999,11 +998,12 @@ int pqrRead(FILE *f,dbmNode *node)
   char record[7];
   char line[256];
   struct STRUCT_FILE pdb;
-  int model_count;
+  int model_flag,model_count;
   int atom_count;
   int atom_max;
   
   model_count=-1;
+  model_flag=0;
   atom_count=0;
   atom_max=5000;
   pdb.atom_entry=Crecalloc(NULL,atom_max,sizeof(struct STRUCT_FILE_ATOM_ENTRY));
@@ -1023,8 +1023,9 @@ int pqrRead(FILE *f,dbmNode *node)
     }
     record[6]='\0';
     if(clStrcmp(record,"MODEL")) {
-      if(model_count==-1)
-	model_count=0;
+      //if(model_count==-1)
+      //model_count=0;
+      model_flag=1;
       model_count++;
     } else if(clStrcmp(record,"ATOM") ||
 	      clStrcmp(record,"HETATM")) {
@@ -1049,7 +1050,7 @@ int pqrRead(FILE *f,dbmNode *node)
   pdb.connect_count=0;
   pdb.secs_count=0;
 
-  structFileEntry2DB(&pdb,&node->structNode);
+  structFileEntry2DB(&pdb,&node->structNode,model_flag);
 
   //node->structNode.conn_flag=1;
   node->structNode.xtal=NULL;
@@ -1259,6 +1260,7 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
   float *fptr;
   struct STRUCT_TRJ_POSITION *tptr;
   char message[256];
+  int swap_flag=0;
 
   fread(hdr,sizeof(char),4,f);
   hdr[4]='\0';
@@ -1280,15 +1282,18 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
     if(fread(&ac,sizeof(int),1,f)<=0)
 	break;
 
-    if(sf) {
-      swap_4b((unsigned char *)&ac);
-    }
-
     if(acount==-1) {
       acount=ac;
       if(acount <1 || acount>1e6) {
-	comMessage("error: binposTrjRead: nonsense atom count\n");
-	return -1;
+	// try swapping
+	swap_4b((unsigned char *)&ac);
+	if(ac <1 || ac >1e6) {
+	  // still no good
+	  comMessage("error: binposTrjRead: nonsense atom count (even after byte-swap)\n");
+	  return -1;
+	} else {
+	  swap_flag=1;
+	}
       }
       fptr=Ccalloc(sizeof(float),acount*3);
       tptr=Crecalloc(NULL,sizeof(struct STRUCT_TRJ_POSITION),acount*fmax);
@@ -1302,7 +1307,7 @@ int binposTrjRead(FILE *f, dbmStructNode *node, int sf)
     }
 
     fread(fptr,sizeof(float),acount*3,f);
-    if(sf)
+    if(swap_flag)
       swap_4bs((unsigned char *)fptr,acount*3);
     for(ac=0;ac<acount;ac++) {
       tpos=(fcount*acount+ac);
@@ -1424,7 +1429,7 @@ int gmxRead(FILE *f,dbmNode *node)
     add_atom_entry(&gmx,&aentry);
   }
 
-  structFileEntry2DB(&gmx,&node->structNode);
+  structFileEntry2DB(&gmx,&node->structNode,0);
   node->structNode.xtal=NULL;
 
   Cfree(gmx.atom_entry);
@@ -1606,10 +1611,10 @@ static int add_secs_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_SECS_ENTRY 
 
 
 /*
-  Convert STRUCT_FILE into struct dataset
+  Convert STRUCT_FILE into coordinate dataset
 */
 
-int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
+int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_flag)
 {
   int i,j,ac,rc,*oi,cc,pass;
   struct STRUCT_FILE_ATOM_ENTRY *ae,re;
@@ -1622,7 +1627,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
   struct STRUCT_CHAIN *chain,*ochain;
   int chain_count,chain_max,chain_flag;
   struct STRUCT_MODEL *model,*omodel;
-  int model_count,model_max,model_flag;
+  int model_count,model_max;
 
   struct STRUCT_ATOM *cap;
   int cai;
@@ -1691,11 +1696,13 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
 	 struct_atom_table_len*sizeof(struct STRUCT_ATOM_TABLE));
 
 
+  /* model_flag is now passed into routine
   if(sf->atom_entry[0].mnum<2) {
     model_flag=0;
   } else {
     model_flag=1;
   }
+  */
 
   chain_flag=0;
   for(i=0;i<sf->atom_count;i++)

@@ -64,7 +64,7 @@ struct CHARMM_TRJ_HEADER {
 };
 
 
-int structFileEntry2DB(struct STRUCT_FILE *,dbmStructNode *);
+int structFileEntry2DB(struct STRUCT_FILE *,dbmStructNode *, int model_flag);
 
 int pdbRead(FILE *f,dbmNode *node);
 int pdbLine2AtomEntry(char *,struct STRUCT_FILE_ATOM_ENTRY *);
