@@ -217,23 +217,6 @@ int writeFile(char *name, int type, int accum)
   else
     glDisable(GL_FOG);
 
-#ifndef USE_VERTEX_ARRAY
-  /* find any spline objects */
-  for(i=0;i<dbm.nodec_max;i++)
-    if(dbm.node[i].common.type==DBM_NODE_STRUCT)
-      for(j=0;j<dbm.node[j].structNode.obj_max;j++)
-	if(dbm.node[j].structNode.obj[j]!=NULL) {
-	  switch(dbm.node[j].structNode.obj[j]->render.mode) {
-	  case RENDER_HELIX:
-	  case RENDER_STRAND:
-	  case RENDER_TUBE:
-	  case RENDER_SLINE:
-	    structSmooth(dbm.node[j].structNode.obj[j]);
-	    break;
-	  }
-	}
-#endif
-
 #ifdef CPK_NEW
   for(i=0;i<dbm.nodec_max;i++)
     if(dbm.node[i].common.type==DBM_NODE_STRUCT)

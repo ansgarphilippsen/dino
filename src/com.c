@@ -345,10 +345,10 @@ int comWorkPrompt(int word_count, char ** word_list)
     }
   } else if(!strcmp(word_list[0],"new")) {
     /* create new dataset */
-#ifdef GEOM
+
     if(dbmNew(word_count-1,word_list+1)!=0)
       errflag=1;
-#endif
+
   } else if(!strcmp(word_list[0],"fuck") ||
 	    !strcmp(word_list[0],"shit")) {
     /* 

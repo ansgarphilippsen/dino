@@ -920,12 +920,10 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
 
   mode=node->smode;
 
-#ifdef NEWCONN3
   for(bc=0;bc<node->bond_count;bc++) {
     node->bond[bc].oap1=NULL;
     node->bond[bc].oap2=NULL;
   }
-#endif
 
   obj_ac=0;
   for(pass=0;pass<=1;pass++) {
@@ -955,14 +953,14 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
 		    obj->atom[obj_ac].label=0;
 		    obj->atom[obj_ac].ap=cap;
 		    obj->atom[obj_ac].cc=0;
-#ifdef NEWCONN3
+
 		    for(bc=0;bc<cap->bondc;bc++) {
 		      if(node->bond[cap->bondi[bc]].atom1==cap)
 			node->bond[cap->bondi[bc]].oap1=&obj->atom[obj_ac];
 		      if(node->bond[cap->bondi[bc]].atom2==cap)
 			node->bond[cap->bondi[bc]].oap2=&obj->atom[obj_ac];
 		    }
-#endif		    
+
 		  } else {
 		    obj->atom_flag[cap->n]=1;
 		  }
@@ -979,7 +977,7 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
 		  obj->atom[obj_ac].label=0;
 		  obj->atom[obj_ac].ap=cap;
 		  obj->atom[obj_ac].cc=0;
-#ifdef NEWCONN3
+
 		  for(bc=0;bc<cap->bondc;bc++) {
 		    if(node->bond[cap->bondi[bc]].atom1==cap)
 		      node->bond[cap->bondi[bc]].oap1=&obj->atom[obj_ac];
@@ -987,7 +985,7 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
 		      node->bond[cap->bondi[bc]].oap2=&obj->atom[obj_ac];
 		    
 		  }
-#endif		    
+
 		} else {
 		  obj->atom_flag[cap->n]=1;
 		}
@@ -1016,7 +1014,6 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
 
   bap=obj->atom;
 
-#ifdef NEWCONN3
   for(bc=0;bc<node->bond_count;bc++) {
     oap1=node->bond[bc].oap1;
     oap2=node->bond[bc].oap2;
@@ -1030,41 +1027,6 @@ int structObjConnect(dbmStructNode *node, structObj *obj, Select *sel)
       ++(oap2->cc);
     }
   }
-#else
-  for(bc=0;bc<node->bond_count;bc++) {
-    hit=0;
-    atom1=node->bond[bc].atom1->n;
-    atom2=node->bond[bc].atom2->n;
-    bap1=node->bond[bc].atom1;
-    bap2=node->bond[bc].atom2;
-    for(ac=0;ac<obj->atom_count;ac++) {
-      /*
-      ac1=obj->atom[ac].ap->n;
-      if(atom1==ac1) {
-      */
-      if(bap1==bap[ac].ap) {
-	hit++;
-	oap1=&obj->atom[ac];
-	/*
-      } else if(atom2==ac1) {
-	*/
-      } else if(bap2==bap[ac].ap) {
-	hit++;
-	oap2=&obj->atom[ac];
-      }
-      if(hit==2) {
-	memcpy(&obj->bond[obj_bc],&node->bond[bc],
-	       sizeof(struct STRUCT_BOND));
-	obj->bond[obj_bc].prop1=&oap1->prop;
-	obj->bond[obj_bc].prop2=&oap2->prop;
-	obj_bc++;
-	++(oap1->cc);
-	++(oap2->cc);
-	break;
-      }
-    }
-  }
-#endif
   obj->bond_count=obj_bc;
 
   obj_bc=0;

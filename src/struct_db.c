@@ -918,7 +918,6 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
 	      ... versus all atoms in this MODEL 
 	    */
 
-#ifdef NEWCONN2
 	    caXYZtoABC(node->ca,(float *)ap1->p,abc1);
 	    for(abc2[0]=abc1[0]-1;abc2[0]<=abc1[0]+1;abc2[0]++)
 	      for(abc2[1]=abc1[1]-1;abc2[1]<=abc1[1]+1;abc2[1]++)
@@ -932,21 +931,6 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
 			  structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
 		  }
 		}
-#else	    
-	    for(ac2=0;ac2<cmp->atom_count;ac2++) {
-	      ap2=cmp->atom[ac2];
-	      /*
-		connect if number of a1 is smaller than that of a2
-		(this should really be a continuous INTERNAL number,
-		not the number from the file !!!)
-		and if the distance between them is good
-	      */
-	      if(ap1->n!=ap2->n)
-		if(structIsConnected(ap1,ap2))
-		  structConnectAtoms(node,&nb,&bc,&b_max,ap1,ap2);
-	      
-	    }
-#endif
 	  }
 	  /* 
 	     connectivity info is available for this residue
