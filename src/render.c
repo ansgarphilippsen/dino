@@ -20,6 +20,7 @@ int renderSet(struct RENDER *render, int owc, char **owl)
   int wc;
   int c;
   int oldi;
+  float col[3];
 
   if(owc<=0)
     return 0;
@@ -871,7 +872,53 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
-
+#ifdef RENDER_SOLID
+    } else if(!strcmp(prop,"solid")) {
+      /********************
+	      solid
+      ********************/
+      if(!strcmp(op,"!")) {
+	render->solid=0;
+      } else if(strlen(op)==0) {
+	render->solid=1;
+      } else if(!strcmp(op,"=")) {
+	if(!strcmp(val,"0") ||
+	   !strcmp(val,"false") ||
+	   !strcmp(val,"off")) {
+	  render->solid=0;
+	} else {
+	  render->solid=1;
+	}
+      } else {
+	sprintf(message,"\ninvalid operator %s",op);
+	comMessage(message);
+	return -1;
+      }
+    } else if(!strcmp(prop,"solidc")) {
+      if(strlen(op)==0) {
+	sprintf(message,"\nmissing operator");
+	comMessage(message);
+	return -1;
+      }
+      if(strlen(val)==0) {
+	sprintf(message,"\nmissing value");
+	comMessage(message);
+	return -1;
+      }
+      if(strcmp(op,"=")) {
+	sprintf(message,"\ninvalid operator: %s",op);
+	comMessage(message);
+	return -1;
+      }
+      if(comGetColor(val, &col[0], &col[1], &col[2])!=0) {
+	sprintf(message,"\nunknown color: %s", val);
+	comMessage(message);
+	return -1;
+      }
+      render->solidc[0]=col[0];
+      render->solidc[1]=col[1];
+      render->solidc[2]=col[2];
+#endif
     } else if(!strcmp(prop,"stipple")) {
       /********************
 	      stipple

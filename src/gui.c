@@ -554,6 +554,10 @@ int guiInitVisual()
 
   buf[bufc++]=GLX_RGBA;
   buf[bufc++]=GLX_DOUBLEBUFFER;
+#ifdef RENDER_SOLID
+  buf[bufc++]=GLX_STENCIL_SIZE;
+  buf[bufc++]=1;
+#endif
   buf[bufc++]=GLX_DEPTH_SIZE;
   depthi=bufc++;
   buf[bufc++]=GLX_RED_SIZE;

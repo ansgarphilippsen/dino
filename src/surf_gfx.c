@@ -113,8 +113,13 @@ int surfDrawObj(surfObj *obj)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   } else {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#ifdef RENDER_SOLID
+    if(obj->render.cull && !(obj->render.solid && t==1.0))
+        glEnable(GL_CULL_FACE);
+#else
     if(obj->render.cull)
         glEnable(GL_CULL_FACE);
+#endif
   }
 
   if(t<1.0) {
@@ -144,20 +149,18 @@ int surfDrawObj(surfObj *obj)
 
   glDepthMask(GL_TRUE);
 
-  glDrawElements(GL_TRIANGLES,obj->facec*3,GL_UNSIGNED_INT,obj->face);
-  
-  /*
-  glBegin(GL_TRIANGLES);
-  for(f=0;f<obj->facec*3;f++) {
-    glColor3fv(obj->vert[obj->face[f]].c);
-    glNormal3fv(obj->vert[obj->face[f]].n);
-    glVertex3fv(obj->vert[obj->face[f]].p);
+#ifdef RENDER_SOLID
+  if(obj->render.solid && t==1.0) {
+    glClearStencil(0x0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS,0x0,0x1);
+    glStencilOp(GL_INVERT,GL_INVERT,GL_INVERT);
   }
-  glEnd();
-  */
-  
-//  glCallList(obj->list);
-  
+#endif
+
+  glDrawElements(GL_TRIANGLES,obj->facec*3,GL_UNSIGNED_INT,obj->face);
+
   
   glDisableClientState(GL_VERTEX_ARRAY); 
   glDisableClientState(GL_COLOR_ARRAY);
@@ -165,6 +168,27 @@ int surfDrawObj(surfObj *obj)
 
   glDisable(GL_CULL_FACE);
 
+#ifdef RENDER_SOLID
+  if(obj->render.solid && t==1.0) {
+    glStencilFunc(GL_NOTEQUAL,0x0,0x1);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0,1,0,1);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glColor3fv(obj->render.solidc);
+    glRectd(0,0,1,1);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glDisable(GL_STENCIL_TEST);
+  }
+#endif
   glPopMatrix();
 
   glPopAttrib();

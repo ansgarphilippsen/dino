@@ -1017,6 +1017,12 @@ int surfSetDefault(dbmSurfNode *node, surfObj *obj)
   obj->render.dbl_light=0;
   obj->render.face_reverse=0;          
   obj->render.cull=0;
+#ifdef RENDER_SOLID
+  obj->render.solid=0;
+  obj->render.solidc[0]=1.0;
+  obj->render.solidc[1]=1.0;
+  obj->render.solidc[2]=1.0;
+#endif
   comSetDefMat(&obj->render.mat);
 
   obj->r=1.0;
