@@ -13,11 +13,18 @@ static int joy_fd;
 int jInit()
 {
 #ifdef LINUX
+  // old kernels
   joy_fd=open("/dev/js0",O_NONBLOCK);
-  if(joy_fd==-1)
-    return -1;
-  else
+  if(joy_fd==-1) {
+    // new kernels
+    joy_fd=open("/dev/input/js0",O_NONBLOCK);
+    if(joy_fd==-1)
+      return -1;
+    else
+      return 0;
+  } else {
     return 0;
+  }
 #else
   return -1;
 #endif

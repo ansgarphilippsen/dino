@@ -206,10 +206,12 @@ int comInit()
   com.benchmark=0;
 
 #ifdef LINUX
-  if(jInit()==0)
+  if(jInit()==0) {
     com.joyflag=1;
-  else
+    fprintf(stdout,"Joystick found\n");
+  } else {
     com.joyflag=0;
+  }
 #else
   com.joyflag=0;     
 #endif  
