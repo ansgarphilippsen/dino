@@ -1,0 +1,15 @@
+# makedef for ALPHA
+
+ARCH=DEC
+
+
+CC   = cc
+GOPT = -g2 -fullwarn
+WOPT = 
+IOPT = -I/usr/include/CC -I../extras/include
+SLIB = ../extras/lib/libtiff.a ../extras/lib/libpng.a ../extras/lib/libz.a
+
+COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D $(ARCH)
+LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm
+LOPT = $(LIBS)
+

@@ -223,11 +223,3 @@ GLwStereo.o: GLwStereo.c dino.h GLwStereo.h gfx.h dbm.h struct_db.h \
  rex.h render.h cgfx.h struct_obj.h struct_common.h set.h transform.h \
  cubearray.h scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h \
  surf_obj.h prop.h grid_db.h grid_obj.h geom_db.h geom_obj.h gui.h
-autoplay.o: autoplay.c autoplay.h com.h struct_db.h rex.h render.h \
- cgfx.h struct_obj.h struct_common.h set.h transform.h cubearray.h \
- dbm.h scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h surf_obj.h \
- prop.h grid_db.h grid_obj.h geom_db.h geom_obj.h gui.h shell.h gfx.h
-joy.o: joy.c joy.h com.h struct_db.h rex.h render.h cgfx.h \
- struct_obj.h struct_common.h set.h transform.h cubearray.h dbm.h \
- scal_db.h scal_obj.h xtal.h vect_db.h surf_db.h surf_obj.h prop.h \
- grid_db.h grid_obj.h geom_db.h geom_obj.h
