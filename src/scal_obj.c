@@ -250,6 +250,8 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
   } else if(obj->type==SCAL_VR) {
     ret=scalVR(obj,sel);
 #endif
+  } else if(obj->type==SCAL_SLAB) {
+    ret=scalSlab(obj,sel);
   }
 
   obj->ou_size=obj->u_size;
@@ -266,7 +268,7 @@ int scalObjRenew(scalObj *obj, Set *set, Select *sel)
 
 int scalObjSet(scalObj *obj, Set *s, int flag)
 {
-  int pc,op,os,vi[3],f,res;
+  int pc,op,os,vi[3],f,res,ec;
   struct POV_VALUE *val;
   float r,g,b,r2,g2,b2,v1[4],rad1,rad2;
   float rval,p[3],frac1,frac2,rval1,rval2;
@@ -307,6 +309,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	s->pov[pc].id=SCAL_PROP_LEVEL;
       } else {
 	comMessage("\nerror: property level only valid for object type contour");
+	return -1;
+      }
+    } else if(clStrcmp(s->pov[pc].prop,"dir")) {
+      if(obj->type==SCAL_SLAB) {
+	s->pov[pc].id=SCAL_PROP_DIR;
+      } else {
+	comMessage("\nerror: property dir only valid for object type slab");
 	return -1;
       }
     } else if(clStrcmp(s->pov[pc].prop,"rad")) {
@@ -375,19 +384,13 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	  obj->g=g;
 	  obj->b=b;
 	} else if(obj->type==SCAL_GRID) {
-	  for(pc=0;pc<obj->point_count;pc++) {
+	  for(ec=0;ec<obj->point_count;ec++) {
 	    f=0;
 	    if(s->select_flag) {
-	      /*
-		vd1[0]=obj->point[pc].v[0];
-		vd1[1]=obj->point[pc].v[1];
-		vd1[2]=obj->point[pc].v[2];
-		scalXYZtoUVW(obj->field,vd1,vd2); 
-	      */
 	      res=scalIsSelected(obj->node,
-				 obj->point[pc].uvw[0],
-				 obj->point[pc].uvw[1],
-				 obj->point[pc].uvw[2],
+				 obj->point[ec].uvw[0],
+				 obj->point[ec].uvw[1],
+				 obj->point[ec].uvw[2],
 				 &s->select);
 	      if(res==-1)
 		return -1;
@@ -412,11 +415,11 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		  // this dataset
 		  if(scalGetRangeXYZVal(obj->node,
 					s->range.prop,
-					obj->point[pc].v,
+					obj->point[ec].v,
 					&rval)<0)
 		    return -1;
 		} else {
-		  if(dbmGetRangeVal(&s->range,obj->point[pc].v,&rval)<0)
+		  if(dbmGetRangeVal(&s->range,obj->point[ec].v,&rval)<0)
 		    return -1;
 		}
 		frac1=rval2-rval1;
@@ -430,9 +433,9 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		  frac2/=frac1;
 		}
 		if(frac2>=0.0 && frac2<=1.0) {
-		  obj->point[pc].c[0]=(r2-r)*frac2+r;
-		  obj->point[pc].c[1]=(g2-g)*frac2+g;
-		  obj->point[pc].c[2]=(b2-b)*frac2+b;
+		  obj->point[ec].c[0]=(r2-r)*frac2+r;
+		  obj->point[ec].c[1]=(g2-g)*frac2+g;
+		  obj->point[ec].c[2]=(b2-b)*frac2+b;
 		}
 	      } else {
 		if(comGetColor(val->val1,&r,&g,&b)<0) {
@@ -440,23 +443,66 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 		  comMessage(val->val1);
 		  return -1;
 		}
-		obj->point[pc].c[0]=r;
-		obj->point[pc].c[1]=g;
-		obj->point[pc].c[2]=b;
+		obj->point[ec].c[0]=r;
+		obj->point[ec].c[1]=g;
+		obj->point[ec].c[2]=b;
 	      }
 	    }
 	  }
+	} else if (obj->type==SCAL_SLAB) {
+	  /*
+	    go through texture data and
+	    assign colors accordingly
+	  */
+	  for(ec=0;ec<obj->slab.size*obj->slab.size;ec++)
+	      if(s->range_flag) {
+		if(comGetColor(val->val1,&r,&g,&b)<0) {
+		  comMessage("\nerror: set: unknown color ");
+		  comMessage(val->val1);
+		  return -1;
+		}
+		if(comGetColor(val->val2,&r2,&g2,&b2)<0) {
+		  comMessage("\nerror: set: unknown color ");
+		  comMessage(val->val2);
+		  return -1;
+		}
+		rval=obj->slab.data[ec];
+		frac1=rval2-rval1;
+		frac2=rval-rval1;
+		if(frac1==0.0) {
+		  if(frac2==0.0)
+		    frac2=0.5;
+		  else
+		    frac2=-2.0;
+		} else {
+		  frac2/=frac1;
+		}
+		if(frac2>=0.0 && frac2<=1.0) {
+		  obj->slab.tex[ec*3+0]=(r2-r)*frac2+r;
+		  obj->slab.tex[ec*3+1]=(g2-g)*frac2+g;
+		  obj->slab.tex[ec*3+2]=(b2-b)*frac2+b;
+		}
+	      } else {
+		if(comGetColor(val->val1,&r,&g,&b)<0) {
+		  comMessage("\nerror: set: unknown color ");
+		  comMessage(val->val1);
+		  return -1;
+		}
+		obj->slab.tex[ec*3+0]=r;
+		obj->slab.tex[ec*3+1]=g;
+		obj->slab.tex[ec*3+2]=b;
+	      }
 	}
       }
       break;
     case SCAL_PROP_RAD:
-      for(pc=0;pc<obj->point_count;pc++) {
+      for(ec=0;ec<obj->point_count;ec++) {
 	f=0;
 	if(s->select_flag) {
 	  res=scalIsSelected(obj->node,
-			     obj->point[pc].uvw[0],
-			     obj->point[pc].uvw[1],
-			     obj->point[pc].uvw[2],
+			     obj->point[ec].uvw[0],
+			     obj->point[ec].uvw[1],
+			     obj->point[ec].uvw[2],
 			     &s->select);
 	  if(res==-1)
 	    return -1;
@@ -474,11 +520,11 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	      // this dataset
 	      if(scalGetRangeXYZVal(obj->node,
 				    s->range.prop,
-				    obj->point[pc].v,
+				    obj->point[ec].v,
 				    &rval)<0)
 		return -1;
 	    } else {
-	      if(dbmGetRangeVal(&s->range,obj->point[pc].v,&rval)<0)
+	      if(dbmGetRangeVal(&s->range,obj->point[ec].v,&rval)<0)
 		return -1;
 	    }
 	    frac1=rval2-rval1;
@@ -492,11 +538,11 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	      frac2/=frac1;
 	    }
 	    if(frac2>=0.0 && frac2<=1.0) {
-	      obj->point[pc].rad=(rad2-rad1)*frac2+rad1;
+	      obj->point[ec].rad=(rad2-rad1)*frac2+rad1;
 	    }
 	  } else {
 	    rad1=atof(val->val1);
-	    obj->point[pc].rad=rad1;
+	    obj->point[ec].rad=rad1;
 	  }
 	}
       }
@@ -507,21 +553,32 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
 	comMessage(val->val1);
 	return -1;
       }
-      scalXYZtoUVW(obj->field,vd1,vd2);
-      if(op==POV_OP_EQ) {
-	obj->u_center=(int)vd2[0];
-	obj->v_center=(int)vd2[1];
-	obj->w_center=(int)vd2[2];
+      if(obj->type==SCAL_SLAB) {
+	if(op==POV_OP_EQ) {
+	  obj->slab.center[0]=vd1[0];
+	  obj->slab.center[1]=vd1[1];
+	  obj->slab.center[2]=vd1[2];
+	} else {
+	  comMessage("\nerror: set: expected operator = for property center");
+	  return -1;
+	}
       } else {
-	comMessage("\nerror: set: expected operator = for property center");
-	return -1;
+	scalXYZtoUVW(obj->field,vd1,vd2);
+	if(op==POV_OP_EQ) {
+	  obj->u_center=(int)vd2[0];
+	  obj->v_center=(int)vd2[1];
+	  obj->w_center=(int)vd2[2];
+	} else {
+	  comMessage("\nerror: set: expected operator = for property center");
+	  return -1;
+	}
+	obj->u_start=obj->u_center-obj->u_size/2;
+	obj->v_start=obj->v_center-obj->v_size/2;
+	obj->w_start=obj->w_center-obj->w_size/2;
+	obj->u_end=obj->u_center+obj->u_size/2;
+	obj->v_end=obj->v_center+obj->v_size/2;
+	obj->w_end=obj->w_center+obj->w_size/2;
       }
-      obj->u_start=obj->u_center-obj->u_size/2;
-      obj->v_start=obj->v_center-obj->v_size/2;
-      obj->w_start=obj->w_center-obj->w_size/2;
-      obj->u_end=obj->u_center+obj->u_size/2;
-      obj->v_end=obj->v_center+obj->v_size/2;
-      obj->w_end=obj->w_center+obj->w_size/2;
       break;
     case SCAL_PROP_SIZE:
       if(val->val1[0]=='{') {
@@ -580,6 +637,26 @@ int scalObjSet(scalObj *obj, Set *s, int flag)
       obj->u_end=obj->u_center+obj->u_size/2;
       obj->v_end=obj->v_center+obj->v_size/2;
       obj->w_end=obj->w_center+obj->w_size/2;
+      break;
+    case SCAL_PROP_DIR:
+      if(val->val1[0]=='{') {
+	if(matExtract1Df(val->val1,3,v1)!=0) {
+	  comMessage("\nerror: set: expected {x,y,z} for dir");
+	  return -1;
+	}
+      } else {
+	v1[0]=atof(val->val1);
+	v1[1]=atof(val->val1);
+	v1[2]=atof(val->val1);
+      }
+      if(op==POV_OP_EQ) {
+	obj->slab.dir[0]=v1[0];
+	obj->slab.dir[1]=v1[1];
+	obj->slab.dir[2]=v1[2];
+      } else {
+	comMessage("\nerror: expected operator '='");
+	return -1;
+      }
       break;
     case SCAL_PROP_LEVEL:
       strncpy(nv,val->val1,15);
@@ -876,3 +953,8 @@ int scalVR(scalObj *obj, Select *sel)
   return 0;
 }
 #endif
+
+int scalSlab(scalObj *obj, Select *sel)
+{
+  return 0;
+}

@@ -25,6 +25,7 @@ enum {OBJ_UNKNOWN=0,
       SCAL_CONTOUR=20,
       SCAL_GRID,
       SCAL_GRAD,
+      SCAL_SLAB,
 #ifdef VR
       SCAL_VR,
 #endif

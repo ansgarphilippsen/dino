@@ -153,6 +153,8 @@ geomObj *geomNewObj(struct DBM_GEOM_NODE *node, char *name, int type)
 	no->va.count=0;
 	no->va.max=0;
 	no->va.p=NULL;
+      } else if (no->type==GEOM_SLAB) {
+
       }
       no->render.show=1;
       no->render.mode=RENDER_OFF;

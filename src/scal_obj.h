@@ -70,6 +70,14 @@ struct SCAL_VR {
 };
 #endif
 
+struct SCAL_SLAB {
+  double a,b,c,d;
+  int usize,vsize,size;
+  float *data;
+  unsigned char *tex;
+  double dir[3],center[3];
+};
+
 typedef struct SCAL_OBJ {
   int type;
   char name[256];
@@ -102,6 +110,7 @@ typedef struct SCAL_OBJ {
 #ifdef BONO
   struct SCAL_OCTREE octree;
 #endif
+  struct SCAL_SLAB slab;
   int method;
 }scalObj;
 
@@ -122,6 +131,8 @@ int scalAddFace(struct SCAL_FACE **, int *c, int *m, int i1, int i2, int i3);
 int scalAddVect(struct SCAL_VECT **f, int *c, int *m, double *v, double *n);
 
 int scalGrid(scalObj *obj, Select *sel);
+
+int scalSlab(scalObj *obj, Select *sel);
 
 #ifdef VR
 int scalVR(scalObj *obj, Select *sel);

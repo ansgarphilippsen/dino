@@ -229,6 +229,8 @@ int scalComNew(dbmScalNode *node,int wc, char **wl)
 	  type=SCAL_CONTOUR;
 	} else if(clStrcmp(co.param[i].wl[0],"grid")) {
 	  type=SCAL_GRID;
+	} else if(clStrcmp(co.param[i].wl[0],"slab")) {
+	  type=SCAL_SLAB;
 #ifdef VR
 	} else if(clStrcmp(co.param[i].wl[0],"volume")) {
 	  type=SCAL_VR;
@@ -1359,6 +1361,24 @@ int scalSetDefault(scalObj *obj)
   obj->vr.start=0.0;
   obj->vr.end=1.0;
 #endif
+
+  obj->slab.a=0.0;
+  obj->slab.b=0.0;
+  obj->slab.c=1.0;
+  obj->slab.d=0.0;
+
+  obj->slab.usize=32;
+  obj->slab.vsize=32;
+  obj->slab.size=obj->slab.usize*obj->slab.vsize;
+  obj->slab.data=Ccalloc(obj->slab.size,sizeof(float));
+  obj->slab.tex=Ccalloc(obj->slab.size,3*sizeof(unsigned char));
+  obj->slab.dir[0]=0.0;
+  obj->slab.dir[1]=0.0;
+  obj->slab.dir[2]=1.0;
+  obj->slab.center[0]=0.0;
+  obj->slab.center[1]=0.0;
+  obj->slab.center[2]=0.0;
+
   return 0;
 }
 

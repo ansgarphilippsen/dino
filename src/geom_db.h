@@ -25,7 +25,7 @@ enum            {GEOM_TYPE_POINT,
 		 GEOM_TYPE_LABEL,
 		 GEOM_TYPE_ALL};
 
-enum {GEOM_PRIM,GEOM_CLIP};
+enum {GEOM_PRIM,GEOM_SLAB};
 
 int geomCommand(struct DBM_GEOM_NODE *,int wc, char **wl);
 int geomNew(struct DBM_GEOM_NODE *, int wc, char **wl);

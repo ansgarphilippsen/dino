@@ -62,7 +62,6 @@ typedef struct GEOM_CYL {
   float c[4],v1[3],v2[3],r;
 }geomCyl;
 
-
 typedef struct GEOM_OBJ {
   int type;
   char name[64];
