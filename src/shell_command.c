@@ -312,8 +312,10 @@ static int call_script(const char *filename, const char **wl, int wc)
     shellOut("\n");
     return -1;
   }
-    
+
+#ifndef OSX
   guitSuspend(1);
+#endif
   shellOut("\n");
   scrlvl++;
 
@@ -386,8 +388,9 @@ static int work_script(void)
   }
 
   if(scrlvl<0)
+#ifndef OSX      
     guitSuspend(0);
-
+#endif
   return 0;
 }
 

@@ -1859,14 +1859,15 @@ int comGetMinMaxSlab()
 
 int comWriteCharBuf(char c)
 {
+#ifndef OSX
 #ifdef NEW_SHELL
   guitAddChar(c);
 #else
   shellAddChar(c);
 #endif
+#endif
   return 0;
 }
-
 
 int comPlay(dbmNode *node, int command)
 {

@@ -205,12 +205,14 @@ int dinoMain(int argc,char **argv)
 
 void dinoExit(int n)
 {
+#ifndef OSX
 #ifdef NEW_SHELL
   guitOutit();
 #else
   shellOutit();
 #endif
-
+#endif
+  
 #ifdef SGI
   cmiStereo(0);
 #endif
