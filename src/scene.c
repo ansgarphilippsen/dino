@@ -14,7 +14,6 @@
 #include "mat.h"
 #include "Cmalloc.h"
 #include "glw.h"
-#include "input.h"
 #include "cl.h"
 #include "set.h"
 #include "help.h"
@@ -1119,13 +1118,6 @@ int sceneCommand(int wc, char **wl)
   }
   return 0;
 }
-
-
-void sceneInputCallback(struct INPUT_MESSAGE *m, void *p)
-{
-
-}
-
 
 void scenePush(char *s)
 {

@@ -1,8 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "input.h"
-
 struct SCENE_STACK {
   char expr[256];
 };
@@ -30,7 +28,6 @@ struct SCENE {
 
 int sceneInit(void);
 int sceneCommand(int wc, char **wl);
-void sceneInputCallback(struct INPUT_MESSAGE *m, void *p);
 void scenePush(char *s);
 char *scenePop(void);
 char *scenePeek(void);

@@ -22,7 +22,10 @@
 #include "gfx.h"
 #include "dino.h"
 #include "scene.h"
+
+#ifdef USE_CMI
 #include "cmi.h"
+#endif
 
 #ifdef EXPO
 #include <sys/types.h>
@@ -84,8 +87,10 @@ int main(int argc,char **argv)
   debug_mode=0;
   video_mode=0;
 
+#ifdef USE_CMI
   // initialize cmi
   cmiInit();
+#endif
 
   strcpy(logfile,"logfile.dino");
   fprintf(stderr,welcome,VERSION);

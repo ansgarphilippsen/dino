@@ -14,27 +14,57 @@ typedef void * cmiTokenPtr;
 
 #define CMI_QUERY        1<<7
 
-// token command
+// token commands
 enum {
   CMI_NONE=0,
 
-  CMI_RAW,
-  CMI_CHAR,
-  
-  CMI_REFRESH,    // request refresh
-  CMI_REDRAW,     // do actual redraw
-  CMI_VIEWPORT,   // viewport change
-  CMI_RESIZE,     // window resize
-  CMI_INPUT,      // input event     
-  CMI_PICK,
-  CMI_TRANSFORM,
+  // TARGET_COM
+  CMI_EXIT,     // exit request  (NULL)
+  CMI_RAW,      // send raw command  (char *)
+  CMI_INPUT,    // input event (int [N])
 
+  // TARGET_GFX
+  CMI_INITGL,   // opengl can be initialized now (NULL)
+  CMI_REFRESH,  // request refresh (NULL)
+  CMI_REDRAW,   // do actual redraw (NULL)
+  CMI_RESIZE,   // window resize (int[2])
+
+  // TARGET_GUI
   CMI_NEW,
   CMI_DEL,
   CMI_REN,
   CMI_SHOW,
   CMI_HIDE,
 };
+
+// input types
+#define CMI_INPUT_NONE      0
+#define CMI_INPUT_KEYBOARD  1
+#define CMI_INPUT_MOUSE     2
+#define CMI_INPUT_SPACEBALL 3
+#define CMI_INPUT_DIALBOX   4
+#define CMI_INPUT_TABLET    5
+#define CMI_INPUT_PAD       6
+
+#define CMI_BUTTON_PRESS    1
+#define CMI_BUTTON_RELEASE  2
+#define CMI_MOTION          3
+
+// input modifiers
+#define CMI_SHIFT_MASK   (1<<0)
+#define CMI_LOCK_MASK    (1<<1)
+#define CMI_CNTRL_MASK   (1<<2)
+#define CMI_MOD1_MASK    (1<<3)
+#define CMI_MOD2_MASK    (1<<4)
+#define CMI_MOD3_MASK    (1<<5)
+#define CMI_MOD4_MASK    (1<<6)
+#define CMI_MOD5_MASK    (1<<7)
+#define CMI_BUTTON1_MASK (1<<8)
+#define CMI_BUTTON2_MASK (1<<9)
+#define CMI_BUTTON3_MASK (1<<10)
+#define CMI_BUTTON4_MASK (1<<11)
+#define CMI_BUTTON5_MASK (1<<12)
+
 
 typedef struct CMI_TOKEN {
   int target;         // target

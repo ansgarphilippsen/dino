@@ -13,8 +13,9 @@
 # FORMAT_TIFF
 # SGI_STEREO
 # TCL_SHELL
+# USE_CMI
 
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DUSE_CMI
 
 # use tcl as interpreter
 #OPTIONS += -DTCL_SHELL
@@ -24,8 +25,8 @@ OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF
 # GLUT_GUI (and USE_FREEGLUT)
 # X11_GUI
 
-#OPTIONS += -DGLUT_GUI #-DUSE_FREEGLUT
-OPTIONS += -DX11_GUI
+OPTIONS += -DGLUT_GUI #-DUSE_FREEGLUT
+#OPTIONS += -DX11_GUI
 
 MALLOCLIB=
 
@@ -33,7 +34,7 @@ MALLOCLIB=
 #STATIC = 1
 
 SRC= dino.c \
-     cmi.c dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
+     dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
      startup.c cl.c set.c bspline.c transform.c prop.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
@@ -42,7 +43,7 @@ SRC= dino.c \
      geom_db.c geom_obj.c geom_gfx.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
-     write.c render.c mat.c rex.c Cmalloc.c cgfx.c raster.c pov.c \
+     write.c render.c mat.c rex.c Cmalloc.c cgfx.c pov.c \
      cubearray.c writePS.c \
      sglib.c symm.c
 
@@ -53,6 +54,10 @@ sinclude makedef.$(HOSTTYPE)
 # add more stuff depending on OPTIONS
 
 # which shell to use
+ifneq (,$(findstring USE_CMI,$(OPTIONS)))
+SRC += cmi.c input.c
+endif
+
 ifneq (,$(findstring TCL_SHELL,$(OPTIONS)))
 SRC += shell_tcl.c
 LOPT += -ltcl

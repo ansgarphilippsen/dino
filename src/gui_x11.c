@@ -43,7 +43,6 @@ user menu
 #include "gfx.h"
 #include "extension.h"
 #include "om.h"
-//#include "input.h"
 #include "transform.h"
 #include "cl.h"
 #include "glw.h"
@@ -1179,28 +1178,6 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   */
   gui.callback=func;
   
-  /***
-  debmsg("guiInit: assigning default key mappings");
-  for(i=0,j=0;i<GUI_MAX_KEY_EVENTS;i++) {
-    if(gui_default_key_event[j].key>0) {
-      gui.key_event[i].key=gui_default_key_event[j].key;
-      strcpy(gui.key_event[i].command,gui_default_key_event[j].command);
-      j++;
-    } else {
-      gui.key_event[i].key=0;
-      strcpy(gui.key_event[i].command,"");
-    }
-  }
-  ***/
-
-  /*
-  debmsg("guiInit: calling inputInit");
-  if(inputInit()==-1) {
-    fprintf(stderr,"\nfatal memory error in inputInit");
-    dinoExit(-1);
-  }
-  */
-
   /*
     check for a dialbox
   */

@@ -30,6 +30,10 @@
 #include "Cmalloc.h"
 #include "scene.h"
 
+#ifdef USE_CMI
+#include "cmi.h"
+#endif
+
 extern struct SCENE scene;
 extern struct GUI gui;
 struct GFX gfx;
@@ -164,6 +168,13 @@ int gfxInit()
 {
   int i;
   debmsg("gfxInit: filling defaults");
+
+#ifdef USE_CMI
+  // register CMI callback
+  cmiRegisterCallback(CMI_TARGET_GFX,gfxCMICallback);
+#endif
+
+
   gfx.mode=GFX_PERSP;
 
   transReset(&gfx.transform);
@@ -230,9 +241,6 @@ int gfxInit()
   gfx.limz1=0;
   gfx.limz2=0;
 #endif
-
-  // register CMI callback
-  cmiRegisterCallback(CMI_TARGET_GFX,gfxCMICallback);
 
 
   return 0;
@@ -831,16 +839,21 @@ int gfxAccPerspective(GLdouble fovy, GLdouble aspect,
   return 0;
 }
 
+#ifdef USE_CMI
 void gfxCMICallback(const cmiToken *t)
 {
   if(t->target==CMI_TARGET_GFX) {
     switch(t->command) {
+    case CMI_INITGL: gfxGLInit(); break;
     case CMI_REFRESH: comRedraw();  break;
     case CMI_REDRAW: gfxRedraw(); break;
-    case CMI_VIEWPORT:
-
+    case CMI_RESIZE:
+      gfx.win_width=((int *)t->value)[0];
+      gfx.win_height=((int *)t->value)[1];
+      gfxSetViewport();
       break;
     default: break;
     }
   }
 }
+#endif

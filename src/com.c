@@ -28,17 +28,19 @@
 #include "cgfx.h"
 #include "scene.h"
 #include "menu.h"
-//#include "input.h"
 #include "glw.h"
 #include "symm.h"
 #include "cl.h"
 #include "set.h"
-#include "raster.h"
 #include "pov.h"
 #include "transform.h"
 #include "joy.h"
 #include "pick.h"
+
+#ifdef USE_CMI
 #include "cmi.h"
+#include "input.h"
+#endif
 
 #ifdef EXPO
 #include "autoplay.h"
@@ -137,6 +139,12 @@ int comInit()
     {-1,0,0,0}
   };
 
+#ifdef USE_CMI
+  // register cmi callbacks
+  cmiRegisterCallback(CMI_TARGET_COM,comCMICallback);
+  cmiRegisterTimer(comTimeProc);
+#endif
+
   com.play_count=0;
 
   com.tlist_max=8;
@@ -222,9 +230,6 @@ int comInit()
 
   comGenCubeLookup();
 
-  // register cmi callbacks
-  cmiRegisterCallback(CMI_TARGET_COM,comCMICallback);
-  cmiRegisterTimer(comTimeProc);
 
   return 0;
 }
@@ -576,7 +581,16 @@ void comWorkGfxCommand(int word_count, char ** word_list)
 
 void comRedraw()
 {
+#ifdef USE_CMI
+  cmiToken t;
+
+  t.target=CMI_TARGET_GUI;
+  t.command=CMI_REFRESH;
+  t.value=NULL;
+  cmiSubmit(&t);
+#else
   gui.redraw++;
+#endif
 }
 
 
@@ -1222,7 +1236,6 @@ int comIsDB(const char *name)
 struct WRITE_EXT {
   char ext[16],type[16];
 } write_def[]= {
-  {"r3d","raster"},
   {"ps","ps"},
   {"rgb","rgb"},
   {"tiff","tiff"},
@@ -1369,8 +1382,6 @@ int comWrite(int wc,char **wl)
 
   if(!strcmp(type,"raster")) {
     comMessage("\nWARNING: deprecated format! Please use POVray instead");
-    //    comMessage("\nWriting Raster3D (version 2.4 or above) file...");
-    //    writeRaster(f);
     fclose(f);
   } else if(!strcmp(type,"pov")) {
     // open second file
@@ -1855,12 +1866,20 @@ int comGenCubeLookup()
   return 0;
 }
 
+#ifdef USE_CMI
 void comCMICallback(const cmiToken *t)
 {
+  int *ip;
+  char *cp;
+
   if(t->target==CMI_TARGET_COM) {
     switch(t->command) {
-    case CMI_RAW: break;
+    case CMI_EXIT: dinoExit(0); break;
+    case CMI_RAW: cp=(char *)t->value; comRawCommand(cp); break;
+    case CMI_INPUT: inputProcess(t); break;
+      
     default: break;
     }
   }
 }
+#endif
