@@ -12,6 +12,8 @@ struct SCAL_MC_NEW_ORG scalMCNOrg;
 
 #define SCAL_MCN_DEBUG_X
 
+#define SCAL_MCN_TEST1_X
+
 #ifdef SCAL_MCN_DEBUG
 int scal_mcn_flag;
 #endif
@@ -34,17 +36,7 @@ int scalMCN(scalObj *obj, Select *sel)
   scalMCNOrg.level=obj->level;
   scalMCNOrg.select=sel;
 
-  if(obj->point_count>0)
-    Cfree(obj->point);
-  if(obj->line_count>0)
-    Cfree(obj->line);
-  if(obj->face_count>0)
-    Cfree(obj->face);
-
-  obj->point_count=0;
-  obj->line_count=0;
-  obj->face_count=0;
-
+  // populate local variables
   umin=obj->u_start;
   umax=obj->u_end;
   usize=umax-umin+1;
@@ -55,6 +47,7 @@ int scalMCN(scalObj *obj, Select *sel)
   wmax=obj->w_end;
   wsize=wmax-wmin+1;
 
+  // fill housekeeping structs, use heuristics to guess required memory
   scalMCNOrg.vert_count=0;
   scalMCNOrg.vert_max=usize*vsize*wsize/2;
   scalMCNOrg.vert_add=scalMCNOrg.vert_max/2;
@@ -71,9 +64,6 @@ int scalMCN(scalObj *obj, Select *sel)
   scalMCNOrg.face=Crecalloc(NULL,scalMCNOrg.face_max, sizeof(scalMCNFace));
 
 
-  /**
-  fprintf(stderr,"%d %d %d   %d %d %d\n%f\n",umin,vmin,wmin,umax,vmax,wmax,obj->level);
-  **/
   save_w_u=Ccalloc((usize+2)*(vsize+2),sizeof(int));
   save_w_v=Ccalloc((usize+2)*(vsize+2),sizeof(int));
   save2_w_u=Ccalloc((usize+2)*(vsize+2),sizeof(int));
@@ -145,10 +135,12 @@ int scalMCN(scalObj *obj, Select *sel)
       save_v_w=save2_v_w;
       save2_v_w=save_tmp;
     }
-    for(uc=0;uc<usize;uc++)
+    for(uc=0;uc<usize;uc++) {
       save2_w_v[vc*usize+uc]=save_v_w[uc];
-    save2_w_u[vc*usize+uc]=scalMCNOrg.sc.p[7];
-    //    save2_w_u[vc*usize+uc]=-1;
+      save2_w_u[vc*usize+uc]=scalMCNOrg.sc.p[7];
+    }
+    // should this be inside loop?
+    //save2_w_u[vc*usize+uc]=scalMCNOrg.sc.p[7];
 
     save_tmp=save_w_u;
     save_w_u=save2_w_u;
@@ -442,13 +434,150 @@ int scalMCNAddFace(int v1, int v2, int v3)
   flag=0 : only dots + lines
   flag=1 : include faces also
 
+  NOT IMPLEMENTED !!!
 */
+
+#ifdef SCAL_MCN_TEST1
+
+int scalMCN2Obj() 
+{
+  int i,k,p1,p2,p3;
+  float *v1,*v2,*v3,norm[3],*np;
+  char message[256];
+
+  scalObj *obj=scalMCNOrg.obj;
+
+  // assign to scalar field object, reusing previously allocated memory
+
+  // points
+  obj->point_count=scalMCNOrg.vert_count;
+  obj->point=Crecalloc(obj->point,obj->point_count,sizeof(struct SCAL_POINT));
+  // assign from MCNOrg vec, reset normals
+  for(i=0;i<obj->point_count;i++) {
+    obj->point[i].v[0]=scalMCNOrg.vert[i].p[0];
+    obj->point[i].v[1]=scalMCNOrg.vert[i].p[1];
+    obj->point[i].v[2]=scalMCNOrg.vert[i].p[2];
+    obj->point[i].n[0]=0.0;
+    obj->point[i].n[1]=0.0;
+    obj->point[i].n[2]=0.0;
+#ifdef CONTOUR_COLOR
+    // reset point color to obj color
+    obj->point[i].c[0]=obj->r;
+    obj->point[i].c[1]=obj->g;
+    obj->point[i].c[2]=obj->b;
+    obj->point[i].c[3]=obj->render.transparency;
+#endif
+  }
+
+  // assign weighted normals
+  for(i=0;i<scalMCNOrg.face_count;i++) {
+    p1=scalMCNOrg.face[i].v1;
+    p2=scalMCNOrg.face[i].v2;
+    p3=scalMCNOrg.face[i].v3;
+
+    v1=obj->point[p1].v;
+    v2=obj->point[p2].v;
+    v3=obj->point[p3].v;
+
+    // this normal is already scaled according to the face area!
+    scalMCNFaceNormal(v1,v2,v3,norm);
+
+    np=obj->point[p1].n;
+    if(matfCalcDot(np,norm)<0) {
+      np[0]-=norm[0]; np[1]-=norm[1]; np[2]-=norm[2];
+    } else {
+      np[0]+=norm[0]; np[1]+=norm[1]; np[2]+=norm[2];
+    }
+
+    np=obj->point[p2].n;
+    if(matfCalcDot(np,norm)<0) {
+      np[0]-=norm[0]; np[1]-=norm[1]; np[2]-=norm[2];
+    } else {
+      np[0]+=norm[0]; np[1]+=norm[1]; np[2]+=norm[2];
+    }
+
+    np=obj->point[p3].n;
+    if(matfCalcDot(np,norm)<0) {
+      np[0]-=norm[0]; np[1]-=norm[1]; np[2]-=norm[2];
+    } else {
+      np[0]+=norm[0]; np[1]+=norm[1]; np[2]+=norm[2];
+    }
+  }
+
+  for(i=0;i<obj->point_count;i++) {
+    matfNormalize(obj->point[i].n,obj->point[i].n);
+    if(matfCalcLen(obj->point[i].n)==0.0) {
+      fprintf(stderr,"null length normal\n");
+    }
+  }
+
+  // lines
+  obj->line_count=scalMCNOrg.line_count;
+  obj->line=Crecalloc(obj->line,obj->line_count,sizeof(struct SCAL_LINE));
+
+  for(i=0;i<obj->line_count;i++) {
+    obj->line[i].pi0=scalMCNOrg.line[i].v1;
+    obj->line[i].pi1=scalMCNOrg.line[i].v2;
+  }
+
+  obj->face_count=scalMCNOrg.face_count;
+  obj->face=Crecalloc(obj->face,obj->face_count,sizeof(struct SCAL_FACE));
+
+  for(i=0;i<scalMCNOrg.face_count;i++) {
+    p1=scalMCNOrg.face[i].v1;
+    p2=scalMCNOrg.face[i].v2;
+    p3=scalMCNOrg.face[i].v3;
+    obj->face[i].pi0=p1;
+    obj->face[i].pi1=p2;
+    obj->face[i].pi2=p3;
+
+    for(k=0;k<3;k++) {
+      obj->face[i].v1[k]=obj->point[p1].v[k];
+      obj->face[i].v2[k]=obj->point[p2].v[k];
+      obj->face[i].v3[k]=obj->point[p3].v[k];
+      obj->face[i].n1[k]=obj->point[p1].n[k];
+      obj->face[i].n2[k]=obj->point[p2].n[k];
+      obj->face[i].n3[k]=obj->point[p3].n[k];
+    }
+
+    
+#ifdef CONTOUR_COLOR
+    // color values reset to obj color
+    obj->face[i].c1[0]=obj->r; 
+    obj->face[i].c1[1]=obj->g;
+    obj->face[i].c1[2]=obj->b; 
+    obj->face[i].c1[3]=obj->render.transparency;
+    obj->face[i].c2[0]=obj->r; 
+    obj->face[i].c2[1]=obj->g;
+    obj->face[i].c2[2]=obj->b; 
+    obj->face[i].c2[3]=obj->render.transparency;
+    obj->face[i].c3[0]=obj->r; 
+    obj->face[i].c3[1]=obj->g;
+    obj->face[i].c3[2]=obj->b; 
+    obj->face[i].c3[3]=obj->render.transparency;
+#endif
+    
+    obj->face[i].sflag=0;
+  }
+
+  Cfree(scalMCNOrg.vert);
+  Cfree(scalMCNOrg.line);
+  Cfree(scalMCNOrg.face);
+  
+  sprintf(message," %d points  %d lines  %d faces\n",
+	  obj->point_count,obj->line_count, obj->face_count);
+  comMessage(message);
+
+  return 0;
+}
+
+#else
 
 int scalMCN2Obj()
 {
   int i,j,k;
   float nt[3];
-  float *np;
+  float *np,*np2,*np3;
   int pi[3];
   char message[256];
   struct MCN_NEW_TEMP_FACE {
@@ -466,6 +595,8 @@ int scalMCN2Obj()
     for the gfx routine, only the vertices and normals are needed!
     everything else (temporary pointers, indices, etc) should be
     moved to the temporary MCN struct
+    some more functionality must also be present, for the new
+    selection to work
   */
 
   scalObj *obj=scalMCNOrg.obj;
@@ -486,23 +617,25 @@ int scalMCN2Obj()
     tmpface[i].v3[0]=scalMCNOrg.vert[tmpface[i].pi2].p[0];
     tmpface[i].v3[1]=scalMCNOrg.vert[tmpface[i].pi2].p[1];
     tmpface[i].v3[2]=scalMCNOrg.vert[tmpface[i].pi2].p[2];
-
+    // this normal is already scaled according to the face area!
     scalMCNFaceNormal(tmpface[i].v1,tmpface[i].v2,tmpface[i].v3,
 		      scalMCNOrg.face[i].n);
-
   }
 
   for(i=0;i<tmpface_count;i++) {
-    pi[0]=scalMCNOrg.face[i].v1;
-    pi[1]=scalMCNOrg.face[i].v2;
-    pi[2]=scalMCNOrg.face[i].v3;
+    pi[0]=tmpface[i].pi0;
+    pi[1]=tmpface[i].pi1;
+    pi[2]=tmpface[i].pi2;
     for(j=0;j<3;j++) {
-      nt[0]=scalMCNOrg.face[i].n[0];
-      nt[1]=scalMCNOrg.face[i].n[1];
-      nt[2]=scalMCNOrg.face[i].n[2];
+      // use face normal as reference
+      np2=scalMCNOrg.face[i].n;
+      nt[0]=0.0;
+      nt[1]=0.0;
+      nt[2]=0.0;
       for(k=0;k<scalMCNOrg.vert[pi[j]].cc;k++) {
 	np=scalMCNOrg.face[scalMCNOrg.vert[pi[j]].c[k]].n;
-	if(matfCalcDot(nt,np)>=0.0) {
+	// compare reference orientation with current one
+	if(matfCalcDot(np2,np)>=0.0) {
 	  nt[0]+=np[0];
 	  nt[1]+=np[1];
 	  nt[2]+=np[2];
@@ -512,35 +645,40 @@ int scalMCN2Obj()
 	  nt[2]-=np[2];
 	}
       }
-      nt[0]-=scalMCNOrg.face[i].n[0];
-      nt[1]-=scalMCNOrg.face[i].n[1];
-      nt[2]-=scalMCNOrg.face[i].n[2];
 
-      nt[0]/=(float)k;
-      nt[1]/=(float)k;
-      nt[2]/=(float)k;
+      // assign to respective tmpface normal
+      if(j==0) { 
+	np3=tmpface[i].n1;
+      } else if(j==1) {
+	np3=tmpface[i].n2;
+      } else {
+	np3=tmpface[i].n3;
+      }
+      np3[0]=nt[0];
+      np3[1]=nt[1];
+      np3[2]=nt[2];
 
-      if(j==0) 
-	matfNormalize(nt,tmpface[i].n1);
-      else if(j==1)
-	matfNormalize(nt,tmpface[i].n2);
-      else
-	matfNormalize(nt,tmpface[i].n3);
+      matfNormalize(np3,np3);
     }
   }
 
-
+  // face is no longer used, all info is in tmpface now
   Cfree(scalMCNOrg.face);
 
+  // assign to scalar field object, reuse previously allocated memory
   obj->point_count=scalMCNOrg.vert_count;
-  obj->point=Ccalloc(obj->point_count,sizeof(struct SCAL_POINT));
+  obj->point=Crecalloc(obj->point,obj->point_count,sizeof(struct SCAL_POINT));
   for(i=0;i<obj->point_count;i++) {
     obj->point[i].v[0]=scalMCNOrg.vert[i].p[0];
     obj->point[i].v[1]=scalMCNOrg.vert[i].p[1];
     obj->point[i].v[2]=scalMCNOrg.vert[i].p[2];
-    obj->point[i].nc=0;
+    obj->point[i].n[0]=0.0;
+    obj->point[i].n[1]=0.0;
+    obj->point[i].n[2]=0.0;
+    //obj->point[i].nc=0;
   }
 
+  // vert is no longer used
   Cfree(scalMCNOrg.vert);
 
   for(i=0;i<tmpface_count;i++) {
@@ -553,7 +691,7 @@ int scalMCN2Obj()
       obj->point[tmpface[i].pi0].n[1]+=tmpface[i].n1[1];
       obj->point[tmpface[i].pi0].n[2]+=tmpface[i].n1[2];
     }
-    obj->point[tmpface[i].pi0].nc++;
+    //obj->point[tmpface[i].pi0].nc++;
 
     if(matfCalcNDot(obj->point[tmpface[i].pi1].n,tmpface[i].n2)<0) {
       obj->point[tmpface[i].pi1].n[0]+=-tmpface[i].n2[0];
@@ -564,7 +702,7 @@ int scalMCN2Obj()
       obj->point[tmpface[i].pi1].n[1]+=tmpface[i].n2[1];
       obj->point[tmpface[i].pi1].n[2]+=tmpface[i].n2[2];
     }
-    obj->point[tmpface[i].pi1].nc++;
+    //obj->point[tmpface[i].pi1].nc++;
 
     if(matfCalcNDot(obj->point[tmpface[i].pi2].n,tmpface[i].n3)<0) {
       obj->point[tmpface[i].pi2].n[0]+=-tmpface[i].n3[0];
@@ -575,18 +713,19 @@ int scalMCN2Obj()
       obj->point[tmpface[i].pi2].n[1]+=tmpface[i].n3[1];
       obj->point[tmpface[i].pi2].n[2]+=tmpface[i].n3[2];
     }
-    obj->point[tmpface[i].pi2].nc++;
+    //obj->point[tmpface[i].pi2].nc++;
 
 
   }
 
+
   for(i=0;i<obj->point_count;i++) {
-    if(obj->point[i].nc>0) {
-      obj->point[i].n[0]/=(float)obj->point[i].nc;
-      obj->point[i].n[1]/=(float)obj->point[i].nc;
-      obj->point[i].n[2]/=(float)obj->point[i].nc;
+    //if(obj->point[i].nc>0) {
+      //obj->point[i].n[0]/=(float)obj->point[i].nc;
+      //obj->point[i].n[1]/=(float)obj->point[i].nc;
+      //obj->point[i].n[2]/=(float)obj->point[i].nc;
       matfNormalize(obj->point[i].n,obj->point[i].n);
-    }
+      //}
   }
 
 #ifdef CONTOUR_COLOR
@@ -600,7 +739,8 @@ int scalMCN2Obj()
 #endif
 
   obj->line_count=scalMCNOrg.line_count;
-  obj->line=Ccalloc(obj->line_count,sizeof(struct SCAL_LINE));
+  // reuse previously allocated memory
+  obj->line=Crecalloc(obj->line,obj->line_count,sizeof(struct SCAL_LINE));
 
   for(i=0;i<obj->line_count;i++) {
     obj->line[i].pi0=scalMCNOrg.line[i].v1;
@@ -610,9 +750,9 @@ int scalMCN2Obj()
   Cfree(scalMCNOrg.line);
 
   // now assign the object face
-
+  // reuse previously allocated memory
   obj->face_count=tmpface_count;
-  obj->face=Ccalloc(obj->face_count,sizeof(struct SCAL_FACE));
+  obj->face=Crecalloc(obj->face,obj->face_count,sizeof(struct SCAL_FACE));
 
   for(i=0;i<tmpface_count;i++) {
     obj->face[i].v1[0]=tmpface[i].v1[0];
@@ -654,6 +794,8 @@ int scalMCN2Obj()
     obj->face[i].pi0=tmpface[i].pi0;
     obj->face[i].pi1=tmpface[i].pi1;
     obj->face[i].pi2=tmpface[i].pi2;
+
+    obj->face[i].sflag=0;
   }
 
   Cfree(tmpface);
@@ -664,6 +806,8 @@ int scalMCN2Obj()
 
   return 0;
 }
+
+#endif
 
 void scalMCNFaceNormal(float *a, float *b, float *c, float *n)
 {
@@ -678,13 +822,14 @@ void scalMCNFaceNormal(float *a, float *b, float *c, float *n)
 
   ar=matCalcTriArea(a,b,c);
   if(ar<=0.0)
-    ar=0.001;
+    ar=10000;
   matfCalcCross(d1,d2,n);
 
   matfNormalize(n,n);
-  n[0]/=ar;
-  n[1]/=ar;
-  n[2]/=ar;
-
+  // scale normal contribution by area of triangle
+  // the larger the area, the _smaller_ the contribution!
+  n[0]/=(ar);
+  n[1]/=(ar);
+  n[2]/=(ar);
 }
 
