@@ -11,7 +11,7 @@
 # CGFX_DEBUG
 # EXPO
 
-OPTIONS= -D CPK_NEW -D RENDER_SOLID # -D JAVA_GUI
+OPTIONS= -D CPK_NEW -D RENDER_SOLID # -D IMAGICK # -D JAVA_GUI
 
 MALLOCLIB=
 
@@ -26,7 +26,7 @@ SRC= dino.c \
      grid_db.c grid_obj.c grid_read.c grid_gfx.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
      write.c render.c mat.c rex.c extension.c Cmalloc.c cgfx.c raster.c pov.c \
-     ximage_util.c vrml.c cubearray.c om.c menu.c input.c writePS.c\
+     ximage_util.c vrml.c cubearray.c om.c menu.c input.c writePS.c imagick.c\
      sglib.c symm.c GLwStereo.c
 
 

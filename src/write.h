@@ -42,7 +42,7 @@ enum {WRITE_TYPE_TIFF, WRITE_TYPE_PNG};
 
 XVisualInfo* writeGetVis(void);
 
-int writeFile(char *name, int type, int accum);
+int writeFile(char *name, int type, int accum, float scale, int dump);
 
 int writeImage2RGB(XImage *image,char *name);
 

@@ -1,3 +1,5 @@
+added -dump flag to write
+
 added experimental feature render solid
 
 fixed null pointer bug in dbmGetMinMax

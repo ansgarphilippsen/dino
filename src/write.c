@@ -44,6 +44,9 @@
 #include "cgfx.h"
 #include "GLwStereo.h"
 #include "ximage_util.h"
+#ifdef IMAGICK
+#include "imagick.h"
+#endif
 
 extern struct DBM dbm;
 extern struct GFX gfx;
@@ -145,7 +148,7 @@ float jitter16[][2]={ {0.375, 0.4375}, {0.625, 0.0625},
 		      {0.875, 0.9375}, {0.875, 0.6875}, 
 		      {0.125, 0.3125}, {0.625, 0.8125}};
 
-int writeFile(char *name, int type, int accum)
+int writeFile(char *name, int type, int accum, float scale, int dump)
 {
   XImage *image;
   Pixmap pixmap;
@@ -154,6 +157,7 @@ int writeFile(char *name, int type, int accum)
   XWindowAttributes win_info;
   XVisualInfo *visinfo,vis_copy;
   GLuint fl16,fl24;
+  int owidth,oheight;
   int i,j;
 #ifdef WRITE_FORK
   pid_t child_id;
@@ -162,147 +166,186 @@ int writeFile(char *name, int type, int accum)
 
   /* get a new visinfo */
 
-  visinfo=writeGetVis();
-  if(visinfo==NULL) {
-    comMessage("\nfailed to find a correct visual for offline rendering");
-    return -1;
-  }
-  
-//  visinfo=gui.visinfo;
+  if(dump) {
+    visinfo=gui.visinfo;
 
-  /* Create second GLX context */
-  debmsg("writeFile: creating second rendering context");
-  if((glx_context=glXCreateContext(gui.dpy, visinfo,0, False))==NULL) {
-    comMessage("\nerror while creating offline rendering context");
-    return -1;
-  }
- 
-  /* Create X pixmap */
-  sprintf(message,"writeFile: creating %dx%dx%d Pixmap",
-	  gui.win_width, gui.win_height,visinfo->depth);
-  debmsg(message);
+    /* Create X pixmap */
+    sprintf(message,"writeFile: creating 1:1 (%dx%dx%d) Pixmap",
+	    gui.win_width, gui.win_height,visinfo->depth);
+    debmsg(message);
 
-  pixmap=XCreatePixmap(gui.dpy,gui.glxwindow,
-		       gui.win_width,gui.win_height,
-		       visinfo->depth);
-
-  /* create GLXPixmap */
-  debmsg("writeFile: creating GLX Pixmap");
-  glx_pixmap=glXCreateGLXPixmap(gui.dpy, visinfo, pixmap);
-
-  /* attach to second (indirect) rendering context */
-  debmsg("writeFile: attaching GLX Pixmap to second rendering context");
-  glXMakeCurrent(gui.dpy,glx_pixmap,glx_context);
-
-  /* Initialize the rendering context */
-  gfxSetViewport();
-  gfxGLInit();
-
-  /*
-    update the display lists
-  */
-  fl16=glf.font_list_16;
-  fl24=glf.font_list_24;
-  glf.font_list_16=glGenLists(128);
-  glf.font_list_24=glGenLists(128);
-  glfGenFont();
-  glDeleteLists(glf.font_list_24,128);
-  glDeleteLists(glf.font_list_16,128);
-  glf.font_list_16=fl16;
-  glf.font_list_24=fl24;
-
-  /* check fog */
-  if(gfx.fog)
-    glEnable(GL_FOG);
-  else
-    glDisable(GL_FOG);
-
-#ifdef CPK_NEW
-  for(i=0;i<dbm.nodec_max;i++)
-    if(dbm.node[i].common.type==DBM_NODE_STRUCT)
-      for(j=0;j<dbm.node[i].structNode.obj_max;j++)
-	if(dbm.node[i].structNode.obj_flag[j]!=0) {
-	  comNewDisplayList(dbm.node[i].structNode.obj[j].sphere_list);
-	  cgfxSphere(1.0,dbm.node[i].structNode.obj[j].render.detail);
-	  comEndDisplayList();
-	}
+    debmsg("writeFile: converting window to XImage");
+    image=XGetImage(gui.dpy,gui.glxwindow,
+		    0,0,gui.win_width,gui.win_height,
+		    AllPlanes,ZPixmap);
+    
+    if(image==NULL) {
+      fprintf(stderr,"\nError while creating image");
+    } else {
+      image->red_mask = visinfo->red_mask;
+      image->green_mask = visinfo->green_mask;
+      image->blue_mask = visinfo->blue_mask;
+      
+#ifdef IMAGICK
+      
+#else
+      switch(type) {
+      case WRITE_TYPE_TIFF:
+	writeImage2Tiff(image,name);
+	break;
+      case WRITE_TYPE_PNG:
+	writeImage2PNG(image,name);
+	break;
+      }
 #endif
-
-  if(gui.stereo_mode==GUI_STEREO_NORMAL) {
-    gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
-    writeRedraw(WRITE_CENTER_VIEW, accum,1);
-    glXWaitGL();
-  } else if(gui.stereo_mode==GUI_STEREO_SPLIT) {
-    gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
-    glViewport(0,0,gui.win_width/2, gui.win_height);
-    writeRedraw(WRITE_RIGHT_VIEW, accum,1);
-    glViewport(gui.win_width/2+1,0,gui.win_width/2, gui.win_height);
-    writeRedraw(WRITE_LEFT_VIEW, accum,0);
-    gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
-    glViewport(gui.win_width,0,gui.win_width, gui.win_height);
+      /* Destroy XImage */
+      debmsg("writeFile: Destroying XImage");
+      XDestroyImage(image);
+    }
   } else {
-    gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
-    if(gfx.stereo_display==GFX_LEFT)
-      writeRedraw(WRITE_LEFT_VIEW, accum,1);
-    else if(gfx.stereo_display==GFX_RIGHT)
-      writeRedraw(WRITE_RIGHT_VIEW, accum,1);
+    owidth=gui.win_width;
+    oheight=gui.win_height;
+    gui.win_width=(int)(scale*(float)gui.win_width);
+    gui.win_height=(int)(scale*(float)gui.win_height);
+    gfxResizeEvent();
+
+
+    visinfo=writeGetVis();
+    if(visinfo==NULL) {
+      comMessage("\nfailed to find a correct visual for offline rendering");
+      return -1;
+    }
+    
+    
+    /* Create second GLX context */
+    debmsg("writeFile: creating second rendering context");
+    if((glx_context=glXCreateContext(gui.dpy, visinfo,0, False))==NULL) {
+      comMessage("\nerror while creating offline rendering context");
+      return -1;
+    }
+    
+    /* Create X pixmap */
+    sprintf(message,"writeFile: creating %dx%dx%d Pixmap",
+	    gui.win_width, gui.win_height,visinfo->depth);
+    debmsg(message);
+    
+    pixmap=XCreatePixmap(gui.dpy,gui.glxwindow,
+			 gui.win_width,gui.win_height,
+			 visinfo->depth);
+    
+    /* create GLXPixmap */
+    debmsg("writeFile: creating GLX Pixmap");
+    glx_pixmap=glXCreateGLXPixmap(gui.dpy, visinfo, pixmap);
+    
+    /* attach to second (indirect) rendering context */
+    debmsg("writeFile: attaching GLX Pixmap to second rendering context");
+    glXMakeCurrent(gui.dpy,glx_pixmap,glx_context);
+    
+    /* Initialize the rendering context */
+    gfxSetViewport();
+    gfxGLInit();
+    
+    /*
+      update the display lists
+    */
+    fl16=glf.font_list_16;
+    fl24=glf.font_list_24;
+    glf.font_list_16=glGenLists(128);
+    glf.font_list_24=glGenLists(128);
+    glfGenFont();
+    glDeleteLists(glf.font_list_24,128);
+    glDeleteLists(glf.font_list_16,128);
+    glf.font_list_16=fl16;
+    glf.font_list_24=fl24;
+    
+    /* check fog */
+    if(gfx.fog)
+      glEnable(GL_FOG);
     else
+      glDisable(GL_FOG);
+    
+#ifdef CPK_NEW
+    for(i=0;i<dbm.nodec_max;i++)
+      if(dbm.node[i].common.type==DBM_NODE_STRUCT)
+	for(j=0;j<dbm.node[i].structNode.obj_max;j++)
+	  if(dbm.node[i].structNode.obj_flag[j]!=0) {
+	    comNewDisplayList(dbm.node[i].structNode.obj[j].sphere_list);
+	    cgfxSphere(1.0,dbm.node[i].structNode.obj[j].render.detail);
+	    comEndDisplayList();
+	  }
+#endif
+    
+    if(gui.stereo_mode==GUI_STEREO_NORMAL) {
+      gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
       writeRedraw(WRITE_CENTER_VIEW, accum,1);
-   glXWaitGL();
-  }
-
-  /* convert pixmap to XImage */
-  debmsg("writeFile: converting Pixmap to XImage");
-  image=XGetImage(gui.dpy,pixmap,
-		  0,0,gui.win_width,gui.win_height,
-		  AllPlanes,ZPixmap);
-
-  if(image==NULL) {
-    fprintf(stderr,"\nError while creating image");
-  } else {
-#ifdef WRITE_FORK
-    child_id=fork();
-    if(child_id!=0) {
-      /* re-attach to direct rendering context */
-      glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
-      return 0;
+      glXWaitGL();
+    } else if(gui.stereo_mode==GUI_STEREO_SPLIT) {
+      gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
+      glViewport(0,0,gui.win_width/2, gui.win_height);
+      writeRedraw(WRITE_RIGHT_VIEW, accum,1);
+      glViewport(gui.win_width/2+1,0,gui.win_width/2, gui.win_height);
+      writeRedraw(WRITE_LEFT_VIEW, accum,0);
+      gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
+      glViewport(gui.win_width,0,gui.win_width, gui.win_height);
+    } else {
+      gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
+      if(gfx.stereo_display==GFX_LEFT)
+	writeRedraw(WRITE_LEFT_VIEW, accum,1);
+      else if(gfx.stereo_display==GFX_RIGHT)
+	writeRedraw(WRITE_RIGHT_VIEW, accum,1);
+      else
+	writeRedraw(WRITE_CENTER_VIEW, accum,1);
+      glXWaitGL();
     }
+    
+    /* convert pixmap to XImage */
+    debmsg("writeFile: converting Pixmap to XImage");
+    image=XGetImage(gui.dpy,pixmap,
+		    0,0,gui.win_width,gui.win_height,
+		    AllPlanes,ZPixmap);
+    
+    if(image==NULL) {
+      fprintf(stderr,"\nError while creating image");
+    } else {
+      image->red_mask = visinfo->red_mask;
+      image->green_mask = visinfo->green_mask;
+      image->blue_mask = visinfo->blue_mask;
+      
+#ifdef IMAGICK
+      
+#else
+      switch(type) {
+      case WRITE_TYPE_TIFF:
+	writeImage2Tiff(image,name);
+	break;
+      case WRITE_TYPE_PNG:
+	writeImage2PNG(image,name);
+	break;
+      }
 #endif
-    
-    image->red_mask = visinfo->red_mask;
-    image->green_mask = visinfo->green_mask;
-    image->blue_mask = visinfo->blue_mask;
-    
-    switch(type) {
-    case WRITE_TYPE_TIFF:
-      writeImage2Tiff(image,name);
-      break;
-    case WRITE_TYPE_PNG:
-      writeImage2PNG(image,name);
-      break;
+      /* Destroy XImage */
+      debmsg("writeFile: Destroying XImage");
+      XDestroyImage(image);
     }
-    /* Destry XImage */
-    debmsg("writeFile: Destroying XImage");
-    XDestroyImage(image);
+    
+    /* re-attach to direct rendering context */
+    debmsg("writeFile: re-atttaching to to direct rendering context");
+    glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
+    
+    /* destroy GLXPixmap */
+    debmsg("writeFile: destroying GLX Pixmap");
+    glXDestroyGLXPixmap(gui.dpy,glx_pixmap);
+    
+    /* Destroy X pixmap */
+    debmsg("writeFile: destroying Pixmap");
+    XFreePixmap(gui.dpy,pixmap);
+    
+    gui.win_width=owidth;
+    gui.win_height=oheight;
+    gfxSetViewport();
+    gfxResizeEvent();
+
   }
-#ifndef WRITE_FORK
-  /* re-attach to direct rendering context */
-  debmsg("writeFile: re-atttaching to to direct rendering context");
-  glXMakeCurrent(gui.dpy,gui.glxwindow,gui.glxcontext);
-#endif
-  /* destroy GLXPixmap */
-  debmsg("writeFile: destroying GLX Pixmap");
-  glXDestroyGLXPixmap(gui.dpy,glx_pixmap);
-
-  /* Destroy X pixmap */
-  debmsg("writeFile: destroying Pixmap");
-  XFreePixmap(gui.dpy,pixmap);
-
-#ifdef WRITE_FORK
-  if(child_id==0)
-    exit(0);
-#endif
-
   return 0;
 }
 
@@ -670,5 +713,4 @@ int writeImage2PNG(XImage *image,char *name)
 
   return 0;
 }
-
 

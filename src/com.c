@@ -1172,6 +1172,7 @@ int comWrite(int wc,char **wl)
   FILE *f,*f2;
   int pov_flag=0;
   int pov_mode=0;
+  int dump=0;
 
   if(wc<1) {
     comMessage("\nfilename missing");
@@ -1205,6 +1206,9 @@ int comWrite(int wc,char **wl)
       }
       strcpy(type,wl[n+1]);
       n++;
+    } else if(!strcmp(wl[n],"-dump") ||
+	      !strcmp(wl[n],"-d")) {
+      dump=1;
     } else if(!strcmp(wl[n],"-scale") ||
 	      !strcmp(wl[n],"-s")) {
       if(n+1>=wc) {
@@ -1286,6 +1290,7 @@ int comWrite(int wc,char **wl)
   }
 
   if(!strcmp(type,"raster")) {
+    comMessage("\nWARNING: deprecated format! Use POVray instead");
     comMessage("\nWriting Raster3D (version 2.4 or above) file...");
     writeRaster(f);
     fclose(f);
@@ -1314,29 +1319,11 @@ int comWrite(int wc,char **wl)
   } else if(!strcmp(type,"png")) {
     comMessage("\nWriting png file...");
     fclose(f);
-    ow=gui.win_width;
-    oh=gui.win_height;
-    gui.win_width=(int)(scale*(float)gui.win_width);
-    gui.win_height=(int)(scale*(float)gui.win_height);
-    gfxResizeEvent();
-    writeFile(file,WRITE_TYPE_PNG,accum);
-    gui.win_width=ow;
-    gui.win_height=oh;
-    gfxSetViewport();
-    gfxResizeEvent();
+    writeFile(file,WRITE_TYPE_PNG,accum,scale,dump);
   } else if(!strcmp(type,"tiff")) {
     comMessage("\nWriting tiff file...");
     fclose(f);
-    ow=gui.win_width;
-    oh=gui.win_height;
-    gui.win_width=(int)(scale*(float)gui.win_width);
-    gui.win_height=(int)(scale*(float)gui.win_height);
-    gfxResizeEvent();
-    writeFile(file,WRITE_TYPE_TIFF,accum);
-    gui.win_width=ow;
-    gui.win_height=oh;
-    gfxSetViewport();
-    gfxResizeEvent();
+    writeFile(file,WRITE_TYPE_TIFF,accum,scale,dump);
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {
     comMessage("\nWriting VRML scene...");
