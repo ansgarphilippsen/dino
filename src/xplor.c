@@ -215,9 +215,9 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   struct XPLOR_MAP_HEADER header;
   int h1[9];
   double h2[6];
-  char h3[3];
+  char h3[4];
   double fx,fy,fz;
-  char message[256];
+  char message[4096];
   int a,b,c,an,bn,cn,size,section;
   double *sdata;
 
@@ -250,15 +250,14 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
     swap_4bs((unsigned char *)h1,9);
     swap_4bs((unsigned char *)h2,12);
   }
-  /*
-  fprintf(stderr,"\n%d\n%s",ntitle,title);
-  fprintf(stderr,"\n%d %d %d   %d %d %d   %d %d %d\n%e %e %e  %e %e %e\n%c%c%c",
+
+  sprintf(message,
+	  "\n%d\n%s\n%d %d %d  %d %d %d  %d %d %d\n%e %e %e  %e %e %e\n%c%c%c",
+	  ntitle,title,
 	  h1[0],h1[1],h1[2],h1[3],h1[4],h1[5],h1[6],h1[7],h1[8],
 	  h2[0],h2[1],h2[2],h2[3],h2[4],h2[5],
 	  h3[0],h3[1],h3[2]);
-
-  return -1;
-  */
+  debmsg(message);
 
   header.na=h1[0]; header.amin=h1[1]; header.amax=h1[2];
   header.nb=h1[3]; header.bmin=h1[4]; header.bmax=h1[5];
@@ -267,7 +266,8 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   header.alpha=h2[3]; header.beta=h2[4];    header.gamma=h2[5];
   header.format[0]=h3[0]; header.format[1]=h3[1]; header.format[2]=h3[2];
   header.format[3]='\0';
-  if(strcmp(header.format,"ZYX")) {
+
+  if(strncmp(header.format,"ZYX",3)) {
     sprintf(message,"\nunknown xplor map format %s",header.format);
     comMessage(message);
     return -1;
@@ -340,8 +340,8 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
 
     fread(dummy,sizeof(dummy),1,f);
     fread(sdata,sizeof(double),section,f);
-    // SWAP TODO
-    swap_floats((float*)sdata,(float*)sdata,section*2);
+    if(node->swap_flag)
+      swap_floats((float*)sdata,(float*)sdata,section*2);
     fread(dummy,sizeof(dummy),1,f);
     for(b=0;b<bn;b++)
       for(a=0;a<an;a++)
