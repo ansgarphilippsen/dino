@@ -157,8 +157,9 @@ int scalDrawObj(scalObj *obj)
 		      sizeof(struct SCAL_POINT), &obj->point[0].v[0]);
       */
 
-      glDepthMask(GL_FALSE);
-
+      if(obj->render.nice) {
+	glDepthMask(GL_FALSE);
+      }
 
       glBegin(GL_LINES);
       if(gfx.transform.rot[10]>0.0) {
@@ -190,43 +191,45 @@ int scalDrawObj(scalObj *obj)
       }
       glEnd();
 
-      glDepthMask(GL_TRUE);
-
-      /* update the depthbuffer */
-
-      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
-
-      glDisable(GL_BLEND);
-      glDisable(GL_FOG);
+      if(obj->render.nice) {
+	glDepthMask(GL_TRUE);
+	
+	/* update the depthbuffer */
+	
+	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glDisable(GL_BLEND);
+	glDisable(GL_FOG);
 #if defined(LINUX) || defined(OSX)
-      glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+	glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 #else
-      glDrawBuffer(GL_NONE);
+	glDrawBuffer(GL_NONE);
 #endif
-      glBegin(GL_LINES);
-      for(i=0;i<obj->line_count;i++) {
+	glBegin(GL_LINES);
+	for(i=0;i<obj->line_count;i++) {
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->point[obj->line[i].pi0].c);
+	  glColor4fv(obj->point[obj->line[i].pi0].c);
 #endif
-	glVertex3fv(obj->point[obj->line[i].pi0].v);
+	  glVertex3fv(obj->point[obj->line[i].pi0].v);
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->point[obj->line[i].pi1].c);
+	  glColor4fv(obj->point[obj->line[i].pi1].c);
 #endif
-	glVertex3fv(obj->point[obj->line[i].pi1].v);
-	//glArrayElement(obj->line[i].pi0);
-	//glArrayElement(obj->line[i].pi1);
-      }
-      glEnd();
+	  glVertex3fv(obj->point[obj->line[i].pi1].v);
+	  //glArrayElement(obj->line[i].pi0);
+	  //glArrayElement(obj->line[i].pi1);
+	}
+	glEnd();
 #if defined(LINUX) || defined(OSX)
-      glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+	glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 #endif      
-      glPopAttrib();
-
-      /*
-      glDisable(GL_VERTEX_ARRAY);
-      glDisableClientState(GL_VERTEX_ARRAY);
-      */
-
+	glPopAttrib();
+	
+	/*
+	  glDisable(GL_VERTEX_ARRAY);
+	  glDisableClientState(GL_VERTEX_ARRAY);
+	*/
+      }
+      
       glEnable(GL_LIGHTING);
 #endif
     } else if(obj->render.mode==RENDER_SURFACE) {

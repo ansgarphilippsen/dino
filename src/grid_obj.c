@@ -315,105 +315,104 @@ int gridObjSet(gridObj *obj, Set *s, int flag)
     id=s->pov[pc].id;
     
     if(id==GRID_PROP_COLOR) {  /* vertice based properties */
-      for(vc=0;vc<obj->vertc;vc++) {
-	f=0;
-	if(s->select_flag) {
-	  if(gridIsSelected(obj->node, obj->vert[vc].gp, &s->select))
-	    f=1;
-	} else {
-	  f=1;
+      if(flag==1) {
+
+	if(s->range_flag) {
+	  value1=val->val1;
+	  if(val->val2==NULL)
+	    value2=value1;
+	  else
+	    value2=val->val2;
+	  if(comGetColor(value1,&r,&g,&b)<0) {
+	    comMessage("error: set: unknown color \n");
+	    comMessage(value1);
+	    return -1;
+	  }
+	  if(comGetColor(value2,&r2,&g2,&b2)<0) {
+	    comMessage("error: set: unknown color \n");
+	    comMessage(value2);
+	    return -1;
+	  }
 	}
-	if(f) {
-	  switch(id) {
-	  case GRID_PROP_COLOR:
-	    if(flag==1) {
-	      if(s->range_flag) {
-		value1=val->val1;
-		if(val->val2==NULL)
-		  value2=value1;
-		else
-		  value2=val->val2;
-		if(comGetColor(value1,&r,&g,&b)<0) {
-		  comMessage("error: set: unknown color \n");
-		  comMessage(value1);
-		  return -1;
-		}
-		if(comGetColor(value2,&r2,&g2,&b2)<0) {
-		  comMessage("error: set: unknown color \n");
-		  comMessage(value2);
-		  return -1;
-		}
-		if(s->range.src==NULL) {
-		  // this dataset
-		  if(s->range.prop==NULL || clStrcmp(s->range.prop,"h")) {
-		    if(obj->type==GRID_SURFACE) {
-		      if(gridGetRangeVal(obj->node,"h", obj->vert[vc].gp,&rval)<0)
-			return -1;
-		    } else { /* obj!=SURFACE */
-		      rval=obj->vert[vc].z/255.0;
-		    }
-		  } else {
-		    if(obj->type==GRID_CONTOUR) {
-		      comMessage("cross range not supported for type contour\n");
+	for(vc=0;vc<obj->vertc;vc++) {
+	  f=0;
+	  if(s->select_flag) {
+	    if(gridIsSelected(obj->node, obj->vert[vc].gp, &s->select))
+	      f=1;
+	  } else {
+	    f=1;
+	  }
+	  if(f) {
+	    if(s->range_flag) {
+	      if(s->range.src==NULL) {
+		// this dataset
+		if(s->range.prop==NULL || clStrcmp(s->range.prop,"h")) {
+		  if(obj->type==GRID_SURFACE) {
+		    if(gridGetRangeVal(obj->node,"h", obj->vert[vc].gp,&rval)<0)
 		      return -1;
-		    }
-		    if(!obj->node->attach_flag) {
-		      comMessage("error: -range only meaningful with attached structure\n");
-		      return -1;
-		    }
-		    if(obj->vert[vc].gp->attach_node!=NULL) {
-		      if(structGetRangeVal(&obj->vert[vc].gp->attach_node->structNode,
-					   &obj->vert[vc].gp->attach_node->structNode.atom[obj->vert[vc].gp->attach_element],
-					   s->range.prop,&rval)<0)
-			return -1;
-		    } else {
-		      continue;
-		    }
+		  } else { /* obj!=SURFACE */
+		    rval=obj->vert[vc].z/255.0;
 		  }
 		} else {
-		  p[0]=obj->vert[vc].v[0];
-		  p[1]=obj->vert[vc].v[1];
-		  p[2]=obj->vert[vc].v[2];
-		  transApplyf(&obj->node->transform,p);
-		  if(dbmGetRangeVal(&s->range,p,&rval)<0)
+		  if(obj->type==GRID_CONTOUR) {
+		    comMessage("cross range not supported for type contour\n");
 		    return -1;
-		}
-		if(obj->vert[vc].gp!=NULL || obj->type!=GRID_SURFACE) {
-		  frac1=rval2-rval1;
-		  frac2=rval-rval1;
-		  if(frac1==0.0) {
-		    if(frac2==0.0)
-		      frac2=0.5;
-		    else
-		      frac2=-2.0;
+		  }
+		  if(!obj->node->attach_flag) {
+		    comMessage("error: -range only meaningful with attached structure\n");
+		    return -1;
+		  }
+		  if(obj->vert[vc].gp->attach_node!=NULL) {
+		    if(structGetRangeVal(&obj->vert[vc].gp->attach_node->structNode,
+					 &obj->vert[vc].gp->attach_node->structNode.atom[obj->vert[vc].gp->attach_element],
+					 s->range.prop,&rval)<0)
+		      return -1;
 		  } else {
-		    frac2/=frac1;
-		  }
-		  if(s->range.clamp) {
-		    if(frac2<0.0) {
-		      frac2=0.0;
-		    } else if(frac2>1.0) {
-		      frac2=1.0;
-		    }
-		  }
-		  if(frac2>=0.0 && frac2<=1.0) {
-		    obj->vert[vc].c[0]=(r2-r)*frac2+r;
-		    obj->vert[vc].c[1]=(g2-g)*frac2+g;
-		    obj->vert[vc].c[2]=(b2-b)*frac2+b;
+		    continue;
 		  }
 		}
 	      } else {
-		if(comGetColor(val->val1,&r,&g,&b)<0) {
-		  comMessage("error: set: unknown color \n");
-		  comMessage(val->val1);
+		p[0]=obj->vert[vc].v[0];
+		p[1]=obj->vert[vc].v[1];
+		p[2]=obj->vert[vc].v[2];
+		transApplyf(&obj->node->transform,p);
+		if(dbmGetRangeVal(&s->range,p,&rval)<0)
 		  return -1;
-		}
-		obj->vert[vc].c[0]=r;
-		obj->vert[vc].c[1]=g;
-		obj->vert[vc].c[2]=b;
 	      }
-	    }	
-	    break;
+	      if(obj->vert[vc].gp!=NULL || obj->type!=GRID_SURFACE) {
+		frac1=rval2-rval1;
+		frac2=rval-rval1;
+		if(frac1==0.0) {
+		  if(frac2==0.0)
+		    frac2=0.5;
+		  else
+		    frac2=-2.0;
+		} else {
+		  frac2/=frac1;
+		}
+		if(s->range.clamp) {
+		  if(frac2<0.0) {
+		    frac2=0.0;
+		  } else if(frac2>1.0) {
+		    frac2=1.0;
+		  }
+		}
+		if(frac2>=0.0 && frac2<=1.0) {
+		  obj->vert[vc].c[0]=(r2-r)*frac2+r;
+		  obj->vert[vc].c[1]=(g2-g)*frac2+g;
+		  obj->vert[vc].c[2]=(b2-b)*frac2+b;
+		}
+	      }
+	    } else {
+	      if(comGetColor(val->val1,&r,&g,&b)<0) {
+		comMessage("error: set: unknown color \n");
+		comMessage(val->val1);
+		return -1;
+	      }
+	      obj->vert[vc].c[0]=r;
+	      obj->vert[vc].c[1]=g;
+	      obj->vert[vc].c[2]=b;
+	    }
 	  }
 	}
       }

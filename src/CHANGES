@@ -1,3 +1,19 @@
+*rc-8*
+
+fixed slow topograph surface colouring
+
+fixed contour object line rendering for "older" OpenGL implementations
+
+-----
+
+*rc-7*
+
+fixed OSX user menu bug in "center CS"
+
+-----
+
+*rc-6*
+
 fixed missing atom properties for attached surface selection
 
 fixed povray fog output for non-black backgrounds
@@ -15,6 +31,8 @@ fixed bug in mat M3ToM4 conversion
 fixed geom tri not filled for set fill
 
 -----
+
+*rc-5*
 
 fixed unclean exit that could cause a crash under linux
 
@@ -43,6 +61,8 @@ fixed: surface obj center includes transformation
 fixed: povray export untransformed with -u flag
 
 ----
+
+*rc-4*
 
 fixed: default contour transparency is 1.0
 
