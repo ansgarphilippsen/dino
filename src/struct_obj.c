@@ -710,6 +710,119 @@ static int atom_to_point(structAtom *a, struct STRUCT_ATOM_PROP *pr, cgfxSplineP
   return ret;
 }
 
+static void make_helix_cyl(cgfxSplinePoint *pl,int h1,int h2, int pc) 
+{
+  int i;
+  float n1[3],n2[3],n3[3],n4[3],n5[3],delta;
+  n1[0]=pl[h1+0].v[0];
+  n1[1]=pl[h1+0].v[1];
+  n1[2]=pl[h1+0].v[2];
+  n2[0]=pl[h1+1].v[0];
+  n2[1]=pl[h1+1].v[1];
+  n2[2]=pl[h1+1].v[2];
+  n3[0]=pl[h1+2].v[0];
+  n3[1]=pl[h1+2].v[1];
+  n3[2]=pl[h1+2].v[2];
+  n4[0]=(n1[0]+n2[0]+n3[0])/3.0;
+  n4[1]=(n1[1]+n2[1]+n3[1])/3.0;
+  n4[2]=(n1[2]+n2[2]+n3[2])/3.0;
+  pl[h1+1].v[0]=n4[0];
+  pl[h1+1].v[1]=n4[1];
+  pl[h1+1].v[2]=n4[2];
+  
+  n1[0]=pl[h2-2].v[0];
+  n1[1]=pl[h2-2].v[1];
+  n1[2]=pl[h2-2].v[2];
+  n2[0]=pl[h2-1].v[0];
+  n2[1]=pl[h2-1].v[1];
+  n2[2]=pl[h2-1].v[2];
+  n3[0]=pl[h2-0].v[0];
+  n3[1]=pl[h2-0].v[1];
+  n3[2]=pl[h2-0].v[2];
+  n4[0]=(n1[0]+n2[0]+n3[0])/3.0;
+  n4[1]=(n1[1]+n2[1]+n3[1])/3.0;
+  n4[2]=(n1[2]+n2[2]+n3[2])/3.0;
+  pl[h2-1].v[0]=n4[0];
+  pl[h2-1].v[1]=n4[1];
+  pl[h2-1].v[2]=n4[2];
+  
+  n1[0]=pl[h1+1].v[0];
+  n1[1]=pl[h1+1].v[1];
+  n1[2]=pl[h1+1].v[2];
+  n2[0]=pl[h2-1].v[0];
+  n2[1]=pl[h2-1].v[1];
+  n2[2]=pl[h2-1].v[2];
+  n3[0]=n2[0]-n1[0];
+  n3[1]=n2[1]-n1[1];
+  n3[2]=n2[2]-n1[2];
+  
+  delta=1.0/(float)(h2-h1);
+  /*
+  n1[0]-=delta*n3[0];
+  n1[1]-=delta*n3[1];
+  n1[2]-=delta*n3[2];
+  n2[0]+=delta*n3[0];
+  n2[1]+=delta*n3[1];
+  n2[2]+=delta*n3[2];
+  */
+  n4[0]=pl[h1+2].v[0]-n1[0];
+  n4[1]=pl[h1+2].v[1]-n1[1];
+  n4[2]=pl[h1+2].v[2]-n1[2];
+  matfCalcCross(n3,n4,n5);
+
+  for(i=h1+2;i<=h2-2;i++) {
+    pl[i].v[0]=n1[0]+n3[0]*delta*(float)(i-h1);
+    pl[i].v[1]=n1[1]+n3[1]*delta*(float)(i-h1);
+    pl[i].v[2]=n1[2]+n3[2]*delta*(float)(i-h1);
+  }
+
+  matfNormalize(n3,n3);
+  matfNormalize(n4,n4);
+  matfNormalize(n5,n5);
+
+  for(i=h1+1;i<=h2-1;i++) {
+    pl[i].d[0]=-n4[0];
+    pl[i].d[1]=-n4[1];
+    pl[i].d[2]=-n4[2];
+    pl[i].n[0]=n5[0];
+    pl[i].n[1]=n5[1];
+    pl[i].n[2]=n5[2];
+  }
+  /*
+  pl[h1+1].d[0]=(pl[h1+1].d[0]+pl[h1].d[0])*0.5;
+  pl[h1+1].d[1]=(pl[h1+1].d[1]+pl[h1].d[1])*0.5;
+  pl[h1+1].d[2]=(pl[h1+1].d[2]+pl[h1].d[2])*0.5;
+  pl[h1+1].n[0]=(pl[h1+1].n[0]+pl[h1].n[0])*0.5;
+  pl[h1+1].n[1]=(pl[h1+1].n[1]+pl[h1].n[1])*0.5;
+  pl[h1+1].n[2]=(pl[h1+1].n[2]+pl[h1].n[2])*0.5;
+
+  if(h1>0) {
+    pl[h1].d[0]=(pl[h1].d[0]+pl[h1-1].d[0])*0.5;
+    pl[h1].d[1]=(pl[h1].d[1]+pl[h1-1].d[1])*0.5;
+    pl[h1].d[2]=(pl[h1].d[2]+pl[h1-1].d[2])*0.5;
+    pl[h1].n[0]=(pl[h1].n[0]+pl[h1-1].n[0])*0.5;
+    pl[h1].n[1]=(pl[h1].n[1]+pl[h1-1].n[1])*0.5;
+    pl[h1].n[2]=(pl[h1].n[2]+pl[h1-1].n[2])*0.5;
+  }
+
+  pl[h2-1].d[0]=(pl[h2-1].d[0]+pl[h2].d[0])*0.5;
+  pl[h2-1].d[1]=(pl[h2-1].d[1]+pl[h2].d[1])*0.5;
+  pl[h2-1].d[2]=(pl[h2-1].d[2]+pl[h2].d[2])*0.5;
+  pl[h2-1].n[0]=(pl[h2-1].n[0]+pl[h2].n[0])*0.5;
+  pl[h2-1].n[1]=(pl[h2-1].n[1]+pl[h2].n[1])*0.5;
+  pl[h2-1].n[2]=(pl[h2-1].n[2]+pl[h2].n[2])*0.5;
+
+  if(h2<pc-1) {
+    pl[h2].d[0]=(pl[h2].d[0]+pl[h2+1].d[0])*0.5;
+    pl[h2].d[1]=(pl[h2].d[1]+pl[h2+1].d[1])*0.5;
+    pl[h2].d[2]=(pl[h2].d[2]+pl[h2+1].d[2])*0.5;
+    pl[h2].n[0]=(pl[h2].n[0]+pl[h2+1].n[0])*0.5;
+    pl[h2].n[1]=(pl[h2].n[1]+pl[h2+1].n[1])*0.5;
+    pl[h2].n[2]=(pl[h2].n[2]+pl[h2+1].n[2])*0.5;
+  }
+  */
+}
+
 int structSmooth(struct STRUCT_OBJ *obj)
 {
   int i,j,bc,pc;
@@ -765,87 +878,6 @@ int structSmooth(struct STRUCT_OBJ *obj)
 		  &point_list[pc],
 		  &obj->render);
     pc++;
-  /***
-    if(obj->bond[bc-1].atom2->residue->class==STRUCT_PROTEIN) {
-      point_list[pc].v[0]=obj->bond[bc-1].atom2->p->x;
-      point_list[pc].v[1]=obj->bond[bc-1].atom2->p->y;
-      point_list[pc].v[2]=obj->bond[bc-1].atom2->p->z;
-#ifdef HSC_NEWCOL
-      point_list[pc].colp[0]=obj->bond[bc-1].prop2->c[0];
-      point_list[pc].colp[1]=obj->bond[bc-1].prop2->c[1];
-      point_list[pc].colp[2]=obj->bond[bc-1].prop2->c[2];
-      point_list[pc].colp[0][3]=obj->render.transparency;
-      point_list[pc].colp[1][3]=obj->render.transparency;
-      point_list[pc].colp[2][3]=obj->render.transparency;
-#else
-      point_list[pc].c[0]=obj->bond[bc-1].prop2->r;
-      point_list[pc].c[1]=obj->bond[bc-1].prop2->g;
-      point_list[pc].c[2]=obj->bond[bc-1].prop2->b;
-      point_list[pc].c[3]=obj->render.transparency;
-#endif
-      point_list[pc].rad=obj->bond[bc-1].prop2->radius;
-      switch(obj->bond[bc-1].atom2->residue->type) {
-      case STRUCT_RTYPE_COIL: point_list[pc].id=CGFX_COIL; break;
-      case STRUCT_RTYPE_HELIX: point_list[pc].id=CGFX_HELIX; break;
-      case STRUCT_RTYPE_STRAND: point_list[pc].id=CGFX_STRAND; break;
-      default: point_list[pc].id=CGFX_COIL;
-      }
-      point_list[pc].v1=obj->bond[bc-1].atom2->residue->v1;
-    } else if(obj->bond[bc-1].atom2->residue->class==STRUCT_NA) {
-      if(obj->render.mode==RENDER_TUBE) {
-	point_list[pc].v[0]=obj->bond[bc-1].atom2->p->x;
-	point_list[pc].v[1]=obj->bond[bc-1].atom2->p->y;
-	point_list[pc].v[2]=obj->bond[bc-1].atom2->p->z;
-      } else {
-	if(obj->render.na_method==0) {
-	  point_list[pc].v[0]=obj->bond[bc-1].atom2->residue->v0[0];
-	  point_list[pc].v[1]=obj->bond[bc-1].atom2->residue->v0[1];
-	  point_list[pc].v[2]=obj->bond[bc-1].atom2->residue->v0[2];
-	} else {
-	  point_list[pc].v[0]=obj->bond[bc-1].atom2->p->x;
-	  point_list[pc].v[1]=obj->bond[bc-1].atom2->p->y;
-	  point_list[pc].v[2]=obj->bond[bc-1].atom2->p->z;
-	}
-      }
-      point_list[pc].rad=obj->bond[bc-1].prop2->radius;
-      point_list[pc].id=CGFX_NA;
-      point_list[pc].v1=obj->bond[bc-1].atom2->residue->v1;
-      point_list[pc].v2=obj->bond[bc-1].atom2->residue->v2;
-      point_list[pc].v3=obj->bond[bc-1].atom2->residue->v3;
-      point_list[pc].v4=obj->bond[bc-1].atom2->residue->v4;
-      point_list[pc].v5=obj->bond[bc-1].atom2->residue->v5;
-      if(obj->render.na_method==0)
-	point_list[pc].v6=obj->bond[bc-1].atom2->residue->v6;
-      else
-	point_list[pc].v6=obj->bond[bc-1].atom2->residue->v7;
-      point_list[pc].res_id=obj->bond[bc-1].atom2->residue->res_id;
-#ifdef HSC_NEWCOL
-      point_list[pc].colp[0]=obj->bond[bc-1].prop2->c[0];
-      point_list[pc].colp[1]=obj->bond[bc-1].prop2->c[1];
-      point_list[pc].colp[2]=obj->bond[bc-1].prop2->c[2];
-      point_list[pc].colp[0][3]=obj->render.transparency;
-      point_list[pc].colp[1][3]=obj->render.transparency;
-      point_list[pc].colp[2][3]=obj->render.transparency;
-#else
-      point_list[pc].c[0]=obj->bond[bc-1].prop2->c[0][0];
-      point_list[pc].c[1]=obj->bond[bc-1].prop2->c[0][1];
-      point_list[pc].c[2]=obj->bond[bc-1].prop2->c[0][2];
-      point_list[pc].c[3]=obj->render.transparency;
-
-      point_list[pc].c2[0]=obj->bond[bc-1].prop2->c[1][0];
-      point_list[pc].c2[1]=obj->bond[bc-1].prop2->c[1][1];
-      point_list[pc].c2[2]=obj->bond[bc-1].prop2->c[1][2];
-      point_list[pc].c2[3]=obj->render.transparency;
-      point_list[pc].c3[0]=obj->bond[bc-1].prop2->c[2][0];
-      point_list[pc].c3[1]=obj->bond[bc-1].prop2->c[2][1];
-      point_list[pc].c3[2]=obj->bond[bc-1].prop2->c[2][2];
-      point_list[pc].c3[3]=obj->render.transparency;
-#endif
-    } else {
-      point_list[pc].id=CGFX_COIL;
-    }
-***/
-
     
     // set strands correctly for arrow generation
     
@@ -856,43 +888,6 @@ int structSmooth(struct STRUCT_OBJ *obj)
     if(point_list[i].id==CGFX_STRAND)
       point_list[i].id=CGFX_STRAND2;
 
-
-    if(obj->render.helix_method==1) {
-      i=0;
-      while(i<pc) {
-	for(;i<pc;i++)
-	  if(point_list[i].id==CGFX_HELIX)
-	    break;
-	h1=i;
-	for(;i<pc;i++)
-	  if(point_list[i].id!=CGFX_HELIX)
-	    break;
-	h2=i-1;
-
-	/* helix found between h1 and h2 */
-	if(h2-h1>2) {
-	  for(i=h1;i<=h2-2;i++) {
-	    n1[0]=point_list[i+0].v[0];
-	    n1[1]=point_list[i+0].v[1];
-	    n1[2]=point_list[i+0].v[2];
-	    n2[0]=point_list[i+1].v[0];
-	    n2[1]=point_list[i+1].v[1];
-	    n2[2]=point_list[i+1].v[2];
-	    n3[0]=point_list[i+2].v[0];
-	    n3[1]=point_list[i+2].v[1];
-	    n3[2]=point_list[i+2].v[2];
-	    n4[0]=(n1[0]+n2[0]+n3[0])/3.0;
-	    n4[1]=(n1[1]+n2[1]+n3[1])/3.0;
-	    n4[2]=(n1[2]+n2[2]+n3[2])/3.0;
-	    point_list[i].v[0]=n4[0];
-	    point_list[i].v[1]=n4[1];
-	    point_list[i].v[2]=n4[2];
-	  }
-	}
-	
-      }
-
-    }
 
 
 
@@ -1018,6 +1013,32 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	}
       }
     }
+
+    /***
+    if(obj->render.helix_method==1) {
+      i=0;
+      while(i<pc) {
+	for(;i<pc;i++)
+	  if(point_list[i].id==CGFX_HELIX)
+	    break;
+	if(i>0)
+	  h1=i-1;
+	else
+	  h2=i;
+
+	for(;i<pc;i++)
+	  if(point_list[i].id!=CGFX_HELIX)
+	    break;
+	if(i<pc-1)
+	  h2=i;
+	else
+	  h2=i-1;
+
+	if(h2-h1>2)
+	  make_helix_cyl(point_list,h1,h2,pc);
+      }
+    }
+    **/
 
 
     // generate spline, spoint_list is allocated

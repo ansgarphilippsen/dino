@@ -1,3 +1,7 @@
+added cylindrical helix rendering (helixm=1) ALPHA stage
+
+mix/max should work now in -range flag
+
 fixed hsc/tube crashes
 
 render sr=0 resp bw=0 will deactivate sphere, resp cyl rendering

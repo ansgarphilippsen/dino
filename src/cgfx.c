@@ -913,7 +913,8 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 {
   int i,k,ks,maxp;
   cgfxPoint *cp1,*cp2;
-
+  float cylp1[3],cylp2[3],cyld[3];
+  
   int detail=render->detail;
   int detail2=render->detail;
   int morph,sf;
@@ -934,13 +935,62 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
       }
     
     
-    //    va->max=maxp*(detail2+1)*4*6;
     va->count=0;
     va->p=Crecalloc(NULL,va->max, sizeof(cgfxVAField));
     
     
     for(i=0;i<pc-1;i++) {
       if(render->mode==RENDER_HSC) {
+
+	if(sp[i+1].id==CGFX_HELIX && render->helix_method==1) {
+
+	  cgfxGenProfile(&pro1, sp[i].id, render);
+	  for(k=0;k<=sp[i].pc;k++) {
+	    cgfxHSCTransform(&pro1, &sp[i].p[k], &pro5);
+	    cgfxConnectProfile(va,&pro_last,&pro5,0);
+	    memcpy(&pro_last,&pro5,sizeof(cgfxProfile));
+	  }
+
+	  ks=i;
+	  while(sp[++i].id==CGFX_HELIX && i<pc-1) {}
+	  if(i<pc) {
+	    //	    cgfxGenProfile(&pro1, sp[ks].id, render);
+	    cgfxHSCTransform(&pro1, &sp[i-1].p[0], &pro_last);
+	    for(k=1;k<=sp[i-1].pc;k++) {
+	      cgfxHSCTransform(&pro1, &sp[i-1].p[k], &pro5);
+	      cgfxConnectProfile(va,&pro_last,&pro5,0);
+	      memcpy(&pro_last,&pro5,sizeof(cgfxProfile));
+	    }
+	  }
+
+	  k=ks;
+	  cylp1[0]=(sp[k+1].v[0]+sp[k+3].v[0])*0.5;
+	  cylp1[1]=(sp[k+1].v[1]+sp[k+3].v[1])*0.5;
+	  cylp1[2]=(sp[k+1].v[2]+sp[k+3].v[2])*0.5;
+	  cylp2[0]=(sp[i-1].v[0]+sp[i-3].v[0])*0.5;
+	  cylp2[1]=(sp[i-1].v[1]+sp[i-3].v[1])*0.5;
+	  cylp2[2]=(sp[i-1].v[2]+sp[i-3].v[2])*0.5;
+	  cyld[0]=cylp2[0]-cylp1[0];
+	  cyld[1]=cylp2[1]-cylp1[1];
+	  cyld[2]=cylp2[2]-cylp1[2];
+	  matfNormalize(cyld,cyld);
+	  cylp1[0]-=2.0*cyld[0];
+	  cylp1[1]-=2.0*cyld[1];
+	  cylp1[2]-=2.0*cyld[2];
+	  cylp2[0]+=2.0*cyld[0];
+	  cylp2[1]+=2.0*cyld[1];
+	  cylp2[2]+=2.0*cyld[2];
+
+
+	  cgfxGenCylinder(va,cylp1,cylp2,render->helix_width*2.0,
+			  1,0,
+			  render->detail,CGFX_CAP,sp[k].colp[0]);
+
+	  if(i>=pc)
+	    break;
+
+	}
+
 	/* determine i and i+1 profile */
 	if(sp[i].id==sp[i+1].id) {
 	  morph=0;
