@@ -166,10 +166,10 @@ int gfxInit()
 
   transReset(&gfx.transform);
   gfx.transform.tra[2]=-100.0;
-  gfx.transform.slabn=1.0;
-  gfx.transform.slabf=1000.0;
-  gfx.transform.slabn2=1.0;
-  gfx.transform.slabf2=1000.0;
+  gfx.transform.slabn=5.0;
+  gfx.transform.slabf=500.0;
+  gfx.transform.slabn2=5.0;
+  gfx.transform.slabf2=500.0;
 
   gfx.scale=1.0;
   gfx.fovy=25.0;

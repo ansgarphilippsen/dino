@@ -31,7 +31,7 @@
 extern struct GUI gui;
 
 const char usage[]={"Usage: dino [-debug] [-nostereo] [-help] [-s script] [-log filename] [+log] [X toolkit params]\n"};
-const char welcome[]={"\nWelcome to dino v0.8.3d    (http://www.bioz.unibas.ch/~xray/dino)\n\n"};
+const char welcome[]={"\nWelcome to dino v0.8.3    (http://www.bioz.unibas.ch/~xray/dino)\n\n"};
 
 int debug_mode,gfx_mode,stereo_mode;
 

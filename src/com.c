@@ -738,11 +738,11 @@ int comPick(int screenx, int screeny, int flag)
   glLoadIdentity();
   if(gfx.mode==GFX_PERSP) {  
     GLwStereoPerspective(gfx.fovy,gfx.aspect,
-			 gfx.transform.slabn,gfx.transform.slabf,
+			 gfx.transform.slabn2,gfx.transform.slabf2,
 			 eye_dist, -eye_offset);
   } else {
     GLwStereoOrtho(gfx.left,gfx.right,gfx.bottom,gfx.top,
-		   gfx.transform.slabn,gfx.transform.slabf,
+		   gfx.transform.slabn2,gfx.transform.slabf2,
 		   eye_dist, eye_offset);
   }
   
@@ -898,16 +898,11 @@ int comPick(int screenx, int screeny, int flag)
     }
     sprintf(pick,"%s%s",pick,atom->name);
 
-    sprintf(cs,
-	    ".%s:",dbm.node[f].structNode.name);
-    if(dbm.node[f].structNode.model_flag)
-      sprintf(cs,"%s%d.",cs,atom->model->num);
-    if(dbm.node[f].structNode.chain_flag)
-      sprintf(cs,"%s%s.",cs,atom->chain->name);
-    if(dbm.node[f].structNode.residue_flag)
-      sprintf(cs,"%s%d.",cs,atom->residue->num);
-    sprintf(cs,"%s%s",cs,atom->name);
-    
+    /*
+      save .ds:#anum in CS
+    */
+    sprintf(cs,".%s:#%d",dbm.node[f].structNode.name,atom->anum);
+
     if(flag) {
       for(i=0;i<dbm.node[f].structNode.obj_max;i++)
 	if(dbm.node[f].structNode.obj_flag[i]!=0)

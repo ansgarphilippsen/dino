@@ -1,4 +1,12 @@
-current scene rtc is writte to logfile upon exit
+added support for CHARMM esp
+
+added support for ads surface format
+
+$CS now saves absolute atom number .ds:#anum
+
+fixed bug with atom picking
+
+current scene rtc is written to logfile upon exit
 
 added scene property rtc
 
