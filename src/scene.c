@@ -98,7 +98,7 @@ int sceneCommand(int wc, const char **wl)
   char set[1024];
   double v1[16],v2[16];
   float c[3];
-  int i,swc,newi;
+  int i,swc;
   char **swl,prop[256],op[256],val[256];
   double newd,oldd,d2;
   GLdouble im[16]={1.0,0.0,0.0,0.0,
@@ -517,8 +517,9 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage(message);
 	  return -1;
 	}
-	if(gfx.eye_dist<0.0)
-	  gfx.eye_dist=0.0;
+
+	//if(gfx.eye_dist<0.0)
+	// gfx.eye_dist=0.0;
 
 	gfxSetProjection(gfx.current_view);
 	comRedraw();
