@@ -180,8 +180,8 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "";
-				HEADER_SEARCH_PATHS = /Users/bernechs/work/Dino/dino/extras/include;
-				LIBRARY_SEARCH_PATHS = /Users/bernechs/work/Dino/dino/extras/lib;
+				HEADER_SEARCH_PATHS = ../../../extras/include;
+				LIBRARY_SEARCH_PATHS = ../../../extras/lib;
 				OTHER_CFLAGS = "-DOSX -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DFORMAT_TIFF -DUSE_CMI -DNEW_SHELL -DINTERNAL_COLOR -DUSE_CMI ";
 				OTHER_LDFLAGS = "-lpng -lz -ltiff -ljpeg ";
 				PRODUCT_NAME = Dino;
@@ -212,7 +212,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.1</string>
+	<string>0.8-5</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -294,17 +294,17 @@
 				F512D03F0249799D01FB7A39,
 				F512D0400249799D01FB7A39,
 				F512D0410249799D01FB7A39,
-				F59061FE02BE8B6C019813D9,
-				F59061FF02BE8B6C019813D9,
-				F590620002BE8B6C019813D9,
-				F590620102BE8B6C019813D9,
-				F590620202BE8B6C019813D9,
 				F52A76C102BF9B93019813D9,
 				F52A76C202BF9B93019813D9,
 				F52A76CA02C08DDC019813D9,
 				F52A76CB02C08DDC019813D9,
 				F52A76CC02C08DDC019813D9,
 				F52A76D202C09E67019813D9,
+				F77770FE02C37CCA01981365,
+				F777710602C37CF601981365,
+				F777710702C37CF601981365,
+				F777710802C37CF601981365,
+				F777710902C37CF601981365,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -380,9 +380,6 @@
 				F512D0900249799D01FB7A39,
 				F512D0910249799D01FB7A39,
 				F512D0920249799D01FB7A39,
-				F590620302BE8B6C019813D9,
-				F590620402BE8B6C019813D9,
-				F590620502BE8B6C019813D9,
 				F590620602BE8C02019813D9,
 				F52A76C002BF9671019813D9,
 				F52A76C402BF9B93019813D9,
@@ -391,6 +388,9 @@
 				F52A76CE02C08DDC019813D9,
 				F52A76CF02C08DDC019813D9,
 				F52A76D302C09E67019813D9,
+				F77770FF02C37CCA01981365,
+				F777710A02C37CF601981365,
+				F777710B02C37CF601981365,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -463,8 +463,6 @@
 				F512CF4A0249799D01FB7A39,
 				F512CF4B0249799D01FB7A39,
 				F512CF4C0249799D01FB7A39,
-				F59061F402BE8B6C019813D9,
-				F59061F502BE8B6C019813D9,
 				F512CF4D0249799D01FB7A39,
 				F512CF4E0249799D01FB7A39,
 				F512CF4F0249799D01FB7A39,
@@ -473,7 +471,6 @@
 				F512CF520249799D01FB7A39,
 				F512CF530249799D01FB7A39,
 				F512CF540249799D01FB7A39,
-				F59061F602BE8B6C019813D9,
 				F512CF550249799D01FB7A39,
 				F512CF560249799D01FB7A39,
 				F512CF570249799D01FB7A39,
@@ -538,10 +535,6 @@
 				F512CFB40249799D01FB7A39,
 				F512CFB90249799D01FB7A39,
 				F512CFBA0249799D01FB7A39,
-				F59061FA02BE8B6C019813D9,
-				F59061FB02BE8B6C019813D9,
-				F59061FC02BE8B6C019813D9,
-				F59061FD02BE8B6C019813D9,
 				F512CFC00249799D01FB7A39,
 				F512CFC10249799D01FB7A39,
 				F512CFC20249799D01FB7A39,
@@ -581,6 +574,14 @@
 				F512CFE40249799D01FB7A39,
 				F512CFE50249799D01FB7A39,
 				F512CFE60249799D01FB7A39,
+				F77770FC02C37CCA01981365,
+				F77770FD02C37CCA01981365,
+				F777710002C37CF601981365,
+				F777710102C37CF601981365,
+				F777710202C37CF601981365,
+				F777710302C37CF601981365,
+				F777710402C37CF601981365,
+				F777710502C37CF601981365,
 			);
 			isa = PBXGroup;
 			name = DinoCore;
@@ -2372,104 +2373,120 @@
 			path = gui_osx.m_old;
 			refType = 4;
 		};
-		F59061F402BE8B6C019813D9 = {
-			isa = PBXFileReference;
-			name = colors.c;
-			path = /Users/bernechs/work/Dino/dino/src/colors.c;
-			refType = 0;
-		};
-		F59061F502BE8B6C019813D9 = {
-			isa = PBXFileReference;
-			name = colors.h;
-			path = /Users/bernechs/work/Dino/dino/src/colors.h;
-			refType = 0;
-		};
-		F59061F602BE8B6C019813D9 = {
-			isa = PBXFileReference;
-			name = dbm_common.h;
-			path = /Users/bernechs/work/Dino/dino/src/dbm_common.h;
-			refType = 0;
-		};
 		F59061F702BE8B6C019813D9 = {
 			isa = PBXFileReference;
 			name = gui_ext.h;
 			path = /Users/bernechs/work/Dino/dino/src/gui_ext.h;
 			refType = 0;
 		};
-		F59061FA02BE8B6C019813D9 = {
-			isa = PBXFileReference;
-			name = shell_command.c;
-			path = /Users/bernechs/work/Dino/dino/src/shell_command.c;
-			refType = 0;
-		};
-		F59061FB02BE8B6C019813D9 = {
-			isa = PBXFileReference;
-			name = shell_command.h;
-			path = /Users/bernechs/work/Dino/dino/src/shell_command.h;
-			refType = 0;
-		};
-		F59061FC02BE8B6C019813D9 = {
-			isa = PBXFileReference;
-			name = shell_raw.c;
-			path = /Users/bernechs/work/Dino/dino/src/shell_raw.c;
-			refType = 0;
-		};
-		F59061FD02BE8B6C019813D9 = {
-			isa = PBXFileReference;
-			name = shell_raw.h;
-			path = /Users/bernechs/work/Dino/dino/src/shell_raw.h;
-			refType = 0;
-		};
-		F59061FE02BE8B6C019813D9 = {
-			fileRef = F59061F502BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F59061FF02BE8B6C019813D9 = {
-			fileRef = F59061F602BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F590620002BE8B6C019813D9 = {
-			fileRef = F59061F702BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F590620102BE8B6C019813D9 = {
-			fileRef = F59061FB02BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F590620202BE8B6C019813D9 = {
-			fileRef = F59061FD02BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F590620302BE8B6C019813D9 = {
-			fileRef = F59061F402BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F590620402BE8B6C019813D9 = {
-			fileRef = F59061FA02BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F590620502BE8B6C019813D9 = {
-			fileRef = F59061FC02BE8B6C019813D9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F590620602BE8C02019813D9 = {
 			fileRef = F512CF4D0249799D01FB7A39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//F50
+//F51
+//F52
+//F53
+//F54
+//F70
+//F71
+//F72
+//F73
+//F74
+		F77770FC02C37CCA01981365 = {
+			isa = PBXFileReference;
+			name = colors.c;
+			path = ../../colors.c;
+			refType = 2;
+		};
+		F77770FD02C37CCA01981365 = {
+			isa = PBXFileReference;
+			name = colors.h;
+			path = ../../colors.h;
+			refType = 2;
+		};
+		F77770FE02C37CCA01981365 = {
+			fileRef = F77770FD02C37CCA01981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F77770FF02C37CCA01981365 = {
+			fileRef = F77770FC02C37CCA01981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F777710002C37CF601981365 = {
+			isa = PBXFileReference;
+			name = dbm_common.h;
+			path = ../../dbm_common.h;
+			refType = 2;
+		};
+		F777710102C37CF601981365 = {
+			isa = PBXFileReference;
+			name = gui_ext.h;
+			path = ../../gui_ext.h;
+			refType = 2;
+		};
+		F777710202C37CF601981365 = {
+			isa = PBXFileReference;
+			name = shell_command.c;
+			path = ../../shell_command.c;
+			refType = 2;
+		};
+		F777710302C37CF601981365 = {
+			isa = PBXFileReference;
+			name = shell_command.h;
+			path = ../../shell_command.h;
+			refType = 2;
+		};
+		F777710402C37CF601981365 = {
+			isa = PBXFileReference;
+			name = shell_raw.c;
+			path = ../../shell_raw.c;
+			refType = 2;
+		};
+		F777710502C37CF601981365 = {
+			isa = PBXFileReference;
+			name = shell_raw.h;
+			path = ../../shell_raw.h;
+			refType = 2;
+		};
+		F777710602C37CF601981365 = {
+			fileRef = F777710002C37CF601981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F777710702C37CF601981365 = {
+			fileRef = F777710102C37CF601981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F777710802C37CF601981365 = {
+			fileRef = F777710302C37CF601981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F777710902C37CF601981365 = {
+			fileRef = F777710502C37CF601981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F777710A02C37CF601981365 = {
+			fileRef = F777710202C37CF601981365;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F777710B02C37CF601981365 = {
+			fileRef = F777710402C37CF601981365;
 			isa = PBXBuildFile;
 			settings = {
 			};
