@@ -257,7 +257,6 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
   png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
  
   fclose(fp);
-     
 
   return 0;
 }

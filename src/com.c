@@ -1557,16 +1557,16 @@ int comWrite(int wc,const char **wl)
     
   }
   
-  if((f=fopen(file,"w"))==NULL) {
-    sprintf(message,"Error opening %s\n",file);
-    comMessage(message);
-    return -1;
-  }
 
   if(!strcmp(type,"raster")) {
     comMessage("WARNING: deprecated format! Please use POVray instead\n");
     fclose(f);
   } else if(!strcmp(type,"pov")) {
+    if((f=fopen(file,"w"))==NULL) {
+      sprintf(message,"Error opening %s\n",file);
+      comMessage(message);
+      return -1;
+    }
     // open second file
     sprintf(file2,"%s.inc",base);
     if((f2=fopen(file2,"w"))==NULL) {
@@ -1582,23 +1582,25 @@ int comWrite(int wc,const char **wl)
     fclose(f2);
     fclose(f);
   } else if(!strcmp(type,"ps")) {
+    if((f=fopen(file,"w"))==NULL) {
+      sprintf(message,"Error opening %s\n",file);
+      comMessage(message);
+      return -1;
+    }
     comMessage("Writing PostScript file...\n");
     writePS(f);
     fclose(f);
 #ifdef FORMAT_RGB
   } else if(!strcmp(type,"rgb")) {
     comMessage("RGB output no longer supported\n");
-    fclose(f);
 #endif
   } else if(!strcmp(type,"png")) {
     comMessage("Writing png file...\n");
-    fclose(f);
     wparam.type=WRITE_TYPE_PNG;
     writeFile(file,&wparam);
   } else if(!strcmp(type,"tiff")) {
     //comMessage("WARNING: deprecated format ! Please use png instead\n");
     comMessage("Writing tiff file...\n");
-    fclose(f);
     wparam.type=WRITE_TYPE_TIFF;
     writeFile(file,&wparam);
 #ifdef VRML
@@ -1612,7 +1614,6 @@ int comWrite(int wc,const char **wl)
   } else {
     sprintf(message,"unknown type %s\n",type);
     comMessage(message);
-    fclose(f);
     return -1;
   }
   return 0;

@@ -1,3 +1,16 @@
+current problems
+----------------
+
+picking doesn't work after resize
+
+explicit colors broken
+
+within selection cannot distinguish between several values and vector (TCL)
+
+cpk not written to file (display list problem)
+
+
+
 known problems for DINO v0.8.5
 ------------------------------
 

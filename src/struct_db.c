@@ -899,6 +899,8 @@ int structComConnect(dbmStructNode *node, char *s1, char *s2)
   int n1,n2;
   char message[256];
 
+  debmsg("structConnect: retrieving atoms from strings");
+
   if(structSubMatch(node,s1,m1,c1,r1,a1)!=0)
     return -1;
   if(structSubMatch(node,s2,m2,c2,r2,a2)!=0)
@@ -919,11 +921,15 @@ int structComConnect(dbmStructNode *node, char *s1, char *s2)
 
   /* both atoms were found, now connect them */
 
+  debmsg("structConnect: connecting atoms");
+
   structConnectAtoms(node,
 		     &node->bond,
 		     &node->bond_count,
 		     &node->bond_max,
 		     &node->atom[n1], &node->atom[n2]);
+
+  debmsg("structConnect: regenerating bonds");
 
   structRecalcBonds(node);
 
@@ -1022,7 +1028,7 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
   caPointer *ca_p;
   int ca_c;
 
-  b_max=10000;
+  b_max=node->atom_count*2; // empirical
   nb=Crecalloc(NULL,b_max,sizeof(struct STRUCT_BOND));
   bc=0;
 
@@ -1171,13 +1177,8 @@ int structReconnect(struct DBM_STRUCT_NODE *node)
   }
   
   node->bond_count=bc;
-  if(node->bond_max<bc) {
-    node->bond_max=bc;
-    node->bond=Crecalloc(node->bond,node->bond_max,sizeof(struct STRUCT_BOND));
-  }
-  memcpy(node->bond,nb,bc*sizeof(struct STRUCT_BOND));
-  Cfree(nb);
-
+  node->bond_max=b_max;
+  node->bond=nb;
 
 #ifdef WITH_NCBONDS
   structReconnectNC(node);
@@ -1432,6 +1433,7 @@ int structRecalcBondList(struct STRUCT_BOND *bond, int bond_count)
 
 int structConnectAtoms(dbmStructNode *node, struct STRUCT_BOND **nb,int *bc, int *bm, struct STRUCT_ATOM *ap1, struct STRUCT_ATOM *ap2)
 {
+  int max_add=node->atom_count;
   struct STRUCT_BOND *ob;
   int i;
 
@@ -1457,15 +1459,12 @@ int structConnectAtoms(dbmStructNode *node, struct STRUCT_BOND **nb,int *bc, int
     (*nb)[(*bc)].n=(*bc);
     (*bc)++;
     if((*bc)>=(*bm)) {
-//      ob=(*nb);
-      (*nb)=Crecalloc((*nb),(*bm)+5000,sizeof(struct STRUCT_BOND));
-//      memcpy((*nb),ob,(*bm)*sizeof(struct STRUCT_BOND));
-      (*bm)+=5000;
-//      Cfree(ob);
+      (*nb)=Crecalloc((*nb),(*bm)+max_add,sizeof(struct STRUCT_BOND));
+      (*bm)+=max_add;
     }
     return 0;
   } else {
-    debmsg("Connect: bond overflow");
+    debmsg("ConnectAtoms: bond overflow");
     return -1;
   }
 }
