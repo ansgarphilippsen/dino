@@ -12,7 +12,9 @@
         NSOpenGLPFADoubleBuffer,
 	NSOpenGLPFAColorSize, 8,
 	NSOpenGLPFADepthSize, 1,
-	NSOpenGLPFAMinimumPolicy,
+	NSOpenGLPFASampleBuffers,1,  // 1 for on, 0 for off
+	NSOpenGLPFASamples,8,        // same as colorsize ??
+	NSOpenGLPFAMaximumPolicy,
         nil };
     NSOpenGLPixelFormat *pixFmt;
 
