@@ -87,7 +87,7 @@ int gridCommand(struct DBM_GRID_NODE *node,int wc, char **wl)
       comMessage("syntax: grab device\n");
       return -1;
     }
-    if(comGrab(&node->transform,wl[1])<0)
+    if(comGrab(&node->transform,0,0,wl[1])<0)
       return -1;
     // set center to current center
     comGetCurrentCenter(node->transform.cen);
@@ -465,6 +465,8 @@ int gridSet(dbmGridNode *node, Set *s)
       s->pov[pc].id=GRID_PROP_ROT;
     } else if (clStrcmp(s->pov[pc].prop,"trans")) {
       s->pov[pc].id=GRID_PROP_TRANS;
+    } else if (clStrcmp(s->pov[pc].prop,"rtc")) {
+      s->pov[pc].id=GRID_PROP_RTC;
     } else {
       comMessage("error: set: unknown property \n");
       comMessage(s->pov[pc].prop);
@@ -524,6 +526,14 @@ int gridSet(dbmGridNode *node, Set *s)
       if(transSetTra(&node->transform,val->val1)<0)
 	return -1;
       break;
+    case GRID_PROP_RTC:
+      if(val->range_flag) {
+	comMessage("error: set: unexpected range in property rot\n");
+	return -1;
+      }
+      if(transSetAll(&node->transform,val->val1)<0)
+	return -1;
+      break;
     }
   }
   return 0;
@@ -557,6 +567,8 @@ int gridGet(dbmGridNode *node, char *prop)
     comReturn(transGetRot(&node->transform));
   } else if(!strcmp(prop,"trans")) {
     comReturn(transGetTra(&node->transform));
+  } else if(!strcmp(prop,"rtc")) {
+    comReturn(transGetAll(&node->transform));
   } else {
     sprintf(message,"%s: unknown property %s\n",node->name, prop);
     comMessage(message);

@@ -27,6 +27,7 @@ enum TRANSFORM_COMMAND {TRANS_NN=0,
 #define TRANSFORM_MAX_CUSTOM 8
 
 typedef void (*transCustomFunc)(double val, void *ptr);
+typedef void (*transCallback)(void*cd);
 
 typedef struct TRANSFORM_CUSTOM {
   int flag;
@@ -39,6 +40,7 @@ typedef struct TRANSFORM_MATRIX {
   double rot[16],tra[4],cen[4];
   double slabn,slabf;
   double slabn2,slabf2;
+  double custom[3]; // custom entries
 }transMat;
 
 typedef struct TRANSFORM_LIST {
@@ -60,6 +62,8 @@ typedef struct TRANSFORM_DEVICE_LIST {
   transCustom custom[TRANSFORM_MAX_CUSTOM];
   double factor;      // generic factor to regulate ALL commands
   transMat *transform;
+  transCallback callback;
+  void* client_data;
 }transDeviceList;
 
 int transCommand(transMat *trans, int command, int axis, double value);

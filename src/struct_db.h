@@ -413,4 +413,6 @@ void structSetFlag(dbmStructNode *node,int mask);
 void structClearFlag(dbmStructNode *node,int mask);
 
 void structAddSymop(dbmStructNode *node, int wc, char**wl);
+
+void structOnTransform(void* cdata);
 #endif

@@ -74,12 +74,12 @@ int sceneInit(void)
 
   /* grab the dial box */
   //  comGrabInput(GUI_DIALS, (comInputFunc)gfxCommand, NULL);
-  comGrab(&gfx.transform, "mouse");
-  comGrab(&gfx.transform, "mouse2");
-  comGrab(&gfx.transform, "dials");
-  comGrab(&gfx.transform, "dials2");
-  comGrab(&gfx.transform, "spaceball");
-  comGrab(&gfx.transform, "spaceball2");
+  comGrab(&gfx.transform,0,0, "mouse");
+  comGrab(&gfx.transform,0,0, "mouse2");
+  comGrab(&gfx.transform,0,0, "dials");
+  comGrab(&gfx.transform,0,0, "dials2");
+  comGrab(&gfx.transform,0,0, "spaceball");
+  comGrab(&gfx.transform,0,0, "spaceball2");
 
   gfx.axisflag=0;
   
@@ -1204,7 +1204,7 @@ int sceneCommand(int wc, const char **wl)
       sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
     } else {
-      if(comGrab(&gfx.transform,wl[1])<0)
+      if(comGrab(&gfx.transform,0,0,wl[1])<0)
 	return -1;
     }
   } else if(clStrcmp(wl[0],"spin")) {
@@ -1729,7 +1729,7 @@ int sceneSubClipCom(int c, int wc, const char **wl)
       sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
     } else {
-      if(comGrab(&gfx.clip[c].transform,wl[1])<0)
+      if(comGrab(&gfx.clip[c].transform,0,0,wl[1])<0)
 	return -1;
     }
   } else {

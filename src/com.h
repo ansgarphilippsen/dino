@@ -98,7 +98,9 @@ void comReturn(const char *r);
 const char *comGetReturn(void);
 
 int comTransform(int device, int mask, int axis, int value);
-int comGrab(transMat *tm, char *name);
+
+int comGrab(transMat *tm, transCallback cb, void* cdata, char *name);
+
 int comGetCurrentCenter(double *);
 
 void comWriteModelview(void);

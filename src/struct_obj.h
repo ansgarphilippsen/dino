@@ -110,4 +110,6 @@ int structObjGrab(structObj *obj, int wc, char **wl);
 
 int structObjDel(structObj *obj);
 
+void structObjUpdateSymview(structObj* obj);
+
 #endif

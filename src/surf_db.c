@@ -68,7 +68,7 @@ int surfCommand(struct DBM_SURF_NODE *node,int wc, char **wl)
       comMessage("syntax: grab device\n");
       return -1;
     }
-    if(comGrab(&node->transform,wl[1])<0)
+    if(comGrab(&node->transform,0,0,wl[1])<0)
       return -1;
     // set center to current center
     comGetCurrentCenter(node->transform.cen);

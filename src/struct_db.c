@@ -247,7 +247,7 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
       sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
     } else {
-      if(comGrab(&node->transform,wl[1])<0)
+      if(comGrab(&node->transform,(transCallback)structOnTransform,(void*)node,wl[1])<0)
 	return -1;
       // set center to current center
       comGetCurrentCenter(node->transform.cen);
@@ -640,7 +640,7 @@ int structSet(dbmStructNode *node, Set *s)
   }
 
   if(s->range_flag) {
-    comMessage("error: set: range not expected for struct dataset");
+    comMessage("error: set: range not expected for struct dataset\n");
     return -1;
   }
 
@@ -3812,4 +3812,17 @@ void structAddSymop(dbmStructNode* node, int wc, char**wl)
   if(transSetTra(&tmat,wl[1])<0) return;
 
   transListAddEntry(&node->symop_list,&tmat);
+}
+
+void structOnTransform(void* cdata)
+{
+  dbmStructNode *node = (dbmStructNode*)cdata;
+  int j;
+  for(j=0;j<node->obj_max;j++) {
+      if(node->obj_flag[j]!=0) {
+	if(node->obj[j].symview>0) {
+	  structObjUpdateSymview(&node->obj[j]);
+	}
+      }
+  }
 }

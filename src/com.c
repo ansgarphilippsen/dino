@@ -1879,6 +1879,9 @@ int comTransform(int device, int mask, int axis, int ivalue)
 			   com.tlist[i].command[j].command,
 			   axis,
 			   value*com.tlist[i].command[j].factor);
+	      if(com.tlist[i].callback!=0) {
+		(*com.tlist[i].callback)(com.tlist[i].client_data);
+	      }
 
 	      // store mouse x/y movement
 	      if(device==TRANS_MOUSE) {
@@ -1898,7 +1901,7 @@ int comTransform(int device, int mask, int axis, int ivalue)
   return 0;
 }
 
-int comGrab(transMat *tm, char *name)
+int comGrab(transMat *tm, transCallback cb, void* cdata, char *name)
 {
   int i;
   if(name==NULL)
@@ -1907,6 +1910,8 @@ int comGrab(transMat *tm, char *name)
   for(i=0;i<com.tlist_count;i++) {
     if(!strcmp(com.tlist[i].name,name)) {
       com.tlist[i].transform=tm;
+      com.tlist[i].callback=cb;
+      com.tlist[i].client_data=cdata;
       return 0;
     }
   }  

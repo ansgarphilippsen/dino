@@ -1973,7 +1973,7 @@ int structObjGrab(structObj *obj, int wc, char **wl)
 
   fprintf(stderr,"%s %s %s\n",dev,ax,target);
 
-  if(comGrab(&obj->build->trans,dev)<0)
+  if(comGrab(&obj->build->trans,0,0,dev)<0)
     return -1;
 
   //  comGetCurrentCenter(obj->build->trans.cen);
@@ -1999,13 +1999,45 @@ int structObjDelete(structObj *obj)
   return 0;
 }
 
+/*
+  called upon each dataset transformation
+*/
+void structObjUpdateSymview(structObj* obj)
+{
+  int sc;
+  double *cen, *tra, ea, eb,cosa,sina,dr,angle;
+  transMat *trans;
+
+  if(obj->symview==2) { // helical symmetry
+    if(obj->node->helical->axr!=1.0) {
+      cen = obj->node->transform.cen;
+      tra = obj->node->transform.tra;
+      ea = sqrt((tra[0]+cen[0])*(tra[0]+cen[0])+(tra[1]+cen[1])*(tra[1]+cen[1]));
+      eb = ea * obj->node->helical->axr;
+
+      for(sc=0;sc<=obj->symcount;sc++) {
+	trans = transListGetEntry(&obj->transform_list,sc);
+	angle = trans->custom[0];
+	sina=sin(M_PI*angle/180.0);
+	cosa=cos(M_PI*angle/180.0);
+	dr = sqrt(ea*ea*eb*eb/(eb*eb*cosa*cosa+ea*ea*sina*sina))-ea;
+	trans->tra[1] = dr * sina;
+	trans->tra[0] = dr * cosa;
+      }
+    }
+  }
+}
+
+/*
+  prepare the transformations for symmetry
+*/
 static void prep_symview(structObj* obj)
 {
   transMat tmat;
   struct SYMM_INFO sinfo;
   int sc;
   double angle,dist,dr,ea,eb,sina,cosa;
-  double *cen;
+  double *cen,*tra;
   char msg[256];
   /* 
      based on symview settings, generate a list
@@ -2038,15 +2070,19 @@ static void prep_symview(structObj* obj)
     } else if(obj->symview==2) {
       if(obj->node->helical) { // helical info
 	transListInit(&obj->transform_list,obj->symcount);
+	/****
 	if(obj->node->helical->axr!=1.0) {
 	  cen = obj->node->transform.cen;
-	  ea = sqrt(cen[0]*cen[0]+cen[1]*cen[1]);
+	  tra = obj->node->transform.tra;
+	  ea = sqrt((tra[0]+cen[0])*(tra[0]+cen[0])+(tra[1]+cen[1])*(tra[1]+cen[1]));
 	  eb = ea * obj->node->helical->axr;
-	  fprintf(stderr,"elliptical radii are %f and %f\n",ea,eb);
 	}
+	****/
 	for(sc=0;sc<=obj->symcount;sc++) {
 	  angle = obj->node->helical->angle*(double)sc;
+	  tmat.custom[0]=angle;
 	  dist = obj->node->helical->dist*(double)sc;
+	  tmat.custom[1]=dist;
 	  matMakeRotMat(angle,0.0,0.0,1.0,tmat.rot);
 	  tmat.tra[2]=dist;
 	  /*
@@ -2057,19 +2093,20 @@ static void prep_symview(structObj* obj)
 	    dist is the 'a' radius of an ellipse, the axial ratio
 	    d is given by b/a
 	  */
+	  /*****
 	  if(obj->node->helical->axr!=1.0) {
 	    sina=sin(M_PI*angle/180.0);
 	    cosa=cos(M_PI*angle/180.0);
 	    dr = sqrt(ea*ea*eb*eb/(eb*eb*cosa*cosa+ea*ea*sina*sina))-ea;
 	    tmat.tra[1] = dr * sina;
 	    tmat.tra[0] = dr * cosa;
-	    fprintf(stderr,"added additional translation of %f\n",dr);
 	  } else {
 	    tmat.tra[0]=tmat.tra[1]=0.0;
 	  }
+	  ****/
 	  transListAddEntry(&obj->transform_list,&tmat);
-	  fprintf(stderr,"%s\n",transGetAll(&tmat));
 	}
+	structObjUpdateSymview(obj);
       } else {
 	comMessage("no helical symmetry info in dataset\n");
 	return;
