@@ -234,10 +234,7 @@ int shellParseCommand(const char **wl, int wc)
     // TODO pause
 
   } else if(clStrcmp(wl[0],"break")) {
-    if(scrlvl>=0) {
-      Cfree(scrbuf[scrlvl].buf);
-      scrlvl--;
-    }
+    // TODO break;
 
   } else if(clStrcmp(wl[0],"alias")) {
     // define or list aliases

@@ -20,6 +20,13 @@
 
 //static char scal_obj_return[256];
 
+static int add_vertex(struct SCAL2SURF_VERT **list, int *count, int *max, float p[3]);
+static void calc_face_normal(struct SCAL2SURF_FACE *face, struct SCAL2SURF_VERT *vert);
+static void add_face(struct SCAL2SURF_VERT *vert,int indx);
+void check_normal(struct SCAL2SURF_FACE *face,int fi1, int fi3, struct SCAL2SURF_VERT *vert);
+static int check_face_neigh(struct SCAL2SURF_FACE *f1, struct SCAL2SURF_FACE *f2, struct SCAL2SURF_VERT *vert, float b[3]);
+
+
 extern struct GLOBAL_COM com;
 
 int scalObjCommand(dbmScalNode *node,scalObj *obj,int wc,char **wl)
@@ -1647,10 +1654,155 @@ int scalGrad(scalObj *obj, Select *sel)
 
 */
 
+int scalObj2Surf(scalObj *obj,surfObj *surf) 
+{
+  int vc,vcount,vmax;
+  int fc,fcount,fi,tc;
+  struct SCAL2SURF_VERT *vert;
+  struct SCAL2SURF_FACE *face;
+  float ref[3];
+
+  if(obj->type!=SCAL_CONTOUR) {
+    return -1;
+  }
+
+  vmax=obj->point_count*5;
+  vcount=0;
+  vert=Crecalloc(NULL,vmax,sizeof(struct SCAL2SURF_VERT));
+  fcount=obj->face_count;
+  face=Ccalloc(fcount,sizeof(struct SCAL2SURF_FACE));
+
+  fprintf(stderr,"1\n");
+  // optimization possible by using face->pi0, pi1 and pi2
+
+  for(fc=0;fc<fcount;fc++) {
+    // assign vertex index to each face
+    face[fc].i1=add_vertex(&vert,&vcount,&vmax,obj->face[fc].v1);
+    face[fc].i2=add_vertex(&vert,&vcount,&vmax,obj->face[fc].v2);
+    face[fc].i3=add_vertex(&vert,&vcount,&vmax,obj->face[fc].v3);
+    // add the face index to each vertex
+    add_face(&vert[face[fc].i1],fc);
+    add_face(&vert[face[fc].i2],fc);
+    add_face(&vert[face[fc].i3],fc);
+    // calculate the face normals
+    calc_face_normal(&face[fc],vert);
+    face[fc].flag=0;
+    face[fc].fc=0;
+  }
+
+  fprintf(stderr,"2\n");
+
+  // find neighbouring faces
+  // ref vector points from touching edge to opposite point
+  for(fc=0;fc<fcount;fc++) {
+    for(fi=0;fi<vert[face[fc].i1].fc;fi++) {
+      if(check_face_neigh(&face[fc],&face[vert[face[fc].i1].fi[fi]],vert,ref)) {
+	if(face[fc].fc<SCAL2SURF_MAX_FV) {
+	  face[fc].fi[face[fc].fc]=vert[face[fc].i1].fi[fi];
+	  face[fc].ref[3*face[fc].fc+0]=ref[0];
+	  face[fc].ref[3*face[fc].fc+1]=ref[1];
+	  face[fc].ref[3*face[fc].fc+2]=ref[2];
+	  face[fc].fc++;
+	}
+
+      }
+    }
+    for(fi=0;fi<vert[face[fc].i2].fc;fi++) {
+      if(check_face_neigh(&face[fc],&face[vert[face[fc].i2].fi[fi]],vert,ref)) {
+	if(face[fc].fc<SCAL2SURF_MAX_FV) {
+	  face[fc].fi[face[fc].fc]=vert[face[fc].i2].fi[fi];
+	  face[fc].ref[3*face[fc].fc+0]=ref[0];
+	  face[fc].ref[3*face[fc].fc+1]=ref[1];
+	  face[fc].ref[3*face[fc].fc+2]=ref[2];
+	  face[fc].fc++;
+
+	}
+      }
+    }
+    for(fi=0;fi<vert[face[fc].i3].fc;fi++) {
+      if(check_face_neigh(&face[fc],&face[vert[face[fc].i3].fi[fi]],vert,ref)) {
+	if(face[fc].fc<SCAL2SURF_MAX_FV) {
+	  face[fc].fi[face[fc].fc]=vert[face[fc].i3].fi[fi];
+	  face[fc].ref[3*face[fc].fc+0]=ref[0];
+	  face[fc].ref[3*face[fc].fc+1]=ref[1];
+	  face[fc].ref[3*face[fc].fc+2]=ref[2];
+	  face[fc].fc++;
+	} else {
+	  fprintf(stderr,"face_neigh: max fc (%d) reached!\n",SCAL2SURF_MAX_FV);
+	}
+      }
+    }
+  }
+  
+  fprintf(stderr,"3\n");
+  // go recursively through all faces and check normal orientation
+  for(fc=0;fc<fcount;fc++) {
+    for(fi=0;fi<face[fc].fc;fi++) {
+      check_normal(face,fc,fi,vert);
+    }
+  }
+
+  fprintf(stderr,"4\n");
+  // calculate normals based on weighted face normals
+  tc=0;
+  for(vc=0;vc<vcount;vc++) {
+    vert[vc].n[0]=face[vert[vc].fi[0]].n[0];
+    vert[vc].n[1]=face[vert[vc].fi[0]].n[1];
+    vert[vc].n[2]=face[vert[vc].fi[0]].n[2];
+    for(fc=1;fc<vert[vc].fc;fc++) {
+      fi=vert[vc].fi[fc];
+
+      if(matfCalcDot(face[vert[vc].fi[0]].n,face[fi].n)<0) {
+	tc++;
+	//vert[vc].n[0]=10.0;
+	//vert[vc].n[1]=10.0;
+	//vert[vc].n[2]=10.0;
+      } else {
+      vert[vc].n[0]+=face[fi].n[0];
+      vert[vc].n[1]+=face[fi].n[1];
+      vert[vc].n[2]+=face[fi].n[2];
+      }
+    }
+    matfNormalize(vert[vc].n,vert[vc].n);
+    //    fprintf(stderr,"%d %f %f %f\n",vert[vc].fc,vert[vc].n[0],vert[vc].n[1],vert[vc].n[2]);
+  }
+
+  fprintf(stderr,"%d missmatches in vertice normals\n",tc);
+
+  fprintf(stderr,"5\n");
+  for(fc=0;fc<fcount;fc++) {
+    obj->face[fc].v1[0]=vert[face[fc].i1].p[0];
+    obj->face[fc].v1[1]=vert[face[fc].i1].p[1];
+    obj->face[fc].v1[2]=vert[face[fc].i1].p[2];
+    obj->face[fc].v2[0]=vert[face[fc].i2].p[0];
+    obj->face[fc].v2[1]=vert[face[fc].i2].p[1];
+    obj->face[fc].v2[2]=vert[face[fc].i2].p[2];
+    obj->face[fc].v3[0]=vert[face[fc].i3].p[0];
+    obj->face[fc].v3[1]=vert[face[fc].i3].p[1];
+    obj->face[fc].v3[2]=vert[face[fc].i3].p[2];
+
+    obj->face[fc].n1[0]=vert[face[fc].i1].n[0];
+    obj->face[fc].n1[1]=vert[face[fc].i1].n[1];
+    obj->face[fc].n1[2]=vert[face[fc].i1].n[2];
+    obj->face[fc].n2[0]=vert[face[fc].i2].n[0];
+    obj->face[fc].n2[1]=vert[face[fc].i2].n[1];
+    obj->face[fc].n2[2]=vert[face[fc].i2].n[2];
+    obj->face[fc].n3[0]=vert[face[fc].i3].n[0];
+    obj->face[fc].n3[1]=vert[face[fc].i3].n[1];
+    obj->face[fc].n3[2]=vert[face[fc].i3].n[2];
+  }
+
+  Cfree(face);
+  Cfree(vert);
+
+  return 0;
+}
+
+
 static int add_vertex(struct SCAL2SURF_VERT **list, int *count, int *max, float p[3]) 
 {
   int n;
-  float dx,dy,dz,eps=0.001;
+  float dx,dy,dz,eps=1e-8;
 
   // either find already existing vertex
   // or add new
@@ -1689,49 +1841,58 @@ static void calc_face_normal(struct SCAL2SURF_FACE *face, struct SCAL2SURF_VERT 
 
   // from the three vertices calculate the face area
   // and the normal vector
-  v1[0]=vert[face->i2].p[0]-vert[face->i1].p[0];
-  v1[1]=vert[face->i2].p[1]-vert[face->i1].p[1];
-  v1[2]=vert[face->i2].p[2]-vert[face->i1].p[2];
-  v2[0]=vert[face->i3].p[0]-vert[face->i1].p[0];
-  v2[1]=vert[face->i3].p[1]-vert[face->i1].p[1];
-  v2[2]=vert[face->i3].p[2]-vert[face->i1].p[2];
+  v2[0]=vert[face->i2].p[0]-vert[face->i1].p[0];
+  v2[1]=vert[face->i2].p[1]-vert[face->i1].p[1];
+  v2[2]=vert[face->i2].p[2]-vert[face->i1].p[2];
+  v1[0]=vert[face->i3].p[0]-vert[face->i1].p[0];
+  v1[1]=vert[face->i3].p[1]-vert[face->i1].p[1];
+  v1[2]=vert[face->i3].p[2]-vert[face->i1].p[2];
 
   face->area=matCalcTriArea(vert[face->i1].p,vert[face->i2].p,vert[face->i3].p);
   if(face->area==0.0) {
-    face->area=0.001;
+    fprintf(stderr,"face area of zero!\n");
+    face->area=1.0;
   }
   matfCalcCross(v2,v1,nn);
   matfNormalize(nn,face->n);
 }
 
-void add_face(struct SCAL2SURF_VERT *vert,int indx) 
+static void add_face(struct SCAL2SURF_VERT *vert,int indx) 
 {
   if(vert->fc<SCAL2SURF_MAX_FV) {
     vert->fi[vert->fc++]=indx;
+  } else {
+    fprintf(stderr,"add_face: max fc (%d) reached!\n",SCAL2SURF_MAX_FV);
   }
 }
 
-void check_normal(struct SCAL2SURF_FACE *face,int fi1, int fi3, struct SCAL2SURF_VERT *vert)
+void check_normal(struct SCAL2SURF_FACE *face,int fr, int fci, struct SCAL2SURF_VERT *vert)
 {
   int fc;
   static int i,fi2;
   static float v1[3],v2[3];
     
-  // fi1 one is the reference, fi3 index to the current face
-  fi2=face[fi1].fi[fi3];
+  // fr one is the reference, fci index to the current face
+  fi2=face[fr].fi[fci];
   
-  if(!face[fi2].flag) {
-    face[fi2].flag=1;
+  if(face[fi2].flag<10) {
+    face[fi2].flag++;
 
-    // NOT WORKING
+    /*
+      compare current face to reference, if 
+      angle between normals >90 deg, swap
+      two face indices to change orientation
+      of triangle, then recalc normal
+    */
 
-    if((matfCalcDot(face[fi1].n,face[fi2].n)*matfCalcDot(v1,v2))>0) {
+    if((matfCalcDot(face[fr].n,face[fi2].n)<0.0)) {
       i=face[fi2].i2;
       face[fi2].i2=face[fi2].i3;
       face[fi2].i3=i;
       calc_face_normal(&face[fi2],vert);
     }
     
+    // check all neighbours, using current face as reference
     for(fc=0;fc<face[fi2].fc;fc++) {
       check_normal(face,fi2,fc,vert);
     }
@@ -1745,60 +1906,60 @@ static int check_face_neigh(struct SCAL2SURF_FACE *f1, struct SCAL2SURF_FACE *f2
   int t1,t2;
 
   // TODO init t1 and t2, use |= instead of &= ???
+  t1=t2=0;
 
   if(f1->i1==f2->i1) {
-    t1&=0x1; t2&=0x1;
+    t1+=0x1; t2+=0x1;
+    c++;
+  } else if(f1->i1==f2->i2) {
+    t1+=0x1; t2+=0x2;
+    c++;
+  } else if(f1->i1==f2->i3) {
+    t1+=0x1; t2+=0x4;
     c++;
   }
-  if(f1->i1==f2->i2) {
-    t1&=0x1; t2&=0x2;
-    c++;
-  }
-  if(f1->i1==f2->i3) {
-    t1&=0x1; t2&=0x4;
-    c++;
-  }
+
   if(f1->i2==f2->i1) {
-    t1&=0x2; t2&=0x1;
+    t1+=0x2; t2+=0x1;
+    c++;
+  } else if(f1->i2==f2->i2) {
+    t1+=0x2; t2+=0x2;
+    c++;
+  } else if(f1->i2==f2->i3) {
+    t1+=0x2; t2+=0x4;
     c++;
   }
-  if(f1->i2==f2->i2) {
-    t1&=0x2; t2&=0x2;
-    c++;
-  }
-  if(f1->i2==f2->i3) {
-    t1&=0x2; t2&=0x4;
-    c++;
-  }
+
   if(f1->i3==f2->i1) {
-    t1&=0x4; t2&=0x1;
+    t1+=0x4; t2+=0x1;
     c++;
-  }
-  if(f1->i3==f2->i2) {
-    t1&=0x4; t2&=0x2;
+  } else if(f1->i3==f2->i2) {
+    t1+=0x4; t2+=0x2;
     c++;
-  }
-  if(f1->i3==f2->i3) {
-    t1&=0x4; t2&=0x4;
+  } else if(f1->i3==f2->i3) {
+    t1+=0x4; t2+=0x4;
     c++;
   }
 
   if(c==2) {
     if(t1==0x3) {
-      // i3
+      // i1+i2 are neigh, i3 is opposite
       p1=vert[f1->i3].p;
       p2=vert[f1->i2].p;
       p3=vert[f1->i1].p;
     } else if(t1==0x5) {
-      // i2
+      // i2 opposite
       p1=vert[f1->i2].p;
       p2=vert[f1->i3].p;
       p3=vert[f1->i1].p;
-    } else {
-      // i1
+    } else if(t1==0x6) {
+      // i1 opposite
       p1=vert[f1->i1].p;
       p2=vert[f1->i2].p;
       p3=vert[f1->i3].p;
+    } else {
+      //fprintf(stderr,"internal error (%x)\n",t1);
+      return 0;
     }
 
     b[0]=p1[0]-(p3[0]+p2[0])*0.5;
@@ -1811,138 +1972,3 @@ static int check_face_neigh(struct SCAL2SURF_FACE *f1, struct SCAL2SURF_FACE *f2
   return 0;
 }
 
-int scalObj2Surf(scalObj *obj,surfObj *surf) 
-{
-  int vc,vcount,vmax;
-  int fc,fcount,fi;
-  struct SCAL2SURF_VERT *vert;
-  struct SCAL2SURF_FACE *face;
-  float ref[3];
-
-  if(obj->type!=SCAL_CONTOUR) {
-    return -1;
-  }
-
-  vmax=obj->point_count;
-  vcount=0;
-  vert=Crecalloc(NULL,vmax,sizeof(struct SCAL2SURF_VERT));
-  fcount=obj->face_count;
-  face=Ccalloc(fcount,sizeof(struct SCAL2SURF_FACE));
-
-  fprintf(stderr,"1\n");
-  // optimization possible by using face->pi0, pi1 and pi2
-
-  for(fc=0;fc<fcount;fc++) {
-    // assign vertex index to each face
-    face[fc].i1=add_vertex(&vert,&vcount,&vmax,obj->face[fc].v1);
-    face[fc].i2=add_vertex(&vert,&vcount,&vmax,obj->face[fc].v2);
-    face[fc].i3=add_vertex(&vert,&vcount,&vmax,obj->face[fc].v3);
-    // add the face index to each vertex
-    add_face(&vert[face[fc].i1],fc);
-    add_face(&vert[face[fc].i2],fc);
-    add_face(&vert[face[fc].i3],fc);
-    // calculate the face normals
-    calc_face_normal(&face[fc],vert);
-    face[fc].flag=0;
-    face[fc].fc=0;
-  }
-
-  // find neighbouring faces
-  for(fc=0;fc<fcount;fc++) {
-    for(fi=0;fi<vert[face[fc].i1].fc;fi++) {
-      if(check_face_neigh(&face[fc],&face[vert[face[fc].i1].fi[fi]],vert,ref)) {
-	if(face[fc].fc<SCAL2SURF_MAX_FV) {
-	  face[fc].fi[face[fc].fc]=vert[face[fc].i1].fi[fi];
-	  face[fc].ref[3*face[fc].fc+0]=ref[0];
-	  face[fc].ref[3*face[fc].fc+1]=ref[1];
-	  face[fc].ref[3*face[fc].fc+2]=ref[2];
-	  face[fc].fc++;
-	}
-
-      }
-    }
-    for(fi=0;fi<vert[face[fc].i2].fc;fi++) {
-      if(check_face_neigh(&face[fc],&face[vert[face[fc].i2].fi[fi]],vert,ref)) {
-	if(face[fc].fc<SCAL2SURF_MAX_FV) {
-	  face[fc].fi[face[fc].fc]=vert[face[fc].i2].fi[fi];
-	  face[fc].ref[3*face[fc].fc+0]=ref[0];
-	  face[fc].ref[3*face[fc].fc+1]=ref[1];
-	  face[fc].ref[3*face[fc].fc+2]=ref[2];
-	  face[fc].fc++;
-
-	}
-      }
-    }
-    for(fi=0;fi<vert[face[fc].i3].fc;fi++) {
-      if(check_face_neigh(&face[fc],&face[vert[face[fc].i3].fi[fi]],vert,ref)) {
-	if(face[fc].fc<SCAL2SURF_MAX_FV) {
-	  face[fc].fi[face[fc].fc]=vert[face[fc].i3].fi[fi];
-	  face[fc].ref[3*face[fc].fc+0]=ref[0];
-	  face[fc].ref[3*face[fc].fc+1]=ref[1];
-	  face[fc].ref[3*face[fc].fc+2]=ref[2];
-	  face[fc].fc++;
-	}
-      }
-    }
-  }
-  
-  fprintf(stderr,"2\n");
-  // go recursively through all faces and check normal orientation
-  for(fc=0;fc<fcount;fc++) {
-    for(fi=0;fi<face[fc].fc;fi++) {
-      check_normal(face,fc,fi,vert);
-    }
-  }
-
-  fprintf(stderr,"3\n");
-  // calculate normals based on weighted face normals
-  for(vc=0;vc<vcount;vc++) {
-    vert[vc].n[0]=0.0;
-    vert[vc].n[1]=0.0;
-    vert[vc].n[2]=0.0;
-    for(fc=0;fc<vert[vc].fc;fc++) {
-      fi=vert[vc].fi[fc];
-
-      vert[vc].n[0]+=face[fi].n[0]/face[fi].area;
-      vert[vc].n[1]+=face[fi].n[1]/face[fi].area;
-      vert[vc].n[2]+=face[fi].n[2]/face[fi].area;
-
-      /*
-      vert[vc].n[0]+=face[fi].n[0];
-      vert[vc].n[1]+=face[fi].n[1];
-      vert[vc].n[2]+=face[fi].n[2];
-      */
-    }
-    matfNormalize(vert[vc].n,vert[vc].n);
-    //    fprintf(stderr,"%d %f %f %f\n",vert[vc].fc,vert[vc].n[0],vert[vc].n[1],vert[vc].n[2]);
-  }
-
-  fprintf(stderr,"4\n");
-  for(fc=0;fc<fcount;fc++) {
-    obj->face[fc].v1[0]=vert[face[fc].i1].p[0];
-    obj->face[fc].v1[1]=vert[face[fc].i1].p[1];
-    obj->face[fc].v1[2]=vert[face[fc].i1].p[2];
-    obj->face[fc].v2[0]=vert[face[fc].i2].p[0];
-    obj->face[fc].v2[1]=vert[face[fc].i2].p[1];
-    obj->face[fc].v2[2]=vert[face[fc].i2].p[2];
-    obj->face[fc].v3[0]=vert[face[fc].i3].p[0];
-    obj->face[fc].v3[1]=vert[face[fc].i3].p[1];
-    obj->face[fc].v3[2]=vert[face[fc].i3].p[2];
-
-    obj->face[fc].n1[0]=vert[face[fc].i1].n[0];
-    obj->face[fc].n1[1]=vert[face[fc].i1].n[1];
-    obj->face[fc].n1[2]=vert[face[fc].i1].n[2];
-    obj->face[fc].n2[0]=vert[face[fc].i2].n[0];
-    obj->face[fc].n2[1]=vert[face[fc].i2].n[1];
-    obj->face[fc].n2[2]=vert[face[fc].i2].n[2];
-    obj->face[fc].n3[0]=vert[face[fc].i3].n[0];
-    obj->face[fc].n3[1]=vert[face[fc].i3].n[1];
-    obj->face[fc].n3[2]=vert[face[fc].i3].n[2];
-  }
-
-  Cfree(face);
-  Cfree(vert);
-
-  return 0;
-
-}

@@ -89,7 +89,7 @@ struct SCAL_SLAB {
 
 // 2 structs for contour to surface conversion
 
-#define SCAL2SURF_MAX_FV 8
+#define SCAL2SURF_MAX_FV 16
 
 struct SCAL2SURF_VERT {
   float p[3],n[3]; // position and normal

@@ -168,7 +168,9 @@ int scalDrawObj(scalObj *obj)
       glEnable(GL_LIGHTING);
 
     } else if(obj->render.mode==RENDER_SURFACE) {
+
       // RENDER WITH FULL SURFACE MODE
+
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
       glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
