@@ -150,7 +150,6 @@ export OPTIONS
 export .SUFFIXES
 
 DATE = `date +"%Y%m%d"`
-MACH = `uname -m`
 
 sinclude $(GUI)/make.addon
 
