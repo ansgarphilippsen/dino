@@ -15,6 +15,8 @@
 				F530F03E034928A301FB7A39,
 				F550C2F503400B2A01808B89,
 				F550C2F403400B2A01808B89,
+				56F7395F04FE4ED300985453,
+				56F7395E04FE4ED300985453,
 				F528331A02491AD301FB7A39,
 				F528331902491AD301FB7A39,
 				F52A76D002C09DA9019813D9,
@@ -327,6 +329,7 @@
 				F56D6CCD034CC48001FB7A39,
 				56597ECE0438BD1E00FB7A39,
 				56268E1A0466D3D6009854CB,
+				56F7396004FE4ED400985453,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -421,6 +424,7 @@
 				F56D6CD0034CC98A01FB7A39,
 				56597ECD0438BD1E00FB7A39,
 				56268E190466D3D6009854CB,
+				56F7396104FE4ED400985453,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -521,6 +525,30 @@
 		};
 		56597ECE0438BD1E00FB7A39 = {
 			fileRef = 56597ECC0438BD1E00FB7A39;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		56F7395E04FE4ED300985453 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = GFXWindow.h;
+			refType = 4;
+		};
+		56F7395F04FE4ED300985453 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = GFXWindow.m;
+			refType = 4;
+		};
+		56F7396004FE4ED400985453 = {
+			fileRef = 56F7395E04FE4ED300985453;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		56F7396104FE4ED400985453 = {
+			fileRef = 56F7395F04FE4ED300985453;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2627,13 +2655,13 @@
 		F550C2F403400B2A01808B89 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = DinoObject.h;
+			path = DataObject.h;
 			refType = 4;
 		};
 		F550C2F503400B2A01808B89 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = DinoObject.m;
+			path = DataObject.m;
 			refType = 4;
 		};
 		F550C2F603400B2A01808B89 = {

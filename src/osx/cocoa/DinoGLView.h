@@ -24,6 +24,7 @@
 - (void)otherMouseDown:(NSEvent *)theEvent;
 - (void)otherMouseUp:(NSEvent *)theEvent;
 - (void)otherMouseDragged:(NSEvent *)theEvent;
+- (void)keyDown:(NSEvent *)theEvent;
 
 @end
 

@@ -27,6 +27,7 @@
 - (void)command:(NSString *)theCommand from:(id)sender;
 - (void)showCommandResult:(NSString *)tmp;
 - (void)notifyUser:(NSString *)message returnPrompt:(BOOL)flag;
+- (void)setCLIWindowAsKeyWindow;
 // Update Display
 - (void)swapBuffers;
 - (void)updateStatusBox:(NSString *)text;

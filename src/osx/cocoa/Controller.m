@@ -25,16 +25,20 @@ static id dinoController;
     dinoController=self;
 
     [dinoCLI setCommandHandler:dinoController];
-    NSDrawer *CLIDrawer = [[[dinoGL window] drawers] objectAtIndex:0];
-    [CLIDrawer setContentSize:NSMakeSize(0,160)];	
-    [CLIDrawer openOnEdge:NSMinYEdge];
+//    NSDrawer *CLIDrawer = [[[dinoGL window] drawers] objectAtIndex:0];
+//    [CLIDrawer setContentSize:NSMakeSize(0,160)];	
+//    [CLIDrawer openOnEdge:NSMinYEdge];
 
+    [[dinoGL window] setFrameAutosaveName:@"GFXWindowPref"];
+    [[dinoGL window] setFrameUsingName:@"GFXWindowPref"];
+    [[dinoCLI window] setFrameAutosaveName:@"CLIWindowPref"];
+    [[dinoCLI window] setFrameUsingName:@"CLIWindowPref"];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
-    [[dinoGL window] makeKeyWindow];
-    
+    [[dinoCLI window] makeKeyWindow];
+
     [self notifyUser:[NSString stringWithFormat:@"Welcome to dino v%s (http://www.dino3d.org)",VERSION] returnPrompt:NO];
     [self updateVersionBox:[NSString stringWithFormat:@"dino v%s",VERSION]];
 	
@@ -75,6 +79,11 @@ static id dinoController;
 - (void)notifyUser:(NSString *)message returnPrompt:(BOOL)flag
 {
     [dinoCLI notifyUser:message returnPrompt:flag];
+}
+
+- (void)setCLIWindowAsKeyWindow
+{
+    [[dinoCLI window] makeKeyWindow];
 }
 
 //------------------------------------------------------

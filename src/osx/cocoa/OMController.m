@@ -1,7 +1,7 @@
 #import "OMController.h"
 
 #import "Controller.h"
-#import "DinoObject.h"
+#import "DataObject.h"
 #include "gui_osx.h"
 #include "gui_ext.h"
 
@@ -27,6 +27,10 @@ static id dinoOMController;
     [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:[toggleButton cell]];
 //    [dinoOM setVerticalMotionCanBeginDrag:YES];
 //    [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
+
+    [[dinoOM window] setFrameAutosaveName:@"OMWindowPref"];
+    [[dinoOM window] setFrameUsingName:@"OMWindowPref"];
+    
 }
 
 - (void)dealloc{
@@ -61,7 +65,7 @@ static id dinoOMController;
 
 - (void)omAddObj:(NSString *)name inDB:(NSString *)db
 {
-    DinoObject *anObject = [[[DinoObject alloc] initWithName:name inDataSet:db] autorelease];
+    DataObject *anObject = [[[DataObject alloc] initWithName:name inDataSet:db] autorelease];
 
     [[self dataSetOfName:db] addChildren:anObject];
     [dinoOM reloadData];

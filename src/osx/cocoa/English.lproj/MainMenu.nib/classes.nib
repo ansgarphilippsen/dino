@@ -38,6 +38,7 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
+        {CLASS = DinoGFXWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
         {
             CLASS = DinoGLView; 
             LANGUAGE = ObjC; 

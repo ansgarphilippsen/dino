@@ -11,7 +11,8 @@ struct GUI
 };
 
 void guiTimeProc();
-void gui_mouse_input(int eventType, int mask, int x, int y);
+void gfx_mouse_input(int eventType, int mask, int x, int y);
+void gfx_keyboard_input(int eventType, int mask);
 //Object Menu
 int omAddDB(const char *name);
 int omDelDB(const char *name);

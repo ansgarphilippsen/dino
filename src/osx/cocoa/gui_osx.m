@@ -171,7 +171,7 @@ void guitWrite(const char *s)
 
 ****************************************/
 
-void gui_mouse_input(int eventType, int mask, int x, int y)
+void gfx_mouse_input(int eventType, int mask, int x, int y)
 {
     cmiToken t;
     int val[5];
@@ -189,6 +189,59 @@ void gui_mouse_input(int eventType, int mask, int x, int y)
 
     cmiSubmit(&t);
 }
+
+/*void glx_keyboard_input(int key)
+{
+    cmiToken t;
+    int val[3];
+
+    t.target=CMI_TARGET_COM;
+    t.command=CMI_INPUT;
+    t.value=val;
+
+    val[0]=CMI_INPUT_KEYBOARD;
+    val[1]=CMI_BUTTON_RELEASE;
+
+    // somehow get the key value from the event into key
+
+    // replace XK_* with OSX macros
+    switch(key) {
+	case XK_Return:
+	case XK_Linefeed:
+	case XK_KP_Enter:
+	    val[2]=CMI_KEY_RETURN;
+	    cmiSubmit(&t);
+	    break;
+	case XK_Delete:
+	    val[2]=CMI_KEY_DELETE;
+	    cmiSubmit(&t);
+	    break;
+	case XK_Up:
+	    val[2]=CMI_KEY_UP;
+	    cmiSubmit(&t);
+	    break;
+	case XK_Down:
+	    val[2]=CMI_KEY_DOWN;
+	    cmiSubmit(&t);
+	    break;
+	case XK_Left:
+	    val[2]=CMI_KEY_LEFT;
+	    cmiSubmit(&t);
+	    break;
+	case XK_Right:
+	    val[2]=CMI_KEY_RIGHT;
+	    cmiSubmit(&t);
+	    break;
+	default:
+	{
+	    for(i=0;i<kcount;i++) {
+		val[2]=(int)kbuf[i];
+		cmiSubmit(&t);
+	    }
+	}
+    }    
+
+}*/
 
 /***************************************
 

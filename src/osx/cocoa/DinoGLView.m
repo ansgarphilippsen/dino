@@ -49,6 +49,7 @@
     eventType = CMI_BUTTON_PRESS;
     mask = CMI_BUTTON1_MASK;
     if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
+    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
 
@@ -56,7 +57,7 @@
     px = pt.x;
     py = frame.size.height - pt.y;
 
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+    gfx_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
@@ -71,6 +72,7 @@
     eventType = CMI_BUTTON_RELEASE;
     mask = CMI_BUTTON1_MASK;
     if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
+    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
@@ -78,7 +80,7 @@
     px = pt.x;
     py = frame.size.height - pt.y;
 
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+    gfx_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
@@ -93,6 +95,7 @@
     eventType = CMI_MOTION;
     mask = CMI_BUTTON1_MASK;
     if(flags & NSCommandKeyMask) mask = CMI_BUTTON2_MASK;
+    if(flags & NSAlphaShiftKeyMask) mask += CMI_CNTRL_MASK;
     if(flags & NSShiftKeyMask) mask += CMI_SHIFT_MASK;
     if(flags & NSAlternateKeyMask) mask += CMI_BUTTON2_MASK;
     
@@ -100,7 +103,7 @@
     px = pt.x;
     py = frame.size.height - pt.y;
 
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+    gfx_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
 }
 
 - (void)otherMouseDown:(NSEvent *)theEvent
@@ -120,7 +123,7 @@
     px = pt.x;
     py = frame.size.height - pt.y;
 
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+    gfx_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
 }
 
 - (void)otherMouseUp:(NSEvent *)theEvent
@@ -140,7 +143,7 @@
     px = pt.x;
     py = frame.size.height - pt.y;
 
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+    gfx_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
 }
 
 - (void)otherMouseDragged:(NSEvent *)theEvent
@@ -160,7 +163,18 @@
     px = pt.x;
     py = frame.size.height - pt.y;
 
-    gui_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+    gfx_mouse_input((int)eventType, (int)mask, (int)px, (int)py);
+}
+
+//---------------------------------------------------------------------------------
+// keyboard input
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    [[Controller dinoController] updateStatusBox:[theEvent characters]];
+
+    //    NSString *input = [theEvent characters];
+//    glx_keyboard_input((int)eventType);
 }
 
 @end
