@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 
   cmiInit();
 
-  gfxCMIInit();
+  gfxInit();
 
   if(guiInit(argc, argv)<0) {
     return -1;

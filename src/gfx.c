@@ -248,6 +248,9 @@ int gfxInit()
   gfx.limz2=0;
 #endif
 
+#ifdef USE_CMI
+  gfxCMIInit();
+#endif
 
   return 0;
 }
@@ -257,6 +260,7 @@ int gfxCMIInit(void)
 {
   // register CMI callback
   cmiRegisterCallback(CMI_TARGET_GFX,gfxCMICallback);
+  return 0;
 }
 #endif
 
