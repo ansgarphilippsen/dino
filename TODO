@@ -3,13 +3,25 @@ TODO LIST FOR DINO
 This should be implemented / fixed asap
 =======================================
 
+OpenDX scalar field format
+
+filer dataset name to replace . with _
+
+add flag to POVray output to write out untransformed coordinates
+
+add -selection to attachment (pass pointer to select)
+
+add range flag clamp to all ds (e.g surf)
+
+allow underscore in vars
+
 *ALPHA*.dinorc
 
 scalar field dataset offset !!!!!!!
 
-naming detail vs detail2
+*OK*naming detail vs detail2
 
-add flag to -range that will either clamp or ignore outside values
+*OK*add flag to -range that will either clamp or ignore outside values
 
 *ALPHA* add helix cylinders!
 
@@ -32,7 +44,7 @@ check transparency for lines/contour (back/front sorting)
 
 *OK* render intpol not working
 
-check colors on SGI
+*OK*check colors on SGI
 
 delete should accept wildcards
 
@@ -42,7 +54,9 @@ scene:lightN grab INPUTDEVICE
 
 set labels on/off with command plus selection possible
 
-use '-arch XXX' flag for load to identify architecture and to 
+*OK*automatic swapping
+
+*DEPRECATED*use '-arch XXX' flag for load to identify architecture and to 
 automatically decide wether to swap or not (MIPS ALPHA PPC INTEL and MSB 
 and LSB)
  
