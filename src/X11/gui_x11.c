@@ -53,7 +53,7 @@ user menu
 #endif
 
 static int init_main(int argc, char **argv);
-static int init_visual(int sf);
+static int init_visual(int sf,int st);
 static Colormap get_colormap(XVisualInfo *vinfo);
 static void glx_init(Widget ww, XtPointer clientData, XtPointer call);
 static void glx_expose(Widget ww, XtPointer clientData, XtPointer call);
@@ -80,7 +80,7 @@ struct GUI gui;
 extern struct OBJECT_MENU om;
 extern struct USER_MENU um;
 
-extern int debug_mode;
+extern int debug_mode,gfx_flags;
 
 static String fallback_resources[]={
   "*sgiMode: True",
@@ -176,11 +176,22 @@ int guiInit(int argc, char **argv)
   }
 #endif
   
-  ret=init_visual(use_stereo);
+  // try with stencil buffer
+  ret=init_visual(use_stereo,1);
+  if(ret<0) {
+    gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
+    ret=init_visual(use_stereo,0);
+  }
+
 
 #ifdef SGI_STEREO
   if(ret<0 && use_stereo) {
-    ret=init_visual(0);
+    ret=init_visual(0,1);
+    if(ret<0) {
+      gfx_flags=gfx_flags | DINO_FLAG_NOSTENCIL;
+      ret=init_visual(0,0);
+    }
+
     stereo_available=SGI_STEREO_LOW;
   }
 #endif
@@ -810,7 +821,7 @@ static int init_colordb()
   find the best X11 visual available
 */
 
-static int init_visual(int use_stereo)
+static int init_visual(int use_stereo, int use_stencil)
 {
   int buf[64];
   int bufc=0,i,j;
@@ -821,13 +832,20 @@ static int init_visual(int use_stereo)
 
   buf[bufc++]=GLX_RGBA;
 #ifdef SGI_STEREO
-  if(use_stereo)
+  if(use_stereo) {
     buf[bufc++]=GLX_STEREO;
+  } else {
+    debmsg("stereo deactivated");
+  }
 #endif
   buf[bufc++]=GLX_DOUBLEBUFFER;
 #ifdef RENDER_SOLID
-  buf[bufc++]=GLX_STENCIL_SIZE;
-  buf[bufc++]=1;
+  if(use_stencil) {
+    buf[bufc++]=GLX_STENCIL_SIZE;
+    buf[bufc++]=1;
+  } else {
+    debmsg("stencil buffer deactivated\n");
+  }
 #endif
   buf[bufc++]=GLX_DEPTH_SIZE;
   depthi=bufc++;
@@ -845,14 +863,17 @@ static int init_visual(int use_stereo)
       buf[redi]=c[j];
       buf[bluei]=c[j];
       buf[greeni]=c[j];
+      sprintf(message,"trying visual with depth %d and rgba %d",d[i],c[j]);
+      debmsg(message);
       gui.visinfo=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
       if(gui.visinfo!=NULL) {
-	sprintf(message,"found visual with depth %d and rgba %d",d[i],c[j]);
+	sprintf(message,"using this visual");
 	debmsg(message);
 	return 0;
       }
     }
   }
+  debmsg("no suitable visual found");
   return -1;
 }
 

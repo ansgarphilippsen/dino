@@ -11,10 +11,15 @@ typedef char* string;
 
 #define VERSION "0.8.5-4"
 
+#define DINO_FLAG_NOGFX     1<<0
+#define DINO_FLAG_NOSTENCIL 1<<1
+#define DINO_FLAG_NOSTEREO  1<<2
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+int dinoParseArgs(int argc, char **argv);
 int dinoMain(int argc, char **argv);
 void dinoExit(int);
 

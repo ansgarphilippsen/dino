@@ -90,6 +90,9 @@ struct GFX
 };
 
 int gfxInit(void);
+#ifdef USE_CMI
+int gfxCMIInit(void);
+#endif
 int gfxGLInit(void);
 
 int gfxRedraw(void);

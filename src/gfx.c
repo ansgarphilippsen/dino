@@ -174,11 +174,6 @@ int gfxInit()
   int i;
   debmsg("gfxInit: filling defaults");
 
-#ifdef USE_CMI
-  // register CMI callback
-  cmiRegisterCallback(CMI_TARGET_GFX,gfxCMICallback);
-#endif
-
 
   gfx.mode=GFX_PERSP;
 
@@ -256,6 +251,14 @@ int gfxInit()
 
   return 0;
 }
+
+#ifdef USE_CMI
+int gfxCMIInit(void)
+{
+  // register CMI callback
+  cmiRegisterCallback(CMI_TARGET_GFX,gfxCMICallback);
+}
+#endif
 
 
 /******************************************

@@ -40,7 +40,7 @@ const char usage[]={"Usage: dino [-debug] [-nostereo] [-help] [-s script] [-log 
 
 char welcome[]={"Welcome to dino v%s    (http://www.dino3d.org)\n\n"};
 
-int debug_mode,gfx_mode,stereo_mode,video_mode, shell_mode;
+int debug_mode,gfx_mode,stereo_mode,video_mode, shell_mode,gfx_flags;
 
 /***************************
 
@@ -59,31 +59,32 @@ int debug_mode,gfx_mode,stereo_mode,video_mode, shell_mode;
 
 ****************************/
 
-int dinoMain(int argc,char **argv)
+static int startup_flag=1;
+static char logfile[128];
+static char startup[256];
+static char script[256];
+
+int dinoParseArgs(int argc, char **argv)
 {
-  int gf,i;
-  char files[64][256];
-  char script[256];
+  int i;
   char expr[256];
-  char startup[256];
-  int filec;
-  int startup_flag=1;
-  char logfile[128];
 
   gfx_mode=1;
   stereo_mode=1;
   debug_mode=0;
   video_mode=0;
   shell_mode=0;
+  gfx_flags=0;
 
-  strcpy(logfile,"logfile.dino");
   fprintf(stderr,welcome,VERSION);
+
+  strcpy(script,"");
+  strcpy(logfile,"logfile.dino");
 
   /* go through options */
   debmsg("checking command line");
   i=1;
-  filec=0;
-  strcpy(script,"");
+  //  filec=0;
   while(i<argc) {
     if(argv[i][0]=='-' ||
        argv[i][0]=='+') {
@@ -100,6 +101,11 @@ int dinoMain(int argc,char **argv)
         fprintf(stderr,"debug mode ON\n");
       } else if(!strcmp(argv[i],"-nostereo")) {
         stereo_mode=0;
+	gfx_flags+=DINO_FLAG_NOSTEREO;
+      } else if(!strcmp(argv[i],"-nostencil")) {
+	gfx_flags+=DINO_FLAG_NOSTENCIL;
+      } else if(!strcmp(argv[i],"-nogfx")) {
+	gfx_flags+=DINO_FLAG_NOGFX;
       } else if(!strcmp(argv[i],"-vidmode")) {
         if(i+1>=argc) {
           fprintf(stderr,"error: expected argument after -vidmode\n");
@@ -133,20 +139,22 @@ int dinoMain(int argc,char **argv)
         exit(-1);
       }
     } else {
-      strcpy(files[filec++],argv[i]);
+      fprintf(stderr,"ignored superfluous word %s\n",argv[i]);
     }
     i++;
   }
+  return 0;
+}
  
-#ifdef USE_CMI
-  // debmsg("calling guiInit");
-  //if(guiInit(argc, argv)<0)  return -1;
-#endif
+int dinoMain(int argc,char **argv)
+{
+  int i;
+  char expr[256];
+
   debmsg("calling comInit");
   if(comInit()<0) return -1;
-  // in main.c
-  //debmsg("calling gfxInit");
-  //if(gfxInit()<0) return -1;
+  debmsg("calling gfxInit");
+  if(gfxInit()<0) return -1;
   debmsg("calling dbmInit");
   if(dbmInit()<0) return -1;
   debmsg("calling sceneInit");
@@ -163,10 +171,12 @@ int dinoMain(int argc,char **argv)
     load_startup();
   }
 
+  /*
   for(i=0;i<filec;i++) {
     sprintf(expr,"load %s",files[i]);
     comRawCommand(expr);
   }
+  */
 
   if(strlen(script)>0) {
     sprintf(expr,"@%s",script);

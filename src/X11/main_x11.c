@@ -15,15 +15,17 @@ int main(int argc, char **argv)
 {
   int ret;
 
+  dinoParseArgs(argc,argv);
+
   cmiInit();
 
-  gfxInit();
+  gfxCMIInit();
 
   if(guiInit(argc, argv)<0) {
     return -1;
   }
 
-  dinoMain(argc, argv);
+  dinoMain(argc,argv);
 
   guitInit();
 

@@ -5,11 +5,14 @@
 #endif
 #include <string.h>
 
+#include "dino.h"
 #include "render.h"
 #include "dbm.h"
 #include "com.h"
 #include "cgfx.h"
 #include "mat.h"
+
+extern int gfx_flags;
 
 int renderSet(struct RENDER *render, int owc, char **owl)
 {
@@ -959,25 +962,29 @@ int renderSet(struct RENDER *render, int owc, char **owl)
       }
 #ifdef RENDER_SOLID
     } else if(!strcmp(prop,"solid")) {
-      /********************
-	      solid
-      ********************/
-      if(!strcmp(op,"!")) {
-	render->solid=0;
-      } else if(strlen(op)==0) {
-	render->solid=1;
-      } else if(!strcmp(op,"=")) {
-	if(!strcmp(val,"0") ||
-	   !strcmp(val,"false") ||
-	   !strcmp(val,"off")) {
-	  render->solid=0;
-	} else {
-	  render->solid=1;
-	}
+      if(gfx_flags & DINO_FLAG_NOSTENCIL) {
+	comMessage("Solid rendering not possible on this display: missing stencil buffer\n");
       } else {
-	sprintf(message,"invalid operator %s\n",op);
-	comMessage(message);
-	return -1;
+	/********************
+			     solid
+	********************/
+	if(!strcmp(op,"!")) {
+	  render->solid=0;
+	} else if(strlen(op)==0) {
+	  render->solid=1;
+	} else if(!strcmp(op,"=")) {
+	  if(!strcmp(val,"0") ||
+	     !strcmp(val,"false") ||
+	     !strcmp(val,"off")) {
+	    render->solid=0;
+	  } else {
+	    render->solid=1;
+	  }
+	} else {
+	  sprintf(message,"invalid operator %s\n",op);
+	  comMessage(message);
+	  return -1;
+	}
       }
     } else if(!strcmp(prop,"solidc")) {
       if(strlen(op)==0) {
