@@ -11,9 +11,12 @@
 # FORMAT_RGB
 # FORMAT_VRML
 # SGI_STEREO
+# TCL_SHELL
 
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL
 
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL 
+# use tcl as interpreter
+#OPTIONS += -DTCL_SHELL
 
 # several GUIs, one must be chosen !
 # SDL_GLUT
@@ -29,7 +32,7 @@ MALLOCLIB=
 #STATIC = 1
 
 SRC= dino.c \
-     dbm.c shell.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
+     dbm.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
      cl.c set.c bspline.c transform.c prop.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
@@ -48,14 +51,15 @@ sinclude makedef.$(HOSTTYPE)
 
 # add more stuff depending on OPTIONS
 
-ifneq (,$(findstring BUILD,$(OPTIONS)))
-SRC += build.c
+# which shell to use
+ifneq (,$(findstring TCL_SHELL,$(OPTIONS)))
+SRC += shell_tcl.c
+LOPT += -ltcl
+else
+SRC += shell.c
 endif
 
-ifneq (,$(findstring JAVA_GUI,$(OPTIONS)))
-SRC += jci.c
-endif
-
+# one of the three GUIs: X11, GLUT or SDL
 ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
 SRC += gui_glut.c om_glut.c
 endif
@@ -67,20 +71,34 @@ ifneq (,$(findstring X11_GUI,$(OPTIONS)))
 SRC += extension.c gui_x11.c om_x11.c AppPlus.c
 endif
 
+# special EXPO functionality
 ifneq (,$(findstring EXPO,$(OPTIONS)))
 SRC += autoplay.c
 endif
 
+# test code for imagick image library support
 ifneq (,$(findstring IMAGICK,$(OPTIONS)))
 SRC += imagick.c
 endif
 
+# deprecated code for RGB output
 ifneq (,$(findstring FORMAT_RGB,$(OPTIONS)))
 SRC += ximage_util.c
 endif
 
+# test code for VRML output
 ifneq (,$(findstring FORMAT_VRML,$(OPTIONS)))
 SRC += vrml.c
+endif
+
+# test code for model building
+ifneq (,$(findstring BUILD,$(OPTIONS)))
+SRC += build.c
+endif
+
+# test code for JAVA GUI
+ifneq (,$(findstring JAVA_GUI,$(OPTIONS)))
+SRC += jci.c
 endif
 
 

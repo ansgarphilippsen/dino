@@ -1,6 +1,6 @@
 /***********************************
 
- shell.c
+ shell_tcl.c
 
 ************************************/
 
@@ -25,6 +25,7 @@
 #include <sys/ioctl.h>
 #endif
 
+#include <tcl.h>
 
 #include "dino.h"
 #include "shell.h"
@@ -165,6 +166,9 @@ struct SHELL {
 
   int greedy;
   int prompt_flag;
+
+  Tcl_DString tcl_ds;
+  Tcl_Interp *tcl_interp;
 };
 
 
@@ -1329,7 +1333,6 @@ static int shellParse(int wc, const char **wl,int pos)
     }
   } else if(!strcmp(wl[0],"unalias")) {
   } else {
-    
       /* go through subfunction list, if no match then callback */
     
     if(shell.callback(wc,wl)!=0)
@@ -1618,6 +1621,41 @@ static int shellWorkScript()
 }
 
 
+
+static int shell_unknown_cmd(ClientData clientData,
+		       Tcl_Interp *interp,
+		       int objc, Tcl_Obj *CONST objv[])
+{
+  int argc,i;
+  const char *argv[1024];
+
+  argc=objc-1;
+  for(i=0;i<argc;i++)
+    argv[i]=Tcl_GetString(objv[i+1]);
+
+  shellParse(argc,argv,0);
+  //  fprintf(stderr,"\n%s",comGetReturn());
+
+  //  fprintf(stderr,"caught unknown tcl command\n");
+  Tcl_SetResult(interp,comGetReturn(),TCL_STATIC);
+  return TCL_OK;
+}
+
+static void shell_tcl_init()
+{
+  // tcl stuff
+  shell.tcl_interp=Tcl_CreateInterp();
+
+  Tcl_CreateObjCommand(shell.tcl_interp, "unknown", shell_unknown_cmd,
+		       (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+
+  // unfortunate name clashes are hacked away for now
+  Tcl_DeleteCommand(shell.tcl_interp, "load");
+
+  Tcl_DStringInit(&shell.tcl_ds);
+}
+
+
 /*
   externally visible functions follow
 */
@@ -1833,6 +1871,8 @@ int shellInit(shell_callback func, const char *logfile)
 
   getcwd(shell.cwd,256);
 
+  shell_tcl_init();
+
   return SHELL_OK;
 }
 
@@ -1950,6 +1990,7 @@ int shellWork()
 
   if(shell.prompt_flag)
     shellPrompt();
+
   return 0;
 }
 
@@ -1962,374 +2003,18 @@ int shellWork()
   shellWorkPrompt
   ---------------
 
-  Upon receiving the raw prompt, this funtion will
-  go through it, replacing aliases and variables if
-  necessary. By doing so, it splits the raw prompt
-  into a set of words.
-  The problem here is that the raw prompt -or an exact
-  copy for that matter - cannot be used as a target
-  for the word_list, because subprompt, variables,
-  aliases etc can change the length of the entry.
-  The solution is to create a copy of the raw prompt
-  on the fly, which can then hold the words in one
-  memory area. It is important that there is space for
-  an additional word !
-  This routine is called recursively if a subprompt is
-  encountered, so the memory area for the word list
-  must be allocated dynamically all the time.
+  process raw prompts
 
 *********************************************************/
-enum SHELL_H {SHELL_NONE=0,
-	      SHELL_PRIME,  /* '' */
-	      SHELL_WBRACE, /* {} */
-	      SHELL_SBRACE, /* [] */
-	      SHELL_DPRIME  /* "" */
-};
 
 int shellWorkPrompt(const char *raw_prompt2, int pos, char **result)
 {
-  int i,j,c;
-  string prompt=NULL;
-  int prompt_max,prompt_len;
-  string sub_prompt=NULL;
-  int sub_prompt_max,sub_prompt_len;
-  string raw_prompt;
-  int raw_prompt_len,raw_prompt_max;
-  const char *word[2048]; /* 2048 is the maximal number of words */
-  int wordi[2048];
-  int wc;
-  char var[256];
-#ifdef LINUX
-  int var_c;
-#endif
-#ifdef SGI
-  char var_c,*cp;
-#endif
-#ifdef DEC
-  char var_c,*cp;
-#endif
-#ifdef SUN
-  char var_c,*cp;
-#endif
-  char message[256];
-  int varcheck=0;
-  int error_code=SHELL_OK;
-  char alias[256];
-  int ac1,ac2;
-  int nest_history[1024];
-  int nest_bc[1024];
-  int nest_level;
-  int add_char_flag;
-  int sub_prompt_flag;
-  int exit_flag;
-  char add_char;
-  char *res;
-
-  /* allocate space for copy of raw_prompt */
-  raw_prompt_max=strlen(raw_prompt2)+1024;
-  raw_prompt=Ccalloc(raw_prompt_max,sizeof(char));
-  raw_prompt_len=0;
-
-  strcpy(raw_prompt,raw_prompt2);
-
-  /* allocate space for prompt */
-  prompt_max=strlen(raw_prompt2)+1024;
-  prompt=Ccalloc(prompt_max,sizeof(char));
-  prompt_len=0;
-
-
-  /* main loop over range of raw_prompt */
-
-  c=0;
-  prompt[prompt_len]='\0';
-  wc=0;
-  wordi[wc++]=0;
-
-  /* check for aliases in first word */
-  while(isspace(raw_prompt[c]) && c<strlen(raw_prompt))
-    c++;
-  ac1=c;
-  ac2=0;
-  while(!isspace(raw_prompt[ac1]) && ac1<strlen(raw_prompt)){
-    alias[ac2++]=raw_prompt[ac1++];
-  }
-  alias[ac2]='\0';
-  for(i=0;i<shell.aliasc;i++)
-    if(!strcmp(shell.alias[i].name,alias)) {
-      strcpy(raw_prompt,shell.alias[i].value);
-      strcat(raw_prompt," ");
-      raw_prompt_len=strlen(raw_prompt);
-      for(j=ac2;j<strlen(raw_prompt2);j++)
-	shellAddPrompt(&raw_prompt,&raw_prompt_max,&raw_prompt_len,
-		       raw_prompt2[j]);
-      break;
-
-    }
-  
-
-  nest_history[nest_level=0]=SHELL_NONE;
-
-  do {
-    while(isspace(raw_prompt[c]) && c<strlen(raw_prompt))
-      c++;
-    sub_prompt_flag=0;
-    exit_flag=0;
-    while(c<strlen(raw_prompt)){
-      add_char_flag=1;
-
-      add_char=raw_prompt[c++];
-      if(isspace(add_char)) {
-	if(nest_history[nest_level]==SHELL_NONE) {
-	  exit_flag=1;
-	  add_char_flag=0;
-	} else {
-	  add_char_flag=1;
-	}
-      } else if(add_char=='"') {
-	if(nest_history[nest_level]>SHELL_DPRIME) {
-	  add_char_flag=1;
-	} else {
-	  if(nest_history[nest_level]==SHELL_DPRIME) {
-	    nest_level--;
-	  } else {
-	    nest_history[++nest_level]=SHELL_DPRIME;
-	  }
-	  add_char_flag=0;
-	}      
-      } else if(add_char=='[') {
-	if(nest_history[nest_level]>SHELL_SBRACE) {
-	  add_char_flag=1;
-	} else if(nest_history[nest_level]==SHELL_SBRACE) {
-	  add_char_flag=1;
-	  nest_bc[nest_level]++;
-	} else {
-	  
-	  nest_history[++nest_level]=SHELL_SBRACE;
-
-	  nest_bc[nest_level]=1;
-
-	  /* prepare the subprompt */
-	  sub_prompt_max=strlen(raw_prompt)+1024;
-	  sub_prompt=Ccalloc(sub_prompt_max,sizeof(char));
-	  sub_prompt_len=0;
-	  sub_prompt_flag=1;
-
-	  add_char_flag=0;
-	}
-      } else if(add_char==']') {
-	if(nest_history[nest_level]>SHELL_SBRACE) {
-	  add_char_flag=1;
-	} else if(nest_history[nest_level]==SHELL_SBRACE) {
-	  nest_bc[nest_level]--;
-	  if(nest_bc[nest_level]>0) {
-	    add_char_flag=1;
-	  } else {
-
-	    /* send sub_prompt to evaluation */
-	    if(strlen(sub_prompt)>0) {
-	      if(shellWorkPrompt(sub_prompt,-1,NULL)==SHELL_ERROR) {
-		error_code=SHELL_ERROR;
-	      } else {
-		res=comGetReturn();
-		for(i=0;i<strlen(res);i++) {
-		  shellAddPrompt(&prompt,&prompt_max,&prompt_len,res[i]);
-		}
-	      }
-	    }
-	    nest_level--;
-	    Cfree(sub_prompt);
-	    sub_prompt_flag=0;
-	    add_char_flag=0;
-	  }
-	} else {
-	  shellOut("\nerror during prompt parsing: superfluous ]");
-	  error_code=SHELL_ERROR;
-	}
-      } else if(add_char=='{') {
-	if(nest_history[nest_level]>SHELL_WBRACE) {
-	  add_char_flag=1;
-	} else if(nest_history[nest_level]==SHELL_WBRACE) {
-	  add_char_flag=1;
-	  nest_bc[nest_level]++;
-	} else {
-	  add_char_flag=1;
-	  nest_history[++nest_level]=SHELL_WBRACE;
-	  nest_bc[nest_level]=1;
-	}
-      } else if(add_char=='}') {
-	if(nest_history[nest_level]>SHELL_WBRACE) {
-	  add_char_flag=1;
-	} else if(nest_history[nest_level]==SHELL_WBRACE) {
-	  nest_bc[nest_level]--;
-	  if(nest_bc[nest_level]>0) {
-	    add_char_flag=1;
-	  } else {
-	    nest_level--;
-	    add_char_flag=1;
-	  }
-	} else {
-	  shellOut("\nerror during prompt parsing: superfluous }");
-	  error_code=SHELL_ERROR;
-	}
-	/* prime needed for DNA selection */
-	/**************
-      } else if(add_char=='\'') {
-	if(nest_history[nest_level]>SHELL_PRIME) {
-	  add_char_flag=1;
-	} else if(nest_history[nest_level]==SHELL_PRIME) {
-	  add_char_flag=0;
-	  nest_level--;
-	} else {
-	  add_char_flag=0;
-	  nest_history[++nest_level]=SHELL_PRIME;
-	}
-	*****************/
-      } else if(add_char=='$') {
-	if(nest_history[nest_level]>=SHELL_SBRACE) {
-	  add_char_flag=1;
-	} else {
-	  add_char_flag=0;
-	  /* var detected */
-	  if((++varcheck)>1013) {
-	    shellOut("\nVariable nesting limit reached");
-	    error_code=SHELL_ERROR;
-	  } else {
-	    /* get variable name */
-	    var_c=0;
-	    while(isalnum(raw_prompt[c]) && c<strlen(raw_prompt)) {
-	      var[var_c++]=raw_prompt[c++];
-	    }
-	    var[var_c]='\0';
-	    for(i=0;i<shell.top.var_max;i++)
-	      if(strlen(shell.top.var[i].name)>0) {
-		if(!strcmp(var,shell.top.var[i].name))
-		  break;
-	      }
-	    if(i<shell.top.var_max) {
-	      /* variable found */
-	      for(j=0;j<strlen(shell.top.var[i].value);j++) {
-		shellAddPrompt(&prompt,&prompt_max,&prompt_len,
-			       shell.top.var[i].value[j]);
-	      }
-	    } else {
-	      /* check if numerical variable from script */
-	      if(atoi(var)>0) {
-		if(shell.current->argc>=atoi(var)) {
-		  for(j=0;j<strlen(shell.current->argv[atoi(var)]);j++) {
-		    shellAddPrompt(&prompt,&prompt_max,&prompt_len,
-				   shell.current->argv[atoi(var)][j]);
-		  }
-		} else {
-		  sprintf(message,"\nunknown parameter %d",atoi(var));
-		  shellOut(message);
-		  error_code=SHELL_ERROR;
-		}
-	      } else {
-		sprintf(message,"\nunknown variable %s",var);
-		shellOut(message);
-		error_code=SHELL_ERROR;
-	      }
-	    }
-	  }
-	}
-      } else if(add_char=='\\') {
-	/* some sort of protection */
-	if(c>=strlen(raw_prompt)) {
-	  add_char_flag=0;
-	} else if(raw_prompt[c]=='\n') {
-	  if(shell.current->state==SHELL_SCRIPT) {
-	    c++;
-	    add_char_flag=0;
-	  } else {
-	    add_char_flag=1;
-	  }
-	} else if(raw_prompt[c]=='\\') {
-	  add_char='\\';
-	  c++;
-	  add_char_flag=1;
-	} else {
-	  add_char_flag=0;
-	}
-      } else if(add_char==';') {
-	if(nest_history[nest_level]>SHELL_NONE) {
-	  add_char_flag=1;
-	} else {
-	  /* command line split */
-	  if(prompt_len>wordi[wc-1]){
-	    shellAddPrompt(&prompt,&prompt_max,&prompt_len,'\0');
-	    wordi[wc++]=prompt_len;
-	  }
-	  
-	  for(i=0;i<wc;i++) {
-	    word[i]=&prompt[wordi[i]];
-	  }
-	  wc--;
-	  if(shellParse(wc,word,pos)==SHELL_ERROR)
-	    error_code=SHELL_ERROR;
-	  
-	  prompt_len=0;
-	  wc=0;
-	  wordi[wc++]=prompt_len;
-	  add_char_flag=0;
-	}
-      } else if(add_char=='/') {
-	if(nest_history[nest_level]<SHELL_DPRIME) {
-	  if(c<strlen(raw_prompt)) {
-	    if(raw_prompt[c]=='/') {
-	      /* comment */
-	      exit_flag=1;
-	      add_char_flag=0;
-	      c=strlen(raw_prompt)+1;
-	      break;
-	    } else {
-	      add_char_flag=1;
-	    }
-	  } else {
-	    add_char_flag=1;
-	  }
-	} else {
-	  add_char_flag=1;
-	}
-      } else {
-	add_char_flag=1;
-      }
-
-      if(add_char_flag) {
-	if(sub_prompt_flag) {
-	  shellAddPrompt(&sub_prompt,&sub_prompt_max,&sub_prompt_len,add_char);
-	} else {
-	  shellAddPrompt(&prompt,&prompt_max,&prompt_len,add_char);
-	}
-      }
-      if(exit_flag || error_code!=SHELL_OK)
-	break;
-    }
-    if(error_code==SHELL_ERROR)
-      break;
-    
-    /* end of word */
-    if(prompt_len>wordi[wc-1]){
-      shellAddPrompt(&prompt,&prompt_max,&prompt_len,0);
-      wordi[wc++]=prompt_len;
-    }
-  } while(c<strlen(raw_prompt));
-
-  for(i=0;i<wc;i++) {
-    word[i]=&prompt[wordi[i]];
-  }
-  
-  wc--;
-  
-  if(error_code!=SHELL_ERROR)
-    if(shellParse(wc,word,pos)==SHELL_ERROR)
-      error_code=SHELL_ERROR;
-
-  // return value is in comReturn
-  
-  Cfree(raw_prompt);
-  Cfree(prompt);
-
-  return error_code;
+  const char *s=raw_prompt2;
+  Tcl_DStringSetLength(&shell.tcl_ds,0);
+  Tcl_EvalEx(shell.tcl_interp,
+	     Tcl_ExternalToUtfDString(NULL,s,strlen(s),&shell.tcl_ds),
+	     -1,TCL_EVAL_GLOBAL);
+  return SHELL_OK;
 }
 
 

@@ -13,7 +13,9 @@ aliases, etc).
 
 *******************************************/
 
-int shellInit(int (*)(int,char **), const char *);
+typedef int (*shell_callback)(int, const char **);
+
+int shellInit(shell_callback cb, const char *);
 int shellSetInitCommand(char *c);
 int shellOutit(void);
 
@@ -25,7 +27,7 @@ void shellAddChar(char c);
 int shellWork(void);
 int shellWorkPrompt(const char *prompt, int pos, char **result);
 
-int shellSetVar(int wc, char **wl);
+int shellSetVar(int wc, const char **wl);
 
 
 
