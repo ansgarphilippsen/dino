@@ -98,7 +98,7 @@ int scalDrawObj(scalObj *obj)
   switch(obj->type) {
   case SCAL_CONTOUR:
     if(obj->render.mode==RENDER_POINT) {
-
+      // RENDER DOTS ONLY
       glDisable(GL_LIGHTING);
       glDisable(GL_COLOR_MATERIAL);
 
@@ -111,6 +111,7 @@ int scalDrawObj(scalObj *obj)
       }
       glEnd();
     } else if(obj->render.mode==RENDER_LINE) {
+      // RENDER IN CHICKEN WIRE MODE
       glDisable(GL_LIGHTING);
       glDisable(GL_COLOR_MATERIAL);
 
@@ -174,8 +175,9 @@ int scalDrawObj(scalObj *obj)
       glEnable(GL_LIGHTING);
 
     } else if(obj->render.mode==RENDER_SURFACE) {
+      // RENDER WITH FULL SURFACE MODE
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
-      //      glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+      glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
       glEnable(GL_LIGHTING);
       glEnable(GL_COLOR_MATERIAL);

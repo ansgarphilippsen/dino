@@ -222,7 +222,7 @@ int main(int argc,char **argv)
   debmsg("calling sceneInit");
   sceneInit();
   debmsg("calling shellInit");
-  shellInit(comWorkPrompt,logfile);
+  shellInit((shell_callback)comWorkPrompt,logfile);
 
 
   if(startup_flag) {

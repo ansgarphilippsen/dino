@@ -27,7 +27,8 @@ void shellAddChar(char c);
 int shellWork(void);
 int shellWorkPrompt(const char *prompt, int pos, char **result);
 
-int shellSetVar(int wc, const char **wl);
+//int shellSetVar(int wc, const char **wl);
+int shellSetVar(const char *var, const char *val);
 
 
 

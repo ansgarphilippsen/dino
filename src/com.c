@@ -809,9 +809,7 @@ int comPick(int screenx, int screeny, int flag)
 
   sprintf(message,"{%.5f,%.5f,%.5f}",scene.cp[0],scene.cp[1],scene.cp[2]);
   strcpy(message2,"CP");
-  var[0]=message2;
-  var[1]=message;
-  shellSetVar(2,var);
+  shellSetVar(message2,message);
 
 
   if(scene.cpflag)
@@ -903,16 +901,12 @@ int comPick(int screenx, int screeny, int flag)
 	    pick->name,pick->p[0],pick->p[1],pick->p[2]);
     guiMessage(message);
     strcpy(message,"CS");
-    var[0]=message;
-    var[1]=pick->id;
-    shellSetVar(2,var);
+    shellSetVar(message,pick->id);
     scenePush(pick->id);
 
     strcpy(message,"CP");
     sprintf(message2,"{%4f,%4f,%4f}",pick->p[0],pick->p[1],pick->p[2]);
-    var[0]=message;
-    var[1]=message2;
-    shellSetVar(2,var);
+    shellSetVar(message,message2);
 
     // TODO: toggle label
   } else {
@@ -1011,16 +1005,13 @@ int comPick(int screenx, int screeny, int flag)
     }
     guiMessage(pick);
     strcpy(message,"CS");
-    var[0]=message;
-    var[1]=cs;
-    shellSetVar(2,var);
+    shellSetVar(message,cs);
     scenePush(cs);
 
     strcpy(message,"CP");
     sprintf(message2,"{%4f,%4f,%4f}",atom->p->x,atom->p->y,atom->p->z);
-    var[0]=message;
-    var[1]=message2;
-    shellSetVar(2,var);
+
+    shellSetVar(message,message2);
   } else {
     guiMessage(" ");
   }

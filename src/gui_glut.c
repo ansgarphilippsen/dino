@@ -368,6 +368,11 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   gui.mbs[1]=GLUT_UP;
   gui.mbs[2]=GLUT_UP;
 
+#ifdef USE_FREEGLUT
+  fprintf(stdout,"Using freeglut (http://freeglut.sf.net)\n");
+#else
+  fprintf(stdout,"Using GLUT (c) Mark J. Kilgard\n");
+#endif
   gfxGLInit();
 
   return 0;

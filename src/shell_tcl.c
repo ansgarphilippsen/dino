@@ -1096,10 +1096,6 @@ static int shellParse(int wc, const char **wl,int pos)
   }
 
   if(wl[0][0]=='@') {
-    /*
-    clStrncpy(tcl_file,&wl[0][1],1023);
-    Tcl_EvalFile(shell.tcl_interp,tcl_file);
-    */
 
     if(shell.instance_count>1024) {
       shellOut("\nMaximum nesting level (1024) reached");
@@ -1142,71 +1138,10 @@ static int shellParse(int wc, const char **wl,int pos)
     shell.state=SHELL_INTERACTIVE;
     Cfree(tcl_file_buf);
 
-    /* old code below */    
-    /*
-      child=Ccalloc(1,sizeof(struct SHELL_INSTANCE));
-      child->state=SHELL_SCRIPT;
-      child->buf_size=st.st_size+256;
-      child->buf=Cmalloc(child->buf_size);
-      if(child->buf==NULL) {
-      sprintf(message,"\nmemory allocation error");
-      shellOut(message);
-      return SHELL_ERROR;
-      }
-      fread(child->buf,child->buf_size,1,f);
-      fclose(f);
-      child->buf[st.st_size]='\0';
-      strcat(child->buf,"\nEOF");
-      child->buf_pos=0;
-      child->var=shell.current->var;
-      child->var_max=shell.current->var_max;
-      child->argc=wc-1;
-      arglen=0;
-      for(i=1;i<wc;i++)
-      arglen+=(strlen(wl[i])+1);
-      child->argv[0]=Ccalloc(arglen+64,sizeof(char));
-      arglen=0;
-      for(i=1;i<wc;i++) {
-      child->argv[i]=child->argv[0]+arglen;
-      strcpy(child->argv[0]+arglen,wl[i]);
-      arglen+=strlen(wl[i]);
-      child->argv[0][arglen++]='\0';
-      }
-      
-      child->parent=shell.current;
-      shell.current->child=child;
-      shell.current=child;
-      
-      shell.state=SHELL_SCRIPT;
-      shell.instance_count++;
-    */
   } else if(wl[0][0]=='!') {
     // system subcommand
     shellOut("\n");
     system(wl[0]+1);
-  } else if(!strcmp(wl[0],"set")) {    
-    if(wc<3) {
-      sprintf(message,"\nsyntax error: set var value");
-      shellOut(message);
-      return SHELL_ERROR;
-    }
-    shellSetVar(wc-1,wl+1);
-  } else if(!strcmp(wl[0],"unset")) {
-    for(i=1;i<wc;i++) {
-      for(j=0;j<shell.current->var_max;j++)
-	if(!strcmp(wl[i],shell.current->var[j].name)) {
-	  strcpy(shell.current->var[j].name,"");
-	  Cfree(shell.current->var[j].value);
-	}
-    }
-  } else if(!strcmp(wl[0],"var")) {
-    for(i=0;i<shell.current->var_max;i++)
-      if(strlen(shell.current->var[i].name)!=0) {
-	shellOut("\n");
-	shellOut(shell.current->var[i].name);
-	shellOut(" = ");
-	shellOut(shell.current->var[i].value);
-      }
   } else if(!strcmp(wl[0],"echo")){
     shellEcho(wc-1,wl+1);
   } else if(!strcmp(wl[0],"push")) {
@@ -1233,15 +1168,11 @@ static int shellParse(int wc, const char **wl,int pos)
     if(wc>1) {
       for(i=1;i<wc;i++) {
 	if(shell.estackp>=0) {
-	  varlist[0]=wl[i];
-	  varlist[1]=shell.estack[shell.estackp].expr;
-	  shellSetVar(2,varlist);
+	  shellSetVar(wl[i],shell.estack[shell.estackp].expr);
 	  shell.estackp--;
 	} else {
-	  varlist[0]=wl[i];
 	  strcpy(message,"0");
-	  varlist[1]=message;
-	  shellSetVar(2,varlist);
+	  shellSetVar(wl[i],"0");
 	}
       }
     } else {
@@ -1408,11 +1339,15 @@ static int shellWorkInteractive()
   /*
     read characters that were placed in charbuf (by gfx) 
   */
+
   while(shell.charbuf.count>0) {
     c=shell.charbuf.buf[0];
     for(i=0;i<shell.charbuf.count-1;i++)
       shell.charbuf.buf[i]=shell.charbuf.buf[i+1];
     shell.charbuf.count--;
+    if(bc<shell.stdinbuflen)
+      shell.stdinbuf[bc++]=c;
+    /*
     shell.stdinbuf[bc++]=c;
     if(bc>=shell.stdinbuflen) {
       ob=shell.stdinbuf;
@@ -1421,8 +1356,8 @@ static int shellWorkInteractive()
       Cfree(ob);
       shell.stdinbuflen+=1024;
     }
+    */
   }
-
 
   shell.stdinbuf[bc]='\0';
   if(bc>0) {
@@ -1669,6 +1604,8 @@ static int shell_unknown_cmd(ClientData clientData,
 
 static void shell_tcl_init()
 {
+  int v1,v2;
+
   // tcl stuff
   shell.tcl_interp=Tcl_CreateInterp();
 
@@ -1679,8 +1616,18 @@ static void shell_tcl_init()
   Tcl_DeleteCommand(shell.tcl_interp, "load");
 
   Tcl_DStringInit(&shell.tcl_ds);
+
+  Tcl_GetVersion(&v1,&v2,NULL,NULL);
+
+  fprintf(stdout,"Using TCL interpreter v%d.%d (http://www.scriptics.com)\n",v1,v2);
 }
 
+/*
+static char *shell_preset_var[2][]={
+  {"CS",""},
+  {"CP","{0,0,0}"}
+};
+*/
 
 /*
   externally visible functions follow
@@ -1690,7 +1637,7 @@ int shellInit(shell_callback func, const char *logfile)
 {
   int i;
   char m1[512],m2[256];
-  const char *var[2];
+
   /*
     terminal functionality 
   */
@@ -1721,6 +1668,10 @@ int shellInit(shell_callback func, const char *logfile)
     perror("tcsetattr");
     dinoExit(1);
   }
+
+  
+  debmsg("shellInit: initializing tcl");
+  shell_tcl_init();
 
   debmsg("shellInit: filling default values");
   shell.callback=func;
@@ -1779,67 +1730,67 @@ int shellInit(shell_callback func, const char *logfile)
   shell.greedy=0;
   shell.prompt_flag=1;
 
-  var[0]=m2;
-  var[1]=m1;
+  debmsg("shellInit: defining preset variables");
+
   sprintf(m1,"%g",M_PI);
   strcpy(m2,"PI");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ALA,CYS,ASP,GLU,PHE,GLY,HIS,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR)");
   strcpy(m2,"protein");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=A,C,G,T)");
   strcpy(m2,"dna");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=A,C,G,U)");
   strcpy(m2,"rna");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ALA,GLY,ILE,LEU,MET,PRO,VAL)");
   strcpy(m2,"aliphatic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=PHE,TYR,TRP)");
   strcpy(m2,"aromatic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ALA,VAL,PHE,PRO,MET,ILE,LEU,TRP)");
   strcpy(m2,"hydrophobic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ARG,LYS)");
   strcpy(m2,"basic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"((rname=LYS and aname=NZ) or (rname=ARG and aname=NH1,NH2))");
   strcpy(m2,"basic2");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ASP,GLU)");
   strcpy(m2,"acidic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"((rname=GLU and aname=OE1,OE2) or (rname=ASP and aname=OD1,OD2))");
   strcpy(m2,"acidic2");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=SER,THR,TYR,HIS,CYS,ASN,GLN)");
   strcpy(m2,"polar");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"((rname=SER and aname=OG) or (rname=THR and aname=OG1) or (rname=TYR and aname=OH) or (rname=HIS and aname=ND1,NE2) or (rname=CYS and aname=SG) or (rname=ASN and aname=OD1,ND1) or (rname=GLN and aname=OE1,NE1) or (rname=TRP and aname=NE1))");
   strcpy(m2,"polar2");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m2,"CS");
   strcpy(m1,"{0,0,0}");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m2,"CP");
   strcpy(m1,"{0,0,0}");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   debmsg("shellInit: trapping SIGWINCH");
 #ifdef LINUX
@@ -1889,15 +1840,8 @@ int shellInit(shell_callback func, const char *logfile)
   shell.static_buf_max=4096;
   shell.static_buf=Ccalloc(shell.static_buf_max,sizeof(char));
 
-  /*
-  shell.savebufpos=0;
-  shell.savebufmax=65536;
-  shell.savebuf=Ccalloc(shell.savebufmax,sizeof(char));
-  */
-
   getcwd(shell.cwd,256);
 
-  shell_tcl_init();
 
   return SHELL_OK;
 }
@@ -2047,74 +1991,27 @@ int shellWorkPrompt(const char *raw_prompt2, int pos, char **result)
 }
 
 
+static char shell_static_var_val[2048];
 
-
-int shellSetVar(int wc, const char **wl)
+int shellSetVar(const char *cvar, const char *cval)
 {
-  int i;
-  char var[256];
-  char *val;
-  int vmax;
-  struct SHELL_VAR *ov;
+  static char var[256],*val;
 
-  vmax=0;
-  for(i=0;i<wc;i++)
-    vmax+=strlen(wl[i])+2;
+  clStrncpy(var,cvar,255);
 
-  if(vmax<256)
-    vmax=256;
-
-  val=Ccalloc(vmax,sizeof(char));
-
-  strcpy(var,wl[0]);
-
-  strcpy(val,"");
-  for(i=1;i<wc;i++) {
-    strcat(val,wl[i]);
-    strcat(val," ");
+  if(clStrlen(cval)>2047) {
+    val=Cmalloc(clStrlen(cval));
+    clStrcpy(val,cval);
+    Tcl_SetVar(shell.tcl_interp,var,val,TCL_GLOBAL_ONLY);
+    Cfree(val);
+  } else {
+    val=shell_static_var_val;
+    clStrcpy(val,cval);
+    Tcl_SetVar(shell.tcl_interp,var,val,TCL_GLOBAL_ONLY);
   }
 
-  val[strlen(val)-1]='\0';
-
-  /*
-  fprintf(stderr,"\n*var: %lx  max: %d",shell.current->var,shell.current->var_max);
-  */
-
-  for(i=0;i<shell.current->var_max;i++) {
-    if(!strcmp(var,shell.current->var[i].name)) {
-      memset(shell.current->var[i].value,0,
-	     sizeof(shell.current->var[i].value));
-      shell.current->var[i].value=val;
-      break;
-    }
-  }
-  if(i==shell.current->var_max) {
-    for(i=0;i<shell.current->var_max;i++) {
-      if(strlen(shell.current->var[i].name)==0) {
-	strcpy(shell.current->var[i].name,var);
-	shell.current->var[i].value=val;
-	break;
-      }
-    }
-    if(i==shell.current->var_max) {
-      ov=shell.current->var;
-      shell.current->var=
-	Ccalloc(shell.current->var_max+100,
-	       sizeof(struct SHELL_VAR));
-      memcpy(shell.current->var,
-	     ov,
-	     sizeof(struct SHELL_VAR)*shell.current->var_max);
-      shell.current->var_max+=100;
-      Cfree(ov);
-      strcpy(shell.current->var[i].name,var);
-      shell.current->var[i].value=val;
-    }
-  }
-  
   return 0;
 }
-
-
 
 
 int shellSetInitCommand(char *c)

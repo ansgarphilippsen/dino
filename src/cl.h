@@ -23,7 +23,10 @@ int clStrcpy(char *d, const char *s);
 int clStrncpy(char *d, const char *s, int m);
 int clStrlen(const char *s);
 int clStrncat(char *d, const char *s, int m);
+int clStrcat(char *d, const char *s);
 const char *clStrchr(const char *s, int c);
 const char *clStrrchr(const char *s, int c);
+char *clStrdup(const char *s);
+const char *clSubstr(const char *s, int indx1, int indx2);
 
 #endif

@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <regex.h>
 
 #include "mat.h"
 #include "cl.h"
@@ -560,6 +561,10 @@ int matGetDim(const char *s,int *dd1, int *dd2)
   return 0;
 }
 
+/*
+  float versions for extraction routines
+*/
+
 int matExtract1Df(const char *string, int dim, float *res)
 {
   int i;
@@ -574,6 +579,71 @@ int matExtract1Df(const char *string, int dim, float *res)
   return 0;
 }
 
+int matExtract2Df(const char *string, int dim1, int dim2, float *res)
+{
+  int i;
+  double r[128];
+
+  if(matExtract2D(string,dim1,dim2,r)==-1)
+    return -1;
+
+  for(i=0;i<dim1*dim2;i++)
+    res[i]=(float)r[i];
+
+  return 0;
+}
+
+/*
+  matrix extraction routines
+*/
+//#define MAT_NEW_EXTRACTION
+#ifdef MAT_NEW_EXTRACTION
+
+int matExtract1D(const char *string, int dim, double *res)
+{
+  int i,ret;
+  regex_t preg;
+  regmatch_t *pmatch;
+  static char message[256];
+  static char *sub="([-0-9+. ]*)";
+  static char expr[1024];
+
+  pmatch=Ccalloc(dim+1,sizeof(regmatch_t));
+
+  clStrcpy(expr,sub);
+  for(i=1;i<dim;i++) {
+    clStrcat(expr,",");
+    clStrcat(expr,sub);
+  }
+ 
+  ret=regcomp(&preg,expr,REG_EXTENDED);
+  if(ret>0) {
+    regerror(ret,&preg,message,256);
+    fprintf(stderr,"\nregcomp: %s",message);
+    return -1;
+  } else {
+    ret=regexec(&preg,string,5,pmatch,0);
+    if(ret==REG_NOMATCH) {
+      regfree(&preg);
+      Cfree(pmatch);
+      return -1;
+    } else {
+      for(i=0;i<dim;i++) {
+	res[i]=atof(clSubstr(string,pmatch[i+1].rm_so,pmatch[i+1].rm_eo-1));
+      }
+      regfree(&preg);
+      Cfree(pmatch);
+    }
+  }
+  return 0;
+}
+
+int matExtract2D(const char *string, int dim1, int dim2, double *res)
+{
+  return -1;
+}
+
+#else
 
 int matExtract1D(const char *string, int dim, double *res)
 {
@@ -613,19 +683,6 @@ int matExtract1D(const char *string, int dim, double *res)
   return 0;
 }
 
-int matExtract2Df(const char *string, int dim1, int dim2, float *res)
-{
-  int i;
-  double r[128];
-
-  if(matExtract2D(string,dim1,dim2,r)==-1)
-    return -1;
-
-  for(i=0;i<dim1*dim2;i++)
-    res[i]=(float)r[i];
-
-  return 0;
-}
 
 int matExtract2D(const char *string, int dim1, int dim2, double *res)
 {
@@ -696,6 +753,8 @@ int matExtract2D(const char *string, int dim1, int dim2, double *res)
 
   return 0;
 }
+
+#endif
 
 int matAssemble1D(double *m, int dim, char *string)
 {

@@ -158,6 +158,18 @@ int clStrncat(char *d, const char *s, int m)
   return j;
 }
 
+int clStrcat(char *d, const char *s)
+{
+  int i,j;
+  if(d==NULL || s==NULL)
+    return 0;
+  i=clStrlen(d);
+  j=0;
+  while(s[j]!='\0') d[i++]=s[j++];
+  d[i]='\0';
+  return j;
+}
+
 const char *clStrchr(const char *s, int c)
 {
   int i,l;
@@ -188,3 +200,57 @@ const char *clStrrchr(const char *s, int c)
   return NULL;
 }
 
+static char cl_empty[]="\0";
+
+char *clStrdup(const char *s)
+{
+  char *p=cl_empty;
+  if(clStrlen(s)) {
+    p=Cmalloc(clStrlen(s));
+    clStrcpy(p,s);
+  }
+  return p;
+}
+
+/*
+  return pointer to substr
+*/
+
+static char cl_substr_buffer[2048];
+
+const char *clSubstr(const char *s, int indx1, int indx2)
+{
+  char *ret=cl_substr_buffer;
+  int len,p,i,p1,p2;
+
+  clStrcpy(ret,"");
+  if(s==NULL)
+    return ret;
+
+  if((len=clStrlen(s))==0)
+    return ret;
+
+  if(indx1<0) {
+    // substr from right offset, ignore indx2
+    p2=len;
+    p1=len+indx1;
+    if(p1<0)
+      p1=0;
+  } else {
+    // substr from indx1 to indx2
+    if(indx2<indx1) {
+      return ret;
+    }
+    p1=indx1;
+    if(p1>len)
+      p1=len;
+    p2=indx2+1;
+    if(p2>len)
+      p2=len;
+  }
+
+  for(i=0,p=p1;p<p2;i++,p++)
+    ret[i]=s[p];
+
+  return ret;
+}

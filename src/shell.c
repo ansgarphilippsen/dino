@@ -1054,6 +1054,23 @@ static int shellOpr(const char *op2)
   return SHELL_OK;
 }
 
+static int shellSetVarList(int wc, const char **wl)
+{
+  int i,tl;
+  static char var[256],val[2048];
+  
+  clStrncpy(var,wl[0],255);
+  clStrcpy(val,"");
+
+  tl=0;
+  for(i=1;i<wc;i++) {
+    clStrncat(val,wl[i],2048-tl);
+    tl+=clStrlen(wl[i]);
+  }
+
+  return shellSetVar(var,val);
+}
+
 
 /*************************************************
 
@@ -1160,7 +1177,7 @@ static int shellParse(int wc, const char **wl,int pos)
       shellOut(message);
       return SHELL_ERROR;
     }
-    shellSetVar(wc-1,wl+1);
+    shellSetVarList(wc-1,wl+1);
   } else if(!strcmp(wl[0],"unset")) {
     for(i=1;i<wc;i++) {
       for(j=0;j<shell.current->var_max;j++)
@@ -1203,15 +1220,10 @@ static int shellParse(int wc, const char **wl,int pos)
     if(wc>1) {
       for(i=1;i<wc;i++) {
 	if(shell.estackp>=0) {
-	  varlist[0]=wl[i];
-	  varlist[1]=shell.estack[shell.estackp].expr;
-	  shellSetVar(2,varlist);
+	  shellSetVar(wl[i],shell.estack[shell.estackp].expr);
 	  shell.estackp--;
 	} else {
-	  varlist[0]=wl[i];
-	  strcpy(message,"0");
-	  varlist[1]=message;
-	  shellSetVar(2,varlist);
+	  shellSetVar(wl[i],"0");
 	}
       }
     } else {
@@ -1715,67 +1727,65 @@ int shellInit(shell_callback func, const char *logfile)
   shell.greedy=0;
   shell.prompt_flag=1;
 
-  var[0]=m2;
-  var[1]=m1;
   sprintf(m1,"%g",M_PI);
   strcpy(m2,"PI");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ALA,CYS,ASP,GLU,PHE,GLY,HIS,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR)");
   strcpy(m2,"protein");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=A,C,G,T)");
   strcpy(m2,"dna");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=A,C,G,U)");
   strcpy(m2,"rna");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ALA,GLY,ILE,LEU,MET,PRO,VAL)");
   strcpy(m2,"aliphatic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=PHE,TYR,TRP)");
   strcpy(m2,"aromatic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ALA,VAL,PHE,PRO,MET,ILE,LEU,TRP)");
   strcpy(m2,"hydrophobic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ARG,LYS)");
   strcpy(m2,"basic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"((rname=LYS and aname=NZ) or (rname=ARG and aname=NH1,NH2))");
   strcpy(m2,"basic2");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=ASP,GLU)");
   strcpy(m2,"acidic");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"((rname=GLU and aname=OE1,OE2) or (rname=ASP and aname=OD1,OD2))");
   strcpy(m2,"acidic2");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"(rname=SER,THR,TYR,HIS,CYS,ASN,GLN)");
   strcpy(m2,"polar");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m1,"((rname=SER and aname=OG) or (rname=THR and aname=OG1) or (rname=TYR and aname=OH) or (rname=HIS and aname=ND1,NE2) or (rname=CYS and aname=SG) or (rname=ASN and aname=OD1,ND1) or (rname=GLN and aname=OE1,NE1) or (rname=TRP and aname=NE1))");
   strcpy(m2,"polar2");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m2,"CS");
   strcpy(m1,"{0,0,0}");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   strcpy(m2,"CP");
   strcpy(m1,"{0,0,0}");
-  shellSetVar(2,var);
+  shellSetVar(m2,m1);
 
   debmsg("shellInit: trapping SIGWINCH");
 #ifdef LINUX
@@ -2333,41 +2343,16 @@ int shellWorkPrompt(const char *raw_prompt2, int pos, char **result)
 }
 
 
-
-
-int shellSetVar(int wc, const char **wl)
+int shellSetVar(const char *var, const char *cval)
 {
   int i;
-  char var[256];
-  char *val;
-  int vmax;
   struct SHELL_VAR *ov;
+  char *val;
 
-  vmax=0;
-  for(i=0;i<wc;i++)
-    vmax+=strlen(wl[i])+2;
-
-  if(vmax<256)
-    vmax=256;
-
-  val=Ccalloc(vmax,sizeof(char));
-
-  strcpy(var,wl[0]);
-
-  strcpy(val,"");
-  for(i=1;i<wc;i++) {
-    strcat(val,wl[i]);
-    strcat(val," ");
-  }
-
-  val[strlen(val)-1]='\0';
-
-  /*
-  fprintf(stderr,"\n*var: %lx  max: %d",shell.current->var,shell.current->var_max);
-  */
+  val=clStrdup(cval);
 
   for(i=0;i<shell.current->var_max;i++) {
-    if(!strcmp(var,shell.current->var[i].name)) {
+    if(clStrcmp(var,shell.current->var[i].name)) {
       memset(shell.current->var[i].value,0,
 	     sizeof(shell.current->var[i].value));
       shell.current->var[i].value=val;
@@ -2376,8 +2361,8 @@ int shellSetVar(int wc, const char **wl)
   }
   if(i==shell.current->var_max) {
     for(i=0;i<shell.current->var_max;i++) {
-      if(strlen(shell.current->var[i].name)==0) {
-	strcpy(shell.current->var[i].name,var);
+      if(clStrlen(shell.current->var[i].name)==0) {
+	clStrncpy(shell.current->var[i].name,var,64);
 	shell.current->var[i].value=val;
 	break;
       }
