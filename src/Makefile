@@ -125,7 +125,7 @@ endif
 sinclude makedef.$(HOSTTYPE)
 
 ifneq (,$(findstring USE_TCL,$(OPTIONS)))
-LOPT += -ltcl
+LOPT += $(LIBTCL)
 endif
 
 

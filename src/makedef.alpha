@@ -18,6 +18,8 @@ COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D$(ARCH)
 
 #LIBGL = -lGLw -lGLU -lGL
 
+LIBTCL = -ltcl
+
 LIBGL = ../extras/lib/libGL.a \
         ../extras/lib/libGLU.a \
         ../extras/lib/libGLw.a

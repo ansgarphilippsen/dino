@@ -24,6 +24,8 @@ LIBGL += -lGLU -lGL
 LIBGLW = ../extras/lib/libGLw.a
 LIBMOTIF = -lXm
 
+LIBTCL = -ltcl8.3
+
 #static version
 #INCLUDE = -I../mesa/include -I/usr/include/CC -I/usr/X11R6/include
 #LIBGL = ../mesa/lib/libGL.a ../mesa/lib/libGLU.a ../mesa/lib/libGLw.a

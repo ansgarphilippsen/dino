@@ -14,6 +14,7 @@ SLIB = ../extras/lib/libtiff.a ../extras/lib/libpng.a ../extras/lib/libz.a ../ex
 LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm # -limage
 LOPT = -n32 -mips3 $(LIBS) -L/usr/freeware/lib32
 
+LIBTCL = -ltcl
 
 OPTIONS += -DSGI_STEREO -DIRIX # -D SPACETEC
 

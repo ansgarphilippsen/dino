@@ -16,6 +16,8 @@ LIBSTATIC = /usr/lib/libtiff.a /usr/lib/libjpeg.a
 LIBSHARED = -lXi -lXt -lXmu -lXext -lX11 -lm -lgdbm -lpthread -ldl
 LIBSHARED += -lpng -lz
 
+LIBTCL = -ltcl
+
 ifdef STATIC
 # static version
 LIBGL=
