@@ -668,6 +668,9 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	point_list[pc].colp[0]=obj->bond[bc].prop1->c[0];
 	point_list[pc].colp[1]=obj->bond[bc].prop1->c[1];
 	point_list[pc].colp[2]=obj->bond[bc].prop1->c[2];
+	point_list[pc].colp[0][3]=obj->render.transparency;
+	point_list[pc].colp[1][3]=obj->render.transparency;
+	point_list[pc].colp[2][3]=obj->render.transparency;
 #else
 	point_list[pc].c[0]=obj->bond[bc].prop1->r;
 	point_list[pc].c[1]=obj->bond[bc].prop1->g;
@@ -715,6 +718,9 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	point_list[pc].colp[0]=obj->bond[bc].prop1->c[0];
 	point_list[pc].colp[1]=obj->bond[bc].prop1->c[1];
 	point_list[pc].colp[2]=obj->bond[bc].prop1->c[2];
+	point_list[pc].colp[0][3]=obj->render.transparency;
+	point_list[pc].colp[1][3]=obj->render.transparency;
+	point_list[pc].colp[2][3]=obj->render.transparency;
 #else
 	point_list[pc].c[0]=obj->bond[bc].prop1->c[0][0];
 	point_list[pc].c[1]=obj->bond[bc].prop1->c[0][1];
@@ -1004,6 +1010,8 @@ int structSmooth(struct STRUCT_OBJ *obj)
 
     // generate spline, spoint_list is allocated
     bsplineGenerate(point_list, &spoint_list, pc, detail, obj->render.cgfx_flag);
+
+    // should transparency be set here ??
 
     // create cgfx object
     cgfxGenHSC(&va, point_list, pc, &obj->render);
@@ -1548,8 +1556,7 @@ int structObjGenVA(structObj *obj)
     if(sr<=bw)
       cgfxGenCylinder(&obj->va,
 		      (float *)obj->bond[i].atom1->p,mid,
-		      bw,sti,sto,detail,CGFX_BLUNT,col);
-    //bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
+		      bw,sti,sto,detail,CGFX_ROUND_BEGIN,col);
     else
       cgfxGenCylinder(&obj->va,
 		      (float *)obj->bond[i].atom1->p,mid,

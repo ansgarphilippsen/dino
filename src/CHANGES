@@ -1,3 +1,9 @@
+depth effect is off per default
+
+fixed !intpol crash
+
+fixed structure dataset object transparency
+
 revamped GUI: separated layers, added GLUT/freeglut or SDL support
 
 added binpos format

@@ -192,7 +192,7 @@ int gfxInit()
   gfx.fog_color[2]=gfx_fog_color[2];
   gfx.fog_color[3]=gfx_fog_color[3];
 
-  gfx.fog=1;
+  gfx.fog=0;
   gfx.fog_dist=0.0;
   gfx.fog_near=gfx.transform.slabn;
   gfx.fog_far=gfx.transform.slabf;
@@ -322,7 +322,8 @@ int gfxGLInit(void)
   */
   glFogfv(GL_FOG_COLOR,gfx.fog_color);
   glFogi(GL_FOG_MODE,GL_LINEAR);
-  glEnable(GL_FOG);
+  if(gfx.fog)
+    glEnable(GL_FOG);
 
   /*
     stencil buffer

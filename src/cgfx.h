@@ -29,7 +29,7 @@ typedef struct CGFX_POINT {
   float v[4],n[4],d[4];
 #ifdef HSC_NEWCOL
   float col[3][4];
-  int fc;
+  int fc; // this parameter is not working!
 #else
   float c[4];
 #endif
@@ -63,7 +63,7 @@ typedef struct CGFX_VERTEX_ARRAY {
 }cgfxVA;
 
 typedef struct CGFX_PROFILE {
-  cgfxPoint p[361];
+  cgfxPoint p[721];
   int pc;
   float f;
 }cgfxProfile;

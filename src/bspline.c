@@ -83,7 +83,7 @@ int bsplineGenerate(cgfxSplinePoint *sp, cgfxPoint **pp, int n, int detail, int 
       }
     } else {
       for(k=0;k<3;k++) {
-	for(i=0;i<n;i++) {
+	for(i=0;i<n-1;i++) {
 	  for(d=0;d<detail/2;d++) {
 	    v=sp[i].colp[col][k];
 	    p[i*detail+d].col[col][k]=v;
@@ -100,6 +100,7 @@ int bsplineGenerate(cgfxSplinePoint *sp, cgfxPoint **pp, int n, int detail, int 
     for(i=0;i<n;i++)
       for(d=0;d<detail;d++)
 	p[i*detail+d].col[col][3]=sp[i].colp[col][3];
+    
   }
 
 #else

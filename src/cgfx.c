@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 #include <GL/gl.h>
 #include <GL/glx.h>
@@ -902,12 +903,13 @@ int cgfxGenCylinder(cgfxVA *va, float *fbeg, float *fend, float frad, float fsti
 
   return 0;
 }
+static  cgfxProfile pro1, pro2, pro3, pro4, pro5, pro6, pro_last;
 
 int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
 {
   int i,k,ks,maxp;
   cgfxPoint *cp1,*cp2;
-  cgfxProfile pro1, pro2, pro3, pro4, pro5, pro6, pro_last;
+
   int detail=render->detail;
   int detail2=render->detail;
   int morph,sf;
@@ -916,7 +918,6 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
   maxp=0;
   for(i=0;i<pc;i++)
     maxp+=sp[i].pc;
-
 
   if(render->mode==RENDER_HSC || render->mode==RENDER_TUBE) {
 
@@ -1098,6 +1099,7 @@ int cgfxConnectProfile(cgfxVA *va, cgfxProfile *p1, cgfxProfile *p2, int f)
 
   o=p1->pc-2;  // EMPIRICAL ??? why does this work ???
 
+
   for(i=0;i<p1->pc-1;i++) {
     k=i+1;
     l1=i+o;
@@ -1135,6 +1137,7 @@ int cgfxCopyPVa(cgfxPoint *p, cgfxVAField *f)
   f->n[1]=p->n[1];
   f->n[2]=p->n[2];
 #ifdef HSC_NEWCOL
+  p->fc=0;
   f->c[0]=p->col[p->fc][0];
   f->c[1]=p->col[p->fc][1];
   f->c[2]=p->col[p->fc][2];
@@ -1272,14 +1275,9 @@ int cgfxMorphProfile(cgfxProfile *p1, cgfxProfile *p2, cgfxProfile *p3)
     p3->p[i].n[2]=(p1->f*p1->p[i].n[2]+p2->f*p2->p[i].n[2]);
     matfNormalize(p3->p[i].n, p3->p[i].n);
 #ifdef HSC_NEWCOL
-    /*
-    for(col=0;col<3;col++) {
-      p3->p[i].col[col][0]=(p1->f*p1->p[i].col[col][0]+p2->f*p2->p[i].col[col][0]);
-      p3->p[i].col[col][1]=(p1->f*p1->p[i].col[col][1]+p2->f*p2->p[i].col[col][1]);
-      p3->p[i].col[col][2]=(p1->f*p1->p[i].col[col][2]+p2->f*p2->p[i].col[col][2]);
-      p3->p[i].col[col][3]=(p1->f*p1->p[i].col[col][3]+p2->f*p2->p[i].col[col][3]);
-    }
-    */    
+    p1->p[i].fc=0;
+    p2->p[i].fc=0;
+    p3->p[i].fc=0;
     p3->p[i].col[0][0]=(p1->f*p1->p[i].col[p1->p[i].fc][0]+
 			p2->f*p2->p[i].col[p2->p[i].fc][0]);
     p3->p[i].col[0][1]=(p1->f*p1->p[i].col[p1->p[i].fc][1]+
@@ -1288,7 +1286,7 @@ int cgfxMorphProfile(cgfxProfile *p1, cgfxProfile *p2, cgfxProfile *p3)
 			p2->f*p2->p[i].col[p2->p[i].fc][2]);
     p3->p[i].col[0][3]=(p1->f*p1->p[i].col[p1->p[i].fc][3]+
 			p2->f*p2->p[i].col[p2->p[i].fc][3]);
-    p3->p[i].fc=0;
+
 #else
     p3->p[i].c[0]=(p1->f*p1->p[i].c[0]+p2->f*p2->p[i].c[0]);
     p3->p[i].c[1]=(p1->f*p1->p[i].c[1]+p2->f*p2->p[i].c[1]);
@@ -1318,13 +1316,6 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     z=0.0;
     for(i=0;i<detail*4;i++) {
 #ifdef HSC_NEWCOL
-      /*
-      if(i<detail || i>=detail*3) {
-	pro->p[i].fc=0;
-      } else {
-	pro->p[i].fc=1;
-      }
-      */
       pro->p[i].fc=0;
 #endif
       angle=frac*(double)i;
@@ -1381,13 +1372,6 @@ int cgfxGenProfile(cgfxProfile *pro, int type, Render *render)
     z=0.0;
     for(i=0;i<detail*4;i++) {
 #ifdef HSC_NEWCOL
-      /*
-      if(i<detail || i>=detail*3) {
-	pro->p[i].fc=0;
-      } else {
-	pro->p[i].fc=1;
-      }
-      */
       pro->p[i].fc=0;
 #endif
       angle=frac*(double)i;
