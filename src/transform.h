@@ -22,14 +22,25 @@ enum TRANSFORM_COMMAND {TRANS_NN=0,
 			TRANS_SLABF,
 			TRANS_CUSTOM};
 
+#define TRANSFORM_MAX_LIST 10
+#define TRANSFORM_MAX_COMMAND_LIST 18
+#define TRANSFORM_MAX_CUSTOM 8
+
+typedef void (*transCustomFunc)(double val, void *ptr);
+
+typedef struct TRANSFORM_CUSTOM {
+  int flag;
+  transCustomFunc cb;
+  void *ptr;
+  double factor;
+}transCustom;
+
 typedef struct TRANSFORM_MATRIX {
   double rot[16],tra[4],cen[4];
   double slabn,slabf;
   double slabn2,slabf2;
 }transMat;
 
-#define TRANSFORM_MAX_LIST 10
-#define TRANSFORM_MAX_COMMAND_LIST 18
 
 typedef struct TRANSFORM_LIST {
   int device,mask;    // device/name combination of this entry
@@ -37,13 +48,14 @@ typedef struct TRANSFORM_LIST {
   struct TRANSFORM_LIST_COMMAND { // list of commands for each axis/mask
     int axis,mask;    // axis/mask that defines the command
     int command;      // the command id
-    double factor;     // mutliplication factor
+    double factor;     // multiplication factor
   }command[TRANSFORM_MAX_COMMAND_LIST];
+  transCustom custom[TRANSFORM_MAX_CUSTOM];
   double factor;      // generic factor to regulate ALL commands
   transMat *transform;
 }transList;
 
-int transCommand(transMat *trans, int command, double value);
+int transCommand(transMat *trans, int command, int axis, double value);
 int transReset(transMat *trans);
 
 int transApply(transMat *trans, double *v);

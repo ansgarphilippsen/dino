@@ -1,6 +1,10 @@
 #ifndef STRUCT_COMMON_H
 #define STRUCT_COMMON_H
 
+struct STRUCT_APOS {
+  float x,y,z;
+};
+
 struct STRUCT_ATOM_PROP {
   float r,g,b;
   float radius;

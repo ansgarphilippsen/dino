@@ -11,10 +11,13 @@
 #endif
 
 #include "struct_db.h"
+#include "struct_obj.h"
 #include "gfx.h"
 #include "glf.h"
 #include "cgfx.h"
 #include "com.h"
+#include "transform.h"
+#include "build.h"
 
 extern struct GFX gfx;
 
@@ -24,13 +27,9 @@ int structDraw(dbmStructNode *node, int f)
 {
   int j;
   structObj *obj;
-  //double c[3];
-
-  glPushMatrix();
+  transMat *trans;
 
   // apply ds transform
-
-  //comGetCurrentCenter(c);
 
   /* draw cell if requested */
   if(node->show_cell && node->xtal!=NULL) {
@@ -38,7 +37,7 @@ int structDraw(dbmStructNode *node, int f)
   }
 
   /*
-    first draw objects with transform
+    special BD Trj objects
   */
 
   if(node->trj_flag && node->trj.type==STRUCT_TRJ_BD && f==0) {
@@ -49,86 +48,43 @@ int structDraw(dbmStructNode *node, int f)
 	  structDrawBDObj(node,obj);
 	}
   } else {
-    
     for(j=0;j<node->obj_max;j++)
       if(node->obj_flag[j]!=0)
-	if(node->obj[j].render.show)
-	  if(node->obj[j].transform_flag) {
+	if(node->obj[j].render.show) {
+	  glPushMatrix();
+	  if(node->obj[j].build!=NULL) {
 	    obj=&node->obj[j];
-	    /*
-	      apply obj transform BEFORE dataset transform
-	    */
+	    trans=&obj->build->trans;
 	    
-	    glPushMatrix();
-	    glTranslated(obj->transform.cen[0],
-			 obj->transform.cen[1],
-			 obj->transform.cen[2]);
-	    
-	    glTranslated(obj->transform.tra[0],
-			 obj->transform.tra[1],
-			 obj->transform.tra[2]);
-	    
-	    glMultMatrixd(obj->transform.rot);
-	    
-	    glTranslated(-obj->transform.cen[0],
-			 -obj->transform.cen[1],
-			 -obj->transform.cen[2]);
-	    
-	    glTranslated(node->transform.cen[0],
-			 node->transform.cen[1],
-			 node->transform.cen[2]);
-	    
-	    glTranslated(node->transform.tra[0],
-			 node->transform.tra[1],
-			 node->transform.tra[2]);
-	    
-	    glMultMatrixd(node->transform.rot);
-	    
-	    glTranslated(-node->transform.cen[0],
-			 -node->transform.cen[1],
-			 -node->transform.cen[2]);
-	    
-	    if((f==0 && node->obj[j].render.transparency==1.0) ||
-	       (f!=0 && node->obj[j].render.transparency<1.0)) {
-	      structDrawObj(&node->obj[j]);
-	    }
-	    
-	    glPopMatrix();
-	    
+	    glTranslated(trans->cen[0],
+			 trans->cen[1],
+			 trans->cen[2]);
+	    glTranslated(trans->tra[0],
+			 trans->tra[1],
+			 trans->tra[2]);
+	    glMultMatrixd(trans->rot);
+	    glTranslated(-trans->cen[0],
+			 -trans->cen[1],
+			 -trans->cen[2]);
+	  }	    
+	  glTranslated(node->transform.cen[0],
+		       node->transform.cen[1],
+		       node->transform.cen[2]);
+	  glTranslated(node->transform.tra[0],
+		       node->transform.tra[1],
+		       node->transform.tra[2]);
+	  glMultMatrixd(node->transform.rot);
+	  glTranslated(-node->transform.cen[0],
+		       -node->transform.cen[1],
+		       -node->transform.cen[2]);
+	  
+	  if((f==0 && node->obj[j].render.transparency==1.0) ||
+	     (f!=0 && node->obj[j].render.transparency<1.0)) {
+	    structDrawObj(&node->obj[j]);
 	  }
-    
-    
-    glTranslated(node->transform.cen[0],
-		 node->transform.cen[1],
-		 node->transform.cen[2]);
-    
-    glTranslated(node->transform.tra[0],
-		 node->transform.tra[1],
-		 node->transform.tra[2]);
-    
-    glMultMatrixd(node->transform.rot);
-    
-    glTranslated(-node->transform.cen[0],
-		 -node->transform.cen[1],
-		 -node->transform.cen[2]);
-    
-    if(f==0) {
-      for(j=0;j<node->obj_max;j++)
-	if(node->obj_flag[j]!=0)
-	  if(node->obj[j].render.show)
-	    if(!node->obj[j].transform_flag)
-	      if(node->obj[j].render.transparency==1.0)
-		structDrawObj(&node->obj[j]);
-    } else {
-      for(j=0;j<node->obj_max;j++)
-	if(node->obj_flag[j]!=0)
-	  if(node->obj[j].render.show)
-	    if(!node->obj[j].transform_flag)
-	      if(node->obj[j].render.transparency<1.0)
-		structDrawObj(&node->obj[j]);
-    }
+	  glPopMatrix();
+	}
   }
-  glPopMatrix();
 
   return 0;
 }

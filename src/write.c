@@ -43,7 +43,9 @@
 #include "Cmalloc.h"
 #include "cgfx.h"
 #include "GLwStereo.h"
+#ifdef FORMAT_RGB
 #include "ximage_util.h"
+#endif
 #ifdef IMAGICK
 #include "imagick.h"
 #endif
@@ -436,14 +438,14 @@ XVisualInfo * writeGetVis(int accum_flag)
   return NULL;
 }
 
-
+#ifdef FORMAT_RGB
 int writeImage2RGB(XImage *image,char *name)
 {
   /* branch to ximage_util code */
   xu_writeimage(image,name);
   return 0;
 }
-
+#endif
 
 int writeRedraw(int mode, int accum, int flag)
 {
@@ -451,6 +453,7 @@ int writeRedraw(int mode, int accum, int flag)
   int i;
 
   glDrawBuffer(GL_FRONT);
+  glReadBuffer(GL_FRONT);
 
   if(accum==1) {
     if(mode==WRITE_RIGHT_VIEW) {
@@ -469,8 +472,8 @@ int writeRedraw(int mode, int accum, int flag)
     comDBRedraw();
   } else {
 
-    glClear(GL_ACCUM_BUFFER_BIT);
-    
+    //    glClear(GL_ACCUM_BUFFER_BIT);
+
     switch(accum) {
     case 2: jitter=(float *)jitter2; break;
     case 3: jitter=(float *)jitter3; break;
@@ -489,7 +492,10 @@ int writeRedraw(int mode, int accum, int flag)
       gfxSetFog();
       gfxSceneRedraw(flag);
       comDBRedraw();
-      glAccum(GL_ACCUM, f);	   
+      if(i==0)
+	glAccum(GL_LOAD, f);	   
+      else
+	glAccum(GL_ACCUM, f);	   
     }
     glAccum(GL_RETURN, 1.0);
   }
@@ -578,7 +584,7 @@ int writeImage2Tiff(XImage *ximage,char *name)
   for(y=ysize-1; y>=0; y--) {
     pp=(uint8*) buf;
     for(x=0; x<xsize; x++) {
-      index = xu_getpixel(ximage,x,ysize-y-1);
+      index = XGetPixel(ximage,x,ysize-y-1);
       
       r[x] = (short)(rf * (float)((index>>rshift)&rmask));
       g[x] = (short)(gf * (float)((index>>gshift)&gmask));

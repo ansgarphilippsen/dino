@@ -524,9 +524,9 @@ void apIdle(void)
       ap.rotx+=ap.rotxd;
       ap.roty+=ap.rotyd;
       ap.rotz+=ap.rotzd;
-      transCommand(&gfx.transform,TRANS_ROTX,ap.rotx);
-      transCommand(&gfx.transform,TRANS_ROTY,ap.roty);
-      transCommand(&gfx.transform,TRANS_ROTZ,ap.rotz);
+      transCommand(&gfx.transform,TRANS_ROTX,-1,ap.rotx);
+      transCommand(&gfx.transform,TRANS_ROTY,-1,ap.roty);
+      transCommand(&gfx.transform,TRANS_ROTZ,-1,ap.rotz);
       comRedraw();
     }
   }

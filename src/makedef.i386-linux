@@ -4,32 +4,43 @@ ARCH=LINUX
 
 LIBDIR = -L/usr/X11R6/lib
 
+# all of these are static
 LIBSTATIC = /usr/lib/libtiff.a /usr/lib/libjpeg.a /usr/lib/libpng.a /usr/lib/libz.a
+
+#all of these are shared
 LIBSHARED = -lXi -lXt -lXmu -lXext -lX11 -lm -lgdbm -lpthread
 
-# old
-#INCLUDE = -I/usr/X11R6/LessTif/Motif1.2/include -I/usr/X11R6/include
-#LIBMOTIF = /usr/X11R6/LessTif/Motif1.2/lib/libXm.a
-#LIBMOTIF = /usr/X11R6/lib/libXm.a
+ifdef STATIC
+# static version
+LIBGL=
+INCLUDE = -I../extra/include -I/usr/X11R6/include
+ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
+LIBGL += ../extra/lib/libglut.a
+endif
+LIBGL += ../extra/lib/libGL.a ../extra/lib/libGLU.a
+LIBGLW = ../extra/lib/libGLw.a
+LIBMOTIF = /usr/X11R6/lib/libXm.a
 
-# shared lib version
+else
+
+# OLD shared lib version
 #INCLUDE = -I/usr/X11R6/include
 #LIBGL = -lGLU -lGL
 #LIBGLW = /usr/X11R6/lib/libGLw.a
 #LIBMOTIF = -lXm
 
 # motif static, rest shared
+LIBGL=
+ifneq (,$(findstring GLUT_GUI,$(OPTIONS)))
+LIBGL += -lglut
+endif
 INCLUDE = -I/usr/X11R6/include
-LIBGL = -lGLU -lGL
+LIBGL += -lGLU -lGL
 LIBGLW = /usr/X11R6/lib/libGLw.a
 LIBMOTIF = /usr/X11R6/lib/libXm.a
 
+endif
 
-# static version
-#INCLUDE = -I ../lesstif/include -I../mesa/include -I/usr/include/CC -I/usr/X11R6/include
-#LIBGL = ../mesa/lib/libGL.a ../mesa/lib/libGLU.a ../mesa/lib/libGLw.a
-#LIBGLW =
-#LIBMOTIF = /usr/X11R6/lib/libXm.a
 
 #JAVA_INC = -I/usr/java/include
 
@@ -39,6 +50,7 @@ CC   = gcc
 COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused $(JAVA_INC)
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(MALLOCLIB) $(LIBGLW) $(LIBSTATIC) $(JAVA_LIBS)
 
-SRC += autoplay.c joy.c
+#SRC += autoplay.c joy.c
+#SRC += jci.c
 
-SRC += jci.c
+SRC += joy.c

@@ -193,7 +193,7 @@ int sceneCommand(int wc, char **wl)
       comMessage(message);
       return -1;
     }
-    transCommand(&gfx.transform,TRANS_ROTX, atof(wl[1]));
+    transCommand(&gfx.transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"roty")) {
     /**********************
@@ -204,7 +204,7 @@ int sceneCommand(int wc, char **wl)
       comMessage(message);
       return -1;
     }
-    transCommand(&gfx.transform,TRANS_ROTY, atof(wl[1]));
+    transCommand(&gfx.transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"rotz")) {
     /**********************
@@ -215,7 +215,7 @@ int sceneCommand(int wc, char **wl)
       comMessage(message);
       return -1;
     }
-    transCommand(&gfx.transform,TRANS_ROTZ, atof(wl[1]));
+    transCommand(&gfx.transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"rotm")) { 
     /**********************
@@ -246,7 +246,7 @@ int sceneCommand(int wc, char **wl)
       comMessage(message);
       return -1;
     }
-    transCommand(&gfx.transform,TRANS_TRAX, atof(wl[1]));
+    transCommand(&gfx.transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transy")) {
     /**********************
@@ -257,7 +257,7 @@ int sceneCommand(int wc, char **wl)
       comMessage(message);
       return -1;
     }
-    transCommand(&gfx.transform,TRANS_TRAY, atof(wl[1]));
+    transCommand(&gfx.transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transz")) {
     /**********************
@@ -268,7 +268,7 @@ int sceneCommand(int wc, char **wl)
       comMessage(message);
       return -1;
     }
-    transCommand(&gfx.transform,TRANS_TRAZ, atof(wl[1]));
+    transCommand(&gfx.transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transm")) {
     /**********************
@@ -284,9 +284,9 @@ int sceneCommand(int wc, char **wl)
       comMessage(message);
       return -1;
     }
-    transCommand(&gfx.transform,TRANS_TRAX, v1[0]);
-    transCommand(&gfx.transform,TRANS_TRAY, v1[1]);
-    transCommand(&gfx.transform,TRANS_TRAZ, v1[2]);
+    transCommand(&gfx.transform,TRANS_TRAX,-1, v1[0]);
+    transCommand(&gfx.transform,TRANS_TRAY,-1, v1[1]);
+    transCommand(&gfx.transform,TRANS_TRAZ,-1, v1[2]);
     comRedraw();
   } else if(!strcmp(wl[0],"set")) {
     /**********************

@@ -43,6 +43,8 @@
 #include "pov.h"
 #include "transform.h"
 #include "joy.h"
+#include "pick.h"
+
 #ifdef EXPO
 #include "autoplay.h"
 #endif
@@ -94,7 +96,7 @@ struct HELP_ENTRY top_help[] = {
 
 int comInit()
 {
-  int i,tc;
+  int i,j,tc;
 #ifdef LINUX
   char joyname[128];
 #endif
@@ -150,6 +152,11 @@ int comInit()
     com.tlist[i].device=TRANS_NONE;
     com.tlist[i].transform=NULL;
     com.tlist[i].name[0]='\0';
+    for(j=0;j<TRANSFORM_MAX_CUSTOM;j++) {
+      com.tlist[i].custom[j].flag=0;
+      com.tlist[i].custom[j].cb=NULL;
+      com.tlist[i].custom[j].ptr=NULL;
+    }
   }
 
   // MOUSE
@@ -720,14 +727,25 @@ int comPick(int screenx, int screeny, int flag)
 
   GLdouble sx,sy,sz,szs;
   double p1[3],p2[3];
+#ifdef PICK_NEW
+  dbmPickList picklist;
+  dbmPickElement *pick=NULL;
+#else
   struct STRUCT_ATOM **atomlist,*atom;
+  char cs[256],pick[256];
+#endif
   double eye_dist=gui.eye_dist;
   double eye_offset=gui.eye_offset;
   double v[3];
 
   char message[2560],message2[256];
-  char cs[256],pick[256];
   char *var[2];
+
+#ifdef PICK_NEW
+  picklist.max=1000;
+  picklist.count=0;
+  picklist.ele=Crecalloc(NULL,picklist.max,sizeof(dbmPickElement));
+#endif
 
   if(!gui.stereo_mode) {
     eye_offset=0.0;
@@ -782,11 +800,7 @@ int comPick(int screenx, int screeny, int flag)
     comMessage("\nInternal GL Error: gluUnProject failed");
     return -1;
   }
-  /*
-  fprintf(stderr,"\n%f %f %f  %f %f %f",
-	  p1[0],p1[1],p1[2],
-	  p2[0],p2[1],p2[2]);
-	  */
+
   if(flag) {
     scene.cp[0]=p1[0];
     scene.cp[1]=p1[1];
@@ -823,6 +837,92 @@ int comPick(int screenx, int screeny, int flag)
   
   strcpy(message,"");
 
+#ifdef PICK_NEW
+  /* go through all datasets */
+  for(i=0;i<dbm.nodec_max;i++) {
+    /* currently, only struct dataset is implemented */
+    if(dbm.node[i].common.type==DBM_NODE_STRUCT) {
+      /* apply the ds transform */
+      glPushMatrix();
+      glTranslated(dbm.node[i].structNode.transform.cen[0],
+		   dbm.node[i].structNode.transform.cen[1],
+		   dbm.node[i].structNode.transform.cen[2]);
+      glTranslated(dbm.node[i].structNode.transform.tra[0],
+		   dbm.node[i].structNode.transform.tra[1],
+		   dbm.node[i].structNode.transform.tra[2]);
+      glMultMatrixd(dbm.node[i].structNode.transform.rot);
+      glTranslated(-dbm.node[i].structNode.transform.cen[0],
+		   -dbm.node[i].structNode.transform.cen[1],
+		   -dbm.node[i].structNode.transform.cen[2]);
+
+      /* now get new modelview matrices */
+      glGetDoublev(GL_MODELVIEW_MATRIX,mmatrix);
+      glPopMatrix();
+      
+      /* get {screen_x,screen_y,slab_near} */
+      if(gluUnProject(sx,sy,gfx.transform.slabn,
+		      mmatrix,pmatrix,viewport,
+		      &p1[0],&p1[1],&p1[2])==GL_FALSE){
+	comMessage("\nInternal GL Error: gluUnProject failed");
+	return -1;
+      }
+      
+      /* get {screen_x,screen_y,slab_far} */
+      if(gluUnProject(sx,sy,gfx.transform.slabf,
+		      mmatrix,pmatrix,viewport,
+		      &p2[0],&p2[1],&p2[2])==GL_FALSE){
+	comMessage("\nInternal GL Error: gluUnProject failed");
+	return -1;
+      }
+
+      /*
+	now get all atoms and bonds surrounding
+	line defined by p1 and 2
+      */
+      structPick(&dbm.node[i].structNode,p1,p2,0.16,&picklist);
+
+    }
+  }
+
+  /* get the pick closest to the near clipping plane */
+  szs=1.0;
+  for(i=0;i<picklist.count;i++) {
+    if(gluProject(picklist.ele[i].p[0],
+		  picklist.ele[i].p[1],
+		  picklist.ele[i].p[2],
+		  mmatrix,pmatrix,viewport,
+		  &sx,&sy,&sz)==GL_TRUE) {
+      
+      if(sz<szs && sz>=0.0) {
+	szs=sz;
+	pick = &picklist.ele[i];
+      }
+    }
+  }
+  
+  if(pick!=NULL) {
+    //    fprintf(stderr,"\n%s  %s",pick->name,pick->id);
+    guiMessage(pick->name);
+    strcpy(message,"CS");
+    var[0]=message;
+    var[1]=pick->id;
+    shellSetVar(2,var);
+    scenePush(pick->id);
+
+    strcpy(message,"CP");
+    sprintf(message2,"{%4f,%4f,%4f}",pick->p[0],pick->p[1],pick->p[2]);
+    var[0]=message;
+    var[1]=message2;
+    shellSetVar(2,var);
+
+    // TODO: toggle label
+  } else {
+    guiMessage(" ");
+  }
+
+  Cfree(picklist.ele);
+
+#else
   atom=NULL;
   szs=1.0;
   for(i=0;i<dbm.nodec_max;i++) {
@@ -864,18 +964,12 @@ int comPick(int screenx, int screeny, int flag)
 	comMessage("\nInternal GL Error: gluUnProject failed");
 	return -1;
       }
-      
       atomlist=structPick(&dbm.node[i].structNode,p1,p2);
       j=0;
       while(atomlist[j]!=NULL) {
 	if(gluProject(atomlist[j]->p->x,atomlist[j]->p->y,atomlist[j]->p->z,
 		      mmatrix,pmatrix,viewport,
 		      &sx,&sy,&sz)==GL_TRUE) {
-	  /*
-	  fprintf(stderr,"%d %s %f %f\n",
-		  atomlist[j]->anum,atomlist[j]->name,
-		  sz, szs);
-		  */	  
 	  if(sz<szs && sz>=0.0) {
 	    szs=sz;
 	    f=i;
@@ -931,6 +1025,7 @@ int comPick(int screenx, int screeny, int flag)
   } else {
     guiMessage(" ");
   }
+#endif
   return 0;
 }
 
@@ -1153,7 +1248,9 @@ struct WRITE_EXT {
   {"tif","tiff"},
   {"pov","pov"},
   {"png","png"},
+#ifdef VRML
   {"vrml","vrml"},
+#endif
   {NULL,NULL}
 };
   
@@ -1313,9 +1410,11 @@ int comWrite(int wc,char **wl)
     comMessage("\nWriting PostScript file...");
     writePS(f);
     fclose(f);
+#ifdef FORMAT_RGB
   } else if(!strcmp(type,"rgb")) {
     comMessage("\nRGB output no longer supported");
     fclose(f);
+#endif
   } else if(!strcmp(type,"png")) {
     comMessage("\nWriting png file...");
     fclose(f);
@@ -1325,12 +1424,14 @@ int comWrite(int wc,char **wl)
     comMessage("\nWriting tiff file...");
     fclose(f);
     writeFile(file,WRITE_TYPE_TIFF,accum,scale,dump);
+#ifdef VRML
   } else if(!strcmp(type,"vrml") ||
 	    !strcmp(type,"wrl")) {
     comMessage("\nWARNING: not in a workable state!");
     comMessage("\nWriting VRML scene...");
     writeVRML(f);
     fclose(f);
+#endif
   } else {
     sprintf(message,"\nunknown type %s",type);
     comMessage(message);
@@ -1639,7 +1740,7 @@ char *comGetReturn() {return com_return_buf;}
 
 int comTransform(int device, int mask, int axis, int ivalue)
 {
-  int i,j,mask2;
+  int i,j,mask2,axis_flag;
   double value=(double)ivalue;
 
   mask &= Button1Mask | Button2Mask | Button3Mask | Button4Mask |
@@ -1655,12 +1756,25 @@ int comTransform(int device, int mask, int axis, int ivalue)
       // modify mask
       mask2=mask & (~com.tlist[i].mask);
       if(com.tlist[i].transform!=NULL) {
-	for(j=0;com.tlist[i].command[j].axis!=-1;j++) {
-	  if(com.tlist[i].command[j].axis==axis && 
-	     (com.tlist[i].command[j].mask==mask2)) {
-	    transCommand(com.tlist[i].transform,
-			 com.tlist[i].command[j].command,
-			 value*com.tlist[i].command[j].factor);
+	// check for custom entries first
+	// overiding the normal ones
+	axis_flag=0;
+	if(axis>=0 && axis<TRANSFORM_MAX_CUSTOM) {
+	  if(com.tlist[i].custom[axis].flag) {
+	    axis_flag=1;
+	    if(com.tlist[i].custom[axis].cb!=NULL)
+	      (*com.tlist[i].custom[axis].cb)(value*com.tlist[i].custom[axis].factor,com.tlist[i].custom[axis].ptr);
+	  }
+	}
+	if(!axis_flag) {
+	  for(j=0;com.tlist[i].command[j].axis!=-1;j++) {
+	    if(com.tlist[i].command[j].axis==axis && 
+	       (com.tlist[i].command[j].mask==mask2)) {
+	      transCommand(com.tlist[i].transform,
+			   com.tlist[i].command[j].command,
+			   axis,
+			   value*com.tlist[i].command[j].factor);
+	    }
 	  }
 	}
       }
@@ -1759,4 +1873,5 @@ int comGenCubeLookup()
     }
 
   }
+  return 0;
 }

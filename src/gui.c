@@ -139,14 +139,209 @@ static char *expo_message="DINO by Ansgar Philippsen  -  Special EXPO2000 versio
 
 *************************************************/
 
+#ifdef JAVA_GUI
 int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 {
-#ifdef JAVA_GUI
   debmsg("initializing JGUI");
   jciInit();
 
   return -1;
+}
+#endif
+
+#ifdef GLUT_GUI
+static void guiReshape(int width, int height)
+{
+  gui.win_width=width;
+  gui.win_height=height;
+  gfxSetViewport();
+  comRedraw();
+}
+
+static void guiTimer(int value)
+{
+  if(gui.redraw) {
+    gui.redraw=0;
+    gfxRedraw();
+  }
+  comTimeProc();
+  glutTimerFunc(5,guiTimer,0);
+}
+
+static void guiMouseFunc(int button, int state, int x, int y)
+{
+  struct timeval tp;
+  struct timezone tzp;
+  long tc,dt;
+  int dx,dy;
+  int mod=glutGetModifiers();
+
+  gui.modifiers=mod;
+
+  gettimeofday(&tp,&tzp);
+  tc=tp.tv_sec*1000000L+tp.tv_usec;
+
+  dx=gui.last_x-x;
+  dy=gui.last_y-y;
+
+  if(button==GLUT_LEFT_BUTTON) {
+    gui.mbs[0]=state;
+
+    if(state==GLUT_UP && gui.mbs[1]==GLUT_UP && gui.mbs[2]==GLUT_UP) {
+      dt=tc-gui.timecode;
+      if(dt<200000 || 
+	 (dx==0 && dy==0 && dt<300000)) {
+	//	comPick(x,y,0);
+      }
+    }
+  }
+
+  gui.timecode=tc;
+  
+  if(button==GLUT_MIDDLE_BUTTON) {
+    gui.mbs[1]=state;
+  }
+
+  if(button==GLUT_RIGHT_BUTTON) {
+    gui.mbs[2]=state;
+  }
+
+  gui.last_x=x;
+  gui.last_y=y;
+  gfx.sx=x;
+  gfx.sy=y;
+  gfx.sdx=0;
+  gfx.sdy=0;
+}
+
+
+static void guiMotionFunc(int x, int y)
+{
+  int dx,dy;
+  int mod=gui.modifiers;
+  int mask=0;
+
+  dx=gui.last_x-x;
+  dy=gui.last_y-y;
+  gfx.sx=x;
+  gfx.sy=y;
+  gui.last_x=x;
+  gui.last_y=y;
+
+  if(gui.mbs[0]==GLUT_DOWN)
+    mask+=Button1Mask;
+  if(gui.mbs[1]==GLUT_DOWN)
+    mask+=Button2Mask;
+  if(gui.mbs[2]==GLUT_DOWN)
+    mask+=Button3Mask;
+
+  if(mod & GLUT_ACTIVE_SHIFT)
+    mask+=ShiftMask;
+  if(mod & GLUT_ACTIVE_CTRL)
+    mask+=ControlMask;
+  //  if(mod & GLUT_ALT_SHIFT)
+  //  mask+=ShiftMask;
+
+  comTransform(TRANS_MOUSE, mask, 0, dx);
+  comTransform(TRANS_MOUSE, mask, 1, dy);
+}
+
+static void guiKeyboardFunc(unsigned char key, int x, int y)
+{
+  comWriteCharBuf(key);
+}
+
+static void guiSpecialFunc(int key, int x, int y)
+{
+  switch(key) {
+  case GLUT_KEY_UP: 
+    comWriteCharBuf(27);
+    comWriteCharBuf('[');
+    comWriteCharBuf('A');
+    break;
+  case GLUT_KEY_DOWN: 
+    comWriteCharBuf(27);
+    comWriteCharBuf('[');
+    comWriteCharBuf('B');
+    break;
+  case GLUT_KEY_LEFT: 
+    comWriteCharBuf(27);
+    comWriteCharBuf('[');
+    comWriteCharBuf('D');
+    break;
+  case GLUT_KEY_RIGHT:
+    comWriteCharBuf(27);
+    comWriteCharBuf('[');
+    comWriteCharBuf('C');
+    break;
+  }
+}
+
+static void guiOMExpose()
+{
+
+}
+
+int guiInit(void (*func)(int, char **), int *argc, char ***argv)
+{
+  guiInitRGB();
+
+  glutInit(argc,(*argv));
+
+  /* main gfx window */
+  glutInitWindowSize(500,500);
+  glutInitWindowPosition(300,100);
+  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+
+  if(glutDeviceGet(GLUT_HAS_SPACEBALL)) {
+    fprintf(stderr,"glut spaceball detected\n");
+  }
+
+  gui.glut_main=glutCreateWindow("dino gfx");
+
+  glutDisplayFunc(comRedraw);
+  glutReshapeFunc(guiReshape);
+  glutMouseFunc(guiMouseFunc);
+  glutMotionFunc(guiMotionFunc);
+  glutKeyboardFunc(guiKeyboardFunc);
+  glutSpecialFunc(guiSpecialFunc);
+ 
+  glutTimerFunc(5,guiTimer,0);
+
+  /* object menu window */
+  glutInitWindowSize(100,300);
+  glutInitWindowPosition(100,100);
+  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+  gui.glut_om=glutCreateWindow("dino om");
+  glutDisplayFunc(guiOMExpose);
+
+  /* set back to main gfx */
+  glutSetWindow(gui.glut_main);
+
+  gui.callback=func;
+  gui.redraw=0;
+  gui.stereo_available=GLW_STEREO_NONE;
+  gui.stereo_mode=GUI_STEREO_OFF;
+  gui.eye_dist=150.0;
+  gui.eye_offset=10.0;
+  gui.mbs[0]=GLUT_UP;
+  gui.mbs[1]=GLUT_UP;
+  gui.mbs[2]=GLUT_UP;
+
+  gfxGLInit();
+
+  return 0;
+}
+
+int guiMainLoop()
+{
+  glutMainLoop();
+  return 0;
+}
+
 #else
+int guiInit(void (*func)(int, char **), int *argc, char ***argv)
+{
 
   int i,j;
   EventMask em;
@@ -295,6 +490,8 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
   omInit();
   gui.om_flag=1;
 #endif
+
+  guiPadInit();
 
   debmsg("guiInit: searching for visual");
   /* 
@@ -470,81 +667,9 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
     initialization completed
   */
   return 0;
-#endif
 }
 
-int guiInitRGB()
-{
-#ifdef LINUX
-  char *rgbfile1;
-  FILE *rgbfile2;
-  char rgb_line[256],*rgb_sep,*rgb_nam;
-  unsigned short usp[6];
-  datum key,content;
-  GDBM_FILE gdbm_f;
-#endif
 
-  debmsg("guiInit: loading rgb database");
-#ifdef LINUX
-  strcpy(gui.gdbm_tmpfile,"");
-  rgbfile1=tmpnam(NULL);
-  rgbfile2=fopen("/usr/lib/X11/rgb.txt","r");
-  if(rgbfile2==NULL) {
-    fprintf(stderr,"cannot find rgb.txt\n");
-    return -1;
-  } else {
-    strcpy(gui.gdbm_tmpfile,rgbfile1);
-    gdbm_f=gdbm_open(rgbfile1,0,GDBM_NEWDB,0600,0);
-    if(gdbm_f==NULL) {
-      fprintf(stderr,"cannot open rgb tmp file %s\n",rgbfile1);
-      return -1;
-    }
-    fgets(rgb_line,256,rgbfile2); /* first line is comment */
-    do {
-      fgets(rgb_line,256,rgbfile2);
-      if (rgb_line[0]!='!' && rgb_line[0]!='\n') {
-	rgb_sep=strchr(rgb_line,'\t');
-	if(rgb_sep!=NULL) {
-	  rgb_sep[0]='\0';
-	  rgb_nam=strrchr(rgb_sep+1,'\t')+1;
-	  if(rgb_nam!=NULL) {
-	    rgb_nam[strlen(rgb_nam)-1]='\0';
-	    rgb_line[3]='\0';
-	    rgb_line[7]='\0';
-	    rgb_line[11]='\0';
-	    usp[0]=(unsigned short)atoi(rgb_line+0)*256;
-	    usp[1]=(unsigned short)atoi(rgb_line+4)*256;
-	    usp[2]=(unsigned short)atoi(rgb_line+8)*256;
-	    key.dptr=rgb_nam;
-	    key.dsize=strlen(rgb_nam);
-	    content.dptr=(char *)usp;
-	    content.dsize=sizeof(usp);
-	    gdbm_store(gdbm_f,key,content,GDBM_REPLACE);
-	  }
-	}
-      }
-    } while(!feof(rgbfile2));
-    gdbm_close(gdbm_f);
-  }
-  gui.cdbm=gdbm_open(rgbfile1,0,GDBM_READER,0,0);
-  
-#endif
-#ifdef SGI
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef DEC
-  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
-#endif
-#ifdef SUN
-  gui.cdbm=dbm_open("/usr/openwin/lib/rgb",0,0);
-#endif
-
-  if(gui.cdbm==NULL) {
-    fprintf(stderr,"rgb color database not found\n");
-    return -1;
-  }
-  return 0;
-}
 
 int guiInitVisual()
 {
@@ -636,6 +761,7 @@ int guiInitStereo()
   }
   return -1;
 }
+
 
 /**************************************
    guiMainLoop
@@ -821,7 +947,6 @@ void guiGlxExpose(Widget ww, XtPointer clientData, XtPointer call)
   debmsg("calling Redraw");
   comRedraw();
 }
-
 
 /*****************************
 
@@ -1241,6 +1366,9 @@ void guiExtensionHandler(Widget w, XtPointer client_data, XEvent *event)
   } 
 	  
 }
+
+#endif
+// END FOR NON-GLUT (OLD) GUI STUFF
 
 
 /************************************
@@ -1663,3 +1791,91 @@ void HandleDrop(Widget w, XtPointer client_data, XtPointer call_data)
 {
 }
 
+int guiPadInit()
+{
+  gui.pad1v=8;
+  gui.pad2u=2;
+  gui.pad2v=3;
+  /*  
+  gui.pad1 = XCreateSimpleWindow(gui.dpy,DefaultRootWindow(gui.dpy),
+				 0,0,100,50*gui.pad1v,1,
+				 BlackPixel(gui.dpy,DefaultScreen(gui.dpy)),
+				 WhitePixel(gui.dpy,DefaultScreen(gui.dpy)));
+
+  XMapWindow(gui.dpy,gui.pad1);
+  */
+  return 0;
+}
+
+int guiInitRGB()
+{
+#ifdef LINUX
+  char *rgbfile1;
+  FILE *rgbfile2;
+  char rgb_line[256],*rgb_sep,*rgb_nam;
+  unsigned short usp[6];
+  datum key,content;
+  GDBM_FILE gdbm_f;
+#endif
+
+  debmsg("guiInit: loading rgb database");
+#ifdef LINUX
+  strcpy(gui.gdbm_tmpfile,"");
+  rgbfile1=tmpnam(NULL);
+  rgbfile2=fopen("/usr/lib/X11/rgb.txt","r");
+  if(rgbfile2==NULL) {
+    fprintf(stderr,"cannot find rgb.txt\n");
+    return -1;
+  } else {
+    strcpy(gui.gdbm_tmpfile,rgbfile1);
+    gdbm_f=gdbm_open(rgbfile1,0,GDBM_NEWDB,0600,0);
+    if(gdbm_f==NULL) {
+      fprintf(stderr,"cannot open rgb tmp file %s\n",rgbfile1);
+      return -1;
+    }
+    fgets(rgb_line,256,rgbfile2); /* first line is comment */
+    do {
+      fgets(rgb_line,256,rgbfile2);
+      if (rgb_line[0]!='!' && rgb_line[0]!='\n') {
+	rgb_sep=strchr(rgb_line,'\t');
+	if(rgb_sep!=NULL) {
+	  rgb_sep[0]='\0';
+	  rgb_nam=strrchr(rgb_sep+1,'\t')+1;
+	  if(rgb_nam!=NULL) {
+	    rgb_nam[strlen(rgb_nam)-1]='\0';
+	    rgb_line[3]='\0';
+	    rgb_line[7]='\0';
+	    rgb_line[11]='\0';
+	    usp[0]=(unsigned short)atoi(rgb_line+0)*256;
+	    usp[1]=(unsigned short)atoi(rgb_line+4)*256;
+	    usp[2]=(unsigned short)atoi(rgb_line+8)*256;
+	    key.dptr=rgb_nam;
+	    key.dsize=strlen(rgb_nam);
+	    content.dptr=(char *)usp;
+	    content.dsize=sizeof(usp);
+	    gdbm_store(gdbm_f,key,content,GDBM_REPLACE);
+	  }
+	}
+      }
+    } while(!feof(rgbfile2));
+    gdbm_close(gdbm_f);
+  }
+  gui.cdbm=gdbm_open(rgbfile1,0,GDBM_READER,0,0);
+  
+#endif
+#ifdef SGI
+  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
+#endif
+#ifdef DEC
+  gui.cdbm=dbm_open("/usr/lib/X11/rgb",0,0);
+#endif
+#ifdef SUN
+  gui.cdbm=dbm_open("/usr/openwin/lib/rgb",0,0);
+#endif
+
+  if(gui.cdbm==NULL) {
+    fprintf(stderr,"rgb color database not found\n");
+    return -1;
+  }
+  return 0;
+}

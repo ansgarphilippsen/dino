@@ -6,6 +6,8 @@ FSAA works in online (with __GL_FSAA_MODE) but not in offline rendering
 FSAA works now with 24bit color depth, but core dumps in 16bit (in call to 
 glViewport)
 
+FSAA works only in first window
+
 AGPGART does not result in speed increase, but rather a decrease by 25%
 
 AGP Driver seems to be reported wrongly as NVIDIA when going to NvAGP 0

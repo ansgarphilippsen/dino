@@ -252,42 +252,42 @@ int structCommand(dbmStructNode *node,int wc,char **wl)
       comMessage("\nerror: missing value after rotx");
       return -1;
     }
-    transCommand(&node->transform,TRANS_ROTX,atof(wl[1]));
+    transCommand(&node->transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"roty")) {
     if(wc<2) {
       comMessage("\nerror: missing value after roty");
       return -1;
     }
-    transCommand(&node->transform,TRANS_ROTY,atof(wl[1]));
+    transCommand(&node->transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"rotz")) {
     if(wc<2) {
       comMessage("\nerror: missing value after rotz");
       return -1;
     }
-    transCommand(&node->transform,TRANS_ROTZ,atof(wl[1]));
+    transCommand(&node->transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transx")) {
     if(wc<2) {
       comMessage("\nerror: missing value after transx");
       return -1;
     }
-    transCommand(&node->transform,TRANS_TRAX,atof(wl[1]));
+    transCommand(&node->transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transy")) {
     if(wc<2) {
       comMessage("\nerror: missing value after transy");
       return -1;
     }
-    transCommand(&node->transform,TRANS_TRAY,atof(wl[1]));
+    transCommand(&node->transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transz")) {
     if(wc<2) {
       comMessage("\nerror: missing value after transz");
       return -1;
     }
-    transCommand(&node->transform,TRANS_TRAZ,atof(wl[1]));
+    transCommand(&node->transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"center")) {
     if(wc<2) {
@@ -1372,6 +1372,7 @@ int structConnectAtoms(dbmStructNode *node, struct STRUCT_BOND **nb,int *bc, int
     ap1->bondi[ap1->bondc++]=(*bc);
     ap2->bondi[ap2->bondc++]=(*bc);
     
+    (*nb)[(*bc)].n=(*bc);
     (*bc)++;
     if((*bc)>=(*bm)) {
 //      ob=(*nb);
@@ -1513,7 +1514,7 @@ int structSubMatch(struct DBM_STRUCT_NODE *node, char *rsub, char *model, char *
   if(rsub[0]=='#') {
     anum=atoi(rsub+1);
     for(i=0;i<node->atom_count;i++)
-      if(node->atom[i].anum==anum) {
+      if(node->atom[i].n==anum) {
 	if(node->model_flag)
 	  sprintf(model,"%d",node->atom[i].model->num);
 	else
@@ -2032,6 +2033,143 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
   return 0;
 }
 
+#ifdef PICK_NEW
+int structPick(dbmStructNode *node, double *p1, double *p2, double cutoff_d, dbmPickList *pl)
+{
+  double sx,sy,sz;
+  double v1x,v1y,v1z;
+  double vx,vy,vz;
+  double dx,dy,dz,dist;
+  double u,t1,t2,t3;
+  double px,py,pz;
+  int ac,bc,oc;
+  struct STRUCT_OBJ *obj;
+  double cur_d,cur_d2;
+  char name[256],id[256];
+  // SET TO ZERO FOR BOND PICKING
+  int atom_hit=1;
+
+  /* The formula is:
+
+       px*vx+py*vy+pz*vz-(v1x*vx+v1y*vy+v1z*vz)
+     u=----------------------------------------
+                 vx^2+vy^2+vz^2
+                   
+     but I prefer to split it in three terms: t1, t2 and t3 (see below)
+  */
+
+  v1x=p1[0];
+  v1y=p1[1];
+  v1z=p1[2];
+  vx=p2[0]-v1x;
+  vy=p2[1]-v1y;
+  vz=p2[2]-v1z;
+
+  t2=v1x*vx+v1y*vy+v1z*vz;
+  t3=vx*vx+vy*vy+vz*vz;
+
+  if(t3==0.0)
+    return 0;
+
+  cur_d=cutoff_d;
+  cur_d2=cur_d;
+  
+  for(oc=0;oc<node->obj_max;oc++)
+    if(node->obj_flag[oc]!=0)
+      if(node->obj[oc].render.show) {
+	obj=&node->obj[oc];
+	for(ac=0;ac<obj->atom_count;ac++){
+	  px=obj->atom[ac].ap->p->x;
+	  py=obj->atom[ac].ap->p->y;
+	  pz=obj->atom[ac].ap->p->z;
+	  
+	  t1=px*vx+py*vy+pz*vz;
+	  
+	  u=(t1-t2)/t3;
+	  
+	  sx=v1x+u*vx;
+	  sy=v1y+u*vy;
+	  sz=v1z+u*vz;
+	  
+	  dx=sx-px;
+	  dy=sy-py;
+	  dz=sz-pz;
+	  
+	  dist=(dx*dx+dy*dy+dz*dz);
+	  
+	  if(dist<cur_d) {
+	    sprintf(name,".%s:",node->name);
+	    if(node->model_flag)
+	      sprintf(name,"%s %d",name,obj->atom[ac].ap->model->num);
+	    if(node->chain_flag)
+	      sprintf(name,"%s %s",name,obj->atom[ac].ap->chain->name);
+	    sprintf(name,"%s %s%d",name,
+		    obj->atom[ac].ap->residue->name,
+		    obj->atom[ac].ap->residue->num);
+	    sprintf(name,"%s %s",name,obj->atom[ac].ap->name);
+	    sprintf(id,".%s:#%d",node->name,obj->atom[ac].ap->n);
+	    dbmPickAdd(pl,px,py,pz,name,id);
+	    atom_hit++;
+	  }
+	}
+      }
+  if(!atom_hit)
+    for(oc=0;oc<node->obj_max;oc++)
+      if(node->obj_flag[oc]!=0)
+	if(node->obj[oc].render.show) {
+	  obj=&node->obj[oc];
+	  for(bc=0;bc<obj->bond_count;bc++) {
+	    px=0.5*(obj->bond[bc].atom1->p->x+obj->bond[bc].atom2->p->x);
+	    py=0.5*(obj->bond[bc].atom1->p->y+obj->bond[bc].atom2->p->y);
+	    pz=0.5*(obj->bond[bc].atom1->p->z+obj->bond[bc].atom2->p->z);
+	    
+	    t1=px*vx+py*vy+pz*vz;
+	    
+	    u=(t1-t2)/t3;
+	    
+	    sx=v1x+u*vx;
+	    sy=v1y+u*vy;
+	    sz=v1z+u*vz;
+	    
+	    dx=sx-px;
+	    dy=sy-py;
+	    dz=sz-pz;
+	    
+	    dist=(dx*dx+dy*dy+dz*dz);
+	    
+	    if(dist<cur_d2) {
+	      sprintf(name,".%s: [",node->name);
+	      if(node->model_flag)
+		sprintf(name,"%s %d",name,obj->bond[bc].atom1->model->num);
+	      if(node->chain_flag)
+		sprintf(name,"%s %s",name,obj->bond[bc].atom1->chain->name);
+	      sprintf(name,"%s %s%d",name,
+		      obj->bond[bc].atom1->residue->name,
+		      obj->bond[bc].atom1->residue->num);
+	      sprintf(name,"%s %s",name,obj->bond[bc].atom1->name);
+	      strcat(name,"] - [");
+	      if(node->model_flag)
+		sprintf(name,"%s %d",name,obj->bond[bc].atom2->model->num);
+	      if(node->chain_flag)
+		sprintf(name,"%s %s",name,obj->bond[bc].atom2->chain->name);
+	      sprintf(name,"%s %s%d",name,
+		      obj->bond[bc].atom2->residue->name,
+		      obj->bond[bc].atom2->residue->num);
+	      sprintf(name,"%s %s",name,obj->bond[bc].atom2->name);
+	      strcat(name,"]");
+	      
+	      sprintf(id,".%s:%%%d",node->name,obj->bond[bc].n);
+	      
+	      dbmPickAdd(pl,px,py,pz,name,id);
+	    }
+	  }
+	}
+  
+  
+  return 0;
+}
+
+#else
 
 struct STRUCT_ATOM ** structPick(struct DBM_STRUCT_NODE *node, double *p1, double *p2)
 {
@@ -2123,6 +2261,7 @@ struct STRUCT_ATOM ** structPick(struct DBM_STRUCT_NODE *node, double *p1, doubl
   return atom_list;
 }
 
+#endif
 
 float structGetAtomProperty(struct STRUCT_ATOM *ap,const char *prop)
 {
@@ -2205,8 +2344,7 @@ int structSetDefault(structObj *obj)
   cgfxSphere(1.0,obj->render.detail);
   comEndDisplayList();
 
-  obj->uco_flag=0;
-  obj->transform_flag=0;
+  obj->build=NULL;
 
   return 0;
 }
@@ -2775,10 +2913,6 @@ int structFix(struct DBM_STRUCT_NODE *node)
   int i;
   float v1[3];
 
-  v1[0]=1.0;
-  v1[1]=10.0;
-  v1[2]=100.0;
-
   for(i=0;i<node->atom_count;i++) {
     v1[0]=node->atom[i].p->x;
     v1[1]=node->atom[i].p->y;
@@ -3274,3 +3408,18 @@ int structRecenter(dbmStructNode *node)
 
   return 0;
 }
+
+void structSetFlag(dbmStructNode *node,int mask)
+{
+  int i;
+  for(i=0;i<node->atom_count;i++)
+    node->atom[i].flag |= mask;
+}
+
+void structClearFlag(dbmStructNode *node,int mask)
+{
+  int i;
+  for(i=0;i<node->atom_count;i++)
+    node->atom[i].flag &= (~mask);
+}
+

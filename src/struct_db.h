@@ -9,6 +9,7 @@
 #include "cubearray.h"
 #include "set.h"
 #include "transform.h"
+#include "pick.h"
 
 enum                 {SEL_ATOM,
 		      SEL_RESIDUE,
@@ -56,7 +57,6 @@ enum {STRUCT_PROP_COLOR,
       STRUCT_PROP_SMODE,  // selection mode
       STRUCT_PROP_CELL,   // unit cell
       STRUCT_PROP_SG,     // space group  
-      STRUCT_PROP_UCO,    // unit cell offset
       STRUCT_PROP_TFAST,  // fast trj update
       STRUCT_PROP_FRAME   // current frame to display
 };
@@ -87,9 +87,6 @@ struct STRUCT_ATOM_CHEM {
   double vdwr;           /* van der Waals radius */
 };
 
-struct STRUCT_APOS {
-  float x,y,z;
-};
 
 /* some bit parameters */
 
@@ -101,11 +98,13 @@ struct STRUCT_APOS {
 #define STRUCT_HBA 0x4  // HBond acceptor
 #define STRUCT_SBD 0x8  // SBridge donor
 #define STRUCT_SBA 0x10 // SBridge acceptor
+#define STRUCT_BUILD_TAG 0x20
 
 #define STRUCT_MAX_BOND_PER_ATOM 8
 
 /* bonds */
 struct STRUCT_BOND {
+  int n; /* internal counter */
   struct STRUCT_ATOM *atom1,*atom2;
   struct STRUCT_ATOM_PROP *prop1,*prop2;
   float axis[3],length,angle;
@@ -114,7 +113,7 @@ struct STRUCT_BOND {
 };
 
 /* simple element: the atom */
-struct STRUCT_ATOM {
+typedef struct STRUCT_ATOM {
   int n;                /* continuos number in db */
   int anum;             /* number from file */
   char name[16];        /* atom name */
@@ -140,7 +139,7 @@ struct STRUCT_ATOM {
   int flag;    // used for a number of bit parameters
   
   int bondi[STRUCT_MAX_BOND_PER_ATOM],bondc,bondm;
-};
+}structAtom;
 
 /* first level of organization: the residue */
 struct STRUCT_RESIDUE {
@@ -161,6 +160,7 @@ struct STRUCT_RESIDUE {
 /* second level of organization: the chain */
 struct STRUCT_CHAIN {
   char name[16];
+  int num;
   struct STRUCT_RESIDUE **residue;  /* pointer to pointers to residues */
   int *residue_index;               /* residue indexes */
   int residue_count;                /* number of residues in this chain */
@@ -237,6 +237,7 @@ struct TRJ_PLAY {
   int wait,wait_count;
   int delay,delay_count;
 };
+
 
 typedef struct DBM_STRUCT_NODE {
   int type;
@@ -344,7 +345,11 @@ int structSubGetNum(struct DBM_STRUCT_NODE *n, char *m, char *c, char *r, char *
 
 int structIsConnected(struct STRUCT_ATOM *a1, struct STRUCT_ATOM *a2);
 
+#ifdef PICK_NEW
+int structPick(dbmStructNode *n, double *p1, double *p2, double d, dbmPickList *pl);
+#else
 struct STRUCT_ATOM ** structPick(struct DBM_STRUCT_NODE *node, double *p1, double *p2);
+#endif
 
 int structIsAtomSelected(struct DBM_STRUCT_NODE *node, struct STRUCT_ATOM *atom, Select *sel);
 int structEvalAtomPOV(struct DBM_STRUCT_NODE *node, struct STRUCT_ATOM *atom,POV *pov);
@@ -377,5 +382,8 @@ int structGetVectProtein(struct STRUCT_RESIDUE *r);
 int structGetVectNA(struct STRUCT_RESIDUE *r);
 
 int structRecenter(dbmStructNode *node);
+
+void structSetFlag(dbmStructNode *node,int mask);
+void structClearFlag(dbmStructNode *node,int mask);
 
 #endif

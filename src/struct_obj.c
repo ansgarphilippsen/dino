@@ -17,6 +17,9 @@
 #include "struct_obj.h"
 #include "cl.h"
 #include "bspline.h"
+#ifdef BUILD
+#include "build.h"
+#endif
 
 /* 
    statically defined return value 
@@ -129,6 +132,56 @@ int structObjCommand(struct DBM_STRUCT_NODE *node,structObj *obj,int wc,char **w
     return structObjComRenew(obj, wc-1,wl+1);
   } else if(!strcmp(wl[0],"write")) {
     return structWrite(obj->node,obj,wc-1,wl+1);
+#ifdef BUILD
+  } else if(!strcmp(wl[0],"edit")) {
+    if(obj->build!=NULL) {
+      sprintf(message,"\nalready in edit mode");
+      comMessage(message);
+      return -1;
+    } else {
+      return structObjEdit(obj,wc-1,wl+1);
+    }
+  } else if(!strcmp(wl[0],"merge")) {
+    if(obj->build==NULL) {
+      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      comMessage(message);
+      return -1;
+    } else {
+      return structObjMerge(obj,wc-1,wl+1);
+    }
+  } else if(!strcmp(wl[0],"unedit")) {
+    if(obj->build==NULL) {
+      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      comMessage(message);
+      return -1;
+    } else {
+      return structObjUnedit(obj,wc-1,wl+1);
+    }
+  } else if(!strcmp(wl[0],"grab")) {
+    if(obj->build==NULL) {
+      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      comMessage(message);
+      return -1;
+    } else {
+      return structObjGrab(obj,wc-1,wl+1);
+    }
+  } else if(!strcmp(wl[0],"reset")) {
+    if(obj->build==NULL) {
+      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      comMessage(message);
+      return -1;
+    } else {
+      return structObjReset(obj,wc-1,wl+1);
+    }
+  } else if(!strcmp(wl[0],"fix")) {
+    if(obj->build==NULL) {
+      sprintf(message,"\n%s only available in edit mode",wl[0]);
+      comMessage(message);
+      return -1;
+    } else {
+      return structObjFix(obj,wc-1,wl+1);
+    }
+#endif
   } else {
     sprintf(message,"\n%s: unknown command %s",obj->name,wl[0]);
     comMessage(message);
@@ -330,8 +383,6 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	      clStrcmp(set->pov[pc].prop,"radius") ||
 	      clStrcmp(set->pov[pc].prop,"rad")) {
       set->pov[pc].id=STRUCT_PROP_RAD;
-    } else if(clStrcmp(set->pov[pc].prop,"uco")) {
-      set->pov[pc].id=STRUCT_PROP_UCO;
     } else {
       comMessage("\nerror: set: unknown property ");
       comMessage(set->pov[pc].prop);
@@ -365,35 +416,6 @@ int structObjSet(structObj *obj, Set *set, int flag)
 	obj->nbond_prop.r=r;
 	obj->nbond_prop.g=g;
 	obj->nbond_prop.b=b;
-      }
-      break;
-    case STRUCT_PROP_UCO:
-      if(val->range_flag) {
-	comMessage("\nerror: unexpected range for uco");
-	return -1;
-      }
-      if(matExtract1Df(val->val1,3,p)==-1) {
-	comMessage("\nerror: expected uco={x,y,z}");
-	return -1;
-      }
-      obj->uco[0]=p[0];
-      obj->uco[1]=p[1];
-      obj->uco[2]=p[2];
-      if(obj->node->xtal==NULL) {
-	comMessage("\nerror: uco requires cell for dataset");
-      } else {
-	if(p[0]==0.0 && p[1]==0.0 && p[2]==0.0) {
-	  obj->uco_flag=0;
-	  obj->transform_flag=0;
-	} else {
-	  obj->uco_flag=1;
-	  obj->transform_flag=1;
-	  dbmUCOTransform(obj->node->xtal,&obj->transform,p);
-	  fprintf(stderr,"\n%f %f %f",
-		  obj->transform.tra[0],
-		  obj->transform.tra[1],
-		  obj->transform.tra[2]);
-	}
       }
       break;
     }
@@ -1548,3 +1570,149 @@ int structObjGenVA(structObj *obj)
   return 0;
 }
 
+#ifdef BUILD
+
+int structObjEdit(structObj *obj, int wc, char **wl)
+{
+  char message[256];
+  int i;
+
+  if(obj->build!=NULL) {
+    sprintf(message,"\n.%s.%s: already in editing mode",
+	    obj->node->name, obj->name);
+    return -1;
+  } else {
+    obj->build = Cmalloc(sizeof(buildInst));
+
+    obj->build->atom=Ccalloc(obj->atom_count,sizeof(struct STRUCT_ATOM));
+    obj->build->apos=Ccalloc(obj->atom_count,sizeof(struct STRUCT_APOS));
+    obj->build->apos_orig=Ccalloc(obj->atom_count,sizeof(struct STRUCT_APOS));
+    obj->build->ap_save=Ccalloc(obj->atom_count,sizeof(structAtom *));
+    obj->build->atom_count=obj->atom_count;
+    obj->build->apos_size=obj->atom_count*sizeof(struct STRUCT_APOS);
+
+    for(i=0;i<obj->atom_count;i++) {
+      memcpy(&obj->build->atom[i],obj->atom[i].ap,sizeof(struct STRUCT_ATOM));
+      memcpy(&obj->build->apos[i],obj->atom[i].ap->p,sizeof(struct STRUCT_APOS));    
+      memcpy(&obj->build->apos_orig[i],obj->atom[i].ap->p,sizeof(struct STRUCT_APOS));
+      obj->build->ap_save[i]=obj->atom[i].ap;
+      obj->build->atom[i].p=&obj->build->apos[i];
+      obj->atom[i].ap=&obj->build->atom[i];
+    }
+
+    buildGenHierarchy(obj->build);
+
+    transReset(&obj->build->trans);
+    //    transReset(&obj->build->trans_frag);
+
+    //    buildGenTor(obj->build);
+  }
+  return 0;
+}
+
+int structObjMerge(structObj *obj, int wc, char **wl)
+{
+  if(obj->build==NULL)
+    return -1;
+
+  // merge the temp atoms back to ds
+
+  structObjUnedit(obj,0,NULL);
+
+  return 0;
+}
+
+int structObjUnedit(structObj *obj, int wc, char **wl)
+{
+  int i;
+  if(obj->build==NULL)
+    return -1;
+
+  for(i=0;i<obj->atom_count;i++) {
+    obj->atom[i].ap=obj->build->ap_save[i];
+  }
+
+  Cfree(obj->build->atom);
+  Cfree(obj->build->apos);
+  Cfree(obj->build->ap_save);
+  Cfree(obj->build);
+  obj->build=NULL;
+
+  return 0;
+}
+
+int structObjReset(structObj *obj, int wc, char **wl)
+{
+  int i;
+  // set all torsion angle deltas to 0
+  /*
+  for(i=0;i<obj->build->tor_count;i++)
+    ;
+  */
+  // copy apos_orig to apos
+
+  // reset rigid body transformation
+  transReset(&obj->build->trans);
+  comRedraw();
+  return 0;
+}
+
+int structObjFix(structObj *obj, int wc, char **wl)
+{
+  int i;
+  double v[3];
+
+  // apply all transformations (torsion and rigid body)
+  // then copy apos to apos_orig
+
+  //  structRecalcBondList(obj->bond,obj->bond_count);
+  // structObjReset(obj);
+  //  comRedraw();
+
+  return 0;
+}
+
+int structObjGrab(structObj *obj, int wc, char **wl)
+{
+  char dev[256],*ax;
+  char target[256];
+  float fact=1.0;
+  int i;
+
+  if(wc<=0) {
+    comMessage("\nerror: grab requires at least a device");
+    return -1;
+  }
+
+  clStrncpy(dev,wl[0],256);
+  ax=clStrchr(dev,'.');
+  if(ax!=NULL) {
+    ax[0]='\0';
+    ax++;
+  }
+
+  clStrcpy(target,"default");
+  i=1;
+  while(i<wc) {
+    if(clStrcmp(wl[i],"-t") ||
+       clStrcmp(wl[i],"-target")) {
+      i++;
+      if(i>=wc) {
+	comMessage("\nerror: missing parameter after -target");
+	return -1;
+      }
+      strncpy(target,wl[i++],256);
+    }
+  }
+
+  fprintf(stderr,"\n%s %s %s",dev,ax,target);
+
+  if(comGrab(&obj->build->trans,dev)<0)
+    return -1;
+
+  //  comGetCurrentCenter(obj->build->trans.cen);
+
+  return 0;
+}
+
+#endif

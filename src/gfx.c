@@ -369,6 +369,7 @@ int gfxGLInit(void)
   /*
     init the fonts
   */
+
   debmsg("gfxGLInit: calling glfInit");
   glfInit();
   debmsg("gfxGLInit: calling glfGenFont");
@@ -447,8 +448,12 @@ int gfxRedraw()
     comDBRedraw();
   }
   
+#ifdef GLUT_GUI
+  glutSwapBuffers();
+#else
   glXSwapBuffers(gui.dpy, gui.glxwindow);
-  
+#endif  
+
   return 0;
 }
 

@@ -88,42 +88,42 @@ int surfCommand(struct DBM_SURF_NODE *node,int wc, char **wl)
       comMessage("\nerror: missing value after rotx");
       return -1;
     }
-    transCommand(&node->transform,TRANS_ROTX,atof(wl[1]));
+    transCommand(&node->transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"roty")) {
     if(wc<2) {
       comMessage("\nerror: missing value after roty");
       return -1;
     }
-    transCommand(&node->transform,TRANS_ROTY,atof(wl[1]));
+    transCommand(&node->transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"rotz")) {
     if(wc<2) {
       comMessage("\nerror: missing value after rotz");
       return -1;
     }
-    transCommand(&node->transform,TRANS_ROTZ,atof(wl[1]));
+    transCommand(&node->transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transx")) {
     if(wc<2) {
       comMessage("\nerror: missing value after transx");
       return -1;
     }
-    transCommand(&node->transform,TRANS_TRAX,atof(wl[1]));
+    transCommand(&node->transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transy")) {
     if(wc<2) {
       comMessage("\nerror: missing value after transy");
       return -1;
     }
-    transCommand(&node->transform,TRANS_TRAY,atof(wl[1]));
+    transCommand(&node->transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
   } else if(!strcmp(wl[0],"transz")) {
     if(wc<2) {
       comMessage("\nerror: missing value after transz");
       return -1;
     }
-    transCommand(&node->transform,TRANS_TRAZ,atof(wl[1]));
+    transCommand(&node->transform,TRANS_TRAZ,-1,atof(wl[1]));
     comRedraw();
   } else {
     sprintf(message,"\nunknown command: %s", wl[0]);

@@ -162,6 +162,7 @@ struct DBM {
   int node_count;
 };
 
+#include "pick.h"
 
 int dbmInit(void);
 int dbmNew(int wc, char **wl);
@@ -182,7 +183,6 @@ float dbmSurfGetProperty(dbmSurfNode *node, float *pos, const char *prop);
 int dbmGridCheckDist(gridObj *, double *v, double d);
 
 int dbmCalcXtal(struct XTAL *xtal);
-int dbmUCOTransform(struct XTAL *xtal,transMat *transform, float uco[3]);
 
 int dbmSplit(char *exp, char c, int *wc, char ***wl);
 int dbmSplitPOV(char *expr, char *prop, char *op, char *val);
@@ -202,5 +202,7 @@ int dbmRangeExtract(dbmNode *node, struct DBM_RANGE *range);
 int dbmIsWithin(float *p, float d2, const char *ds, const char *obj);
 int dbmIsElementInObj(const char *db, const char *obj, int ele_num);
 int dbmGetRangeVal(Range *range, float *p, float *r);
+
+int dbmPickAdd(dbmPickList *pl, float x, float y, float z, char *n, char *id);
 
 #endif

@@ -29,7 +29,7 @@ typedef struct STRUCT_OBJ {
   double r,g,b;
   struct STRUCT_OBJ_MODEL {
     float r,g,b;
-    struct STRUCT_DB *mp;
+    struct STRUCT_MODEL *mp;
   }*model;
   int model_count;
   struct STRUCT_OBJ_CHAIN {
@@ -47,13 +47,10 @@ typedef struct STRUCT_OBJ {
     int cc;
     struct STRUCT_ATOM_PROP prop;
     struct STRUCT_ATOM *ap;
-  }*atom;
+  } *atom;
   int atom_count;
   unsigned char *atom_flag;
-  /*
-  structVect *trace_v1;
-  structVect *trace_v2;
-  */
+
   struct STRUCT_BOND *bond;
   int bond_count;
   struct STRUCT_SINGULAR_BOND *s_bond;
@@ -67,11 +64,7 @@ typedef struct STRUCT_OBJ {
 
   unsigned int sphere_list;
 
-  int uco_flag;
-  float uco[3];
-
-  int transform_flag;
-  transMat transform;
+  struct BUILD_INSTANCE *build;
 }structObj;
 
 
@@ -96,5 +89,12 @@ int structObjIsWithin(structObj *obj, float *p, float d2);
 int structSmooth(structObj *obj);
 
 int structObjGenVA(structObj *obj);
+
+int structObjEdit(structObj *obj, int wc, char **wl);
+int structObjMerge(structObj *obj, int wc, char **wl);
+int structObjUnedit(structObj *obj, int wc, char **wl);
+int structObjReset(structObj *obj, int wc, char **wl);
+int structObjFix(structObj *obj, int wc, char **wl);
+int structObjGrab(structObj *obj, int wc, char **wl);
 
 #endif

@@ -15,7 +15,7 @@
 
 extern struct GFX gfx;
 
-int transCommand(transMat *trans, int command, double value)
+int transCommand(transMat *trans, int command, int axis, double value)
 {
   int i;
   double rmat[16],nmat[16],mm[16],pm[16];

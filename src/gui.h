@@ -33,6 +33,10 @@
 #include <GL/glx.h>
 #endif
 
+#ifdef GLUT_GUI
+#include <GL/glut.h>
+#endif
+
 #ifdef LINUX
 #include <gdbm.h>
 #endif
@@ -123,6 +127,9 @@ struct GUI
 
   Window user_menu;
 
+  Window pad1, pad2;
+  int pad1v, pad2u,pad2v;
+
   char message_string[256],message_string2[256];
 
   int om_flag;
@@ -138,7 +145,13 @@ struct GUI
   int xiEventBase;
 
   void (*callback)(int, char **);
-
+#ifdef GLUT_GUI
+  int glut_main;
+  int glut_om;
+  int mbs[3];
+  int modifiers;
+  long timecode;
+#endif
   int last_x, last_y;
   struct timeval tp_button;
 

@@ -237,7 +237,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node)
 	strcpy(ccp->name,ae->cname);
       else
 	strcpy(ccp->name,"");
-
+      ccp->num=cci;
       ccp->residue=NULL;
       ccp->residue_count=0;
       ccp->residue_count=0;

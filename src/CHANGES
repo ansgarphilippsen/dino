@@ -1,3 +1,6 @@
+fixed bug in accum routine (enabled front buffer for reading), workaround 
+for NVIDIA clearing accum buffer bug
+
 fixed bug in cnsb routine
 
 added -c flag to uhbd load to convert units based on header scale
