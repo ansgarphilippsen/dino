@@ -10,15 +10,15 @@ OMDataset::OMDataset(wxWindow* p, const string& name):
   SetBackgroundColour(wxColour(255,255,255));
   _sizer = new wxBoxSizer(wxVERTICAL);
   _sizer->Add(new wxStaticText(this, -1, name.c_str()), 
-	      0, wxEXPAND | wxHORIZONTAL | wxALIGN_TOP, 1);
+	      1, wxEXPAND | wxALIGN_TOP, 1);
   SetSizerAndFit(_sizer);
 }
 
 void OMDataset::AddObj(const string& name)
 {
   _sizer->Add(new OMObject(this, name), 
-	      0, wxEXPAND | wxHORIZONTAL | wxALIGN_TOP, 5);
-  _sizer->Layout();
+	      1, wxEXPAND | wxALL | wxALIGN_TOP, 5);
+  //_sizer->SetSizeHints(this);
 }
 
 void OMDataset::RemoveObj(const string& name)
@@ -40,7 +40,9 @@ ObjMenu::ObjMenu():
 {
   _swin = new wxScrolledWindow(this,-1);
   _sizer = new wxBoxSizer(wxVERTICAL);
-  _swin->SetSizerAndFit(_sizer);
+  _swin->SetSizer(_sizer);
+  _swin->FitInside();
+  _swin->SetBackgroundColour(wxColour(1,0,0));
   Show(true);
 }
 
@@ -50,9 +52,7 @@ ObjMenu::~ObjMenu()
 
 void ObjMenu::AddDataset(const string& dsname)
 {
-  _sizer->Add(new OMDataset(_swin,dsname), 1, wxEXPAND | wxALL | wxALIGN_TOP, 5);
-  _sizer->Layout();
-  Fit();
+  _sizer->Add(new OMDataset(_swin,dsname), 0, wxEXPAND | wxALL | wxALIGN_TOP | wxADJUST_MINSIZE, 5);
 }
 
 void ObjMenu::RemoveDataset(const string& dsname)
@@ -65,8 +65,8 @@ void ObjMenu::AddObject(const string& dsname, const string& oname)
   OMDataset* dsp = get_dataset(dsname);
   if(dsp) {
     dsp->AddObj(oname);
+    _swin->FitInside();
   }
-  Fit();
 }
 
 void ObjMenu::RemoveObject(const string& dsname, const string& oname)

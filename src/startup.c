@@ -106,7 +106,7 @@ static int eval_line(int argc, char **argv, struct COM_PARAMS *params)
 	 clStrcmp(argv[1],"on")) {
 	params->stereo_flag=1;
       } else {
-	params->stereo_flag=1;
+	params->stereo_flag=0;
       }
     } else if(clStrcmp(argv[0],"mouse_rot_scale")) {
       params->mouse_rot_scale = atof(argv[1]);
@@ -120,6 +120,15 @@ static int eval_line(int argc, char **argv, struct COM_PARAMS *params)
       params->dials_rot_scale = atof(argv[1]);
     } else if(clStrcmp(argv[0],"dials_tra_scale")) {
       params->dials_tra_scale = atof(argv[1]);
+    } else if(clStrcmp(argv[0],"trans_limit")) {
+      if(argc==7) {
+	params->trans_limit_flag=1;
+	for(i=0;i<6;i++) { 
+	  params->trans_limit[i]=atof(argv[i+1]);
+	}
+      } else {
+	fprintf(stderr,"startup parameter 'trans_limit' requires 6 parameters\n");
+      }
     } else {
       // unknown keyword
       //fprintf(stderr,"startup: unknown keyword ignored: %s\n",argv[0]);

@@ -11,6 +11,7 @@
 #include "gfx.h"
 
 extern struct GFX gfx;
+extern struct GLOBAL_COM com;
 
 int transCommand(transMat *trans, int command, int axis, double value)
 {
@@ -91,15 +92,6 @@ int transCommand(transMat *trans, int command, int axis, double value)
     d1[1]=0.0;
     d1[2]=value;
     d1[3]=1.0;
-#ifndef EXPO
-    if(trans==&gfx.transform) {
-      if(gfx.fixz) {
-	gfx.transform.slabn-=value;
-	gfx.transform.slabf-=value;
-	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
-      }
-    }
-#endif
     break;
   case TRANS_SLABN:
     gfx.transform.slabn+=value;
@@ -113,36 +105,6 @@ int transCommand(transMat *trans, int command, int axis, double value)
 
   if(command==TRANS_TRAX || command==TRANS_TRAY || command==TRANS_TRAZ) {
     if(trans==&gfx.transform) {
-#ifdef EXPO
-      oz1=trans->tra[2];
-      trans->tra[0]+=d1[0];
-      trans->tra[1]+=d1[1];
-      trans->tra[2]+=d1[2];
-      if(gfx.limx1!=0) {
-	if(trans->tra[0]>gfx.limx1)
-	  trans->tra[0]=gfx.limx1;
-	if(trans->tra[0]<gfx.limx2)
-	  trans->tra[0]=gfx.limx2;
-      }
-      if(gfx.limy1!=0) {
-	if(trans->tra[1]>gfx.limy1)
-	  trans->tra[1]=gfx.limy1;
-	if(trans->tra[1]<gfx.limy2)
-	  trans->tra[1]=gfx.limy2;
-      }
-      if(gfx.limz1!=0) {
-	if(trans->tra[2]>gfx.limz1)
-	  trans->tra[2]=gfx.limz1;
-	if(trans->tra[2]<gfx.limz2)
-	  trans->tra[2]=gfx.limz2;
-      }
-      if(gfx.fixz) {
-	value=trans->tra[2]-oz1;
-	gfx.transform.slabn-=value;
-	gfx.transform.slabf-=value;
-	gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
-      }
-#else
       trans->tra[0]+=d1[0];
       trans->tra[1]+=d1[1];
       if(gfx.mode==GFX_PERSP) {
@@ -150,7 +112,44 @@ int transCommand(transMat *trans, int command, int axis, double value)
       } else {
 	gfx.scale*=(1.0+d1[2]/100.0);
       }
-#endif
+      value = d1[2];
+      // check new tra values
+      if(com.trans_limit_flag) {
+	if(trans->tra[0]<com.trans_limit[0]) { // left x
+	  trans->tra[0]=com.trans_limit[0];
+	}
+	if(trans->tra[0]>com.trans_limit[1]) { // right x
+	  trans->tra[0]=com.trans_limit[1];
+	}
+	if(trans->tra[1]<com.trans_limit[2]) { // bottom y
+	  trans->tra[1]=com.trans_limit[2];
+	}
+	if(trans->tra[1]>com.trans_limit[3]) { // top y
+	  trans->tra[1]=com.trans_limit[3];
+	}
+
+	if(trans->tra[2]<com.trans_limit[4]) { // front z
+	  //value = (trans->tra[2]-d1[2]) - com.trans_limit[4]; 
+	  value = 0;
+	  trans->tra[2]=com.trans_limit[4];
+	}
+	if(trans->tra[2]>com.trans_limit[5]) { // back z
+	  //value = com.trans_limit[5] - (trans->tra[2]-d1[2]); 
+	  value = 0;
+	  trans->tra[2]=com.trans_limit[5];
+	}
+
+      }
+
+      if(value!=0 && trans==&gfx.transform) {
+	if(gfx.fixz) {
+	  gfx.transform.slabn-=value;
+	  gfx.transform.slabf-=value;
+	  gfxSetSlab(gfx.transform.slabn,gfx.transform.slabf);
+	}
+      }
+
+
     } else {
       matMultMV(gfx.transform.rot,d1,d2);
       trans->tra[0]+=d2[0];

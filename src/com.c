@@ -303,6 +303,17 @@ static void init_transform(struct COM_PARAMS *params)
   com.tlist[tc].command[i].axis=-1;
   tc++;
   com.tlist_count=tc;
+
+  // limits
+  if(params->trans_limit_flag) {
+    com.trans_limit_flag=1;
+    memcpy(com.trans_limit,params->trans_limit,sizeof(float)*6);
+    fprintf(stderr,"setting translation limits to %3f %3f  %3f %3f  %3f %3f\n",
+	    com.trans_limit[0],com.trans_limit[1],com.trans_limit[2],
+	    com.trans_limit[3],com.trans_limit[4],com.trans_limit[5]);
+  } else {
+    com.trans_limit_flag=0;
+  }
 }
 
 

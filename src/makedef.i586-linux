@@ -36,6 +36,6 @@ endif
 CC   = gcc
 CPP  = g++
 # add -pg to both for profiling
-COPT = -g2  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
+COPT = -O3  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
 LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(LIBGLW) $(LIBSTATIC)
 

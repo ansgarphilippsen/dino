@@ -1,3 +1,6 @@
+
+-----
+
 fixed unclean exit that could cause a crash under linux
 
 fixed bug in scalar-field selection

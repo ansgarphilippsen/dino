@@ -49,6 +49,9 @@ struct GLOBAL_COM {
   int ms_mask,ms_axis,ms_ivalue;
 
   float mouse_spin_x, mouse_spin_y;
+
+  int trans_limit_flag;
+  float trans_limit[6];
 };
 
 struct COM_PARAMS {
@@ -56,6 +59,8 @@ struct COM_PARAMS {
   float sb_rot_scale, sb_tra_scale;
   float dials_rot_scale,dials_tra_scale;
   int stereo_flag;
+  float trans_limit[6];
+  int trans_limit_flag;
 };
 
 enum  {COM_PLAY_ON,

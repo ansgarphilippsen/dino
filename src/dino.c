@@ -181,6 +181,7 @@ static void reset_com_params(struct COM_PARAMS *p)
   p->sb_tra_scale=1.0;
   p->dials_rot_scale=1.0;
   p->dials_tra_scale=1.0;
+  p->trans_limit_flag=0;
 }
  
 int dinoMain(int argc,char **argv)
