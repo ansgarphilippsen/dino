@@ -442,29 +442,78 @@ int sceneCommand(int wc, const char **wl)
 	  comMessage(message);
 	  return -1;
 	}
-	oldd=gfx.fog_dist;
 	newd=atof(val);
 	if(clStrcmp(op,"=")) {
-	  gfx.fog_dist=newd;
+	  gfx.fog_far_offset=newd;
 	} else if(clStrcmp(op,"+=")) {
-	  gfx.fog_dist+=newd;
+	  gfx.fog_far_offset+=newd;
 	} else if(clStrcmp(op,"-=")) {
-	  gfx.fog_dist-=newd;
+	  gfx.fog_far_offset-=newd;
 	} else {
 	  sprintf(message,"scene: unknown operator: %s\n",op);
 	  comMessage(message);
 	  return -1;
 	}
-	/****
-	if(gfx.fog_dist<-1.0) {
-	  comMessage("fogo clamped to -1.0\n");
-	  gfx.fog_dist=-1.0;
+	gfxSetFog();
+	comRedraw();
+	scene_virgin_flag=0;
+      } else if(clStrcmp(prop,"fognearoffset") ||
+		clStrcmp(prop,"fogno")) {
+	/**********************
+	  set fog near offset
+	**********************/
+	if(strlen(op)==0) {
+	  sprintf(message,"scene: missing operator\n");
+	  comMessage(message);
+	  return -1;
 	}
-	if(gfx.fog_dist>1.0) {
-	  comMessage("fogo clamped to 1.0\n");
-	  gfx.fog_dist=1.0;
+	if(strlen(val)==0) {
+	  sprintf(message,"scene: missing value\n");
+	  comMessage(message);
+	  return -1;
 	}
-	*****/
+	newd=atof(val);
+	if(clStrcmp(op,"=")) {
+	  gfx.fog_near_offset=newd;
+	} else if(clStrcmp(op,"+=")) {
+	  gfx.fog_near_offset+=newd;
+	} else if(clStrcmp(op,"-=")) {
+	  gfx.fog_near_offset-=newd;
+	} else {
+	  sprintf(message,"scene: unknown operator: %s\n",op);
+	  comMessage(message);
+	  return -1;
+	}
+	gfxSetFog();
+	comRedraw();
+	scene_virgin_flag=0;
+      } else if(clStrcmp(prop,"fogfaroffset") ||
+		clStrcmp(prop,"fogfo")) {
+	/**********************
+	  set fog far offset
+	**********************/
+	if(strlen(op)==0) {
+	  sprintf(message,"scene: missing operator\n");
+	  comMessage(message);
+	  return -1;
+	}
+	if(strlen(val)==0) {
+	  sprintf(message,"scene: missing value\n");
+	  comMessage(message);
+	  return -1;
+	}
+	newd=atof(val);
+	if(clStrcmp(op,"=")) {
+	  gfx.fog_far_offset=newd;
+	} else if(clStrcmp(op,"+=")) {
+	  gfx.fog_far_offset+=newd;
+	} else if(clStrcmp(op,"-=")) {
+	  gfx.fog_far_offset-=newd;
+	} else {
+	  sprintf(message,"scene: unknown operator: %s\n",op);
+	  comMessage(message);
+	  return -1;
+	}
 	gfxSetFog();
 	comRedraw();
 	scene_virgin_flag=0;
@@ -1079,7 +1128,13 @@ int sceneCommand(int wc, const char **wl)
     } else if(clStrcmp(wl[1],"fov")){
       sprintf(message,"%g",gfx.fovy);
     } else if(clStrcmp(wl[1],"fogo")){
-      sprintf(message,"%g",gfx.fog_dist);
+      sprintf(message,"%g",gfx.fog_far_offset);
+    } else if(clStrcmp(wl[1],"fogneafoffset") ||
+	      clStrcmp(wl[1],"fogno")){
+      sprintf(message,"%g",gfx.fog_near_offset);
+    } else if(clStrcmp(wl[1],"fogfaroffset") ||
+	      clStrcmp(wl[1],"fogfo")) {
+      sprintf(message,"%g",gfx.fog_far_offset);
     } else if(clStrcmp(wl[1],"fixz")){
       if(gfx.fixz)
 	sprintf(message,"true");
