@@ -123,6 +123,20 @@ int clStrcpy(char *d, const char *s)
   return c;
 }
 
+int clStrncpy(char *d, const char *s, int m)
+{
+  int c;
+
+  if(d==NULL || s==NULL)
+    return 0;
+  
+  for(c=0;s[c]!='\0' && c<m;c++) {
+    d[c]=s[c];
+  }
+  d[c]='\0';
+  return c;
+}
+
 int clStrlen(const char *s)
 {
   int c=0;

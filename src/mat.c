@@ -4,6 +4,7 @@
 #include <ctype.h>
 
 #include "mat.h"
+#include "cl.h"
 #include "Cmalloc.h"
 
 #ifdef SUN
@@ -1505,4 +1506,68 @@ double matCalcDistancePointToLine(double *l0, double *l1, double *p)
   matCalcCross(diff1,diff2,cross);
 
   return matCalcLen(cross)/matCalcLen(diff1);
+}
+
+/*
+  extract vector in the form
+
+  <v1,v2, ... ,vn>
+  or
+  <v1 v2 ... vn>
+
+  and return count values result
+
+  return 0 on success or neg value on failure
+
+*/
+
+#define mat_max_vector_count 16
+static float mat_vector_result[mat_max_vector_count];
+
+int matExtractVector(const char *s, int *count, float **result)
+{
+  char buf[512],*bp;
+  int c,d,len;
+
+  clStrncpy(buf,s,512);
+  len=clStrlen(buf);
+
+  c=0;
+
+  (*count)=0;
+  (*result)=mat_vector_result;
+  
+  if(buf[c]!='<') {
+    return -1;
+  } else {
+    c++;
+  }
+
+  for(d=0;d<len;d++)
+    if(buf[d]==',')
+      buf[d]=' ';
+
+  bp=buf+c;
+
+  while(buf[c]!='>' && c<len) {
+    
+    while(isspace(buf[c]) && c<len)
+      c++;
+    bp=buf+c;
+    while(!isspace(buf[c]) && c<len)
+      c++;
+
+    if(c<len)
+      buf[c]='\0';
+    (*result)[(*count)++]=atof(bp);
+    if((*count)>mat_max_vector_count)
+      break;
+  }
+
+  if(c>=len || buf[c]!='>') {
+    return -1;
+  }
+
+  return 0;
+
 }

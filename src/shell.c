@@ -1092,6 +1092,8 @@ int shellParse(int wc, char **wl,int pos)
   char es[shell_stack_expr_len];
   char *varlist[2];
   int arglen;
+  int testi;
+  float *testf;
 
   if(wc<1)
     return SHELL_ERROR;

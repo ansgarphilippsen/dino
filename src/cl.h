@@ -20,6 +20,7 @@ int clDelete(clOrg *org);
 int clStrcmp(const char *s1, const char *s2);
 int clStrncmp(const char *s1, const char *s2, int m);
 int clStrcpy(char *d, const char *s);
+int clStrncpy(char *d, const char *s, int m);
 int clStrlen(const char *s);
 int clStrncat(char *d, const char *s, int m);
 const char *clStrchr(const char *s, int c);
