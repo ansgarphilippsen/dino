@@ -12,6 +12,8 @@
 ***************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "dino.h"
@@ -20,7 +22,7 @@
 #include "com.h"
 #include "dbm.h"
 #include "xtal.h"
-#include "GLwStereo.h"
+#include "glw.h"
 #include "render.h"
 #include "mat.h"
 #include "cgfx.h"
@@ -179,7 +181,7 @@ int gfxInit()
   gfx.b=0.0;
   
   gfx.axisflag=1;
-  gfx.stereo_display=GFX_CENTER;
+  gfx.stereo_view=GFX_CENTER;
   gfx.slab_flag=0;
   gfx.spin=0;
 
@@ -369,7 +371,7 @@ int gfxGLInit(void)
   glfGenFont();
 
   // set projection matrix
-  gfxSetProjection(gfx.stereo_display);
+  gfxSetProjection(gfx.stereo_view);
   // set fog
   gfxSetFog();
 
@@ -405,25 +407,8 @@ int gfxGLInit(void)
   
 int gfxRedraw() 
 {
-  if(gui.stereo_mode==GUI_STEREO_NORMAL) {
-    /*
-      the projection matrix needs to be set
-      for each redraw
-    */
-    if(gui.stereo_available==GLW_STEREO_LOW)
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height*0.5;
-    else
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height;
-    GLwStereoDrawBuffer(GLW_STEREO_RIGHT);
-    gfxSetProjection(GFX_RIGHT);
-    gfxSceneRedraw(1);
-    comDBRedraw();
-    GLwStereoDrawBuffer(GLW_STEREO_LEFT);
-    gfxSetProjection(GFX_LEFT);
-    gfxSceneRedraw(1);
-    comDBRedraw();
-  } else if(gui.stereo_mode==GUI_STEREO_SPLIT) {
-    GLwStereoDrawBuffer(GLW_STEREO_RIGHT);
+  if (gui.stereo_mode==GUI_STEREO_SPLIT) {
+    glwDrawBuffer(GLW_STEREO_RIGHT);
     gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
     glViewport(0,0,gui.win_width/2, gui.win_height);
     gfxSetProjection(GFX_RIGHT);
@@ -433,20 +418,31 @@ int gfxRedraw()
     gfxSetProjection(GFX_LEFT);
     gfxSceneRedraw(0);
     comDBRedraw();
+#ifdef SGI_STEREO
+  } else if(gui.stereo_mode==GUI_STEREO_NORMAL) {
+    if(gui.stereo_available==SGI_STEREO_LOW)
+      gfx.aspect=(double)gui.win_width/(double)gui.win_height*0.5;
+    else
+      gfx.aspect=(double)gui.win_width/(double)gui.win_height;
+    glwStereoDrawBuffer(GLW_STEREO_RIGHT);
+    gfxSetProjection(GFX_RIGHT);
+    gfxSceneRedraw(1);
+    comDBRedraw();
+    GLwDrawBuffer(GLW_STEREO_LEFT);
+    gfxSetProjection(GFX_LEFT);
+    gfxSceneRedraw(1);
+    comDBRedraw();
+#endif
   } else {
-    GLwStereoDrawBuffer(GLW_STEREO_LEFT);
-    gfxSetProjection(gfx.stereo_display);
+    glwDrawBuffer(GLW_STEREO_CENTER);
+    gfxSetProjection(gfx.stereo_view);
     gfxSceneRedraw(1);
     
     comDBRedraw();
   }
-  
-#ifdef GLUT_GUI
-  glutSwapBuffers();
-#else
-  glXSwapBuffers(gui.dpy, gui.glxwindow);
-#endif  
 
+  guiSwapBuffers();
+  
   return 0;
 }
 
@@ -457,7 +453,7 @@ int gfxSceneRedraw(int clear)
   double v[4];
 
   if(clear)
-    GLwStereoClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glwClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -553,7 +549,7 @@ int gfxSetViewport(void)
 {
   glViewport(0,0,gui.win_width, gui.win_height);
   gfx.aspect=(double)gui.win_width/(double)gui.win_height;
-  gfxSetProjection(gfx.stereo_display);
+  gfxSetProjection(gfx.stereo_view);
   return 0;
 }
 
@@ -562,33 +558,25 @@ int gfxSetProjection(int view)
   GLdouble iod,fd;
   if(view==GFX_LEFT) {
     iod=-gui.eye_dist;
-    //    fd=gfx.transform.tra[2];
     fd=gui.eye_offset;
   } else if(view==GFX_RIGHT) {
     iod=gui.eye_dist;
-    //    fd=gfx.transform.tra[2];
     fd=gui.eye_offset;
   } else {
     iod=0.0;
     fd=0.0;
   }
 
-  //  fd=gfx.transform.slabn;
-
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   if(gfx.mode==GFX_PERSP) {
-    /*
-    gluPerspective(gfx.fovy,gfx.aspect,
-		   gfx.transform.slabn,gfx.transform.slabf);
-    */
-    GLwStereoPerspective(gfx.fovy,gfx.aspect,
-			 gfx.transform.slabn2,gfx.transform.slabf2,
-			 iod,fd);
-  } else {
-    GLwStereoOrtho(gfx.left,gfx.right,gfx.bottom,gfx.top,
+    glwPerspective(gfx.fovy,gfx.aspect,
 		   gfx.transform.slabn2,gfx.transform.slabf2,
-		   0.0, 0.0);
+		   iod,fd);
+  } else {
+    glwOrtho(gfx.left,gfx.right,gfx.bottom,gfx.top,
+	     gfx.transform.slabn2,gfx.transform.slabf2,
+	     0.0, 0.0);
   }
   return 0;
 }
@@ -604,7 +592,7 @@ int gfxSetSlab(float near, float far)
   gfx.transform.slabn2=near;
   gfx.transform.slabf2=far;
 
-  gfxSetProjection(gfx.stereo_display);
+  gfxSetProjection(gfx.stereo_view);
   gfxSetFog();
   return 0;
 }

@@ -42,7 +42,7 @@
 #include "mat.h"
 #include "Cmalloc.h"
 #include "cgfx.h"
-#include "GLwStereo.h"
+#include "glw.h"
 #ifdef FORMAT_RGB
 #include "ximage_util.h"
 #endif
@@ -155,6 +155,7 @@ float jitter16[][2]={ {0.375, 0.4375}, {0.625, 0.0625},
 
 int writeFile(char *name, int type, int accum, float scale, int dump)
 {
+#ifdef X11_GUI
   XImage *image;
   Pixmap pixmap;
   GLXPixmap glx_pixmap;
@@ -297,9 +298,9 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
       glViewport(gui.win_width,0,gui.win_width, gui.win_height);
     } else {
       gfx.aspect=1.0*(double)gui.win_width/(double)gui.win_height;
-      if(gfx.stereo_display==GFX_LEFT)
+      if(gfx.stereo_view==GFX_LEFT)
 	writeRedraw(WRITE_LEFT_VIEW, accum,1);
-      else if(gfx.stereo_display==GFX_RIGHT)
+      else if(gfx.stereo_view==GFX_RIGHT)
 	writeRedraw(WRITE_RIGHT_VIEW, accum,1);
       else
 	writeRedraw(WRITE_CENTER_VIEW, accum,1);
@@ -354,11 +355,13 @@ int writeFile(char *name, int type, int accum, float scale, int dump)
     gfxResizeEvent();
 
   }
+#endif
   return 0;
 }
 
 XVisualInfo * writeGetVis(int accum_flag)
 {
+#ifdef X11_GUI
   int buf[64];
   int bufc=0,i,j,k;
   int depthi,rgbai,accumi;
@@ -434,7 +437,7 @@ XVisualInfo * writeGetVis(int accum_flag)
       }
     }
   }
-
+#endif
   return NULL;
 }
 
@@ -488,7 +491,7 @@ int writeRedraw(int mode, int accum, int flag)
     }
     f=1.0/(float)accum;
     for(i=0;i<accum;i++) {
-      gfxSetAccProjection(gfx.stereo_display, jitter[i*2+0], jitter[i*2+1]);
+      gfxSetAccProjection(gfx.stereo_view, jitter[i*2+0], jitter[i*2+1]);
       gfxSetFog();
       gfxSceneRedraw(flag);
       comDBRedraw();

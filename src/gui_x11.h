@@ -33,10 +33,6 @@
 #include <GL/glx.h>
 #endif
 
-#ifdef GLUT_GUI
-#include <GL/glut.h>
-#endif
-
 #ifdef LINUX
 #include <gdbm.h>
 #endif
@@ -185,8 +181,6 @@ int guiMInit(void (*)(int, char **), int*, char ***);
 
 int guiMainLoop(void);
 
-int guiStereo(int mode);
-
 int guiResolveColor(const char *name, float *r, float *g, float *b);
 
 int guiMessage(char *m);
@@ -197,5 +191,7 @@ void guiRegisterUserMenu(Window w);
 int guiCheckCustomEvent(XEvent *event);
 
 void guiTimeProc(XtPointer client_data);
+
+void guiSwapBuffers(void);
 
 #endif

@@ -45,6 +45,10 @@ struct GUI_KEY_EVENT {
 
 struct GUI
 {
+  int win_width,win_height;
+  int bpp;
+  int sdl_flags;
+
   int inside;
   int redraw;
 
@@ -87,10 +91,10 @@ int guiMInit(void (*)(int, char **), int*, char ***);
 
 int guiMainLoop(void);
 
-int guiStereo(int mode);
-
 int guiResolveColor(const char *name, float *r, float *g, float *b);
 
 int guiMessage(char *m);
+
+void guiSwapBuffers(void);
 
 #endif

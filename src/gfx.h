@@ -52,7 +52,7 @@ struct GFX
 
   int axisflag;
   int cpflag;
-  int stereo_display;
+  int stereo_view;
   int slab_flag;
   int fixz;
   int spin,sx,sy,sdx,sdy;

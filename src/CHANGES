@@ -1,3 +1,5 @@
+revamped GUI: separated layers, added GLUT/freeglut or SDL support
+
 added binpos format
 
 raster3D output removed

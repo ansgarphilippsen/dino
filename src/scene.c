@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #ifdef USE_MESA
@@ -17,7 +18,7 @@
 #include "gfx.h"
 #include "mat.h"
 #include "Cmalloc.h"
-#include "GLwStereo.h"
+#include "glw.h"
 #include "input.h"
 #include "cl.h"
 #include "set.h"
@@ -147,7 +148,7 @@ int sceneCommand(int wc, char **wl)
     gfx.transform.slabn=1.0;
     gfx.transform.slabf=1000.0;
     gfxSetViewport();
-    gfxSetProjection(gfx.stereo_display);
+    gfxSetProjection(gfx.stereo_view);
     gfxSetFog();
     comRedraw();
   } else if(!strcmp(wl[0],"center")) {
@@ -442,7 +443,7 @@ int sceneCommand(int wc, char **wl)
 	  gfx.mode=GFX_PERSP;
 	  glDisable(GL_NORMALIZE);
 	}
-	gfxSetProjection(gfx.stereo_display);
+	gfxSetProjection(gfx.stereo_view);
 	gfxSetFog();
 	comRedraw();
       } else if(!strcmp(prop,"ortho")) {
@@ -452,7 +453,7 @@ int sceneCommand(int wc, char **wl)
 	  gfx.mode=GFX_ORTHO;
 	  glEnable(GL_NORMALIZE);
 	}
-	gfxSetProjection(gfx.stereo_display);
+	gfxSetProjection(gfx.stereo_view);
 	gfxSetFog();
 	comRedraw();
       } else if(!strcmp(prop,"eyedist")) {
@@ -484,7 +485,7 @@ int sceneCommand(int wc, char **wl)
 	}
 	if(gui.eye_dist<0.0)
 	  gui.eye_dist=0.0;
-	gfxSetProjection(gfx.stereo_display);
+	gfxSetProjection(gfx.stereo_view);
 	comRedraw();
       } else if(!strcmp(prop,"fov")) {
 	/**********************
@@ -517,7 +518,7 @@ int sceneCommand(int wc, char **wl)
 	  gfx.fovy=5.0;
 	if(gfx.fovy>85.0)
 	  gfx.fovy=85.0;
-	gfxSetProjection(gfx.stereo_display);
+	gfxSetProjection(gfx.stereo_view);
 	comRedraw();
       } else if(!strcmp(prop,"fixz")) {
 	/**********************
@@ -687,17 +688,17 @@ int sceneCommand(int wc, char **wl)
 	  return -1;
 	}
 	if(!strcmp(val,"center"))
-	  gfx.stereo_display=GFX_CENTER;
+	  gfx.stereo_view=GFX_CENTER;
 	else if(!strcmp(val,"left"))
-	  gfx.stereo_display=GFX_LEFT;
+	  gfx.stereo_view=GFX_LEFT;
 	else if(!strcmp(val,"right"))
-	  gfx.stereo_display=GFX_RIGHT;
+	  gfx.stereo_view=GFX_RIGHT;
 	else {
 	  sprintf(message,"\ninvalid value for view");
 	  comMessage(message);
 	  return -1;
 	}
-	gfxSetProjection(gfx.stereo_display);
+	gfxSetProjection(gfx.stereo_view);
 	comRedraw();
       } else if(!strcmp(prop,"transmat") ||
 		!strcmp(prop,"trans")) {
@@ -905,9 +906,9 @@ int sceneCommand(int wc, char **wl)
     } else if(!strcmp(wl[1],"bg")) {
       sprintf(message,"{%.3f,%.3f,%.3f}",gfx.r,gfx.g,gfx.b);
     } else if(!strcmp(wl[1],"view")) {
-      if(gfx.stereo_display==GFX_RIGHT)
+      if(gfx.stereo_view==GFX_RIGHT)
 	sprintf(message,"right");
-      else if(gfx.stereo_display==GFX_LEFT)
+      else if(gfx.stereo_view==GFX_LEFT)
 	sprintf(message,"left");
       else
 	sprintf(message,"center");
@@ -954,11 +955,11 @@ int sceneCommand(int wc, char **wl)
   } else if(!strcmp(wl[0],"autoslab")) {
     comGetMinMaxSlab();
     gfxSetFog();
-    gfxSetProjection(gfx.stereo_display);
+    gfxSetProjection(gfx.stereo_view);
     comRedraw();
   } else if(!strcmp(wl[0],"split")) {
     if(gui.stereo_mode==GUI_STEREO_NORMAL) {
-      guiStereo(GUI_STEREO_OFF);
+      glwStereoSwitch(GUI_STEREO_OFF);
       gui.stereo_mode=GUI_STEREO_SPLIT;
     } else if(gui.stereo_mode==GUI_STEREO_OFF) {
       gfx.aspect=0.5*(double)gui.win_width/(double)gui.win_height;
@@ -971,18 +972,18 @@ int sceneCommand(int wc, char **wl)
       comRedraw();
     }
   } else if(!strcmp(wl[0],"stereo")) {
-    if(gui.stereo_available!=GLW_STEREO_NONE) {
+    if(gui.stereo_available) {
       if(wc==1) {
 	if(gui.stereo_mode) {
-	  guiStereo(0);
+	  glwStereoSwitch(0);
 	} else {
-	  guiStereo(1);
+	  glwStereoSwitch(1);
 	}
       } else {
 	if(!strcmp(wl[1],"off")) {
-	  guiStereo(0);
+	  glwStereoSwitch(0);
 	} else if(!strcmp(wl[1],"on")) {
-	  guiStereo(1);
+	  glwStereoSwitch(1);
 	} else {
 	  sprintf(message,"\nunknown command '%s'",wl[1]);
 	  comMessage(message);
@@ -991,7 +992,7 @@ int sceneCommand(int wc, char **wl)
       }
     } else if(!strcmp(wl[0],"mono")) {
       if(gui.stereo_mode) {
-	guiStereo(0);
+	glwStereoSwitch(0);
       }
     } else {
       sprintf(message,"\nStereo mode not available");

@@ -31,7 +31,7 @@
 #include "scene.h"
 #include "menu.h"
 #include "input.h"
-#include "GLwStereo.h"
+#include "glw.h"
 #include "symm.h"
 #include "cl.h"
 #include "set.h"
@@ -97,19 +97,19 @@ int comInit()
   char joyname[128];
 #endif
   struct TRANSFORM_LIST_COMMAND mouse[]={
-    {0, Button1Mask, TRANS_ROTY, -0.5},
-    {1, Button1Mask, TRANS_ROTX, -0.5},
+    {0, GUI_BUTTON1_MASK, TRANS_ROTY, -0.5},
+    {1, GUI_BUTTON1_MASK, TRANS_ROTX, -0.5},
 #ifndef EXPO
-    {0, Button1Mask | ShiftMask, TRANS_TRAX, -1.0},
-    {1, Button1Mask | ShiftMask, TRANS_TRAY, 1.0},
-    {0, Button2Mask , TRANS_TRAZ, -0.2},
-    {1, Button2Mask , TRANS_TRAZ, -0.5},
-    {0, Button1Mask | Button2Mask, TRANS_ROTZ, 1.0},
-    {1, Button1Mask | Button2Mask, TRANS_ROTZ, -1.0},
-    {0, Button2Mask | ShiftMask, TRANS_SLABN, 0.2},
-    {0, Button2Mask | ShiftMask, TRANS_SLABF, 0.2},
-    {0, Button1Mask | Button2Mask | ShiftMask, TRANS_SLABN, 0.2},
-    {0, Button1Mask | Button2Mask | ShiftMask, TRANS_SLABF, -0.2},
+    {0, GUI_BUTTON1_MASK | GUI_SHIFT_MASK, TRANS_TRAX, -1.0},
+    {1, GUI_BUTTON1_MASK | GUI_SHIFT_MASK, TRANS_TRAY, 1.0},
+    {0, GUI_BUTTON2_MASK , TRANS_TRAZ, -0.2},
+    {1, GUI_BUTTON2_MASK , TRANS_TRAZ, -0.5},
+    {0, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK, TRANS_ROTZ, 1.0},
+    {1, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK, TRANS_ROTZ, -1.0},
+    {0, GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABN, 0.2},
+    {0, GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABF, 0.2},
+    {0, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABN, 0.2},
+    {0, GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_SHIFT_MASK, TRANS_SLABF, -0.2},
 #endif
     {-1, 0, 0, 0}
   };
@@ -621,8 +621,8 @@ void comTimeProc()
 #endif
 
   if(gfx.spin) {
-    comTransform(TRANS_MOUSE,Button1Mask,0,gfx.sdx);
-    comTransform(TRANS_MOUSE,Button1Mask,1,gfx.sdy);
+    comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,0,gfx.sdx);
+    comTransform(TRANS_MOUSE,GUI_BUTTON1_MASK,1,gfx.sdy);
     comRedraw();
   }
 
@@ -753,13 +753,13 @@ int comPick(int screenx, int screeny, int flag)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   if(gfx.mode==GFX_PERSP) {  
-    GLwStereoPerspective(gfx.fovy,gfx.aspect,
-			 gfx.transform.slabn2,gfx.transform.slabf2,
-			 eye_dist, -eye_offset);
-  } else {
-    GLwStereoOrtho(gfx.left,gfx.right,gfx.bottom,gfx.top,
+    glwPerspective(gfx.fovy,gfx.aspect,
 		   gfx.transform.slabn2,gfx.transform.slabf2,
-		   eye_dist, eye_offset);
+		   eye_dist, -eye_offset);
+  } else {
+    glwOrtho(gfx.left,gfx.right,gfx.bottom,gfx.top,
+	     gfx.transform.slabn2,gfx.transform.slabf2,
+	     eye_dist, eye_offset);
   }
   
   
@@ -1742,8 +1742,7 @@ int comTransform(int device, int mask, int axis, int ivalue)
   int i,j,mask2,axis_flag;
   double value=(double)ivalue;
 
-  mask &= Button1Mask | Button2Mask | Button3Mask | Button4Mask |
-    ShiftMask | ControlMask | LockMask;
+  mask &= GUI_BUTTON1_MASK | GUI_BUTTON2_MASK | GUI_BUTTON3_MASK | GUI_BUTTON4_MASK | GUI_SHIFT_MASK | GUI_CNTRL_MASK | GUI_LOCK_MASK;
 
 #ifdef EXPO
   apIdleReset();

@@ -10,14 +10,18 @@
 # BUILD
 # FORMAT_RGB
 # FORMAT_VRML
+# SGI_STEREO
 
-# several GUIs, one must be chose !
+
+OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL 
+
+# several GUIs, one must be chosen !
 # SDL_GLUT
-# GLUT_GUI
+# GLUT_GUI (and USE_FREEGLUT)
 # X11_GUI
 
-
-OPTIONS= -DCPK_NEW -DRENDER_SOLID -DHSC_NEWCOL -DSDL_GUI
+#OPTIONS += -DGLUT_GUI -DUSE_FREEGLUT
+OPTIONS += -DX11_GUI
 
 MALLOCLIB=
 
@@ -25,7 +29,7 @@ MALLOCLIB=
 #STATIC = 1
 
 SRC= dino.c \
-     dbm.c shell.c com.c gfx.c help.c conn.c scene.c glf.c\
+     dbm.c shell.c com.c gfx.c help.c conn.c scene.c glf.c glw.c \
      cl.c set.c bspline.c transform.c prop.c\
      struct_db.c struct_obj.c struct_read.c struct_write.c struct_gfx.c \
      scal_db.c scal_obj.c scal_read.c scal_write.c scal_gfx.c \
@@ -36,7 +40,13 @@ SRC= dino.c \
      ccp4.c xplor.c uhbd.c mead.c delphi.c charmm.c\
      write.c render.c mat.c rex.c Cmalloc.c cgfx.c raster.c pov.c \
      cubearray.c input.c writePS.c \
-     sglib.c symm.c GLwStereo.c
+     sglib.c symm.c
+
+# include architecture specific settings, including additional SRC files
+# use HOSTTYPE variable
+sinclude makedef.$(HOSTTYPE)
+
+# add more stuff depending on OPTIONS
 
 ifneq (,$(findstring BUILD,$(OPTIONS)))
 SRC += build.c
@@ -51,9 +61,14 @@ SRC += gui_glut.c om_glut.c
 endif
 ifneq (,$(findstring SDL_GUI,$(OPTIONS)))
 SRC += gui_sdl.c om_sdl.c
+LOPT += -lSDL
 endif
 ifneq (,$(findstring X11_GUI,$(OPTIONS)))
 SRC += extension.c gui_x11.c om_x11.c AppPlus.c
+endif
+
+ifneq (,$(findstring SGI_STEREO,$(OPTIONS)))
+SRC += sgi_stereo.c
 endif
 
 ifneq (,$(findstring EXPO,$(OPTIONS)))
@@ -68,15 +83,12 @@ ifneq (,$(findstring FORMAT_RGB,$(OPTIONS)))
 SRC += ximage_util.c
 endif
 
-ifneq (,$(findstring FORMAT_RGB,$(OPTIONS)))
+ifneq (,$(findstring FORMAT_VRML,$(OPTIONS)))
 SRC += vrml.c
 endif
 
-# include architecture specific settings, including additional SRC files
-# use HOSTTYPE variable
-sinclude makedef.$(HOSTTYPE)
 
-sinclude makedef.java
+#sinclude makedef.java
 
 OBJ := $(SRC:.c=.o)
 

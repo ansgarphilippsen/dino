@@ -27,7 +27,7 @@ Uses GLUT
 #include "gui.h"
 #include "gfx.h"
 #include "extension.h"
-#include "GLwStereo.h"
+#include "glw.h"
 #include "om_glut.h"
 #include "input.h"
 #include "transform.h"
@@ -40,7 +40,6 @@ Uses GLUT
 
 struct GUI gui;
 extern struct GFX gfx;
-extern struct GLW_STEREO GLwStereo;
 
 extern int debug_mode,gfx_mode,stereo_mode;
 
@@ -303,6 +302,7 @@ static int guiInitRGB()
 int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 {
   int sw,sh,i;
+
   clStrcpy(gui.message_string,"Ready");
 
   guiInitRGB();
@@ -360,7 +360,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 
   gui.callback=func;
   gui.redraw=0;
-  gui.stereo_available=GLW_STEREO_NONE;
+  gui.stereo_available=0;
   gui.stereo_mode=GUI_STEREO_OFF;
   gui.eye_dist=150.0;
   gui.eye_offset=10.0;
@@ -384,155 +384,6 @@ int guiMainLoop()
 
 // CODE BELOW HERE NEEDS REWORK !
 
-
-/************************************
-
-  guiStereo
-  ---------
-
-  handles stereo mode switches
-
-**************************************/
-
-int guiStereo(int m)
-{
-#ifdef SGI
-  Arg arg[4];
-  Position ax,ay;
-  Dimension aw,ah;
-  int rh,wh;
-  Position sx,sy;
-  Dimension sw,sh;
-  XWindowChanges xwc;
-
-
-  switch(gui.stereo_available) {
-
-  case GLW_STEREO_LOW:
-    wh=gui.win_height;
-    rh=HeightOfScreen(DefaultScreenOfDisplay(gui.dpy));
-    
-    if(gui.stereo_mode==GUI_STEREO_OFF) {
-      XtSetArg(arg[0],XmNx,&gui.win_xs);
-      XtSetArg(arg[1],XmNy,&gui.win_ys);
-      XtSetArg(arg[2],XmNwidth,&gui.win_widths);
-      XtSetArg(arg[3],XmNheight,&gui.win_heights);
-      XtGetValues(gui.top,arg,4);
-    }
-    
-    sx=gui.win_xs;
-    sy=(Position)rh/2;
-    sw=gui.win_widths;
-    sh=gui.win_heights/2;
-    
-    switch(m) {
-    case GUI_STEREO_OFF: /* off */
-      GLwStereoCommand(GLW_STEREO_NONE);
-      gui.stereo_mode=GUI_STEREO_OFF;
-
-      XtSetArg(arg[1],XmNx,gui.win_xs);
-      XtSetArg(arg[0],XmNy,gui.win_ys);
-      XtSetArg(arg[2],XmNwidth,gui.win_widths);
-      XtSetArg(arg[3],XmNheight,gui.win_heights);
-      XtSetValues(gui.top,arg,4);
-
-      if(gui.om_flag) {
-	xwc.y=gui.win_ys;
-	XReconfigureWMWindow(om.dpy,om.top,om.scrn,
-			     CWY, &xwc);
-      }      
-
-      // reset projection matrix
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height;
-      gfxSetProjection(gfx.stereo_display);
-      gfxSetFog();
-
-      break;
-    case GUI_STEREO_NORMAL: /* on */
-      GLwStereoCommand(GLW_STEREO_LOW);
-      gui.stereo_mode=GUI_STEREO_NORMAL;
-      
-      XtSetArg(arg[1],XmNx,sx);
-      XtSetArg(arg[0],XmNy,sy);
-      XtSetArg(arg[2],XmNwidth,sw);
-      XtSetArg(arg[3],XmNheight,sh);
-      XtSetValues(gui.top,arg,4);
-
-      if(gui.om_flag) {
-	xwc.y=sy+30;
-	XReconfigureWMWindow(om.dpy,om.top,om.scrn,
-			     CWY, &xwc);
-      }      
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height*0.5;
-
-      break;
-    }
-    break;
-  case GLW_STEREO_HIGH:
-    wh=gui.win_height;
-    rh=HeightOfScreen(DefaultScreenOfDisplay(gui.dpy));
-    
-    if(gui.stereo_mode==GUI_STEREO_OFF) {
-      XtSetArg(arg[0],XmNx,&gui.win_xs);
-      XtSetArg(arg[1],XmNy,&gui.win_ys);
-      XtSetArg(arg[2],XmNwidth,&gui.win_widths);
-      XtSetArg(arg[3],XmNheight,&gui.win_heights);
-      XtGetValues(gui.top,arg,4);
-    }
-    
-    sx=GLwStereo.resx-GLwStereo.resy+17;
-    sy=GLwStereo.y_offset;
-    sw=GLwStereo.resy-20;
-    sh=GLwStereo.resy-20;
-    
-    switch(m) {
-    case GUI_STEREO_OFF: /* off */
-      GLwStereoCommand(GLW_STEREO_NONE);
-      gui.stereo_mode=GUI_STEREO_OFF;
-
-      XtSetArg(arg[1],XmNx,gui.win_xs);
-      XtSetArg(arg[0],XmNy,gui.win_ys);
-      XtSetArg(arg[2],XmNwidth,gui.win_widths);
-      XtSetArg(arg[3],XmNheight,gui.win_heights);
-      XtSetValues(gui.top,arg,4);
-
-      if(gui.om_flag) {
-	xwc.y=gui.win_ys;
-	XReconfigureWMWindow(om.dpy,om.top,om.scrn,
-			     CWY, &xwc);
-      }      
-      // reset projection matrix
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height*0.5;
-      gfxSetProjection(gfx.stereo_display);
-      gfxSetFog();
-      break;
-    case GUI_STEREO_NORMAL: /* on */
-      GLwStereoCommand(GLW_STEREO_HIGH);
-      gui.stereo_mode=GUI_STEREO_NORMAL;
-      
-      /*
-	maybe it would be adviseable to 
-	get the new values from the display
-      */
-      XtSetArg(arg[1],XmNx,sx);
-      XtSetArg(arg[0],XmNy,sy);
-      XtSetArg(arg[2],XmNwidth,sw);
-      XtSetArg(arg[3],XmNheight,sh);
-      XtSetValues(gui.top,arg,4);
-
-      if(gui.om_flag) {
-	xwc.y=sy+30;
-	XReconfigureWMWindow(om.dpy,om.top,om.scrn,
-			     CWY, &xwc);
-      }      
-      gfx.aspect=(double)gui.win_width/(double)gui.win_height*0.5;
-      break;
-    }
-    break;
-  }
-#endif
-  return 0;
-}
 
 /************************
 
@@ -777,3 +628,7 @@ int guiMInit(void (*func)(int, char **), int *argc, char ***argv)
   return 1;
 }
 
+void guiSwapBuffers()
+{
+  glutSwapBuffers();
+}

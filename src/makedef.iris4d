@@ -2,7 +2,6 @@
 
 ARCH=SGI
 
-
 CC   = cc
 GOPT = -O2 -n32 -fullwarn -mips3 
 WOPT = -woff 1552,1174,1692,1209,3201
@@ -14,5 +13,6 @@ COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D $(ARCH) -Xcpluscomm -D IRIX -D SPAC
 LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm -limage
 LOPT = -n32 -mips3 $(LIBS) -L/usr/freeware/lib32
 
-SRC += sgi_video.c spacetec.c
+SRC += sgi_video.c sgi_stereo.c spacetec.c
 
+OPTIONS += -DSGI_STEREO

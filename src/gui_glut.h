@@ -33,7 +33,9 @@
 #include <GL/glx.h>
 #endif
 
-#ifdef GLUT_GUI
+#ifdef USE_FREEGLUT
+#include "GL/freeglut.h"
+#else
 #include <GL/glut.h>
 #endif
 
@@ -185,8 +187,6 @@ int guiMInit(void (*)(int, char **), int*, char ***);
 
 int guiMainLoop(void);
 
-int guiStereo(int mode);
-
 int guiResolveColor(const char *name, float *r, float *g, float *b);
 
 int guiMessage(char *m);
@@ -196,5 +196,6 @@ void guiRegisterCustomEvent(Window w, guiCustomFunc f, void *ptr);
 void guiRegisterUserMenu(Window w);
 int guiCheckCustomEvent(XEvent *event);
 
+void guiSwapBuffers(void);
 
 #endif
