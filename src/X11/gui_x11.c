@@ -179,7 +179,7 @@ int guiInit(int argc, char **argv)
 
 
   if(gfx_flags & DINO_FLAG_NOGFX) {
-    gui.dpy=XOpenDisplay(NULL);
+    gui.dpy=XOpenDisplay(getenv("DISPLAY"));
   } else {
     // open top level app
     debmsg("guiInit: opening top level app widget");
