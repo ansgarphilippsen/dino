@@ -1,0 +1,50 @@
+#ifndef SCENE_H
+#define SCENE_H
+
+#include "input.h"
+
+struct SCENE_STACK {
+  char expr[256];
+};
+
+#ifdef EXPO
+struct SCENE_LABEL {
+  char s[128];
+  float p[3],c[3];
+};
+#endif
+
+struct SCENE {
+  struct SCENE_STACK *stack;
+  int stack_p,stack_m;
+  int axis;
+  float cp[3];
+  int cpflag;
+#ifdef EXPO
+  struct SCENE_LABEL *label;
+  int label_c,label_m;
+#endif
+};
+
+#endif
+
+int sceneInit(void);
+int sceneCommand(int wc, char **wl);
+void sceneInputCallback(struct INPUT_MESSAGE *m, void *p);
+void scenePush(char *s);
+char *scenePop(void);
+char *scenePeek(void);
+void sceneClear(void);
+int scenePersp2Ortho(void);
+int sceneOrtho2Persp(void);
+
+int sceneSubCommand(char *sub, int wc, char **wl);
+int sceneSubLightCom(int l, int wc, char **wl);
+int sceneSubLightSet(int l, int wc, char **wl);
+int sceneSubLightGet(int l, int wc, char **wl);
+
+int sceneSubClipCom(int c, int wc, char **wl);
+int sceneSubClipSet(int c, int wc, char **wl);
+int sceneSubClipGet(int c, int wc, char **wl);
+
+int sceneMorph(int wc, char **wl);

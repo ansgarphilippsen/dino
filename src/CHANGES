@@ -1,0 +1,13 @@
+grasp surface file support
+
+initial size of main window adjusts to maximal vertical resolution
+
+added three ops: dist angle torsion and implemented their functionality to
+user menu
+
+script commands are not put in history
+
+only top-level commands get writte to logfile
+
+only error-free commands get written to logfile
+
