@@ -1839,3 +1839,14 @@ void guiExit()
   XSync(gui.dpy,True);
   XCloseDisplay(gui.dpy);
 }
+
+int guiGrab(int s)
+{
+  if(s) {
+    XtGrabPointer(gui.glxwin, 
+		  True, 0, GrabModeAsync,GrabModeAsync,None,None,CurrentTime);
+  } else {
+    XDefineCursor(gui.dpy,None);
+  }
+  return 0;
+}

@@ -48,6 +48,8 @@ void guiCMICallback(const cmiToken *t);
 int guiResolveColor(const char *name, float *r, float *g, float *b);
 #endif
 
+int guiGrab(int s);
+
 #ifdef __cplusplus
 }
 #endif
