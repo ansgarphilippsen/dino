@@ -16,6 +16,9 @@
 #ifdef LINUX
 #include "GLwMDrawA.h"
 #endif
+#ifdef DARWIN
+#include "GLwMDrawA.h"
+#endif
 #ifdef SGI
 #include <X11/GLw/GLwMDrawA.h>
 #endif
