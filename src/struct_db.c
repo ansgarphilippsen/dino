@@ -2182,6 +2182,7 @@ int structSetDefault(structObj *obj)
 
   obj->render.strand_method=0;
   obj->render.helix_method=0;
+  obj->render.na_method=0;
     
   obj->render.transparency=1.0;
   obj->render.cgfx_flag=CGFX_INTPOL_COL;
@@ -3019,15 +3020,21 @@ int structGetVectProtein(struct STRUCT_RESIDUE *res)
 int structGetVectNA(struct STRUCT_RESIDUE *res)
 {
   int ac;
-  double p1[3],p2[3],p3[3],p4[3],p5[3],p6[3];
+  double p0[3],p1[3],p2[3],p3[3],p4[3],p5[3],p6[3],p7[3];
   double q1[3],q2[3],q3[3],q4[3],q5[3],q6[4];
-  int f1,f2,f3,f4,f5,f6;
+  int f0,f1,f2,f3,f4,f5,f6,f7;
   int rtype=0;
+  char message[256];
 
-  f1=f2=f3=f4=f5=f6=0;
+  f0=f1=f2=f3=f4=f5=f6=f7=0;
 
   for(ac=0;ac<res->atom_count;ac++) {
-    if(clStrcmp("C3'",res->atom[ac]->name)) {
+    if(clStrcmp("P",res->atom[ac]->name)) {
+      f0=1;
+      p0[0]=res->atom[ac]->p->x;
+      p0[1]=res->atom[ac]->p->y;
+      p0[2]=res->atom[ac]->p->z;
+    } else if(clStrcmp("C3'",res->atom[ac]->name)) {
       f1=1;
       p1[0]=res->atom[ac]->p->x;
       p1[1]=res->atom[ac]->p->y;
@@ -3064,6 +3071,11 @@ int structGetVectNA(struct STRUCT_RESIDUE *res)
 	p6[0]=res->atom[ac]->p->x;
 	p6[1]=res->atom[ac]->p->y;
 	p6[2]=res->atom[ac]->p->z;
+      } else if(clStrcmp("N3",res->atom[ac]->name)) {
+	f7=1;
+	p7[0]=res->atom[ac]->p->x;
+	p7[1]=res->atom[ac]->p->y;
+	p7[2]=res->atom[ac]->p->z;
       } 
     } else if (clStrcmp("A",res->name) || clStrcmp("G",res->name) ||
 	       clStrcmp("ADE",res->name) || clStrcmp("GUA",res->name)) {
@@ -3084,12 +3096,48 @@ int structGetVectNA(struct STRUCT_RESIDUE *res)
 	p6[0]=res->atom[ac]->p->x;
 	p6[1]=res->atom[ac]->p->y;
 	p6[2]=res->atom[ac]->p->z;
+      } else if(clStrcmp("N1",res->atom[ac]->name)) {
+	f7=1;
+	p7[0]=res->atom[ac]->p->x;
+	p7[1]=res->atom[ac]->p->y;
+	p7[2]=res->atom[ac]->p->z;
       } 
     }
   }
-  if(f1==0 || f2==0 || f3==0 || f4==0 || f5==0 || f6==0) {
-    fprintf(stderr,"\nerror in NA recognition: %s: %d %d %d %d %d %d",
-	    res->name, f1,f2,f3,f4,f5,f6);
+
+  if((f0+f1+f2+f3+f4+f5+f6+f7)!=8) {
+    sprintf(message,"error in NA recognizion: residue %s%d is missing: ",
+	    res->name,res->num);
+
+    if(!f0)
+      strcat(message," P");
+    if(!f1)
+      strcat(message," C1'");
+    if(!f2)
+      strcat(message," C3'");
+    if(!f3)
+      strcat(message," C4'");
+
+    if(!f4 && rtype==1)
+      strcat(message," N1");
+    if(!f5 && rtype==1)
+      strcat(message," C5");
+    if(!f6 && rtype==1)
+      strcat(message," C2");
+    if(!f7 && rtype==1)
+      strcat(message,"N3");
+
+    if(!f4 && rtype==2)
+      strcat(message," N9");
+    if(!f5 && rtype==2)
+      strcat(message," C4");
+    if(!f6 && rtype==2)
+      strcat(message," C2");
+    if(!f7 && rtype==2)
+      strcat(message,"N1");
+
+    debmsg(message);
+
     return -1;
   }
 
@@ -3119,6 +3167,7 @@ int structGetVectNA(struct STRUCT_RESIDUE *res)
     v4: offset of nitrogen to 0,0,0 of base
     v5: {1,0,0} direction of base
     v6: normal of base
+    v7: vector pointing from phosphate to middle
     
   */
 
@@ -3137,6 +3186,10 @@ int structGetVectNA(struct STRUCT_RESIDUE *res)
   res->v3[0]=q4[0];
   res->v3[1]=q4[1];
   res->v3[2]=q4[2];
+
+  res->v7[0]=p7[0]-p0[0];
+  res->v7[1]=p7[1]-p0[1];
+  res->v7[2]=p7[2]-p0[2];
 
   if(rtype==1) {
     /* pyrimidine */

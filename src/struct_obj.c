@@ -623,9 +623,15 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	  point_list[pc].v[1]=obj->bond[bc].atom1->p->y;
 	  point_list[pc].v[2]=obj->bond[bc].atom1->p->z;
 	} else {
-	  point_list[pc].v[0]=obj->bond[bc].atom1->residue->v0[0];
-	  point_list[pc].v[1]=obj->bond[bc].atom1->residue->v0[1];
-	  point_list[pc].v[2]=obj->bond[bc].atom1->residue->v0[2];
+	  if(obj->render.na_method==0) {
+	    point_list[pc].v[0]=obj->bond[bc].atom1->residue->v0[0];
+	    point_list[pc].v[1]=obj->bond[bc].atom1->residue->v0[1];
+	    point_list[pc].v[2]=obj->bond[bc].atom1->residue->v0[2];
+	  } else {
+	    point_list[pc].v[0]=obj->bond[bc].atom1->p->x;
+	    point_list[pc].v[1]=obj->bond[bc].atom1->p->y;
+	    point_list[pc].v[2]=obj->bond[bc].atom1->p->z;
+	  }
 	}
 	point_list[pc].rad=obj->bond[bc].prop1->radius;
 	// TODO
@@ -640,7 +646,10 @@ int structSmooth(struct STRUCT_OBJ *obj)
 	point_list[pc].v3=obj->bond[bc].atom1->residue->v3;
 	point_list[pc].v4=obj->bond[bc].atom1->residue->v4;
 	point_list[pc].v5=obj->bond[bc].atom1->residue->v5;
-	point_list[pc].v6=obj->bond[bc].atom1->residue->v6;
+	if(obj->render.na_method==0)
+	  point_list[pc].v6=obj->bond[bc].atom1->residue->v6;
+	else
+	  point_list[pc].v6=obj->bond[bc].atom1->residue->v7;
 	point_list[pc].res_id=obj->bond[bc].atom1->residue->res_id;
 	point_list[pc].c[0]=obj->bond[bc].prop1->c[0][0];
 	point_list[pc].c[1]=obj->bond[bc].prop1->c[0][1];

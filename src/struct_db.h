@@ -154,7 +154,7 @@ struct STRUCT_RESIDUE {
   int atom_max,atom_add;       /* memory management */
   struct STRUCT_CHAIN *chain;  /* back pointer */
   int chain_num;               /*      "       */
-  float dir[3], v0[3],v1[3], v2[3], v3[3], v4[3], v5[3], v6[3];
+  float dir[3], v0[3],v1[3], v2[3], v3[3], v4[3], v5[3], v6[3], v7[3];
   int res_id;
 };
 

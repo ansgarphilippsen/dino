@@ -60,6 +60,7 @@ typedef struct RENDER {
 
   int strand_method;
   int helix_method;
+  int na_method;
 
   int cull;
 

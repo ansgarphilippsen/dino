@@ -1467,7 +1467,11 @@ int cgfxGenHSC(cgfxVA *va, cgfxSplinePoint *sp, int pc, Render *render)
     if(render->mode==RENDER_HSC) {
       for(i=0;i<pc;i++) {
 	if(sp[i].id==CGFX_NA) {
-	  cgfxGenNA(va, sp+i, render);
+	  if(render->na_method==0) {
+	    cgfxGenNA(va, sp+i, render);
+	  } else {
+	    cgfxGenNA2(va,sp+i, render);
+	  }
 	}
       }    
     }
@@ -2390,3 +2394,19 @@ int cgfxGenNABase(cgfxVA *va, cgfxSplinePoint *p, Render *render)
   return 0;
 }
 
+int cgfxGenNA2(cgfxVA *va, cgfxSplinePoint *p, Render *render)
+{
+  float v1[3],v2[3],v3[3],w=render->bond_width;
+  /* 
+     add a cylinder from v2 to v3
+  */
+  v1[0]=p->v[0];
+  v1[1]=p->v[1];
+  v1[2]=p->v[2];
+  v2[0]=v1[0]+p->v6[0];
+  v2[1]=v1[1]+p->v6[1];
+  v2[2]=v1[2]+p->v6[2];
+  cgfxGenCylinder(va,v1,v2,w,1.0,0.0,render->detail2, CGFX_CAP, p->c2);
+
+  return 0;
+}

@@ -87,6 +87,7 @@ int cgfxAppend(cgfxVA *va1, cgfxVA *va2);
 int cgfxCopyPVa(cgfxPoint *p1, cgfxVAField *f);
 
 int cgfxGenNA(cgfxVA *va, cgfxSplinePoint *p, Render *render);
+int cgfxGenNA2(cgfxVA *va, cgfxSplinePoint *p, Render *render);
 int cgfxGenNASugar(cgfxVA *va, cgfxSplinePoint *p, Render *render);
 int cgfxGenNAConn(cgfxVA *va, cgfxSplinePoint *p, Render *render);
 int cgfxGenNABase(cgfxVA *va, cgfxSplinePoint *p, Render *render);

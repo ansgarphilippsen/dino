@@ -817,6 +817,33 @@ int renderSet(struct RENDER *render, int owc, char **owl)
 	comMessage(message);
 	return -1;
       }
+    } else if(!strcmp(prop,"nam")) {
+      /********************
+	  NA method
+      ********************/
+      if(strlen(op)==0) {
+	sprintf(message,"\nmissing operator");
+	comMessage(message);
+	return -1;
+      }
+      if(strlen(val)==0) {
+	sprintf(message,"\nmissing value");
+	comMessage(message);
+	return -1;
+      }
+      if(!strcmp(op,"=")) {
+	if(atoi(val)==0 || atoi(val)==1) {
+	  render->na_method=atoi(val);
+	} else {
+	  sprintf(message,"\ninvalid NA method %d", atoi(val));
+	  comMessage(message);
+	  return -1;
+	}
+      } else {
+	sprintf(message,"\ninvalid operator %s", op);
+	comMessage(message);
+	return -1;
+      }
     } else if(!strcmp(prop,"helixm")) {
       /********************
 	  helix method
