@@ -424,11 +424,11 @@ int gfxRedraw()
       gfx.aspect=(double)gui.win_width/(double)gui.win_height*0.5;
     else
       gfx.aspect=(double)gui.win_width/(double)gui.win_height;
-    glwStereoDrawBuffer(GLW_STEREO_RIGHT);
+    glwDrawBuffer(GLW_STEREO_RIGHT);
     gfxSetProjection(GFX_RIGHT);
     gfxSceneRedraw(1);
     comDBRedraw();
-    GLwDrawBuffer(GLW_STEREO_LEFT);
+    glwDrawBuffer(GLW_STEREO_LEFT);
     gfxSetProjection(GFX_LEFT);
     gfxSceneRedraw(1);
     comDBRedraw();

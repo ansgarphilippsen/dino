@@ -1096,7 +1096,7 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
     }
   }
 
-  if(gui.stereo_available==GLW_STEREO_HIGH) {
+  if(gui.stereo_available==SGI_STEREO_HIGH) {
     gui.visinfo=gui.stereo_visinfo;
   }
 
@@ -1155,9 +1155,9 @@ int guiInit(void (*func)(int, char **), int *argc, char ***argv)
 #ifdef SGI_STEREO
   if(gui.stereo_available) {
     debmsg("guiInit: initializing stereo");
-    if(glwStereoInit(gui.dpy,XtWindow(gui.glxwin))==-1) {
+    if(glwStereoInit()==-1) {
       fprintf(stderr,"No HighEnd Stereo Video Mode found, LowEnd stereo forced\n");
-      gui.stereo_available=GLW_STEREO_LOW;
+      gui.stereo_available=SGI_STEREO_LOW;
     }
   }
 #endif

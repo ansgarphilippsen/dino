@@ -10,11 +10,15 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#ifdef SGI_STEREO
+#include "sgi_stereo.h"
+#endif
+
 enum {GLW_STEREO_CENTER=0,
       GLW_STEREO_LEFT,
       GLW_STEREO_RIGHT};
 
-void glwStereoInit(void);
+int glwStereoInit(void);
 void glwStereoMode(GLenum mode);
 void glwStereoSwitch(int mode);
 

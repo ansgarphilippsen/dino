@@ -10,9 +10,10 @@ SLIB = ../extras/lib/libtiff.a ../extras/lib/libpng.a ../extras/lib/libz.a ../ex
 
 COPT = $(GOPT) $(WOPT) $(IOPT) $(OPTIONS) -D $(ARCH) -Xcpluscomm -D IRIX -D SPACETEC
 
-LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm -limage
+LIBS = $(SLIB) -lc -lGLw -lGLU -lGL -lXi -lXm -lXt -lXmu -lXext -lX11 -lm # -limage
 LOPT = -n32 -mips3 $(LIBS) -L/usr/freeware/lib32
 
 SRC += sgi_video.c sgi_stereo.c spacetec.c
 
-OPTIONS += -DSGI_STEREO
+OPTIONS += -D SGI_STEREO
+

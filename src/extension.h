@@ -5,6 +5,10 @@
 #ifndef EXTENSION_H
 #define EXTENSION_H
 
+/* new API */
+XDevice *extFindDevice(Display *dpy, char *name);
+
+/* deprecated */
 XDevice *extDialBoxInit(Display *dpy);
 XDevice *extSpaceballInit(Display *dpy);
 

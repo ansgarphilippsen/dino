@@ -141,15 +141,7 @@ struct GUI
   int xiEventBase;
 
   void (*callback)(int, char **);
-#ifdef GLUT_GUI
-  int glut_main;
-  int glut_status;
-  int glut_om;
-  int glut_um;
-  int mbs[3];
-  int modifiers;
-  long timecode;
-#endif
+
   int last_x, last_y;
   struct timeval tp_button;
 
@@ -193,5 +185,7 @@ int guiCheckCustomEvent(XEvent *event);
 void guiTimeProc(XtPointer client_data);
 
 void guiSwapBuffers(void);
+
+
 
 #endif

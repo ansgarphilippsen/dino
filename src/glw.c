@@ -12,24 +12,26 @@ extern struct GUI gui;
 
 extern struct GFX gfx;
 
-void glwStereoInit()
+int glwStereoInit()
 {
 #ifdef SGI_STEREO
-  SGIStereoInit(gui.display,gui.glxwindow);
+  return SGIStereoInit(gui.dpy,XtWindow(gui.glxwin));
+#else
+  return -1;
 #endif
 }
 
 void glwStereoMode(GLenum mode)
 {
 #ifdef SGI_STEREO
-  SGIStereoMode(mode);
+  //  SGIStereoMode(mode);
 #endif
 }
 
 void glwStereoSwitch(int mode)
 {
 #ifdef SGI_STEREO
-  SGISwitchStereo(m);
+  SGISwitchStereo(mode);
 #endif
 }
 

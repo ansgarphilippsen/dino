@@ -1,6 +1,11 @@
 #ifndef _SGI_STEREO_H
 #define _SGI_STEREO_H
 
+#include <Xm/Xm.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/StringDefs.h>
+#include <X11/GLw/GLwMDrawA.h>
 #include <X11/extensions/SGIStereo.h>
 #include <X11/extensions/XSGIvc.h>
 
@@ -9,7 +14,7 @@ enum {SGI_STEREO_NONE=0,
       SGI_STEREO_HIGH=2};
 
 
-struct SGI_STEREO {
+struct SGI_STEREO_INFO {
   Display *display;
   GLXDrawable drawable;
 

@@ -12,34 +12,34 @@
 #include <malloc.h>
 #include <math.h>
 
-#include "sgi_video.h"
-
-#include <Xm/Xm.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/StringDefs.h>
-#include <X11/GLw/GLwMDrawA.h>
-
 #include "sgi_stereo.h"
-
+#include "sgi_video.h"
+#include "glw.h"
 #include "dino.h"
 #include "com.h"
 #include "gfx.h"
 #include "rex.h"
 #include "gui.h"
+#include "om_x11.h"
 
 extern struct GUI gui;
 extern struct GFX gfx;
+extern struct OBJECT_MENU om;
+
 extern int debug_mode,video_mode;
 
-static struct SGI_STEREO SGIStereo;
+struct SGI_STEREO_INFO SGIStereo;
 
 char *glw_monitor_cmd[]=
 {
-  "/usr/gfx/setmon -n 72HZ",   /* GLW_STEREO_NONE */
-  "/usr/gfx/setmon -n STR_BOT",   /* GLW_STEREO_LOW */
-  "/usr/gfx/setmon -n 1024x768_96"    /* GLW_STEREO_HIGH */
+  "/usr/gfx/setmon -n 72HZ",   /* SGI_STEREO_NONE */
+  "/usr/gfx/setmon -n STR_BOT",   /* SGI_STEREO_LOW */
+  "/usr/gfx/setmon -n 1024x768_96"    /* SGI_STEREO_HIGH */
 };
+
+static int SGIStereoExtractResolution(const char *s, int *x, int *y)
+{
+  char buf[512],*p;
 
   strncpy(buf,s,512);
 
@@ -83,7 +83,7 @@ int SGIStereoInit(Display *display, GLXDrawable drawable)
 
   SGIStereo.display = display;
   SGIStereo.drawable = drawable;
-  SGIStereo.mode=GLW_STEREO_NONE;
+  SGIStereo.mode=0;
 
   strcpy(stereo_command,"");
 
@@ -173,7 +173,7 @@ int SGISwitchStereo(int m)
     
     switch(m) {
     case GUI_STEREO_OFF: /* off */
-      GLwStereoCommand(GLW_STEREO_NONE);
+      SGIStereoCommand(SGI_STEREO_NONE);
       gui.stereo_mode=GUI_STEREO_OFF;
 
       XtSetArg(arg[1],XmNx,gui.win_xs);
@@ -195,7 +195,7 @@ int SGISwitchStereo(int m)
 
       break;
     case GUI_STEREO_NORMAL: /* on */
-      GLwStereoCommand(GLW_STEREO_LOW);
+      SGIStereoCommand(SGI_STEREO_LOW);
       gui.stereo_mode=GUI_STEREO_NORMAL;
       
       XtSetArg(arg[1],XmNx,sx);
@@ -226,14 +226,14 @@ int SGISwitchStereo(int m)
       XtGetValues(gui.top,arg,4);
     }
     
-    sx=GLwStereo.resx-GLwStereo.resy+17;
-    sy=GLwStereo.y_offset;
-    sw=GLwStereo.resy-20;
-    sh=GLwStereo.resy-20;
+    sx=SGIStereo.resx-SGIStereo.resy+17;
+    sy=SGIStereo.y_offset;
+    sw=SGIStereo.resy-20;
+    sh=SGIStereo.resy-20;
     
     switch(m) {
     case GUI_STEREO_OFF: /* off */
-      GLwStereoCommand(GLW_STEREO_NONE);
+      SGIStereoCommand(SGI_STEREO_NONE);
       gui.stereo_mode=GUI_STEREO_OFF;
 
       XtSetArg(arg[1],XmNx,gui.win_xs);
@@ -253,7 +253,7 @@ int SGISwitchStereo(int m)
       gfxSetFog();
       break;
     case GUI_STEREO_NORMAL: /* on */
-      GLwStereoCommand(GLW_STEREO_HIGH);
+      SGIStereoCommand(SGI_STEREO_HIGH);
       gui.stereo_mode=GUI_STEREO_NORMAL;
       
       /*
@@ -288,16 +288,16 @@ int SGIStereoCommand(int mode)
     XSync(SGIStereo.display, False);
 
     switch(mode) {
-    case GLW_STEREO_NONE:
+    case SGI_STEREO_NONE:
       system(glw_monitor_cmd[mode]);
       break;
-    case GLW_STEREO_LOW:
+    case SGI_STEREO_LOW:
       XSGISetStereoMode(SGIStereo.display,SGIStereo.drawable,
 			492,532,
 			STEREO_BOTTOM);
       system(glw_monitor_cmd[mode]);
       break;
-    case GLW_STEREO_HIGH:
+    case SGI_STEREO_HIGH:
       system(SGIStereo.stereo_high);
       break;
     }
@@ -311,10 +311,10 @@ int SGIStereoCommand(int mode)
 void SGIStereoDrawBuffer(GLenum view)
 {
   switch(SGIStereo.mode) {
-  case GLW_STEREO_NONE:
+  case SGI_STEREO_NONE:
     glDrawBuffer(GL_BACK);
     break;
-  case GLW_STEREO_LOW:
+  case SGI_STEREO_LOW:
     glDrawBuffer(GL_BACK);
     if(view==GLW_STEREO_LEFT)
       XSGISetStereoBuffer(SGIStereo.display,SGIStereo.drawable,
@@ -324,7 +324,7 @@ void SGIStereoDrawBuffer(GLenum view)
 			  STEREO_BUFFER_RIGHT);
     XSync(SGIStereo.display,False);
     break;
-  case GLW_STEREO_HIGH:
+  case SGI_STEREO_HIGH:
     if(view==GLW_STEREO_LEFT)
       glDrawBuffer(GL_BACK_LEFT);
     else
@@ -388,6 +388,3 @@ int SGIStereoPerspective2(GLdouble fovy, GLdouble aspect,
   return 0;
 }
 
-static int SGIStereoExtractResolution(const char *s, int *x, int *y)
-{
-  char buf[512],*p;
