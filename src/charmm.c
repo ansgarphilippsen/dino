@@ -289,6 +289,8 @@ int bdtrjRead(dbmStructNode *node, FILE *f, int swap_flag)
   sf.atom_count=ntype;
   sf.connect_entry=NULL;
   sf.connect_count=0;
+  sf.secs_entry=NULL;
+  sf.secs_count=0;
 
   structFileEntry2DB(&sf,node);
 
