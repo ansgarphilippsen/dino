@@ -354,7 +354,8 @@ static void finish(int n)
 static void inter(int n)
 {
 #ifdef USE_CMI
-  cmiInterrupt();
+  //cmiInterrupt();
+  finish(0);
 #else
   finish();
 #endif

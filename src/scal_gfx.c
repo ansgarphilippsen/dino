@@ -104,6 +104,38 @@ int scalDrawObj(scalObj *obj)
       }
       glEnd();
     } else if(obj->render.mode==RENDER_LINE) {
+#ifndef OLD_SCAL_CONTOUR_DRAWING
+      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT );
+      glDisable(GL_LIGHTING);
+      glDisable(GL_COLOR_MATERIAL);
+      glEnable(GL_BLEND);
+      glLineWidth(obj->render.line_width);
+
+      glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
+      if(obj->render.transparency<1.0) {
+	glDisable(GL_BLEND);
+	glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+	glBegin(GL_LINES);
+	for(i=0;i<obj->line_count;i++) {
+	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+	  glVertex3fv(obj->point[obj->line[i].pi1].v);
+	}
+	glEnd();
+	
+	glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_BLEND);
+      }
+      
+      glBegin(GL_LINES);
+      for(i=0;i<obj->line_count;i++) {
+	glVertex3fv(obj->point[obj->line[i].pi0].v);
+	glVertex3fv(obj->point[obj->line[i].pi1].v);
+      }
+      glEnd();
+
+      glPopAttrib();
+#else
       // RENDER IN CHICKEN WIRE MODE
       glDisable(GL_LIGHTING);
       glDisable(GL_COLOR_MATERIAL);
@@ -113,27 +145,30 @@ int scalDrawObj(scalObj *obj)
 
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
 
+      /*
       glEnable(GL_VERTEX_ARRAY);
       glEnableClientState(GL_VERTEX_ARRAY);
-
       glVertexPointer(3,GL_FLOAT,
 		      sizeof(struct SCAL_POINT), &obj->point[0].v[0]);
-
-
-      /* draw the lines */
+      */
 
       glDepthMask(GL_FALSE);
+
 
       glBegin(GL_LINES);
       if(gfx.transform.rot[10]>0.0) {
 	for(i=0;i<obj->line_count;i++) {
-	  glArrayElement(obj->line[i].pi0);
-	  glArrayElement(obj->line[i].pi1);
+	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+	  glVertex3fv(obj->point[obj->line[i].pi1].v);
+	  //glArrayElement(obj->line[i].pi0);
+	  //glArrayElement(obj->line[i].pi1);
 	}
       } else {
 	for(i=obj->line_count-1;i>=0;i--) {
-	  glArrayElement(obj->line[i].pi0);
-	  glArrayElement(obj->line[i].pi1);
+	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+	  glVertex3fv(obj->point[obj->line[i].pi1].v);
+	  //glArrayElement(obj->line[i].pi0);
+	  //glArrayElement(obj->line[i].pi1);
 	}
       }
       glEnd();
@@ -153,8 +188,10 @@ int scalDrawObj(scalObj *obj)
 #endif
       glBegin(GL_LINES);
       for(i=0;i<obj->line_count;i++) {
-	glArrayElement(obj->line[i].pi0);
-	glArrayElement(obj->line[i].pi1);
+	glVertex3fv(obj->point[obj->line[i].pi0].v);
+	glVertex3fv(obj->point[obj->line[i].pi1].v);
+	//glArrayElement(obj->line[i].pi0);
+	//glArrayElement(obj->line[i].pi1);
       }
       glEnd();
 #ifdef LINUX
@@ -162,11 +199,13 @@ int scalDrawObj(scalObj *obj)
 #endif      
       glPopAttrib();
 
+      /*
       glDisable(GL_VERTEX_ARRAY);
       glDisableClientState(GL_VERTEX_ARRAY);
+      */
 
       glEnable(GL_LIGHTING);
-
+#endif
     } else if(obj->render.mode==RENDER_SURFACE) {
 
       // RENDER WITH FULL SURFACE MODE
