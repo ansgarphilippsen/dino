@@ -151,6 +151,12 @@ without brackets it separates different syntaxes altogether
 \layout Standard
 
 The abbreviation POV stands for Property Operator Value.
+\layout Standard
+
+SET_EXPR
+\layout Standard
+
+SEL_EXPR
 \layout Chapter
 
 Shell, Scene and GUI
@@ -1469,6 +1475,17 @@ Scene
 \layout Subsection
 
 Scene Commands
+\layout Standard
+
+Commands addressed to the scene are issued in an object-oriented manner:
+ The target 
+\family typewriter 
+scene
+\family default 
+ precedes the command and its parameters:
+\layout Syntax
+
+scene COMMAND PARAMETERS
 \layout RefEntry
 
 autoslab
@@ -3845,16 +3862,114 @@ Datasets
 Concepts
 \layout Subsection
 
+Addressing datasets
+\layout Standard
+
+Every dataset has a unique name (set during loading or creation, see below).
+ Commands addressed to the dataset are issued in an object-oriented manner:
+\layout Syntax
+
+.DS COMMAND PARAMETERS
+\layout Standard
+
+The name of the dataset (
+\family typewriter 
+DS
+\family default 
+), preceded with a dot, appears first, followed by the command and its parameter
+s.
+\layout Subsection
+
 Objects
 \layout Standard
 
-objects are 3D representation of datasets
+Objects are three dimensional representations of datasets.
+ They are constructed from the dataset elements, resulting in a collection
+ of 3D primitives which are displayed in the graphics window.
+ Objects are characterized by:
+\layout Description
+
+Object\SpecialChar ~
+Name A sequence of alphanumeric characters (allowed are pretty much
+ all characters except a blank space and special shell characters such as
+ 
+\family typewriter 
+$ // @ [ ] { } ; 
+\family default 
+), must be unique within a dataset.
+\layout Description
+
+Object\SpecialChar ~
+Type Represents a specific way of converting and interpreting the
+ structural data, resulting in different representations for the same dataset.
+\layout Description
+
+Selection Designates a subset of the dataset elements to be included in
+ the object construction.
+\layout Description
+
+Dataset\SpecialChar ~
+and\SpecialChar ~
+Object\SpecialChar ~
+Properties Additional parameters unique to the dataset and
+ object type.
+ 
+\layout Description
+
+Render\SpecialChar ~
+Properties Parameters affecting the display of the 3D primitives.
+\layout Standard
+
+Objects are part of the dataset they were created from and are addressed
+ as:
+\layout Syntax
+
+.DS.OBJ COMMAND PARAMETERS
+\layout Standard
+
+The object name (
+\family typewriter 
+OBJ
+\family default 
+) is always appended to its dataset (
+\family typewriter 
+DS
+\family default 
+), separated with a dot.
+ The command and its parameters follow.
 \layout Subsection
+
+
+\begin_inset LatexCommand \label{properties}
+
+\end_inset 
 
 Properties
 \layout Standard
 
-copied and shared element properties
+Properties are name-value pairs characterizing dataset, objects and dataset-elem
+ents.
+ The dataset-element properties can be divided into two classes: some are
+ 
+\emph on 
+copied
+\emph default 
+ from the dataset to the object during object (re-) creation and some are
+ 
+\emph on 
+shared
+\emph default 
+ shared between the dataset and its objects.
+ As described in more detail below, the commands 
+\family typewriter 
+set
+\family default 
+ and 
+\family typewriter 
+get
+\family default 
+ are available on the dataset and the object level to modify and retrieve
+ properties.
 \layout Subsection
 
 Selection
@@ -3971,6 +4086,10 @@ Transformations
 \layout Section
 
 Database Manager Commands
+\layout Standard
+
+The database manager module handles the internal database containing all
+ datasets and their objects.
 \layout RefEntry
 
 delete
@@ -3980,6 +4099,7 @@ delete DATASET
 \layout Standard
 
 Removes DATASET and all its objects.
+ Note that the name of the dataset is not preceded with a dot.
 \layout RefEntry
 
 list
@@ -3997,7 +4117,64 @@ load
 load FILE [-name N] [-type T] [-swap]
 \layout Standard
 
-Loads a file into the database, creating a new dataset.
+Probably the most important database manager command.
+ Loads a file into the database, creating a new dataset and converting the
+ file format into the internal format.
+ 
+\layout Standard
+
+The name of the dataset can be specified with 
+\family typewriter 
+-name
+\family default 
+, otherwise the base of the filename
+\begin_float footnote 
+\layout Standard
+
+stripped of its path and extension
+\end_float 
+ will be used.
+ If a dataset of identical name already exists, consecutive numbers starting
+ from 2 will be appended to the name until a unique one is found; the exisiting
+ dataset will 
+\emph on 
+not
+\emph default 
+ be overwritten.
+ 
+\layout Standard
+
+The file type given with 
+\family typewriter 
+-type
+\family default 
+ indicates both the kind of dataset to be created and the file format.
+ If this parameter is omitted, the type is guessed from the extension.
+ Table 
+\begin_inset LatexCommand \vref{dbm_load}
+
+\end_inset 
+
+ lists the currently supported file formats, their recognized extension(s),
+ the type and the kind of dataset that will be created.
+ 
+\layout Standard
+
+Files in binary format might need to be byte-swapped with 
+\family typewriter 
+-swap
+\family default 
+, depending on the processor architecture they were generated on and the
+ processor architecture DINO is running on.
+ The byte order of the supported architectures is as follows:
+\layout Description
+
+Big\SpecialChar ~
+Endian: MIPS (irix) - MOTOROLA (linux-ppc) - SPARC (sun)
+\layout Description
+
+Little\SpecialChar ~
+Endian: INTEL (linux-i386) - ALPHA (osf1)
 \layout RefEntry
 
 new
@@ -4007,6 +4184,16 @@ new TYPE [-name N]
 \layout Standard
 
 Creates a new dataset of TYPE.
+ This is currently limited to 
+\family typewriter 
+geom
+\family default 
+.
+ If no name is specified, 
+\family typewriter 
+TYPE
+\family default 
+ is used.
 \layout RefEntry
 
 rename
@@ -4015,7 +4202,20 @@ rename
 rename OLD NEW
 \layout Standard
 
-Renames dataset OLD into NEW.
+Renames dataset 
+\family typewriter 
+OLD
+\family default 
+ into 
+\family typewriter 
+NEW
+\family default 
+, provided that 
+\family typewriter 
+NEW
+\family default 
+ is not already used.
+ Note that there is no dot predecing the dataset names.
 \layout Standard
 
 \begin_float wide-tab 
@@ -4036,7 +4236,7 @@ Renames dataset OLD into NEW.
 
 \layout Standard
 
-Description
+File Format
 \end_inset 
 </cell>
 <cell multicolumn="0" alignment="left" valignment="top" topline="true" bottomline="false" leftline="true" rightline="false" rotate="false" usebox="none" width="" special="">
@@ -5218,7 +5418,12 @@ del
 .DS del OBJ
 \layout Standard
 
-Removes object OBJ from the dataset.
+Removes the object named 
+\family typewriter 
+OBJ
+\family default 
+ from the dataset.
+ Note that there is no dot preceding the object name.
 \layout RefEntry
 
 fix
@@ -5227,8 +5432,9 @@ fix
 .DS fix
 \layout Standard
 
-Applies the current transformation to the dataset elements, then resets
- the transformation to identity.
+Applies the current transformation to the dataset, then resets the transformatio
+n to identity.
+ 
 \layout RefEntry
 
 get
@@ -5237,7 +5443,27 @@ get
 .DS get PROPERTY
 \layout Standard
 
-Returns dataset PROPERTY.
+Returns the specified dataset property (see tables 
+\begin_inset LatexCommand \vref{struct_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{scal_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{surf_ds_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{topo_ds_prop}
+
+\end_inset 
+
+ ).
 \layout RefEntry
 
 grab
@@ -5246,16 +5472,48 @@ grab
 .DS grab INPUTDEVICE
 \layout Standard
 
-Grabs INPUTDEVICE
+Grabs INPUTDEVICE (see 
+\begin_inset LatexCommand \vref{gui}
+
+\end_inset 
+
+).
 \layout RefEntry
 
 new
 \layout Syntax
 
-.DS new [-type T] [-name N] [-set SET_EXPR] [-sel SELECT_EXPR]
+.DS new [-name N][-type T][-set SET_EXPR][-sel SELECT_EXPR]
 \layout Standard
 
 Creates a new object.
+ If no name is given with 
+\family typewriter 
+-name
+\family default 
+, the dataset name will be used.
+ If an object with the same name already exists, it will be deleted first.
+ The object type - a specific way to convert the data into 3D primitives
+ - can be specified with 
+\family typewriter 
+-type
+\family default 
+.
+ Object properties as well as 
+\emph on 
+shared
+\emph default 
+ dataset-element properties can be assigned using 
+\family typewriter 
+-set
+\family default 
+.
+ Finally, a subset of the dataset-elements used for object creation can
+ be selected with 
+\family typewriter 
+-sel
+\family default 
+.
 \layout RefEntry
 
 reset
@@ -5265,6 +5523,15 @@ reset
 \layout Standard
 
 Resets the dataset transformation.
+\layout RefEntry
+
+restrict
+\layout Syntax
+
+.DS restrict SELECT_EXPR
+\layout Standard
+
+Restricts dataset
 \layout RefEntry
 
 rot
@@ -5293,7 +5560,76 @@ set
 .DS set SET_EXPR [-sel SELECT_EXPR]
 \layout Standard
 
-Sets dataset properties, optionally applying a selection.
+Sets dataset or dataset-element properties (depending on which appear in
+ 
+\family typewriter 
+SET_EXPR
+\family default 
+).
+ A selection can be added to specify which elements are affected.
+ 
+\emph on 
+Shared
+\emph default 
+ elements (see 
+\begin_inset LatexCommand \vref{properties}
+
+\end_inset 
+
+ above) will be updated immediately, while 
+\emph on 
+copied
+\emph default 
+ elements change the default values for subsequent object (re-)creations.
+ Dataset properties are listed in tables 
+\begin_inset LatexCommand \vref{struct_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{scal_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{surf_ds_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{topo_ds_prop}
+
+\end_inset 
+
+, 
+\emph on 
+shared
+\emph default 
+ and 
+\emph on 
+copied
+\emph default 
+ dataset-elements are listed in tables 
+\begin_inset LatexCommand \vref{struct_ele_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{scal_ele_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{surf_ele_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{topo_ele_prop}
+
+\end_inset 
+
+.
 \layout RefEntry
 
 trans
@@ -5335,7 +5671,27 @@ get
 .DS.OBJ get PROPERTY
 \layout Standard
 
-Returns the specified object property.
+Returns the specified object property (see tables 
+\begin_inset LatexCommand \vref{struct_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{scal_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{surf_ds_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{topo_ds_prop}
+
+\end_inset 
+
+).
 \layout RefEntry
 
 hide
@@ -5353,7 +5709,57 @@ set
 .DS.OBJ set SET_EXPR [-sel SEL_EXPR] [-range RANGE_EXPR]
 \layout Standard
 
-Sets object properties, optionally applying a selection or range.
+Sets object properties or 
+\emph on 
+shared
+\emph default 
+ dataset-element properties (depending on which appear in SET_EXPR).
+ The latter can be submitted to a selection or range.
+ Object properties are listed in tables 
+\begin_inset LatexCommand \vref{struct_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{scal_ds_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{surf_ds_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{topo_ds_prop}
+
+\end_inset 
+
+, 
+\emph on 
+shared
+\emph default 
+ elements are listed in tables 
+\begin_inset LatexCommand \vref{struct_ele_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{scal_ele_prop}
+
+\end_inset 
+
+, 
+\begin_inset LatexCommand \vref{surf_ele_prop}
+
+\end_inset 
+
+ and 
+\begin_inset LatexCommand \vref{topo_ele_prop}
+
+\end_inset 
+
+.
 \layout RefEntry
 
 show
@@ -13734,6 +14140,9 @@ Geometric Primitives
 \layout Chapter
 
 Glossary
+\layout Paragraph*
+
+3D Primitive
 \layout Paragraph*
 
 Antialiasing
