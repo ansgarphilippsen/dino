@@ -68,6 +68,8 @@ typedef struct SURF_OBJ {
   int facec;
   */
 
+  float center[3];
+
   unsigned char *vert_flag;
 }surfObj;
 
@@ -87,4 +89,5 @@ int surfGenerate(surfObj *obj, Select *sel);
 
 int surfObjIsWithin(surfObj *obj, float *p, float d2);
 
+void surfObjRecalcCenter(surfObj *obj);
 #endif

@@ -431,25 +431,11 @@ int surfObjSet(surfObj *obj, Set *s, int flag)
 
 int surfObjGet(surfObj *obj, char *prop)
 {
-  int i;
   char message[256];
-  float x,y,z;
 
   if(!strcmp(prop,"center")) {
-    x=0.0;
-    y=0.0;
-    z=0.0;
-    for(i=0;i<obj->vertc;i++) {
-      x+=obj->vert[i].p[0];
-      y+=obj->vert[i].p[1];
-      z+=obj->vert[i].p[2];
-    }
-    if(i>0) {
-      x/=(double)i;
-      y/=(double)i;
-      z/=(double)i;
-    }
-    sprintf(message,"{%.5f,%.5f,%.5f}",x,y,z);
+    sprintf(message,"{%.5f,%.5f,%.5f}",\
+	    obj->center[0],obj->center[1],obj->center[2]);
     comReturn(message);
   } else {
     sprintf(message,"%s: get: unknown property %s\n",obj->name, prop); 
@@ -610,4 +596,30 @@ int surfObjIsWithin(surfObj *obj, float *p, float d2)
     }
   }
   return 0;
+}
+
+void surfObjRecalcCenter(surfObj *obj)
+{
+  float x,y,z;
+  int i;
+
+  x=0.0;
+  y=0.0;
+  z=0.0;
+  for(i=0;i<obj->vertc;i++) {
+    x+=obj->vert[i].p[0];
+    y+=obj->vert[i].p[1];
+    z+=obj->vert[i].p[2];
+  }
+  if(i>0) {
+    x/=(double)i;
+    y/=(double)i;
+    z/=(double)i;
+  }
+
+  obj->center[0]=x;
+  obj->center[1]=y;
+  obj->center[2]=z;
+
+  transApplyf(&obj->node->transform,obj->center);
 }
