@@ -149,15 +149,15 @@ static id dinoController;
 }
 
 - (IBAction)calcDist:(id)sender{
-    [self command:@"push [[scene pop]] [[scene pop]]; opr dist; scene message Distance: [pop]" from:(id)sender]; 
+    [self command:@"push [scene pop] [scene pop]; opr dist; scene message Distance: [pop]" from:(id)sender]; 
 }
 
 - (IBAction)calcAngle:(id)sender{
-    [self command:@"push [[scene pop]] [[scene pop]] [[scene pop]]; opr angle; scene message Angle:[pop]" from:(id)sender]; 
+    [self command:@"push [scene pop] [scene pop] [scene pop]; opr angle; scene message Angle:[pop]" from:(id)sender]; 
 }
 
 - (IBAction)calcTorsion:(id)sender{
-    [self command:@"push [[scene pop]] [[scene pop]] [[scene pop]] [[scene pop]]; opr torsion; scene message Torsion: [pop]" from:(id)sender]; 
+    [self command:@"push [scene pop] [scene pop] [scene pop] [scene pop]; opr torsion; scene message Torsion: [pop]" from:(id)sender]; 
 }
 
 - (IBAction)showCPMarker:(id)sender{
