@@ -1,5 +1,9 @@
 *rc-10*
 
+added auto swapping to charmmb
+fixed 4 character chain length for crd files
+fixed bug for crd files that contain wrong atom count
+fixed missing texture decl in povray 3.5 output of scalar field obj
 
 -----
 *rc-9*

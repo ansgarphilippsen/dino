@@ -864,6 +864,11 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
       m=WRITE_POV_NOCOLOR;
       fprintf(f,"mesh{\n");
 #else
+      if(write_pov_ver==WRITE_POV_V35 && write_pov_mode==WRITE_POV_DEFAULT) {
+	// prepare the smoothing textures to use
+	writePOVGenTriSmoothTex(f,obj_name,tex_name,tp_name,fi_name);
+      }
+
       // copied from write_pov_va BAD BAD STYLE
       // prepare the output
       if(write_pov_mode==WRITE_POV_DEFAULT) {
