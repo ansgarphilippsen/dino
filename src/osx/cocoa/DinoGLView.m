@@ -10,10 +10,9 @@
 {
     NSOpenGLPixelFormatAttribute attrs[] = {
         NSOpenGLPFADoubleBuffer,
-	NSOpenGLPFADepthSize, 1,
+		NSOpenGLPFADepthSize, 1,
         NSOpenGLPFAStencilSize, 1,
-//        NSOpenGLPFAAccumSize, 8,
-	NSOpenGLPFAMaximumPolicy,
+		NSOpenGLPFAMaximumPolicy,
         nil };
     NSOpenGLPixelFormat *pixFmt;
 
@@ -32,10 +31,11 @@
 
 - (void)drawRect:(NSRect)rect
 {
-    [sliderX setMaxValue:(double)rect.size.width];
-    [sliderY setMaxValue:(double)rect.size.height];
+//    [sliderX setMaxValue:(double)rect.size.width];
+//    [sliderY setMaxValue:(double)rect.size.height];
 //    [[Controller dinoController] updateStatusBox:[NSString stringWithFormat:@"%f",[sliderX maxValue]]];  
-    cmiResize((int)rect.size.width,(int)rect.size.height);
+    
+	if([self inLiveResize])	cmiResize((int)rect.size.width,(int)rect.size.height);
     cmiRedraw();
 }
  
