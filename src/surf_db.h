@@ -59,6 +59,8 @@ typedef struct DBM_SURF_NODE {
   
   float cprop_min[PROP_MAX_VALUES],cprop_max[PROP_MAX_VALUES];
 
+  transMat* curr_transform;
+
 }dbmSurfNode;
 
 #define SURF_RENORMAL_MAX_FACEI 16
@@ -78,6 +80,7 @@ int surfComSet(dbmSurfNode *,int wc, char **wl);
 int surfComGet(dbmSurfNode *,int wc, char **wl);
 int surfComDel(dbmSurfNode *,int wc, char **wl);
 int surfComAttach(dbmSurfNode *,int wc, char **wl);
+int surfComCotrans(dbmSurfNode *,int wc, char **wl);
 int surfComRestrict(dbmSurfNode *,int wc, char **wl);
 
 int surfNew(dbmSurfNode *node, char *name, int type, Set *set, Select *sel,int vflag);

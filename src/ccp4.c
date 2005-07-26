@@ -17,7 +17,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
 {
   struct CCP4_MAP_HEADER header;
   int size,ret;
-   double fx,fy,fz;
+  double fx,fy,fz;
   int c1,r1,s1,c2,r2,s2,uvw[3],pc,pr,ps;
   int c,r,s,u,v,w,pointer,pointer_s,pointer_r,size2;
   void *raw_data;

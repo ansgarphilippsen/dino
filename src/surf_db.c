@@ -32,7 +32,8 @@ int surfNewNode(dbmSurfNode *node)
   node->smode=SURF_SMODE_ALL;
 
   transReset(&node->transform);
-
+  node->curr_transform = &node->transform;
+  
   return 0;
 }
 
@@ -48,22 +49,24 @@ int surfCommand(struct DBM_SURF_NODE *node,int wc, char **wl)
     wl[1]=empty_com[1];
   }
 
-  if(!strcmp(wl[0],"?") ||
-     !strcmp(wl[0],"help")) {
-  } else if(!strcmp(wl[0],"new")) {
+  if(clStrcmp(wl[0],"?") ||
+     clStrcmp(wl[0],"help")) {
+  } else if(clStrcmp(wl[0],"new")) {
     return surfComNew(node, wc-1, wl+1);
-  } else if(!strcmp(wl[0],"set")) {
+  } else if(clStrcmp(wl[0],"set")) {
     return surfComSet(node,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"get")) {
+  } else if(clStrcmp(wl[0],"get")) {
     return surfComGet(node,wc-1, wl+1);
-  } else if(!strcmp(wl[0],"restrict")) {
+  } else if(clStrcmp(wl[0],"restrict")) {
     return surfComRestrict(node,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"attach")) {
+  } else if(clStrcmp(wl[0],"attach")) {
     return surfComAttach(node, wc-1, wl+1);
-  } else if(!strcmp(wl[0],"delete") ||
-	    !strcmp(wl[0],"del")) {
+  } else if(clStrcmp(wl[0],"cotrans")) {
+    return surfComCotrans(node,wc-1,wl+1);
+  } else if(clStrcmp(wl[0],"delete") ||
+	    clStrcmp(wl[0],"del")) {
     return surfComDel(node,wc-1,wl+1);
-  } else if(!strcmp(wl[0],"grab")) {
+  } else if(clStrcmp(wl[0],"grab")) {
     if(wc!=2) {
       comMessage("syntax: grab device\n");
       return -1;
@@ -72,13 +75,13 @@ int surfCommand(struct DBM_SURF_NODE *node,int wc, char **wl)
       return -1;
     // set center to current center
     comGetCurrentCenter(node->transform.cen);
-  } else if(!strcmp(wl[0],"fix")) {
+  } else if(clStrcmp(wl[0],"fix")) {
     if(wc>1)
       comMessage("warning: ignored superfluous words after fix\n");
 
     surfFix(node);
     comRedraw();
-  } else if(!strcmp(wl[0],"reset")) {
+  } else if(clStrcmp(wl[0],"reset")) {
     if(wc==1) {
       transReset(&node->transform);
     } else {
@@ -96,42 +99,42 @@ int surfCommand(struct DBM_SURF_NODE *node,int wc, char **wl)
       }
     }
     comRedraw();
-  } else if(!strcmp(wl[0],"rotx")) {
+  } else if(clStrcmp(wl[0],"rotx")) {
     if(wc<2) {
       comMessage("error: missing value after rotx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTX,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"roty")) {
+  } else if(clStrcmp(wl[0],"roty")) {
     if(wc<2) {
       comMessage("error: missing value after roty\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTY,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"rotz")) {
+  } else if(clStrcmp(wl[0],"rotz")) {
     if(wc<2) {
       comMessage("error: missing value after rotz\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_ROTZ,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"transx")) {
+  } else if(clStrcmp(wl[0],"transx")) {
     if(wc<2) {
       comMessage("error: missing value after transx\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAX,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"transy")) {
+  } else if(clStrcmp(wl[0],"transy")) {
     if(wc<2) {
       comMessage("error: missing value after transy\n");
       return -1;
     }
     transCommand(&node->transform,TRANS_TRAY,-1,atof(wl[1]));
     comRedraw();
-  } else if(!strcmp(wl[0],"transz")) {
+  } else if(clStrcmp(wl[0],"transz")) {
     if(wc<2) {
       comMessage("error: missing value after transz\n");
       return -1;
@@ -313,21 +316,21 @@ int surfComAttach(dbmSurfNode *node, int wc, char **wl)
   if(wc==0) {
     return surfAttach(node,NULL,0);
   }
-  if(!strcmp(wl[0],"none") ||
-     !strcmp(wl[0],"off")) {
+  if(clStrcmp(wl[0],"none") ||
+     clStrcmp(wl[0],"off")) {
     return surfAttach(node,NULL,0);
   }
   if(!comIsDB(wl[0])) {
-    sprintf(message,"unknown database %s\n",wl[0]);
+    sprintf(message,"unknown dataset %s\n",wl[0]);
     comMessage(message);
     return -1;
   }
   cutoff=4.0;
   for(i=1;i<wc;i++)
-    if(!strcmp(wl[i],"-i")) {
+    if(clStrcmp(wl[i],"-i")) {
       comMessage("info: attach: -i no longer supported, ignored\n");
-    } else if(!strcmp(wl[i],"-cutoff") ||
-	      !strcmp(wl[i],"-co")) {
+    } else if(clStrcmp(wl[i],"-cutoff") ||
+	      clStrcmp(wl[i],"-co")) {
       if(i+1>=wc) {
 	sprintf(message,"distance missing for -cutoff\n");
 	comMessage(message);
@@ -342,6 +345,32 @@ int surfComAttach(dbmSurfNode *node, int wc, char **wl)
     }
   node->attach_cutoff=cutoff;
   return surfAttach(node,comGetDB(wl[0]),0);
+}
+
+int surfComCotrans(dbmSurfNode *sn,int wc, char **wl)
+{
+  char message[256];
+  dbmNode *nn;
+
+  if(wc<1) {
+    comMessage("required dataset as argument to cotrans\n");
+    return -1;
+  }
+  if(clStrcmp(wl[0],"none") ||
+     clStrcmp(wl[0],"off")) {
+    // copy cotrans matrix to current one
+    transCopy(sn->curr_transform,&sn->transform);
+    // reset to own transformation matrix
+    sn->curr_transform=&sn->transform;
+  }
+  nn = comGetDB(wl[0]);
+  if(nn==NULL) {
+    sprintf(message,"unknown dataset %s\n",wl[0]);
+    comMessage(message);
+    return -1;
+  }
+  sn->curr_transform = &nn->common.transform;
+  return 0;
 }
 
 int surfComRestrict(dbmSurfNode *node, int wc, char **wl)
@@ -526,24 +555,24 @@ int surfGet(dbmSurfNode *node, char *prop)
   int i;
   float v[3];
 
-  if(!strcmp(prop,"center")) {
+  if(clStrcmp(prop,"center")) {
     v[0]=node->transform.cen[0];
     v[1]=node->transform.cen[1];
     v[2]=node->transform.cen[2];
     transApplyf(&node->transform,v);
     sprintf(message,"{%.5f,%.5f,%.5f}",v[0],v[1],v[2]);
     comReturn(message);
-  } else if(!strcmp(prop,"smode")) {
+  } else if(clStrcmp(prop,"smode")) {
     if(node->smode==SURF_SMODE_ALL)
       strcpy(message,"all");
     else
       strcpy(message,"any");
     comReturn(message);
-  } else if(!strcmp(prop,"rot")) {
+  } else if(clStrcmp(prop,"rot")) {
     comReturn(transGetRot(&node->transform));
-  } else if(!strcmp(prop,"trans")) {
+  } else if(clStrcmp(prop,"trans")) {
     comReturn(transGetTra(&node->transform));
-  } else if(!strcmp(prop,"rtc")) {
+  } else if(clStrcmp(prop,"rtc")) {
     comReturn(transGetAll(&node->transform));
   } else {
     sprintf(message,"%s: unknown property %s\n",node->name, prop);
@@ -584,7 +613,7 @@ int surfDelObj(dbmSurfNode *node,char *name)
 	
   for(i=0;i<node->obj_max;i++)
     if(node->obj_flag[i]!=0)
-      if(!strcmp(node->obj[i].name,name)) {
+      if(clStrcmp(node->obj[i].name,name)) {
 	node->obj_flag[i]=0;
 	obj=&node->obj[i];
 	// TODO CFREE !!

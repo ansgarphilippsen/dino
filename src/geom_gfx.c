@@ -150,7 +150,7 @@ int geomDrawObj(geomObj *obj)
     glEnableClientState(GL_COLOR_ARRAY);
     glVertexPointer(3,GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].v);
     glNormalPointer(GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].n);
-    glColorPointer(3,GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].c); 
+    glColorPointer(4,GL_FLOAT,sizeof(cgfxVAField),obj->va.p[0].c); 
 
 #ifdef SUN
      glBegin(GL_TRIANGLES);

@@ -16,24 +16,21 @@ int surfDraw(dbmSurfNode *node, int f)
   glPushMatrix();
 
   // apply ds transform
-
-
        
-  glTranslated(node->transform.cen[0],
-	       node->transform.cen[1],
-	       node->transform.cen[2]);
+  glTranslated(node->curr_transform->cen[0],
+	       node->curr_transform->cen[1],
+	       node->curr_transform->cen[2]);
 
-  glTranslated(node->transform.tra[0],
-	       node->transform.tra[1],
-	       node->transform.tra[2]);
+  glTranslated(node->curr_transform->tra[0],
+	       node->curr_transform->tra[1],
+	       node->curr_transform->tra[2]);
 
-  glMultMatrixd(node->transform.rot);
+  glMultMatrixd(node->curr_transform->rot);
 
-  glTranslated(-node->transform.cen[0],
-	       -node->transform.cen[1],
-	       -node->transform.cen[2]);
+  glTranslated(-node->curr_transform->cen[0],
+	       -node->curr_transform->cen[1],
+	       -node->curr_transform->cen[2]);
 
-	       
 	         
   if(f==0) {
     for(j=0;j<node->obj_max;j++)

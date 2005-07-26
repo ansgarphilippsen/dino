@@ -1655,6 +1655,12 @@ int scalGetRangeXYZVal(dbmScalNode *node, const char *prop, float *pos, float *r
 		    (pos[1]-cp[1])*(pos[1]-cp[1])+
 		    (pos[2]-cp[2])*(pos[2]-cp[2])
 		    );
+  } else if (clStrcmp(prop,"x")) {
+    (*res) = pos[0];
+  } else if (clStrcmp(prop,"y")) {
+    (*res) = pos[1];
+  } else if (clStrcmp(prop,"z")) {
+    (*res) = pos[2];
   } else {
     // default
     xyz[0]=pos[0];
