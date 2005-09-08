@@ -12,20 +12,6 @@
 #define sqrtf(x) ((float)(sqrt((double)(x))))
 #endif
 
-#ifdef DARWIN
-float sqrtf(float v)
-{
-     return (float) sqrt((double)v);
-}
-#endif
-
-#ifdef OSX
-float sqrtf(float v)
-{
-     return (float) sqrt((double)v);
-}
-#endif
-
 #define MAT_NEW_EXTRACTION 1
 
 /**************************************************

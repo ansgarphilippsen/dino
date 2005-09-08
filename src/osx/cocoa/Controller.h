@@ -36,7 +36,7 @@
 - (void)updateVersionBox:(NSString *)text;
 - (void)resetCurrentContext;
 // Main menu: File items
-- (IBAction)setCurrentDirectory:(id)sender;
+- (IBAction)setWorkingDirectory:(id)sender;
 - (IBAction)runScript:(id)sender;
 // Main menu: Scene items (And GFX popup menu items)
 - (IBAction)autoslab:(id)sender;

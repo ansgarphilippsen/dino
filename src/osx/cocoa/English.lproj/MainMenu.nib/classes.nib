@@ -20,7 +20,7 @@
                 rotFromSliderX = id; 
                 rotFromSliderY = id; 
                 runScript = id; 
-                setCurrentDirectory = id; 
+                setWorkingDirectory = id; 
                 showAxis = id; 
                 showCPMarker = id; 
                 toggleDepthCueing = id; 
@@ -50,13 +50,10 @@
             ACTIONS = {centerOnTarget = id; toggleDinoObject = id; }; 
             CLASS = OMController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {
-                dinoController = Controller; 
-                dinoOM = NSOutlineView; 
-                toggleButton = NSButtonCell; 
-            }; 
+            OUTLETS = {dinoOM = OMView; displayFlag = NSButtonCell; }; 
             SUPERCLASS = NSObject; 
         }, 
+        {CLASS = OMFlag; LANGUAGE = ObjC; SUPERCLASS = NSButton; }, 
         {CLASS = OMView; LANGUAGE = ObjC; SUPERCLASS = NSOutlineView; }
     ); 
     IBVersion = 1; 

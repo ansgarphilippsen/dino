@@ -9,6 +9,18 @@ static id dinoOMController;
 
 @implementation OMView
 
+/*
+- (void)mouseDown:(NSEvent *)theEvent
+{
+    [NSApp preventWindowOrdering];
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+{
+    return YES;
+}
+*/
+
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
 {
     return YES;
@@ -22,7 +34,6 @@ static id dinoOMController;
 }
 
 @end
-
 
 @implementation OMController
 
@@ -39,9 +50,9 @@ static id dinoOMController;
 - (void)awakeFromNib
 {
     dinoOMController=self;
-
+	
     dataSetList = [[NSMutableArray alloc] initWithCapacity:2];
-    [[dinoOM tableColumnWithIdentifier:@"displayFlagColumn"] setDataCell:toggleButton];
+	
 //    [dinoOM setVerticalMotionCanBeginDrag:YES];
 //    [dinoOM registerForDraggedTypes:[NSArray arrayWithObjects:@"DinoObjectType"]];
     

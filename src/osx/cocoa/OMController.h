@@ -7,18 +7,18 @@
 }
 
 // Overrides
+//- (void)mouseDown:(NSEvent *)theEvent;
+//- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent;
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent;
 
 @end
 
-
 @interface OMController : NSObject
 {
-    IBOutlet NSOutlineView *dinoOM;
-    IBOutlet NSButtonCell  *toggleButton;
-
-    NSMutableArray         *dataSetList;
+   IBOutlet OMView        *dinoOM;
+   IBOutlet NSButtonCell  *displayFlag;
+   NSMutableArray         *dataSetList;
 }
 
 // Initializatiion

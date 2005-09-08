@@ -4,14 +4,6 @@
 #define MAT_MAX_WORD_COUNT 100
 #define MAT_MAX_STRING_LENGTH 255
 
-#ifdef DARWIN
-extern float sqrtf(float v);
-#endif
-
-#ifdef OSX
-extern float sqrtf(float v);
-#endif
-
 #ifdef SUN
 #define sqrtf(x) ((float)sqrt((double)x))
 #endif

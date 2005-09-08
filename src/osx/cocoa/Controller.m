@@ -121,7 +121,7 @@ static id dinoController;
 //------------------------------------------------------
 // Main menu: File items
 
-- (IBAction)setCurrentDirectory:(id)sender
+- (IBAction)setWorkingDirectory:(id)sender
 {
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
     [oPanel setAllowsMultipleSelection:NO];
