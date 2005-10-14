@@ -21,8 +21,10 @@ int selectNew(Select *s, int argc, char **oargv)
     argc=1;
     defaultl[0]=defaults;
     argv=defaultl;
+    s->select_all_flag=1;
   } else {
     argv=oargv;
+    s->select_all_flag=0;
   }
 
   len=0;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "dino.h"
 #include "Cmalloc.h"
 #include "scal_mc_new.h"
 #include "mat.h"
@@ -18,8 +19,14 @@ struct SCAL_MC_NEW_ORG scalMCNOrg;
 int scal_mcn_flag;
 #endif
 
+extern int debug_mode;
+
+typedef int (*calc_vert_func)(int,int,int,int);
+
 int scalMCN(scalObj *obj, Select *sel)
 {
+  char mesg[1024];
+
   int umin,umax,uc,usize,u;
   int vmin,vmax,vc,vsize,v;
   int wmin,wmax,wc,wsize,w;
@@ -30,6 +37,15 @@ int scalMCN(scalObj *obj, Select *sel)
   int *save2_v_u, *save2_v_w;
   int save_u_v, save_u_w;
   int *save_tmp;
+
+  calc_vert_func calc_vert = scalMCNCalcVert;
+
+  if(sel!=NULL) {
+    if(sel->select_all_flag==0) {
+      calc_vert = scalMCNCalcVertSelect;
+      debmsg("running isocontouring with selection");
+    }
+  }
 
   scalMCNOrg.obj=obj;
   scalMCNOrg.field=obj->field;
@@ -49,20 +65,57 @@ int scalMCN(scalObj *obj, Select *sel)
 
   // fill housekeeping structs, use heuristics to guess required memory
   scalMCNOrg.vert_count=0;
-  scalMCNOrg.vert_max=usize*vsize*wsize/2;
-  scalMCNOrg.vert_add=scalMCNOrg.vert_max/2;
+  scalMCNOrg.vert_max=usize*vsize*wsize/40;
+  if(scalMCNOrg.vert_max<100) {
+    scalMCNOrg.vert_max=100;
+  }
+  scalMCNOrg.vert_add=scalMCNOrg.vert_max/4;
   scalMCNOrg.vert=Crecalloc(NULL,scalMCNOrg.vert_max, sizeof(scalMCNVert));
 
+  if(scalMCNOrg.vert==NULL) {
+    fprintf(stderr,"fatal memory allocation error for iso vertices\n");
+    return -1;
+  }
+
   scalMCNOrg.line_count=0;
-  scalMCNOrg.line_max=usize*vsize*wsize*2;
-  scalMCNOrg.line_add=scalMCNOrg.line_max/2;
+  scalMCNOrg.line_max=usize*vsize*wsize/40;
+  if(scalMCNOrg.line_max<100) {
+    scalMCNOrg.line_max=100;
+  }
+  scalMCNOrg.line_add=scalMCNOrg.line_max/4;
   scalMCNOrg.line=Crecalloc(NULL,scalMCNOrg.line_max, sizeof(scalMCNLine));
 
+  if(scalMCNOrg.line==NULL) {
+    Cfree(scalMCNOrg.vert);
+    fprintf(stderr,"fatal memory allocation error for iso lines\n");
+    return -1;
+  }
+
   scalMCNOrg.face_count=0;
-  scalMCNOrg.face_max=usize*vsize*wsize;
-  scalMCNOrg.face_add=scalMCNOrg.face_max/2;
+  scalMCNOrg.face_max=usize*vsize*wsize/40;
+  if(scalMCNOrg.face_max<100) {
+    scalMCNOrg.face_max=100;
+  }
+  scalMCNOrg.face_add=scalMCNOrg.face_max/4;
   scalMCNOrg.face=Crecalloc(NULL,scalMCNOrg.face_max, sizeof(scalMCNFace));
 
+  if(scalMCNOrg.face==NULL) {
+    Cfree(scalMCNOrg.vert);
+    Cfree(scalMCNOrg.line);
+    fprintf(stderr,"fatal memory allocation error for iso faces\n");
+    return -1;
+  }
+
+  sprintf(mesg,"pre-allocated vert space: %d\n",scalMCNOrg.vert_max*sizeof(scalMCNVert)); 
+  debmsg(mesg);
+  sprintf(mesg,"pre-allocated line space: %d\n",scalMCNOrg.line_max*sizeof(scalMCNLine));
+  debmsg(mesg);
+  sprintf(mesg,"pre-allocated face space: %d\n",scalMCNOrg.face_max*sizeof(scalMCNFace));
+  debmsg(mesg);
+
+  sprintf(mesg,"pre-allocated: %d verts, %d lines, %d faces\n",
+	  scalMCNOrg.vert_max,scalMCNOrg.line_max,scalMCNOrg.face_max);
+  debmsg(mesg);
 
   save_w_u=Ccalloc((usize+2)*(vsize+2),sizeof(int));
   save_w_v=Ccalloc((usize+2)*(vsize+2),sizeof(int));
@@ -79,8 +132,8 @@ int scalMCN(scalObj *obj, Select *sel)
   /* create first w array */
   for(vc=0,v=vmin;v<=vmax;v++,vc++) { /* NOTE the <= */
     for(uc=0,u=umin;u<=umax;u++,uc++) { /* NOTE the <= */
-      save_w_u[vc*usize+uc]=scalMCNCalcVert(u,v,wmin,1);
-      save_w_v[vc*usize+uc]=scalMCNCalcVert(u,v,wmin,0);
+      save_w_u[vc*usize+uc]=calc_vert(u,v,wmin,1);
+      save_w_v[vc*usize+uc]=calc_vert(u,v,wmin,0);
     }
   }
 
@@ -90,12 +143,12 @@ int scalMCN(scalObj *obj, Select *sel)
 
     /* create first v array */
     for(uc=0,u=umin;u<=umax;u++,uc++) {  /* NOTE the <= */
-      save_v_u[uc]=scalMCNCalcVert(u,vmin,w,8);
-      save_v_w[uc]=scalMCNCalcVert(u,vmin,w,4);
+      save_v_u[uc]=calc_vert(u,vmin,w,8);
+      save_v_w[uc]=calc_vert(u,vmin,w,4);
     }
     for(vc=0,v=vmin;v<vmax;vc++,v++) {
-      save_u_v=scalMCNCalcVert(umin,v,w,9);
-      save_u_w=scalMCNCalcVert(umin,v,w,5);
+      save_u_v=calc_vert(umin,v,w,9);
+      save_u_w=calc_vert(umin,v,w,5);
 
       for(uc=0,u=umin;u<umax;uc++,u++) {
 
@@ -111,9 +164,9 @@ int scalMCN(scalObj *obj, Select *sel)
 	scalMCNOrg.sc.p[9]=save_u_v;
 	scalMCNOrg.sc.p[5]=save_u_w;
 
-	scalMCNOrg.sc.p[6]=scalMCNCalcVert(u,v,w,6);
-	scalMCNOrg.sc.p[7]=scalMCNCalcVert(u,v,w,7);
-	scalMCNOrg.sc.p[10]=scalMCNCalcVert(u,v,w,10);
+	scalMCNOrg.sc.p[6]=calc_vert(u,v,w,6);
+	scalMCNOrg.sc.p[7]=calc_vert(u,v,w,7);
+	scalMCNOrg.sc.p[10]=calc_vert(u,v,w,10);
 
 	scalMCNCell();
 
@@ -150,6 +203,11 @@ int scalMCN(scalObj *obj, Select *sel)
     save2_w_v=save_tmp;
   }
 
+  sprintf(mesg,"final count: %d verts, %d lines, %d faces\n",
+	  scalMCNOrg.vert_count,scalMCNOrg.line_count,scalMCNOrg.face_count);
+  debmsg(mesg);
+
+
   Cfree(save_w_u);
   Cfree(save_w_v);
   Cfree(save2_w_u);
@@ -158,7 +216,6 @@ int scalMCN(scalObj *obj, Select *sel)
   Cfree(save_v_w);
   Cfree(save2_v_u);
   Cfree(save2_v_w);
-
 
   scalMCN2Obj();
 
@@ -265,6 +322,58 @@ int scal_mc_new_cube_edge[][2]={
 };
 
 int scalMCNCalcVert(int u, int v, int w, int id)
+{
+  int *p1,*p2;
+  float *c1,*c2;
+  float s1,s2,d1,d2,r;
+  float uvw[4],xyz[4];
+  float u1,u2,v1,v2,w1,w2;
+  int ret;
+
+  p1=scal_mc_new_cube_coordi[scal_mc_new_cube_edge[id][0]];
+  p2=scal_mc_new_cube_coordi[scal_mc_new_cube_edge[id][1]];
+
+  c1=scal_mc_new_cube_coord[scal_mc_new_cube_edge[id][0]];
+  c2=scal_mc_new_cube_coord[scal_mc_new_cube_edge[id][1]];
+
+  s1=scalReadField(scalMCNOrg.field,
+		   p1[0]+u,p1[1]+v,p1[2]+w);
+  s2=scalReadField(scalMCNOrg.field,
+		   p2[0]+u,p2[1]+v,p2[2]+w);
+
+  d1=s2-s1;
+  d2=scalMCNOrg.level-s1;
+
+  if(d1==0.0) {
+    return -1;
+//    r=0.5; causes huge vert_count in weird datasets
+  } else {
+
+    r=d2/d1;
+    
+    if(r>1.0 || r<0.0)
+      return -1;
+  }
+
+  u1=(float)u+c1[0];
+  v1=(float)v+c1[1];
+  w1=(float)w+c1[2];
+  u2=(float)u+c2[0];
+  v2=(float)v+c2[1];
+  w2=(float)w+c2[2];
+  uvw[0]=u1+r*(u2-u1);
+  uvw[1]=v1+r*(v2-v1);
+  uvw[2]=w1+r*(w2-w1);
+
+  scalUVWtoXYZf(scalMCNOrg.field,uvw,xyz);
+
+  r=scalMCNAddVert(xyz,u,v,w);
+
+  return r;
+}
+
+// bad duplication of above code
+int scalMCNCalcVertSelect(int u, int v, int w, int id)
 {
   int *p1,*p2;
   float *c1,*c2;

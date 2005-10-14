@@ -54,6 +54,7 @@ int scalMCN(scalObj *obj, Select *sel);
 int scalMCNCell(void);
 
 int scalMCNCalcVert(int u, int v, int w, int id);
+int scalMCNCalcVertSelect(int u, int v, int w, int id);
 
 int scalMCNAddVert(float *p, int u, int v, int w);
 

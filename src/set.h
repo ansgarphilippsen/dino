@@ -68,6 +68,8 @@ typedef struct SELECT {
 
   int *result;
   int result_count;
+
+  int select_all_flag;
 }Select;
 
 typedef struct SET {

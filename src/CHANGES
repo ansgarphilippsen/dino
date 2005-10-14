@@ -4,6 +4,10 @@ added cotrans to surf
 
 fixed geom object transparency
 
+fixed isocontour memory heuristics for huge maps
+
+fixed slow iso-countouring for non-selections
+
 ---------------------
 
 *rc-10*
