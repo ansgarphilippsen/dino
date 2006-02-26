@@ -320,6 +320,12 @@ static int writePOVCylinder(FILE *f, transMat *transform, int mode, float ov1[3]
 	    rad);
     fprintf(f," material {%s}",mat);
     fprintf(f,"}\n");
+  } else if(mode==WRITE_POV_SCAL_CYL) {
+    // use macro color_cylinder with tp
+    fprintf(f,"color_cylinder (<%.4f,%.4f,%.4f>,<%.3f,%.3f,%.3f,%s,%s>,<%.4f,%.4f,%.4f>,<%.3f,%.3f,%.3f,%s,%s>,%s)\n",
+	    v1[0],v1[1],v1[2],c1[0],c1[1],c1[2],fi,tp,
+	    v2[0],v2[1],v2[2],c2[0],c2[1],c2[2],fi,tp,
+	    rad);
   } else {
     // use macro color_cylinder
     fprintf(f,"color_cylinder (<%.4f,%.4f,%.4f>,<%.3f,%.3f,%.3f>,<%.4f,%.4f,%.4f>,<%.3f,%.3f,%.3f>,%s)\n",
@@ -755,8 +761,8 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
   def_spec=0.0;
   def_rough=0.05;
 
-  lw=obj->render.line_width*0.05;
-  ps=obj->render.point_size*0.05;
+  lw=obj->render.line_width*0.02;
+  ps=obj->render.point_size*0.02;
 
   if(k==0) {
     fprintf(f,"// object .%s.%s\n",obj->node->name, obj->name);
@@ -835,7 +841,7 @@ static int writePOVScalObj(FILE *f, scalObj *obj, int k,float *lim)
       n2[2]=n1[2]=obj->b;
       m=WRITE_POV_NOCOLOR;
 #else
-      m=0;
+      m=WRITE_POV_SCAL_CYL;
 #endif
       for(i=0;i<obj->line_count;i++) {
 #ifdef CONTOUR_COLOR

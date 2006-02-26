@@ -16,6 +16,7 @@
 #define WRITE_POV_PATCH   2
 #define WRITE_POV_SMOOTH  3
 #define WRITE_POV_NOCOLOR 4
+#define WRITE_POV_SCAL_CYL 5
 
 #define WRITE_POV_V31 1
 #define WRITE_POV_V35 2

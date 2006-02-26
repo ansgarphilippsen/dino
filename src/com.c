@@ -1400,7 +1400,7 @@ int comWrite(int wc,const char **wl)
   FILE *f,*f2;
   int pov_flag=0;
   int pov_mode=WRITE_POV_DEFAULT;
-  int pov_ver=WRITE_POV_V31;
+  int pov_ver=WRITE_POV_V35;
   struct WRITE_PARAM wparam;
 
   wparam.dump=1;
@@ -1503,6 +1503,8 @@ int comWrite(int wc,const char **wl)
       pov_mode=WRITE_POV_SMOOTH;
     } else if(!strcmp(wl[n],"-v35")) {
       pov_ver=WRITE_POV_V35;
+    } else if(!strcmp(wl[n],"-v31")) {
+      pov_ver=WRITE_POV_V31;
     } else if(!strcmp(wl[n],"-plane")) {
       pov_flag+=WRITE_POV_PLANE;
     } else if(!strcmp(wl[n],"-box")) {
@@ -1534,7 +1536,7 @@ int comWrite(int wc,const char **wl)
 
   if(!strcmp(type,"pov")) {
     if(pov_ver==WRITE_POV_V35 && pov_mode==WRITE_POV_PATCH) {
-      comMessage("Error: -patch and -v35 cannot be used together!\n");
+      comMessage("Error: -patch is not compatible with povray v35 (use -v31 flag) !\n");
       return -1;
     }
     
@@ -1552,9 +1554,9 @@ int comWrite(int wc,const char **wl)
       return -1;
     }
     if(pov_ver==WRITE_POV_V35) {
-      sprintf(message,"Writing povray (3.5 EXPERIMENTAL!) files %s and %s...\n",file,file2);
+      sprintf(message,"Writing povray 3.5+ files %s and %s...\n",file,file2);
     } else {
-      sprintf(message,"Writing povray (3.1) files %s and %s...\n",file,file2);
+      sprintf(message,"Writing povray 3.1 (deprecated) files %s and %s...\n",file,file2);
     }
     comMessage(message);
 
