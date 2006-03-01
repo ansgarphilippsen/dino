@@ -132,6 +132,7 @@ static void writePOVGenTriSmoothTex(FILE *f, const char *o, const char *tx, cons
 {
   int i,j,k;
   float r,g,b;
+  char *buf=write_pov_mega_tex_buf;
 
   for(i=0;i<8;i++) {
     r=(float)i/7.0;
@@ -140,8 +141,10 @@ static void writePOVGenTriSmoothTex(FILE *f, const char *o, const char *tx, cons
       for(k=0;k<8;k++) {
 	b=(float)k/7.0;
 
+	sprintf(buf,"%s_tex%03d",o,i*100+j*10+k);
+
 	fprintf(f,"#declare %s = texture {%s pigment {color rgbft <%.2f,%.2f,%.2f,%s,%s>}}\n",
-		writePOVTriSmoothTex(o,r,g,b),tx,r,g,b,fi,tp);
+		buf,tx,r,g,b,fi,tp);
 		
       }
     }
