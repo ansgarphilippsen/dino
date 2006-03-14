@@ -585,6 +585,7 @@ int charmmRead(FILE *f,dbmNode *node)
   ac=0;
   debmsg("charmmRead: parsing file");
   while(!feof(f)) {
+    memset(line,0,256);
     fgets(line,sizeof(line),f);
     if(strlen(line)>50)
       charmmLine2AtomEntry(line,&charmm.atom_entry[ac++]);
