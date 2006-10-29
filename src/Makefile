@@ -62,7 +62,7 @@ endif
 
 # include architecture specific settings, including additional SRC files
 # use HOSTTYPE variable
-sinclude makedef.$(HOSTTYPE)
+include makedef.$(HOSTTYPE)
 
 ifneq (,$(findstring USE_TCL,$(OPTIONS)))
 LOPT += $(LIBTCL)

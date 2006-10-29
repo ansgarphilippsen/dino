@@ -28,14 +28,12 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
   // check if swap is required
   fread(&header,sizeof(struct CCP4_MAP_HEADER),1,f);
 
-  // TODO FIX BYTE SWAP PROBLEM
-
-  if(header.mode!=2 && header.mode!=0) {
+  if(header.mapc<1 || header.mapc>3) {
     // try swapping
     sn->swap_flag=1;
     swap_4bs((unsigned char*)&header, sizeof(header)/4.0);
-    if(header.mode!=2 && header.mode!=0) {
-      comMessage("ccp4Read: error: map not in mode 0 or 2 (even after byte-swap\n");
+    if(header.mapc<1 && header.mapc>3) {
+      comMessage("ccp4Read: error: invalid format (even after byte swap)");
       return -1;
     } else {
       comMessage(" (byte-swapping) ");
