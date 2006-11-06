@@ -1,0 +1,2 @@
+Change to src directory, run 'make depend', then 'make snapshot'. This
+should install a executable in bin/.
