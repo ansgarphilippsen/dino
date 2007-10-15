@@ -18,8 +18,8 @@ struct CCP4_MAP_HEADER
   int ispg;
   int nsymbt;
   int lskflag;
-  int skwmat[9];
-  int skwtrn[3];
+  float skwmat[9];
+  float skwtrn[3];
   int dummy[15];
   int map;
   int machst;

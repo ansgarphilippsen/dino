@@ -68,7 +68,7 @@ int ccp4Read(FILE *f, dbmScalNode *sn)
     header.nz=header.ns;
 
   sprintf(message,
-	  "header:\nnc,nr,ns: %ld,%ld,%ld\nncstart,nrstart,nsstart: %ld,%ld,%ld\nnx,ny,nz: %ld,%ld,%ld\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %ld,%ld,%ld\nmode: %ld\na, b, c=%.3f %.3f %.3f\n",
+	  "header:\nnc,nr,ns: %d,%d,%d\nncstart,nrstart,nsstart: %d,%d,%d\nnx,ny,nz: %d,%d,%d\nx,y,z: %.3f,%.3f,%.3f\nmapc,mapr,maps: %d,%d,%d\nmode: %d\na, b, c=%.3f %.3f %.3f\n",
 	  header.nc, header.nr, header.ns,
 	  header.ncstart, header.nrstart, header.nsstart,
 	  header.nx, header.ny, header.nz, 

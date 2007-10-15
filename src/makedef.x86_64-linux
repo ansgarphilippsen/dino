@@ -12,7 +12,6 @@ OPTIONS += -DLINUX_STEREO
 
 LIBDIR = -L../extras/lib -L/usr/X11R6/lib64
 
-
 LIBSTATIC = /usr/lib64/libtiff.a /usr/lib64/libjpeg.a
 LIBSTATIC += /usr/lib64/libpng.a /usr/lib64/libz.a
 
@@ -27,7 +26,7 @@ ifdef STATIC
 INCLUDE = -I../extras/include -I/usr/X11R6/include
 LIBGL = ../extras/lib/libGL.a ../extras/lib/libGLU.a
 LIBGLW = /usr/X11R6/lib/libGLw.a
-LIBMOTIF = /usr/X11R6/lib64/libXm.a
+LIBMOTIF = /usr/lib64/libXm.a
 
 else
 
@@ -36,7 +35,7 @@ else
 #INCLUDE = -I../extras/include -I/usr/X11R6/include
 INCLUDE = -I/usr/X11R6/include
 LIBGL += -lGLU -lGL
-LIBMOTIF = /usr/X11R6/lib64/libXm.a
+LIBMOTIF = /usr/lib64/libXm.a
 
 endif
 

@@ -292,7 +292,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   node->field=Cmalloc(sizeof(struct SCAL_FIELD));
   
   if(node->field==NULL) {
-    sprintf(message,"xplorRead: memory allocation error for %dkb\n",
+    sprintf(message,"xplorRead: memory allocation error for %ldkb\n",
 	    sizeof(struct SCAL_FIELD)/1024);
     comMessage(message);
     return -1;
@@ -314,7 +314,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   node->field->data=Ccalloc(size,sizeof(float));
   
   if(node->field->data==NULL) {
-    sprintf(message,"xplorRead: memory allocation error for %dkb\n",
+    sprintf(message,"xplorRead: memory allocation error for %ldkb\n",
 	    size*sizeof(float)/1024);
     comMessage(message);
     return -1;
@@ -325,7 +325,7 @@ int xplorMapBRead(FILE *f, dbmScalNode *node)
   sdata=Ccalloc(section,sizeof(double));
   
   if(sdata==NULL) {
-    sprintf(message,"xplorRead: memory allocation error for %dkb\n",
+    sprintf(message,"xplorRead: memory allocation error for %ldkb\n",
 	    section*sizeof(double)/1024);
     comMessage(message);
     return -1;

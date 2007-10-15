@@ -702,14 +702,14 @@ static void rpn_opr(const char *op)
 
   // determine type of operator
   op_type=0;
-  for(i=0;i<sizeof(op_unary);i++) {
+  for(i=0;i<sizeof(op_unary)/8;i++) {
     if(clStrcmp(op_unary[i],op)) {
       op_type=1;
       break;
     }
   }
   if(!op_type) {
-    for(i=0;i<sizeof(op_binary);i++) {
+    for(i=0;i<sizeof(op_binary)/8;i++) {
       if(clStrcmp(op_binary[i],op)) {
 	op_type=2;
 	break;
@@ -717,14 +717,14 @@ static void rpn_opr(const char *op)
     }
   }
   if(!op_type) {
-    for(i=0;i<sizeof(op_special);i++) {
+    for(i=0;i<sizeof(op_special)/8;i++) {
       if(clStrcmp(op_special[i],op)) {
 	op_type=3;
 	break;
       }
     }
   }
-
+  
   clStrcpy(op_result,"");
   tresult=-1;
 
@@ -911,7 +911,7 @@ static void rpn_opr(const char *op)
       }
     }
     
-    // copy result in string from into op_result
+    // copy result in string form into op_result
     if(tresult==RPN_TYPE_SCALAR) {
       sprintf(op_result,"%f",fresult);
     } else if(tresult==RPN_TYPE_VECTOR) {
@@ -1142,7 +1142,7 @@ static void rpn_opr(const char *op)
       }
     }
 
-    // copy result in string from into op_result
+    // copy result in string form into op_result
     if(tresult==RPN_TYPE_SCALAR) {
       sprintf(op_result,"%f",fresult);
     } else if(tresult==RPN_TYPE_VECTOR) {
