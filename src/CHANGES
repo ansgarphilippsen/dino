@@ -1,3 +1,13 @@
+0.9.2
+
+added x,y,z to selectable atom properties
+
+tweaks to CCP4 import
+
+povray 3.5 is now default
+
+----------------
+
 0.9.1-1
 
 added cotrans to surf

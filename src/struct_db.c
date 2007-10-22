@@ -1878,11 +1878,69 @@ int structIsAtomSelected(dbmStructNode *node, struct STRUCT_ATOM *atom, Select *
   return selectResult(sel);
 }
 
+
+static int structCheckFloatProp(float prop, int op, int rf, float v1, float v2)
+{
+  if(rf) {
+    return (prop>=v1 && prop<=v2);
+  } else {
+    switch(op) {
+    case POV_OP_EQ: return prop==v1;
+    case POV_OP_NE: return prop!=v1;
+    case POV_OP_LT: return prop<v1;
+    case POV_OP_LE: return prop<=v1;
+    case POV_OP_GT: return prop>v1;
+    case POV_OP_GE: return prop>=v1;
+    }
+  }
+  return 0;
+}
+
+static int structCheckIntProp(int prop, int op, int rf, int v1, int v2)
+{
+  if(rf) {
+    return (prop>=v1 && prop<=v2);
+  } else {
+    switch(op) {
+    case POV_OP_EQ: return prop==v1;
+    case POV_OP_NE: return prop!=v1;
+    case POV_OP_LT: return prop<v1;
+    case POV_OP_LE: return prop<=v1;
+    case POV_OP_GT: return prop>v1;
+    case POV_OP_GE: return prop>=v1;
+    }
+  }
+  return 0;
+}
+
+static int structCheckStringProp(const char* prop, int op, int rf, const char* v1, const char* v2,const char* name)
+{
+  static const char message[128];
+
+  if(rf) {
+    sprintf(message,"error: range not allowed for string property '%s'\n",name);
+    comMessage(message);
+    return -1;
+  }
+
+  if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
+    sprintf(message,"error: expected operator = or != for string property '%s'\n",name);
+    comMessage(message);
+    return -1;
+  }
+
+  if(rex(v1,prop))
+    return 1;
+  return 0;
+}
+
 int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
 {
   int i,j,vc,f,ret;
   int prop,rf,op;
   const char *v1,*v2;
+  float v1_f,v2_f;
+  int v1_i,v2_i;
   struct POV_VALUE *val;
   char message[256];
   float pos[3],dx,dy,dz,dist,dist2;
@@ -1919,6 +1977,12 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
     prop=STRUCT_SEL_OCC;
   else if(clStrcmp(pov->prop,"bfac"))
     prop=STRUCT_SEL_BFAC;
+  else if(clStrcmp(pov->prop,"x"))
+    prop=STRUCT_SEL_XC;
+  else if(clStrcmp(pov->prop,"y"))
+    prop=STRUCT_SEL_YC;
+  else if(clStrcmp(pov->prop,"z"))
+    prop=STRUCT_SEL_ZC;
   else if(clStrcmp(pov->prop,"ele"))
     prop=STRUCT_SEL_ELE;
   else {
@@ -1942,8 +2006,8 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
     dist2=dist*dist;
   }
 
-
   vc=pov->val_count;
+  ret=0;
   for(i=0;i<vc;i++) {
     val=povGetVal(pov,i);
     if(val->range_flag) {
@@ -1960,9 +2024,71 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
       v1=val->val1;
       v2=val->val1;
     }
+    
     if(clStrcmp(v1,"*") || clStrcmp(v2,"*"))
       return 1;
+
+    v1_f=atof(v1);
+    v1_i=atoi(v1);
+    if(rf) {
+      v2_f=atof(v2);
+      v2_i=atoi(v2);
+    }
+
     switch(prop) {
+    case STRUCT_SEL_ANUM: ret=structCheckIntProp(atom->anum,op,rf,v1_i,v2_i); break;
+
+    case STRUCT_SEL_ANAME: ret=structCheckStringProp(atom->name,op,rf,v1,v2,"aname"); break;
+
+    case STRUCT_SEL_RNUM: ret=structCheckIntProp(atom->residue->num,op,rf,v1_i,v2_i); break;
+
+    case STRUCT_SEL_RNAME: ret=structCheckStringProp(atom->residue->name,op,rf,v1,v2,"rname"); break;
+    case STRUCT_SEL_CHAIN: ret=structCheckStringProp(atom->chain->name,op,rf,v1,v2,"chain"); break;
+
+    case STRUCT_SEL_MODEL: ret=structCheckIntProp(atom->model->num,op,rf,v1_i,v2_i); break;
+
+    case STRUCT_SEL_OCC: ret=structCheckFloatProp(atom->weight,op,rf,v1_f,v2_f); break;
+
+    case STRUCT_SEL_BFAC: ret=structCheckFloatProp(atom->bfac,op,rf,v1_f,v2_f); break;
+
+    case STRUCT_SEL_XC: ret=structCheckFloatProp(atom->p->x,op,rf,v1_f,v2_f); break;
+
+    case STRUCT_SEL_YC: ret=structCheckFloatProp(atom->p->y,op,rf,v1_f,v2_f); break;
+
+    case STRUCT_SEL_ZC: ret=structCheckFloatProp(atom->p->z,op,rf,v1_f,v2_f); break;
+
+    case STRUCT_SEL_ELE: ret=structCheckStringProp(atom->chem.element,op,rf,v1,v2,"ele"); break;
+
+    case STRUCT_SEL_RTYPE: // special
+      if(rf) {
+	comMessage("error: range not allowed for rtype\n");
+	return -1;
+      }
+      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
+	comMessage("error: expected operator = or != for rtype\n");
+	return -1;
+      }
+      switch(atom->residue->type) {
+      case STRUCT_RTYPE_HELIX: if(rex(v1,"helix")) return 1; break;
+      case STRUCT_RTYPE_STRAND: if(rex(v1,"strand")) return 1; break;
+      case STRUCT_RTYPE_COIL: if(rex(v1,"coil")) return 1; break;
+      }
+      break;
+    case STRUCT_SEL_CLASS: // special
+      if(rf) {
+	comMessage("error: range not allowed for class\n");
+	return -1;
+      }
+      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
+	comMessage("error: expected operator = or != for class\n");
+	return -1;
+      }
+      switch(atom->residue->clss) {
+      case STRUCT_PROTEIN: if(rex(v1,"protein")) return 1; break;
+      case STRUCT_NA: if(rex(v1,"na")) return 1; break;
+      case STRUCT_MISC: if(rex(v1,"misc")) return 1; break;
+      }
+      break;
     case STRUCT_SEL_OBJECT:
       if(rf) {
 	comMessage("error: range not supported for .object selection\n");
@@ -2027,160 +2153,8 @@ int structEvalAtomPOV(dbmStructNode *node, struct STRUCT_ATOM *atom,POV *pov)
 	  return 1;
       }
       break;
-    case STRUCT_SEL_ANUM:
-      if(rf) {
-	if(atom->anum>=atoi(v1) && atom->anum<=atoi(v2))
-	  return 1;
-      } else {
-	switch(op) {
-	case POV_OP_EQ: if(atom->anum==atoi(v1)) return 1; break;
-	case POV_OP_NE: if(atom->anum!=atoi(v1)) return 1; break;
-	case POV_OP_LT: if(atom->anum<atoi(v1)) return 1; break;
-	case POV_OP_LE: if(atom->anum<=atoi(v1)) return 1; break;
-	case POV_OP_GT: if(atom->anum>atoi(v1)) return 1; break;
-	case POV_OP_GE: if(atom->anum>=atoi(v1)) return 1; break;
-	}
-      }
-      break;
-    case STRUCT_SEL_ANAME:
-      if(rf) {
-	comMessage("error: range not allowed for aname\n");
-	return -1;
-      }
-      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("error: expected operator = or != for aname\n");
-	return -1;
-      }
-      if(rex(v1,atom->name))
-	return 1;
-      break;
-    case STRUCT_SEL_RNUM:
-      if(rf) {
-	if(atom->residue->num>=atoi(v1) && atom->residue->num<=atoi(v2))
-	  return 1;
-      } else {
-	switch(op) {
-	case POV_OP_EQ: if(atom->residue->num==atoi(v1)) return 1; break;
-	case POV_OP_NE: if(atom->residue->num!=atoi(v1)) return 1; break;
-	case POV_OP_LT: if(atom->residue->num<atoi(v1)) return 1; break;
-	case POV_OP_LE: if(atom->residue->num<=atoi(v1)) return 1; break;
-	case POV_OP_GT: if(atom->residue->num>atoi(v1)) return 1; break;
-	case POV_OP_GE: if(atom->residue->num>=atoi(v1)) return 1; break;
-	}
-      }
-      break;
-    case STRUCT_SEL_RNAME:
-      if(rf) {
-	comMessage("error: range not allowed for rname\n");
-	return -1;
-      }
-      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("error: expected operator = or != for rname\n");
-	return -1;
-      }
-      if(rex(v1,atom->residue->name))
-	return 1;
-      break;
-    case STRUCT_SEL_RTYPE:
-      if(rf) {
-	comMessage("error: range not allowed for rtype\n");
-	return -1;
-      }
-      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("error: expected operator = or != for rtype\n");
-	return -1;
-      }
-      switch(atom->residue->type) {
-      case STRUCT_RTYPE_HELIX: if(rex(v1,"helix")) return 1; break;
-      case STRUCT_RTYPE_STRAND: if(rex(v1,"strand")) return 1; break;
-      case STRUCT_RTYPE_COIL: if(rex(v1,"coil")) return 1; break;
-      }
-      break;
-    case STRUCT_SEL_CLASS:
-      if(rf) {
-	comMessage("error: range not allowed for class\n");
-	return -1;
-      }
-      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("error: expected operator = or != for class\n");
-	return -1;
-      }
-      switch(atom->residue->clss) {
-      case STRUCT_PROTEIN: if(rex(v1,"protein")) return 1; break;
-      case STRUCT_NA: if(rex(v1,"na")) return 1; break;
-      case STRUCT_MISC: if(rex(v1,"misc")) return 1; break;
-      }
-      break;
-    case STRUCT_SEL_CHAIN:
-      if(rf) {
-	comMessage("error: range not allowed for chain\n");
-	return -1;
-      }
-      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("error: expected operator = or != for chain\n");
-	return -1;
-      }
-      if(rex(v1,atom->chain->name))
-	return 1;
-      break;
-    case STRUCT_SEL_MODEL:
-      if(rf) {
-	if(atom->model->num>=atoi(v1) && atom->model->num<=atoi(v2))
-	  return 1;
-      } else {
-	switch(op) {
-	case POV_OP_EQ: if(atom->model->num==atoi(v1)) return 1; break;
-	case POV_OP_NE: if(atom->model->num!=atoi(v1)) return 1; break;
-	case POV_OP_LT: if(atom->model->num<atoi(v1)) return 1; break;
-	case POV_OP_LE: if(atom->model->num<=atoi(v1)) return 1; break;
-	case POV_OP_GT: if(atom->model->num>atoi(v1)) return 1; break;
-	case POV_OP_GE: if(atom->model->num>=atoi(v1)) return 1; break;
-	}
-      }
-      break;
-    case STRUCT_SEL_OCC:
-      if(rf) {
-	if(atom->weight>=atof(v1) && atom->weight<=atof(v2))
-	  return 1;
-      } else {
-	switch(op) {
-	case POV_OP_EQ: if(atom->weight==atof(v1)) return 1; break;
-	case POV_OP_NE: if(atom->weight!=atof(v1)) return 1; break;
-	case POV_OP_LT: if(atom->weight<atof(v1)) return 1; break;
-	case POV_OP_LE: if(atom->weight<=atof(v1)) return 1; break;
-	case POV_OP_GT: if(atom->weight>atof(v1)) return 1; break;
-	case POV_OP_GE: if(atom->weight>=atof(v1)) return 1; break;
-	}
-      }
-      break;
-    case STRUCT_SEL_BFAC:
-      if(rf) {
-	if(atom->bfac>=atof(v1) && atom->bfac<=atof(v2))
-	  return 1;
-      } else {
-	switch(op) {
-	case POV_OP_EQ: if(atom->bfac==atof(v1)) return 1; break;
-	case POV_OP_NE: if(atom->bfac!=atof(v1)) return 1; break;
-	case POV_OP_LT: if(atom->bfac<atof(v1)) return 1; break;
-	case POV_OP_LE: if(atom->bfac<=atof(v1)) return 1; break;
-	case POV_OP_GT: if(atom->bfac>atof(v1)) return 1; break;
-	case POV_OP_GE: if(atom->bfac>=atof(v1)) return 1; break;
-	}
-      }
-      break;
-    case STRUCT_SEL_ELE:
-      if(rf) {
-	comMessage("error: range not allowed for ele\n");
-	return -1;
-      }
-      if(!(op==POV_OP_EQ || op==POV_OP_NE)) {
-	comMessage("error: expected operator = or != for aname\n");
-	return -1;
-      }
-      if(rex(v1,atom->chem.element))
-	return 1;
-      break;
     }
+    if(ret!=0) return ret;
   }
 
   return 0;
