@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 44;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -738,9 +738,11 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = E6D14605086FE5FF00BDC271 /* Build configuration list for PBXProject "Dino" */;
+			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Dino */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				E62212F60833C65A007CADC8 /* Dino */,
 			);
@@ -871,7 +873,7 @@
 		E6D14602086FE5FF00BDC271 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = ppc;
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -887,9 +889,9 @@
 					INTERNAL_COLOR,
 					CONTOUR_COLOR,
 				);
-				HEADER_SEARCH_PATHS = ../../../extras/include;
+				HEADER_SEARCH_PATHS = /opt/local/include;
 				INFOPLIST_FILE = "Info-Dino.plist";
-				LIBRARY_SEARCH_PATHS = ../../../extras/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
@@ -900,25 +902,27 @@
 				);
 				PRODUCT_NAME = Dino;
 				SECTORDER_FLAGS = "";
-				USER_HEADER_SEARCH_PATHS = ../CLI;
+				USER_HEADER_SEARCH_PATHS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = YES;
+				ZERO_LINK = NO;
 			};
 			name = Development;
 		};
 		E6D14603086FE5FF00BDC271 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = ppc;
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -928,9 +932,9 @@
 					INTERNAL_COLOR,
 					CONTOUR_COLOR,
 				);
-				HEADER_SEARCH_PATHS = ../../../extras/include;
+				HEADER_SEARCH_PATHS = /opt/local/include;
 				INFOPLIST_FILE = "Info-Dino.plist";
-				LIBRARY_SEARCH_PATHS = ../../../extras/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lpng",
@@ -940,7 +944,7 @@
 				);
 				PRODUCT_NAME = Dino;
 				SECTORDER_FLAGS = "";
-				USER_HEADER_SEARCH_PATHS = ../CLI;
+				USER_HEADER_SEARCH_PATHS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -954,7 +958,7 @@
 		E6D14604086FE5FF00BDC271 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = ppc;
+				ARCHS = "$(NATIVE_ARCH)";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_MODEL_TUNING = "";
@@ -966,9 +970,9 @@
 					INTERNAL_COLOR,
 					CONTOUR_COLOR,
 				);
-				HEADER_SEARCH_PATHS = ../../../extras/include;
+				HEADER_SEARCH_PATHS = /opt/local/include;
 				INFOPLIST_FILE = "Info-Dino.plist";
-				LIBRARY_SEARCH_PATHS = ../../../extras/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lpng",
@@ -978,38 +982,69 @@
 				);
 				PRODUCT_NAME = Dino;
 				SECTORDER_FLAGS = "";
-				USER_HEADER_SEARCH_PATHS = ../CLI;
+				USER_HEADER_SEARCH_PATHS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
 				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
 			};
 			name = Default;
 		};
 		E6D14606086FE5FF00BDC271 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				DEPLOYMENT_LOCATION = NO;
 				GCC_MODEL_TUNING = "";
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-lz",
+					"-ltiff",
+					"-ljpeg",
+				);
 			};
 			name = Development;
 		};
 		E6D14607086FE5FF00BDC271 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(NATIVE_ARCH)";
 				DEAD_CODE_STRIPPING = YES;
+				DEPLOYMENT_LOCATION = NO;
 				GCC_MODEL_TUNING = "";
-				HEADER_SEARCH_PATHS = "";
+				GCC_OPTIMIZATION_LEVEL = s;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-lz",
+					"-ltiff",
+					"-ljpeg",
+				);
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Deployment;
 		};
 		E6D14608086FE5FF00BDC271 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				DEPLOYMENT_LOCATION = NO;
 				GCC_MODEL_TUNING = "";
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-lz",
+					"-ltiff",
+					"-ljpeg",
+				);
 			};
 			name = Default;
 		};
