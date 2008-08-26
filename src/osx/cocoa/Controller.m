@@ -249,10 +249,13 @@ static id dinoController;
     unsigned memSize;
     NSOpenGLPixelFormat *pixFmt;
     NSOpenGLPixelFormatAttribute attrs[] = {
-        NSOpenGLPFAStencilSize, 1,	
-//        NSOpenGLPFAAccumSize, 8,
-	NSOpenGLPFAOffScreen,
-	nil };
+		NSOpenGLPFAOffScreen,		
+		NSOpenGLPFAColorSize, 24,
+		NSOpenGLPFAAlphaSize, 8,
+		NSOpenGLPFADepthSize, 32,	
+	    NSOpenGLPFAAccumSize, af,
+		0 
+		};
 
     pixFmt = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];
     offScreenContext = [[[NSOpenGLContext alloc] initWithFormat:pixFmt shareContext:nil] autorelease];
