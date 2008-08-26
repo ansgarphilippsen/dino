@@ -934,7 +934,7 @@
 				);
 				HEADER_SEARCH_PATHS = /opt/local/include;
 				INFOPLIST_FILE = "Info-Dino.plist";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib/dinolib;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-lpng",
@@ -1020,7 +1020,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib/dinolib;
 				OTHER_LDFLAGS = (
 					"-lpng",
 					"-lz",
