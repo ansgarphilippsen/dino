@@ -1539,13 +1539,13 @@ static int line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *se, char *line)
     tmp[2]=line[23];
     tmp[3]=line[24];
     tmp[4]='\0';
-    se->start=atoi(tmp);
+    se->start=atoi(tmp)-1;
     tmp[0]=line[33];
     tmp[1]=line[34];
     tmp[2]=line[35];
     tmp[3]=line[36];
     tmp[4]='\0';
-    se->end=atoi(tmp);
+    se->end=atoi(tmp)+1;
     //fprintf(stderr,"HELIX: %s %3d %3d\n",se->chain,se->start,se->end);
   } else {
     se->type=STRUCT_RTYPE_STRAND;
@@ -1560,13 +1560,13 @@ static int line_to_secs_entry(struct STRUCT_FILE_SECS_ENTRY *se, char *line)
     tmp[2]=line[24];
     tmp[3]=line[25];
     tmp[4]='\0';
-    se->start=atoi(tmp);
+    se->start=atoi(tmp)-1;
     tmp[0]=line[33];
     tmp[1]=line[34];
     tmp[2]=line[35];
     tmp[3]=line[36];
     tmp[4]='\0';
-    se->end=atoi(tmp);
+    se->end=atoi(tmp)+1;
     //fprintf(stderr,"STRAND: %s %3d %3d\n",se->chain,se->start,se->end);
   }
   return 0;
@@ -2312,7 +2312,8 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
        clStrcmp(node->residue[rc].name,"THR") ||
        clStrcmp(node->residue[rc].name,"VAL") ||
        clStrcmp(node->residue[rc].name,"TRP") ||
-       clStrcmp(node->residue[rc].name,"TYR")) {
+       clStrcmp(node->residue[rc].name,"TYR") ||
+       clStrcmp(node->residue[rc].name,"MSE")) {
       node->residue[rc].clss=STRUCT_PROTEIN;
       /*
 	fprintf(stderr,"%s %d protein\n",

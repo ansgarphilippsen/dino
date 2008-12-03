@@ -1299,13 +1299,13 @@ static const char *alias_get(const char *name)
 
 // variable initialization
 static char *varlist[]={
-  "protein", "(rname=ALA,CYS,ASP,GLU,PHE,GLY,HIS,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR)",
+  "protein", "(rname=ALA,CYS,ASP,GLU,PHE,GLY,HIS,ILE,LYS,LEU,MET,ASN,PRO,GLN,ARG,SER,THR,VAL,TRP,TYR,MSE)",
   "dna","(rname=A,C,G,T,ADE,CYT,GUA,THY)",
   "dna","(rname=A,C,G,T,ADE,CYT,GUA,THY)",
   "rna","(rname=A,C,G,U,ADE,CYT,GUA,URA)",
-  "aliphatic","(rname=ALA,GLY,ILE,LEU,MET,PRO,VAL)",
+  "aliphatic","(rname=ALA,GLY,ILE,LEU,MET,PRO,VAL,MSE)",
   "aromatic","(rname=PHE,TYR,TRP)",
-  "hydrophobic","(rname=ALA,VAL,PHE,PRO,MET,ILE,LEU,TRP)",
+  "hydrophobic","(rname=ALA,VAL,PHE,PRO,MET,ILE,LEU,TRP,MSE)",
   "basic","(rname=LYS,ARG)",
   "basic2","((rname=LYS and aname=NZ) or (rname=ARG and aname=NH1,NH2))",
   "acidic","(rname=ASP,GLU)",

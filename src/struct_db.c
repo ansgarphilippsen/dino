@@ -684,6 +684,9 @@ int structSet(dbmStructNode *node, Set *s)
       s->pov[pc].id=STRUCT_PROP_FRAME;
     } else if(clStrcmp(s->pov[pc].prop,"bfac")) {
       s->pov[pc].id=STRUCT_PROP_BFAC;
+    } else if(clStrcmp(s->pov[pc].prop,"occ") ||
+	      clStrcmp(s->pov[pc].prop,"weight")) {
+      s->pov[pc].id=STRUCT_PROP_OCC;
     } else {
       comMessage("error: set: unknown property ");
       comMessage(s->pov[pc].prop);
@@ -949,6 +952,13 @@ int structSet(dbmStructNode *node, Set *s)
       for(i=0;i<node->atom_count;i++) {
 	if(structIsAtomSelected(node, &node->atom[i], sel)) {
 	  node->atom[i].bfac=atof(val->val1);
+	}
+      }
+      break;
+    case STRUCT_PROP_OCC:
+      for(i=0;i<node->atom_count;i++) {
+	if(structIsAtomSelected(node, &node->atom[i], sel)) {
+	  node->atom[i].weight=atof(val->val1);
 	}
       }
       break;

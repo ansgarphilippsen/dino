@@ -92,12 +92,11 @@ int surfDrawObj(surfObj *obj)
       glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     else
       glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-    /*
-      if(obj->render.face_reverse)
+    
+    if(obj->render.face_reverse)
       glFrontFace(GL_CW);
-      else
+    else
       glFrontFace(GL_CCW);
-    */    
     
     if(obj->render.nice) {
       glEnable(GL_LINE_SMOOTH);
