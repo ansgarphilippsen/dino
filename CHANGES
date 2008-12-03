@@ -1,0 +1,311 @@
+CHANGES FOR v0.9.2 to v0.9.4
+============================
+
+Features
+--------
+
+MSE (seleno-met) residues are now properly recognized as protein
+residues
+
+addedd x,z,y to atom selection properties
+
+Bug Fixes
+---------
+
+added missing occ property for struct dataset
+
+orientation flag for surface rendering activated again
+
+depth-buffer fixed for offscreen rendering under OSX
+
+fixed rpn stack overflow
+
+
+CHANGES FOR v0.9.1-1
+=====================
+
+Features
+---------
+
+added cotrans to surf
+
+Bug Fixes
+---------
+
+fixed geom object transparency
+
+fixed isocontour memory heuristics for huge maps
+
+fixed slow iso-countouring for non-selections
+
+fixed OSX Tiger Problems for maps
+
+
+CHANGES FOR v0.9.0-rc6 to 0.9.0-rc10
+====================================
+
+Bug Fixes
+---------
+
+fixed 4 character chain length for crd files
+
+fixed bug for crd files that contain wrong atom count
+
+fixed missing texture decl in povray 3.5 output of scalar field obj
+
+fixed -nogfx flag under X11
+
+fixed slow topograph surface colouring
+
+fixed contour object line rendering for "older" OpenGL implementations
+
+fixed OSX user menu bug in "center CS"
+
+fixed missing atom properties for attached surface selection
+
+fixed povray fog output for non-black backgrounds
+
+fixed bug in mat M3ToM4 conversion
+
+fixed geom tri not filled for set fill
+
+
+Feature Tweaks
+--------------
+
+added auto swapping to charmmb
+
+tweaked several informative messages
+
+addedd ext property to scal
+
+added missing render splines property
+
+added message for fov out-of-bounds
+
+
+
+CHANGES FOR v0.9.0-rc5
+======================
+
+
+Bug Fixes
+---------
+
+fixed unclean exit that could cause a crash under linux
+
+fixed bug in scalar-field selection
+
+fixed bug in CONECT record for pdb read in
+
+fixed bug in geom dataset with faulty return message handling
+
+fixed geom tube object
+
+render properties are all in sane default state
+
+fixed incorrect error handling during db or obj wildcard usage
+
+fixed superflous memory allocations in contouring
+
+fixed: obj centers are correctly precalculated
+
+fixed: surface obj center includes transformation
+
+
+Feature Tweaks
+--------------
+
+added new fog keywords fogno and fogfo, modified default fog offsets
+(+10 and 0)
+
+added povray untransformed export with -u flag
+
+
+
+CHANGES FOR v0.9.0-rc3 
+======================
+
+Bug Fixes
+---------
+
+default transparency for contour objects is now 1 (was 0.3)
+
+fixed several small bugs occuring during error handling for scalar field dataset
+
+center command is now present in OSX obj menu
+
+default model is 1 (was -1)
+
+assertion "sel->compiled" fixed
+
+non-standard atom names no longer cause occasional crashes
+
+scalar field dataset <> selection works with transformation
+
+coord dataset write command honors transformation
+
+improved element determination from atom names in PDB files
+
+"get center" command works for geom dataset
+
+fixed POVray scalar field color output
+
+accum (-a) write now honors view settings
+
+dataset transformation is now reflected in $CP
+
+render is called after coord-obj set command
+
+fixed surface reset parameters
+
+scene spin working again
+
+CP can be set as variable from shell
+
+shell commands 'unalias' and 'unset' work now
+
+eyedist may be negative
+
+
+New Features (not really suitable for release candidates...)
+------------------------------------------------------------
+
+added GROMACS coordinate file ".gro" format
+
+added scene parameter splitmode (0 per default for straight, 1 for cross-eye)
+
+added -f flag to dino startup flags (fast load instead of -s), also works with @ command 
+
+
+CHANGES FOR v0.8.6
+==================
+
+New Features
+------------
+
+added GROMACS xtc trajectory format
+
+added spider scalar-field format
+
+added surface curvature property 'curv' that ranges from -1.0 (all 
+adjacent faces are concave) to 1.0 (all adjavent faces are convex)
+
+shell / interpreter code re-written from scratch, in preparation for
+TCL (or similar) scripting
+
+GUI code mostly rewritten, graphical frontend is now completely
+separated from backend, to facilitate porting to OSX (and _maybe_ MSWin)
+
+added .dinorc file; currently supported are:
+
+1) an exec block that contains commands to be executed upon startup, eg
+exec {
+  scene set bg=white
+  scene set fov=40
+}
+2) flags dial_rot_scale, dial_trans_scale, mouse_rot_scale and
+mouse_trans_scale to set the multiplication factor for these input devices, eg:
+dial_rot_scale 0.5
+dial_trans_scale 0.5
+
+added new flag to generate POVray v3.5 output "-v35"
+
+scene is centered on the first dataset that is loaded iff scene
+transformation was not set previously (e.g. with a scene set rtc=...)
+
+invalid chars in filenames are replaced with underscore upon loading
+(allowd chars are a-z, A-Z, 0-9, - and _ )
+
+added gz support to msms files (ie you can now have surf.vert.gz and
+surf.face.gz) 
+
+assignement of secondary structure based on HELIX and SHEET entries in
+PDB file (no dssp-like algorithm implemented yet)
+
+using '.ds.obj material' without parameters will show the current settings
+
+for 'ds.obj render': detail1 is always amount of spherical/circular
+subdivision (e.g. spheres for cpk, tube cross-section), detail2 is the
+number of spline segments for spline/hsc/tube
+
+mousewheel can be used to zoom
+
+added '-range' parameter 'clamp' to assign all values smaller, resp
+larger to first, resp second color, e.g.
+.struct.obj set color=blue:red -range prop=bfac,val=30:80,clamp
+
+tube diameter is now set with the render flag 'tubew' (not anymore with 'bw')
+
+added render flag 'userad': this will cause the tube-radius (set with
+'tubew') to be multiplied with the the CA atom radius, e.g.
+.struct.trace set rad=0.5:2.0 -range prop=bfac,val=30:80,clamp
+.struct.trace render tube,tubew=1.0,userad
+
+scene property fogd renamed to fogo (fog offset), this is now an absolut value
+
+added scene properties 'fogm' (fog method, one of 'linear' (default),
+'exp' & 'exp2') and fogd (density for 'exp' and 'exp2' method)
+
+depth effect is _off_ per default (turn on with 'scene set depthc')
+
+added binpos format
+
+removed raster3d output (use povray instead)
+
+auto-detection of swapping for binary data (ie the -swap flag upon
+load is no longer necessary)
+
+'render' is automatically called after 'set' command for struct ds
+
+added round caps to HSC and tube ends
+
+added -c flag to uhbd load to convert units based on header scale
+
+added -rn flag to surf load command, forcing a renormalization of the 
+normal vectors
+
+added scene command "rock" (toggles rocking motion on and off)
+
+added ".dcd" as CHARMM trj extension
+
+added startup flag "-noom" to avoid object menu being displayed
+
+scene stack is now populated with coordinates rather than atom ids
+
+added ruler (scene show ruler)
+
+Bug Fixes
+---------
+
+scalar-field geometric center and center of rotation now identical
+
+obj limitation for struct dataset removed
+
+render nice/fast work for geom objects
+
+fixed distance/angle/torsion bug
+
+spaceball and dialbox should work again (even on linux)
+
+geom object are now visible behind transparent objects
+
+render light2 works again
+
+fixed 'render !intpol' crash
+
+fixed struct obj transparency
+
+variables names may have - or _ in their name
+
+mix/max should work now in -range flag
+
+fixed hsc/tube crashes
+
+'render sr=0' resp 'render bw=0' will deactivate sphere, resp cyl rendering
+
+fixed 'degenerate cylinder error' in POVray output
+
+reduced memory usage of scalar-field object by ~30%
+
+
