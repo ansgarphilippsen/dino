@@ -244,7 +244,7 @@ int guiInit(int argc, char **argv)
     }
     //  pad_init();
 
-    if(gfx_flags | DINO_FLAG_CONS) {
+    if(gfx_flags & DINO_FLAG_CONS) {
       consflag=1;
     } else {
       consflag=0;
@@ -999,7 +999,7 @@ static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, i
   int bufc=0,i,j,k;
   int depthi,redi,bluei,greeni,alphai,accumi;
   int d[]={16,12,8,6,4,1};
-  int c[]={12,8,6,5,4,2,1};
+  int c[]={16,12,8,6,5,4,2,1};
   int a[]={8,4};
   int is,js,ks;
   char message[256];
@@ -1061,28 +1061,28 @@ static XVisualInfo *init_visual(int dbl_flag, int use_stereo, int use_stencil, i
       buf[bluei]=c[j];
       buf[greeni]=c[j];
       if(use_accum) {
-	for(k=ks;k<sizeof(a)/sizeof(int);k++) {
-	  buf[accumi+0]=a[k];
-	  buf[accumi+2]=a[k];
-	  buf[accumi+4]=a[k];
-	  sprintf(message,"trying visual with depth %d, rgba %d and accum %d",d[i],c[j],a[k]);
-	  debmsg(message);
-	  vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
-	  if(vis) {
-	    sprintf(message,"using this visual");
-	    debmsg(message);
-	    return vis;
-	  }
-	}
+        for(k=ks;k<sizeof(a)/sizeof(int);k++) {
+          buf[accumi+0]=a[k];
+          buf[accumi+2]=a[k];
+          buf[accumi+4]=a[k];
+          sprintf(message,"trying visual with depth %d, rgba %d and accum %d",d[i],c[j],a[k]);
+          debmsg(message);
+          vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
+          if(vis) {
+            sprintf(message,"using this visual");
+            debmsg(message);
+            return vis;
+          }
+        }
       } else {
-	sprintf(message,"trying visual with depth %d and rgba %d",d[i],c[j]);
-	debmsg(message);
-	vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
-	if(vis) {
-	  sprintf(message,"using this visual");
-	  debmsg(message);
-	  return vis;
-	}
+        sprintf(message,"trying visual with depth %d and rgba %d",d[i],c[j]);
+        debmsg(message);
+        vis=glXChooseVisual(gui.dpy,DefaultScreen(gui.dpy),buf);
+        if(vis) {
+          sprintf(message,"using this visual");
+          debmsg(message);
+          return vis;
+        }
       }
     }
   }

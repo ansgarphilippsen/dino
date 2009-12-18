@@ -60,6 +60,7 @@ int scalDrawObj(scalObj *obj)
 {
   int i,detail=obj->render.detail1;
   float rw,rh,rz;
+  GLint smask;
 
   // save the state
   glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_LIGHTING_BIT);
@@ -88,16 +89,16 @@ int scalDrawObj(scalObj *obj)
       // RENDER DOTS ONLY
       glDisable(GL_LIGHTING);
       glDisable(GL_COLOR_MATERIAL);
-
+      
       glPointSize(obj->render.point_size);
-
+      
       glBegin(GL_POINTS);
       
       for(i=0;i<obj->point_count;i++) {
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->point[i].c);
+        glColor4fv(obj->point[i].c);
 #endif
-	glVertex3fv(obj->point[i].v);
+        glVertex3fv(obj->point[i].v);
       }
       glEnd();
     } else if(obj->render.mode==RENDER_LINE) {
@@ -107,259 +108,262 @@ int scalDrawObj(scalObj *obj)
       glDisable(GL_COLOR_MATERIAL);
       glEnable(GL_BLEND);
       glLineWidth(obj->render.line_width);
-
+      
 #ifndef CONTOUR_COLOR
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
 #endif
       if(obj->render.transparency<1.0) {
-	glDisable(GL_BLEND);
-	glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
-	glBegin(GL_LINES);
-	for(i=0;i<obj->line_count;i++) {
-	  glVertex3fv(obj->point[obj->line[i].pi0].v);
-	  glVertex3fv(obj->point[obj->line[i].pi1].v);
-	}
-	glEnd();
-	
-	glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
-	glDepthFunc(GL_LEQUAL);
-	glEnable(GL_BLEND);
+        glDisable(GL_BLEND);
+        glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+        glBegin(GL_LINES);
+        for(i=0;i<obj->line_count;i++) {
+          glVertex3fv(obj->point[obj->line[i].pi0].v);
+          glVertex3fv(obj->point[obj->line[i].pi1].v);
+        }
+        glEnd();
+        
+        glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+        glDepthFunc(GL_LEQUAL);
+        glEnable(GL_BLEND);
       }
       
       glBegin(GL_LINES);
       for(i=0;i<obj->line_count;i++) {
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->point[obj->line[i].pi0].c);
+        glColor4fv(obj->point[obj->line[i].pi0].c);
 #endif
-	glVertex3fv(obj->point[obj->line[i].pi0].v);
+        glVertex3fv(obj->point[obj->line[i].pi0].v);
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->point[obj->line[i].pi1].c);
+        glColor4fv(obj->point[obj->line[i].pi1].c);
 #endif
-	glVertex3fv(obj->point[obj->line[i].pi1].v);
+        glVertex3fv(obj->point[obj->line[i].pi1].v);
       }
       glEnd();
-
+      
       glPopAttrib();
 #else
       // OLD_SCAL_CONTOUR_DRAWING
       // RENDER IN CHICKEN WIRE MODE
       glDisable(GL_LIGHTING);
       glDisable(GL_COLOR_MATERIAL);
-
+      
       glLineWidth(obj->render.line_width);
-
+      
 #ifndef CONTOUR_COLOR
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
 #endif
-
+      
       /*
-      glEnable(GL_VERTEX_ARRAY);
+        glEnable(GL_VERTEX_ARRAY);
       glEnableClientState(GL_VERTEX_ARRAY);
       glVertexPointer(3,GL_FLOAT,
 		      sizeof(struct SCAL_POINT), &obj->point[0].v[0]);
       */
-
+      
       if(obj->render.nice) {
-	glDepthMask(GL_FALSE);
+        glDepthMask(GL_FALSE);
       }
-
+      
       glBegin(GL_LINES);
       if(gfx.transform.rot[10]>0.0) {
-	for(i=0;i<obj->line_count;i++) {
+        for(i=0;i<obj->line_count;i++) {
 #ifdef CONTOUR_COLOR
-	  glColor4fv(obj->point[obj->line[i].pi0].c);
+          glColor4fv(obj->point[obj->line[i].pi0].c);
 #endif
-	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+          glVertex3fv(obj->point[obj->line[i].pi0].v);
 #ifdef CONTOUR_COLOR
-	  glColor4fv(obj->point[obj->line[i].pi1].c);
+          glColor4fv(obj->point[obj->line[i].pi1].c);
 #endif
-	  glVertex3fv(obj->point[obj->line[i].pi1].v);
-	  //glArrayElement(obj->line[i].pi0);
-	  //glArrayElement(obj->line[i].pi1);
-	}
+          glVertex3fv(obj->point[obj->line[i].pi1].v);
+          //glArrayElement(obj->line[i].pi0);
+          //glArrayElement(obj->line[i].pi1);
+        }
       } else {
-	for(i=obj->line_count-1;i>=0;i--) {
+        for(i=obj->line_count-1;i>=0;i--) {
 #ifdef CONTOUR_COLOR
-	  glColor4fv(obj->point[obj->line[i].pi0].c);
+          glColor4fv(obj->point[obj->line[i].pi0].c);
 #endif
-	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+          glVertex3fv(obj->point[obj->line[i].pi0].v);
 #ifdef CONTOUR_COLOR
-	  glColor4fv(obj->point[obj->line[i].pi1].c);
+          glColor4fv(obj->point[obj->line[i].pi1].c);
 #endif
-	  glVertex3fv(obj->point[obj->line[i].pi1].v);
-	  //glArrayElement(obj->line[i].pi0);
-	  //glArrayElement(obj->line[i].pi1);
-	}
+          glVertex3fv(obj->point[obj->line[i].pi1].v);
+          //glArrayElement(obj->line[i].pi0);
+          //glArrayElement(obj->line[i].pi1);
+        }
       }
       glEnd();
-
+      
       if(obj->render.nice) {
-	glDepthMask(GL_TRUE);
-	
-	/* update the depthbuffer */
-	
-	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	glDisable(GL_BLEND);
-	glDisable(GL_FOG);
+        glDepthMask(GL_TRUE);
+        
+        /* update the depthbuffer */
+        
+        glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        glDisable(GL_BLEND);
+        glDisable(GL_FOG);
 #if defined(LINUX) || defined(OSX)
-	glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+        glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 #else
-	glDrawBuffer(GL_NONE);
+        glDrawBuffer(GL_NONE);
 #endif
-	glBegin(GL_LINES);
-	for(i=0;i<obj->line_count;i++) {
+        glBegin(GL_LINES);
+        for(i=0;i<obj->line_count;i++) {
 #ifdef CONTOUR_COLOR
-	  glColor4fv(obj->point[obj->line[i].pi0].c);
+          glColor4fv(obj->point[obj->line[i].pi0].c);
 #endif
-	  glVertex3fv(obj->point[obj->line[i].pi0].v);
+          glVertex3fv(obj->point[obj->line[i].pi0].v);
 #ifdef CONTOUR_COLOR
-	  glColor4fv(obj->point[obj->line[i].pi1].c);
+          glColor4fv(obj->point[obj->line[i].pi1].c);
 #endif
-	  glVertex3fv(obj->point[obj->line[i].pi1].v);
-	  //glArrayElement(obj->line[i].pi0);
-	  //glArrayElement(obj->line[i].pi1);
-	}
-	glEnd();
+          glVertex3fv(obj->point[obj->line[i].pi1].v);
+          //glArrayElement(obj->line[i].pi0);
+          //glArrayElement(obj->line[i].pi1);
+        }
+        glEnd();
 #if defined(LINUX) || defined(OSX)
-	glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+        glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 #endif      
-	glPopAttrib();
-	
-	/*
-	  glDisable(GL_VERTEX_ARRAY);
-	  glDisableClientState(GL_VERTEX_ARRAY);
-	*/
+        glPopAttrib();
+        
+        /*
+          glDisable(GL_VERTEX_ARRAY);
+          glDisableClientState(GL_VERTEX_ARRAY);
+        */
       }
       
       glEnable(GL_LIGHTING);
 #endif
     } else if(obj->render.mode==RENDER_SURFACE) {
-
+      
       // RENDER WITH FULL SURFACE MODE
-
+      
 #ifndef CONTOUR_COLOR
       glColor4f(obj->r, obj->g, obj->b,obj->render.transparency);
 #endif
-
+      
       if(obj->contour_method==1) {
-	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-
-	if(obj->render.dbl_light) {
-	  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-	} else {
-	  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
-	}
-	if(obj->render.face_reverse) {
-	  //glFrontFace(GL_CW);
-	}
-	if(obj->render.cull) {
-	  glEnable(GL_CULL_FACE);
-	} else {
-	  glDisable(GL_CULL_FACE);
-	}
-
+        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+        
+        if(obj->render.dbl_light) {
+          glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+        } else {
+          glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+        }
+        if(obj->render.face_reverse) {
+          //glFrontFace(GL_CW);
+        }
+        if(obj->render.cull) {
+          glEnable(GL_CULL_FACE);
+        } else {
+          glDisable(GL_CULL_FACE);
+        }
+        
       } else {
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-	glDisable(GL_CULL_FACE);
+        glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+        glDisable(GL_CULL_FACE);
       }
-
+      
       // TEMPORARY
       //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+      
       glEnable(GL_LIGHTING);
       glEnable(GL_COLOR_MATERIAL);
-
+      
       if(obj->render.transparency<1.0) {
-	glPushMatrix();
-	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
-	glDisable(GL_BLEND);
-	glDisable(GL_FOG);
-	glDisable(GL_NORMALIZE);
-
-	glDepthMask(GL_TRUE);
+        glPushMatrix();
+        glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        glDisable(GL_LIGHTING);
+        glDisable(GL_COLOR_MATERIAL);
+        glDisable(GL_BLEND);
+        glDisable(GL_FOG);
+        glDisable(GL_NORMALIZE);
+        
+        glDepthMask(GL_TRUE);
 #if defined(LINUX) || defined(OSX)
-	glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+        glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 #else
-	glDrawBuffer(GL_NONE);
+        glDrawBuffer(GL_NONE);
 #endif
-	glBegin(GL_TRIANGLES);
-	for(i=0;i<obj->face_count;i++) {
-	  glNormal3fv(obj->face[i].n1);
-	  glVertex3fv(obj->face[i].v1);
-	  glNormal3fv(obj->face[i].n2);
-	  glVertex3fv(obj->face[i].v2);
-	  glNormal3fv(obj->face[i].n3);
-	  glVertex3fv(obj->face[i].v3);
-	}
-	glEnd();
+        glBegin(GL_TRIANGLES);
+        for(i=0;i<obj->face_count;i++) {
+          glNormal3fv(obj->face[i].n1);
+          glVertex3fv(obj->face[i].v1);
+          glNormal3fv(obj->face[i].n2);
+          glVertex3fv(obj->face[i].v2);
+          glNormal3fv(obj->face[i].n3);
+          glVertex3fv(obj->face[i].v3);
+        }
+        glEnd();
 #if defined (LINUX) || defined(OSX)
-	glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+        glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 #endif      
-	glPopAttrib();
-	glPopMatrix();
+        glPopAttrib();
+        glPopMatrix();
       }
-
+      
       if(obj->render.solid && obj->render.transparency==1.0) {
-	glClearStencil(0x0);
-	glClear(GL_STENCIL_BUFFER_BIT);
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_ALWAYS,0x0,0x1);
-	glStencilOp(GL_INVERT,GL_INVERT,GL_INVERT);
+        glPushAttrib(GL_STENCIL_BUFFER_BIT);
+        glGetIntegerv(GL_STENCIL_WRITEMASK,&smask);
+        glStencilMask(smask | 0x2);
+        glClearStencil(0x0);
+        glClear(GL_STENCIL_BUFFER_BIT);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS,0x0,0x1);
+        glStencilOp(GL_INVERT,GL_INVERT,GL_INVERT);
       }
-
+      
       glBegin(GL_TRIANGLES);
       for(i=0;i<obj->face_count;i++) {
-	glNormal3fv(obj->face[i].n1);
+        glNormal3fv(obj->face[i].n1);
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->face[i].c1);
+        glColor4fv(obj->face[i].c1);
 #endif
-	glVertex3fv(obj->face[i].v1);
-	glNormal3fv(obj->face[i].n2);
+        glVertex3fv(obj->face[i].v1);
+        glNormal3fv(obj->face[i].n2);
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->face[i].c2);
+        glColor4fv(obj->face[i].c2);
 #endif
-	glVertex3fv(obj->face[i].v2);
-	glNormal3fv(obj->face[i].n3);
+        glVertex3fv(obj->face[i].v2);
+        glNormal3fv(obj->face[i].n3);
 #ifdef CONTOUR_COLOR
-	glColor4fv(obj->face[i].c3);
+        glColor4fv(obj->face[i].c3);
 #endif
-	glVertex3fv(obj->face[i].v3);
+        glVertex3fv(obj->face[i].v3);
       }
       glEnd();
-
+      
       if(obj->render.solid && obj->render.transparency==1.0) {
-	glStencilFunc(GL_NOTEQUAL,0x0,0x1);
-	glPushMatrix();
-	glLoadIdentity();
-	
-	rh=2.0*fabs(tan(gfx.fovy)*gfx.transform.slabn);
-	rw=rh*gfx.aspect;
-	rz=-gfx.transform.slabn-0.1;
-	
-	glDisable(GL_LIGHTING);
-
-	glBegin(GL_TRIANGLE_STRIP);
-	glColor3fv(obj->render.solidc);
-	glNormal3f(0,0,-1);
-	glVertex3f(-rw,-rh,rz);
-	glVertex3f(rw,-rh,rz);
-	glVertex3f(-rw,rh,rz);
-	glVertex3f(rw,rh,rz);
-	glEnd();
-	
-	glEnable(GL_LIGHTING);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	
-	glPopMatrix();
-	glDisable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL,0x0,0x1);
+        glPushMatrix();
+        glLoadIdentity();
+        
+        rh=2.0*fabs(tan(gfx.fovy)*gfx.transform.slabn);
+        rw=rh*gfx.aspect;
+        rz=-gfx.transform.slabn-0.1;
+        
+        glDisable(GL_LIGHTING);
+        
+        glBegin(GL_TRIANGLE_STRIP);
+        glColor3fv(obj->render.solidc);
+        glNormal3f(0,0,-1);
+        glVertex3f(-rw,-rh,rz);
+        glVertex3f(rw,-rh,rz);
+        glVertex3f(-rw,rh,rz);
+        glVertex3f(rw,rh,rz);
+        glEnd();
+        
+        glEnable(GL_LIGHTING);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        
+        glPopMatrix();
+        glPopAttrib(); // stencil_buffer_bit
       }
-
-
+      
+      
       // draw all face normals
       /***
       if(obj->contour_method==1) {

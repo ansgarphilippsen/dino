@@ -440,6 +440,7 @@ int gfxRedraw()
 {
   int ws;
   int gl_center, gl_left, gl_right;
+  int i;
 
   if(gfx_flags & DINO_FLAG_NODBLBUFF) {
 #ifdef SGI_STEREO
@@ -506,6 +507,79 @@ int gfxRedraw()
     gfxSetProjection(GFX_LEFT);
     gfxSceneRedraw(1);
     comDBRedraw();
+  } else if(gfx.stereo_mode==GFX_STEREO_INTERLACED) {
+    glPushAttrib(GL_STENCIL_BUFFER_BIT);
+    if(gfx.stencil_dirty==1) {
+      //gfx.stencil_dirty=0;
+      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
+      glMatrixMode(GL_PROJECTION);
+      glPushMatrix();
+      glLoadIdentity();
+      glOrtho(0,gfx.win_width,0,gfx.win_height,-1,1);
+      glMatrixMode(GL_MODELVIEW);
+      glPushMatrix();
+      glLoadIdentity();
+      glDrawBuffer(GL_NONE);
+      glDisable(GL_DEPTH_TEST);
+      glDisable(GL_LIGHTING);
+      glDisable(GL_COLOR_MATERIAL);
+      glDisable(GL_FOG);
+      glDisable(GL_CULL_FACE);
+      glDisable(GL_BLEND);
+      glDisable(GL_LINE_SMOOTH);
+      glDisable(GL_POINT_SMOOTH);
+      glLineWidth(1.0);
+      glEnable(GL_STENCIL_TEST);
+      glStencilMask(0x1);
+      glClearStencil(0x0);
+      glClear(GL_STENCIL_BUFFER_BIT);
+      glStencilFunc(GL_ALWAYS,0x1,0x1);
+      glStencilOp(GL_REPLACE,GL_REPLACE,GL_REPLACE);
+      glBegin(GL_LINES);
+      glColor3f(1.0,1.0,1.0);
+      for(i=0;i<gfx.win_height;i+=2) {
+        glVertex2i(0,i);
+        glVertex2i(gfx.win_width-1,i);
+      } 
+      glEnd();
+      glPopMatrix();
+      glMatrixMode(GL_PROJECTION);
+      glPopMatrix();
+      glMatrixMode(GL_MODELVIEW);
+      glPopAttrib();
+    }
+    glEnable(GL_STENCIL_TEST);
+#ifdef SGI_STEREO
+    glwDrawBuffer(gl_center);
+#else
+    glDrawBuffer(gl_center);
+#endif
+
+    /* set up stencil 0 */
+    glStencilOp(GL_KEEP,GL_KEEP,GL_KEEP);
+
+    glStencilFunc(GL_EQUAL,0x1,0x1);
+
+    if(gfx.split_mode==0) {
+      gfxSetProjection(GFX_LEFT);
+    } else {
+      gfxSetProjection(GFX_RIGHT);
+    }
+    gfxSceneRedraw(1);
+    comDBRedraw();
+
+    /* set up stencil 1 */
+    glStencilFunc(GL_EQUAL,0x0,0x1);
+
+    if(gfx.split_mode==0) {
+      gfxSetProjection(GFX_RIGHT);
+    } else {
+      gfxSetProjection(GFX_LEFT);
+    }
+    gfxSceneRedraw(0);
+    comDBRedraw();
+
+    glPopAttrib(); // stencil_buffer_bit
 
   } else {
 #ifdef SGI_STEREO

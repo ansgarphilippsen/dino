@@ -1244,32 +1244,44 @@ int sceneCommand(int wc, const char **wl)
   } else if(clStrcmp(wl[0],"stereo")) {
     if(guiQueryStereo()) {
       if(wc==1) {
-	// toggle mode only;
-	if(gfx.stereo_active) {
-	  gfx.stereo_active=guiSetStereo(0);
-	} else {
-	  gfx.stereo_active=guiSetStereo(1);
-	}
-	if(gfx.stereo_active)
-	  gfx.stereo_mode=GFX_STEREO_HW;
-	else
-	  gfx.stereo_mode=GFX_STEREO_OFF;
+        // toggle mode only;
+        if(gfx.stereo_active) {
+          gfx.stereo_active=guiSetStereo(0);
+        } else {
+          gfx.stereo_active=guiSetStereo(1);
+        }
+        if(gfx.stereo_active)
+          gfx.stereo_mode=GFX_STEREO_HW;
+        else
+          gfx.stereo_mode=GFX_STEREO_OFF;
       }
       if(gfx.stereo_active) {
-	comMessage("stereo mode is ON\n");
+        comMessage("stereo mode is ON\n");
       } else {
-	comMessage("stereo mode is OFF\n");
+        comMessage("stereo mode is OFF\n");
       }
     } else {
       comMessage("hardware stereo not available\n");
     }
+  } else if(clStrcmp(wl[0],"stereoi")) {
+    if(gfx.stereo_active) {
+      gfx.stereo_mode=GFX_STEREO_OFF;
+      gfx.stereo_active=0;
+      comMessage("interlaced stereo off\n");
+    } else {
+      gfx.stereo_mode=GFX_STEREO_INTERLACED;
+      gfx.stereo_active=1;
+      gfx.stencil_dirty=1;
+      comMessage("interlaced stereo on\n");
+    }
+    comRedraw();
   } else if(clStrcmp(wl[0],"grab")) {
     if(wc!=2) {
       sprintf(message,"Syntax: grab devicename\n");
       comMessage(message);
     } else {
       if(comGrab(&gfx.transform,0,0,wl[1])<0)
-	return -1;
+        return -1;
     }
   } else if(clStrcmp(wl[0],"spin")) {
     if(gfx.anim==1)

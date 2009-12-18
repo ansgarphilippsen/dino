@@ -18,7 +18,7 @@ LIBSTATIC += /usr/lib64/libpng.a /usr/lib64/libz.a
 #LIBSTATICC := $(shell $(CC) -print-libgcc-file-name)
 #LIBSTATIC += $(LIBSTATICC)
 
-LIBSHARED = -lXft -lXi -lXt -lXmu -lXext -lX11 -lm -lpthread -ldl
+LIBSHARED = -lXp -lXft -lXi -lXt -lXmu -lXext -lX11 -lm -lpthread -ldl
 
 ifdef STATIC
 
@@ -26,7 +26,7 @@ ifdef STATIC
 INCLUDE = -I../extras/include -I/usr/X11R6/include
 LIBGL = ../extras/lib/libGL.a ../extras/lib/libGLU.a
 LIBGLW = /usr/X11R6/lib/libGLw.a
-LIBMOTIF = /usr/lib64/libXm.a
+LIBMOTIF = /usr/X11R6/lib64/libXm.a
 
 else
 
@@ -35,7 +35,7 @@ else
 #INCLUDE = -I../extras/include -I/usr/X11R6/include
 INCLUDE = -I/usr/X11R6/include
 LIBGL += -lGLU -lGL
-LIBMOTIF = /usr/lib64/libXm.a
+LIBMOTIF = /usr/X11R6/lib64/libXm.a
 
 endif
 

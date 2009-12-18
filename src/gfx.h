@@ -19,7 +19,8 @@ enum          {GFX_PERSP,
 
 enum {GFX_STEREO_OFF=0,
       GFX_STEREO_SPLIT,
-      GFX_STEREO_HW};
+      GFX_STEREO_HW,
+      GFX_STEREO_INTERLACED};
 
 struct GFX_LIGHT {
   int on,local;
@@ -48,7 +49,7 @@ struct GFX
   // this is a copy from struct GUI to allow
   // frontend - backend separation
   int win_width,win_height;
-  int stereo_active,stereo_mode,split_mode;
+  int stereo_active,stereo_mode,split_mode,stencil_dirty;
   float eye_dist, eye_offset;
 
   int current_view;
