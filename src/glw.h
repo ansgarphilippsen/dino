@@ -7,8 +7,8 @@
 #ifndef _GLW_H
 #define _GLW_H
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 
 enum {GLW_STEREO_CENTER=0,
       GLW_STEREO_LEFT,

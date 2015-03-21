@@ -81,7 +81,7 @@ static int com_render(structObj *obj, int wc, char **wl)
     cgfxSphere(1.0,obj->render.detail1);
     comEndDisplayList();
   }
-  
+
   if(obj->render.mode==RENDER_CUSTOM ||
      obj->render.mode==RENDER_CPK) {
     structObjGenVA(obj);
@@ -368,6 +368,7 @@ int structObjRenew(structObj *obj, Set *set, Select *sel)
   comMessage(message);
 
   structObjRecalcCenter(obj);
+  com_render(obj,0,NULL);
 
   // set object properties after renewing
   if(structObjSet(obj,set,1)<0)

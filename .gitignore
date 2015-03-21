@@ -1,0 +1,7 @@
+*.o
+*.a
+*.so
+*.rej
+*.DS_Store
+
+

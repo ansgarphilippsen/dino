@@ -17,6 +17,7 @@ struct STRUCT_FILE_ATOM_ENTRY
   int anum;        /* unique atom number in file */
   char aname[8];   /* IUPAC name of atom */
   char element[3]; /* element symbol of atom */
+  char altloc;
   int rnum;        /* residue number */
   char rname[8];   /* residue name */
   int cnum;        /* chain number */
@@ -25,6 +26,7 @@ struct STRUCT_FILE_ATOM_ENTRY
   char mname[8];    /* model name */
   double x,y,z;    /* cartesian coordinates of atom */
   double c1,c2,c3;  /* custom values */
+  
 };
 
 struct STRUCT_FILE_CONNECT_ENTRY

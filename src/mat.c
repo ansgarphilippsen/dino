@@ -1661,7 +1661,7 @@ double matCalcAngle(double *v1, double *v2,double *v3, double *v4)
 
 double matCalcTorsion(double *v1, double *v2,double *v3, double *v4)
 {
-  double d1[3],d2[3],d3[3],d4[3],c1[3],c2[3],l1,l2,r;
+  double d1[3],d2[3],d3[3],d4[3],c1[3],c2[3],c3[3],l1,l2,l3,r;
 
   d1[0]=v1[0]-v2[0];
   d1[1]=v1[1]-v2[1];
@@ -1681,15 +1681,18 @@ double matCalcTorsion(double *v1, double *v2,double *v3, double *v4)
 
   matCalcCross(d1,d2,c1);
   matCalcCross(d3,d4,c2);
+  matCalcCross(c1,d3,c3);
 
   l1=matCalcLen(c1);
   l2=matCalcLen(c2);
+  l3=matCalcLen(c3);
 
-  if(l1==0.0 || l2==0.0) {
+  if(l1==0.0 || l2==0.0 || l3==0.0) {
     return 0.0;
   }
 
-  r=acos(matCalcDot(c1,c2)/(l1*l2));
+  //r=acos(matCalcDot(c1,c2)/(l1*l2));
+  r=atan2(matCalcDot(c3,c2)/(l3*l2),matCalcDot(c1,c2)/(l1*l2));
 
   return r*180.0/M_PI;
 }

@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: AppPlus.h 141 2002-04-23 13:11:56Z ansgar $ */
 /*
  * Copyright 1994,1995 John L. Cwikla
  *

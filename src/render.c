@@ -26,7 +26,7 @@ void renderDefault(struct RENDER *r)
   };
 
   r->show=1;
-  r->mode=RENDER_SIMPLE;
+  r->mode=RENDER_CUSTOM;
   r->detail=3;
   r->detail1=3;
   r->detail2=3;

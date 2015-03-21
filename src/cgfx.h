@@ -5,7 +5,7 @@
 #define CGFX_USE_RAD    1<<1
 #define CGFX_HSC_CAP    1<<2
 
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 
 #include "render.h" 
 

@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <math.h>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 
 #include "com.h"
 #include "gfx.h"

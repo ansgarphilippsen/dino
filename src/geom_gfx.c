@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 
 #include "geom_db.h"
 #include "cgfx.h"

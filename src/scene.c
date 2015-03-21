@@ -3,8 +3,8 @@
 #include <string.h>
 #include <math.h>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 
 #include "dino.h"
 #include "scene.h"

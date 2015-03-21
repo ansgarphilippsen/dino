@@ -1,11 +1,6 @@
 #ifndef _WRITE_H
 #define _WRITE_H
 
-#ifdef FORMAT_TIFF
-#include <tiff.h>
-#include <tiffio.h>
-#endif
-
 enum             {WRITE_CENTER_VIEW,
 		  WRITE_LEFT_VIEW,
 		  WRITE_RIGHT_VIEW};

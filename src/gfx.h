@@ -1,5 +1,5 @@
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 
 #ifndef GFX_H
 #define GFX_H

@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 
 #include <time.h>
 #include <stdlib.h>
@@ -2450,7 +2450,7 @@ int structSetDefault(structObj *obj)
   *********/
 
   obj->render.show=1;
-  obj->render.mode=RENDER_SIMPLE;
+  obj->render.mode=RENDER_CUSTOM;
   obj->render.detail1=3;
   obj->render.detail2=6;
   obj->render.nice=1;

@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <math.h>
+#include <string.h>
 
 #include <png.h>
 #include <tiffio.h>
@@ -221,7 +222,7 @@ static int write_png(struct WRITE_IMAGE *image,char *name)
     return -1;
   }
    
-  if (setjmp(png_ptr->jmpbuf)) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
     /* If we get here, we had a problem reading the file */
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);

@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include <GL/glu.h>
-#include <GL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
 
 #include "struct_db.h"
 #include "struct_obj.h"

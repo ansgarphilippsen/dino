@@ -189,15 +189,6 @@ int pdbRead(FILE *f,dbmNode *node)
   return 0;
 }
 
-/*
-  a problem is clearly the altLoc entry,
-  at ATOM/HETATM field 17, which gives
-  the possibility to give to alternate
-  conformations of the same atom. It is
-  unclear how this should be handled, right
-  now it is prepended to the residue name
-*/
-
 static int check_element(char *ele)
 {
   static const char *l1[] = {
@@ -295,22 +286,16 @@ int pdbLine2AtomEntry(char *line,struct STRUCT_FILE_ATOM_ENTRY *ae)
   fprintf(stderr,"ATOM %d: aname: %s  ele: %s\n",ae->anum,ae->aname,ae->element);
   */
 
-  altLoc=line[16];
+  ae->altloc=line[16];
   /*
   fprintf(stderr,"ATOM %d: aname: %s altLoc: %c\n",ae->anum,ae->aname,altLoc);
   */
-  if(!isprint(altLoc) || isspace(altLoc)) {
-    for(i=0,j=0;i<3;i++)
-      if(isprint(line[i+17]) && !isspace(line[i+17]))
+    
+  for(i=0,j=0;i<3;i++)
+    if(isprint(line[i+17]) && !isspace(line[i+17]))
 	 ae->rname[j++]=line[i+17];
     ae->rname[j]='\0';
-  } else {
-    ae->rname[0]=altLoc;
-    for(i=0,j=1;i<3;i++)
-      if(isprint(line[i+17]) && !isspace(line[i+17]))
-	 ae->rname[j++]=line[i+17];
-    ae->rname[j+1]='\0';
-  }
+    
   ae->cname[0]=line[21];
 
   if(!isprint(ae->cname[0]) || isspace(ae->cname[0])) {
@@ -1627,7 +1612,7 @@ static int add_secs_entry(struct STRUCT_FILE *sf, struct STRUCT_FILE_SECS_ENTRY 
 
 int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_flag)
 {
-  int i,j,ac,rc,*oi,cc,pass;
+  int i,j,ac,rc,*oi,cc,pass,pass_atom;
   struct STRUCT_FILE_ATOM_ENTRY *ae,re;
   struct STRUCT_FILE_CONNECT_ENTRY *ce;
 
@@ -1777,35 +1762,35 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     */
     if(re.mnum!=ae->mnum) {
       re.mnum=ae->mnum;
-
+      
       debmsg("structRead: new model");
-
+      
       /*
-	at this point one should check wether
-	the model has already been defined,
-	and skip the generation of a new one
-	if that is the case
-      */ 
-
+       at this point one should check wether
+       the model has already been defined,
+       and skip the generation of a new one
+       if that is the case
+       */
+      
       cmi=model_count;
       model_count++;
       if(model_count>=model_max) {
-	model_max*=2;
-	model=Crecalloc(model,model_max,sizeof(struct STRUCT_MODEL));
-	if(model==NULL) {
-	  comMessage("memory allocation error in FileEntry2DB (model)\n");
-	  return -1;
-	}
+        model_max*=2;
+        model=Crecalloc(model,model_max,sizeof(struct STRUCT_MODEL));
+        if(model==NULL) {
+          comMessage("memory allocation error in FileEntry2DB (model)\n");
+          return -1;
+        }
       }
-
+      
       cmp=&model[model_count-1];
-
+      
       /* fill the model structure */
       if(model_flag)
-	cmp->num=model_count;
+        cmp->num=model_count;
       else
-	cmp->num=-1;
-
+        cmp->num=-1;
+      
       cmp->chain=NULL;
       cmp->chain_count=0;
       cmp->chain_max=10;
@@ -1813,10 +1798,10 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
       cmp->chain_index=0;
       cmp->chain_index=Crecalloc(cmp->chain_index,cmp->chain_max,sizeof(int));
       if(cmp->chain_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (cmp->chain_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (cmp->chain_index)\n");
+        return -1;
       }
-
+      
       cmp->atom=NULL;
       cmp->atom_count=0;
       cmp->atom_max=10000;
@@ -1824,10 +1809,10 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
       cmp->atom_index=0;
       cmp->atom_index=Crecalloc(cmp->atom_index,cmp->atom_max,sizeof(int));
       if(cmp->atom_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (cmp->atom_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (cmp->atom_index)\n");
+        return -1;
       }
-
+      
       /* reset reference */
       re.anum=-1e6;
       strcpy(re.aname,"_dummy");
@@ -1835,45 +1820,45 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
       strcpy(re.rname,"_dummy");
       re.cnum=-1e6;
       strcpy(re.cname,"_dummy");
-
+      
     }
-
+    
     /*
-      check if new chain applies 
-    */
+     check if new chain applies
+     */
     if(strcmp(re.cname,ae->cname)) {
       strcpy(re.cname,ae->cname);
-
+      
       debmsg("structRead: new chain");
-
-      /* 
-	 at this point it should be checked
-	 wether this chain was already defined
-	 in the structure file
-      */
+      
+      /*
+       at this point it should be checked
+       wether this chain was already defined
+       in the structure file
+       */
       for(cci=0;cci<chain_count;cci++) {
-	if(clStrcmp(chain[cci].name,re.cname))
-	  break;
+        if(clStrcmp(chain[cci].name,re.cname))
+          break;
       }
-
-
+      
+      
       cci=chain_count;
       chain_count++;
       if(chain_count>=chain_max) {
-	chain_max*=2;
-	chain=Crecalloc(chain,chain_max,sizeof(struct STRUCT_CHAIN));
-	if(chain==NULL) {
-	  comMessage("memory allocation error in FileEntry2DB (chain)\n");
-	  return -1;
-	}
+        chain_max*=2;
+        chain=Crecalloc(chain,chain_max,sizeof(struct STRUCT_CHAIN));
+        if(chain==NULL) {
+          comMessage("memory allocation error in FileEntry2DB (chain)\n");
+          return -1;
+        }
       }
       ccp=&chain[chain_count-1];
-
+      
       /* fill the chain structure */
       if(chain_flag)
-	strcpy(ccp->name,ae->cname);
+        strcpy(ccp->name,ae->cname);
       else
-	strcpy(ccp->name,"");
+        strcpy(ccp->name,"");
       ccp->num=cci;
       ccp->residue=NULL;
       ccp->residue_count=0;
@@ -1882,13 +1867,13 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
       ccp->residue_add=1000;
       ccp->residue=0;
       ccp->residue_index=Crecalloc(ccp->residue,
-				   ccp->residue_max,
-				   sizeof(int));
+                                   ccp->residue_max,
+                                   sizeof(int));
       if(ccp->residue_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (ccp->residue_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (ccp->residue_index)\n");
+        return -1;
       }
-
+      
       ccp->atom=NULL;
       ccp->atom_count=0;
       ccp->atom_count=0;
@@ -1896,112 +1881,125 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
       ccp->atom_add=1000;
       ccp->atom_index=0;
       ccp->atom_index=Crecalloc(ccp->atom_index,
-				ccp->atom_max,
-				sizeof(int));
+                                ccp->atom_max,
+                                sizeof(int));
       if(ccp->atom_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (ccp->atom_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (ccp->atom_index)\n");
+        return -1;
       }
-
+      
       ccp->model=NULL;
       ccp->model_num=cmi;
-
+      
       /* fill the current model */
       cmp->chain_index[cmp->chain_count++]=cci;
       if(cmp->chain_count>=cmp->chain_max) {
-	cmp->chain_max+=cmp->chain_add;
-	cmp->chain_index=Crecalloc(cmp->chain_index,
-				   cmp->chain_max+cmp->chain_add,
-				   sizeof(int));
-	if(cmp->chain_index==NULL) {
-	  comMessage("memory allocation error in FileEntry2DB (cmp->chain_index)\n");
-	  return -1;
-	}
+        cmp->chain_max+=cmp->chain_add;
+        cmp->chain_index=Crecalloc(cmp->chain_index,
+                                   cmp->chain_max+cmp->chain_add,
+                                   sizeof(int));
+        if(cmp->chain_index==NULL) {
+          comMessage("memory allocation error in FileEntry2DB (cmp->chain_index)\n");
+          return -1;
+        }
       }
-
+      
       /* reset reference */
       re.anum=-1e6;
       strcpy(re.aname,"_dummy");
       re.rnum=-1e6;
       strcpy(re.rname,"_dummy");
     }
-
-
-    /* 
-       check if new residue applies
-    */
+    
+    
+    /*
+     check if new residue applies
+     */
     if(ae->rnum!=re.rnum) {
       re.rnum=ae->rnum;
-      /* 
-	 it is probably save to assume that
-	 the residue has not been used before,
-	 therefore a new one will be created
-      */
+      /*
+       it is probably save to assume that
+       the residue has not been used before,
+       therefore a new one will be created
+       */
       cri=residue_count;
       residue_count++;
       if(residue_count>=residue_max) {
-	residue_max+=1000;
-	residue=Crecalloc(residue,residue_max,sizeof(struct STRUCT_RESIDUE));
-	if(residue==NULL) {
-	  comMessage("memory allocation error in FileEntry2DB (residue)\n");
-	  return -1;
-	}
+        residue_max+=1000;
+        residue=Crecalloc(residue,residue_max,sizeof(struct STRUCT_RESIDUE));
+        if(residue==NULL) {
+          comMessage("memory allocation error in FileEntry2DB (residue)\n");
+          return -1;
+        }
       }
       /* now fill the residue structure */
       crp=&residue[residue_count-1];
       strcpy(crp->name,ae->rname);
       crp->num=ae->rnum;
       crp->type=STRUCT_RTYPE_COIL;
-
+      
       crp->atom=NULL;       /* to be filled later */
       crp->atom_count=0;
       crp->atom_max=50;
       crp->atom_add=50;
       crp->atom_index=0;
       crp->atom_index=Crecalloc(crp->atom_index,
-				crp->atom_max,
-				sizeof(int));
+                                crp->atom_max,
+                                sizeof(int));
       if(crp->atom_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (crp->atom_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (crp->atom_index)\n");
+        return -1;
       }
       crp->chain=NULL;      /* to be filled later */
       crp->chain_num=cci;
-
+      
       /* update the current chain */
       ccp->residue_index[ccp->residue_count++]=cri;
       if(ccp->residue_count>=ccp->residue_max) {
-	ccp->residue_max+=ccp->residue_add;
-	ccp->residue_index=Crecalloc(ccp->residue_index,
-				     ccp->residue_max,
-				     sizeof(int));
-	if(ccp->residue_index==NULL) {
-	  comMessage("memory allocation error in FileEntry2DB (ccp->residue_index)\n");
-	  return -1;
-	}
+        ccp->residue_max+=ccp->residue_add;
+        ccp->residue_index=Crecalloc(ccp->residue_index,
+                                     ccp->residue_max,
+                                     sizeof(int));
+        if(ccp->residue_index==NULL) {
+          comMessage("memory allocation error in FileEntry2DB (ccp->residue_index)\n");
+          return -1;
+        }
       }
-
+      
       /* reset reference */
       re.anum=-1e6;
       strcpy(re.aname,"_dummy");
-
+      
     }
-
+    
     /*
-      new atom (always applies) 
-    */
+     new atom
+     */
+    pass_atom=1;
+    if(!isspace(ae->altloc)) {
+      // only accept first altloc
+      for(int i=0;i<crp->atom_count;++i) {
+        cap=crp->atom_index[i];
+        if(clStrcmp(cap->name,ae->aname)) {
+          // duplicate atom exists, skipping this one
+          pass_atom=0;
+        }
+      }
+    }
+    if(!pass_atom) continue;
+    
     cai=atom_count;
     atom_count++;
     if(atom_count>=atom_max) {
       atom_max*=2;
       atom=Crecalloc(atom,atom_max,sizeof(struct STRUCT_ATOM));
       if(atom==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (atom)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (atom)\n");
+        return -1;
       }
     }
     cap=&atom[atom_count-1];
-
+    
     /* fill atom structure */
     cap->n=atom_count-1;
     cap->anum=ae->anum;
@@ -2013,11 +2011,11 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     cap->weight=ae->c2;
     cap->restriction=0;
     cap->flag=0;
-
+    
     strcpy(cap->chem.element,ae->element);
     for(i=0;i<node->atom_table_len;i++)
       if(clStrcmp(node->atom_table[i].e,ae->element))
-	break;
+        break;
     cap->chem.charge=0.0;
     cap->chem.vdwr=node->atom_table[i].vdwr;
     cap->chem.an=node->atom_table[i].z;
@@ -2035,7 +2033,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     cap->def_prop.c[2][0]=cap->def_prop.r;
     cap->def_prop.c[2][1]=cap->def_prop.g;
     cap->def_prop.c[2][2]=cap->def_prop.b;
-
+    
     /* back pointers */
     cap->residue=NULL;
     cap->residue_num=cri;
@@ -2043,84 +2041,83 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     cap->chain_num=cci;
     cap->model=NULL;
     cap->model_num=cmi;
-
+    
     cap->bondc=0;
     cap->bondm=STRUCT_MAX_BOND_PER_ATOM;
-
-    /* 
-       fill in the atom info for the current
-       residue, chain and model
-    */
+    
+    /*
+     fill in the atom info for the current
+     residue, chain and model
+     */
     crp->atom_index[crp->atom_count++]=cai;
     if(crp->atom_count>=crp->atom_max) {
       crp->atom_max+=crp->atom_add;
       crp->atom_index=Crecalloc(crp->atom_index,
-				crp->atom_max,
-				sizeof(int));
+                                crp->atom_max,
+                                sizeof(int));
       if(crp->atom_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (crp->atom_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (crp->atom_index)\n");
+        return -1;
       }
-
     }
-
+    
     ccp->atom_index[ccp->atom_count++]=cai;
     if(ccp->atom_count>=ccp->atom_max) {
       ccp->atom_max+=ccp->atom_add;
       ccp->atom_index=Crecalloc(ccp->atom_index,
-				ccp->atom_max,sizeof(int));
+                                ccp->atom_max,sizeof(int));
       if(ccp->atom_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (ccp->atom_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (ccp->atom_index)\n");
+        return -1;
       }
     }
-
+    
     cmp->atom_index[cmp->atom_count++]=cai;
     if(cmp->atom_count>=cmp->atom_max) {
       cmp->atom_max+=cmp->atom_add;
       cmp->atom_index=Crecalloc(cmp->atom_index,
-				cmp->atom_max,sizeof(int));
+                                cmp->atom_max,sizeof(int));
       if(cmp->atom_index==NULL) {
-	comMessage("memory allocation error in FileEntry2DB (cmp->atom_index)\n");
-	return -1;
+        comMessage("memory allocation error in FileEntry2DB (cmp->atom_index)\n");
+        return -1;
       }
     }
   }
-
+  
   comMessage("n");
-
+  
   debmsg("structRead: assign to dataset");
-
+  
   model=Crecalloc(model,model_count,sizeof(struct STRUCT_MODEL));
   node->model=model;
   node->model_count=model_count;
   node->model_max=model_count;
   node->model_add=1;
   node->model_flag=model_flag;
-
+  
   chain=Crecalloc(chain,chain_count+1,sizeof(struct STRUCT_CHAIN));
   node->chain=chain;
   node->chain_count=chain_count;
   node->chain_max=chain_count;
   node->chain_add=1;
   node->chain_flag=chain_flag;
-
+  
   residue=Crecalloc(residue,residue_count+1,sizeof(struct STRUCT_RESIDUE));
   node->residue=residue;
   node->residue_count=residue_count;
   node->residue_max=residue_count;
   node->residue_add=1000;
   node->residue_flag=residue_flag;
-
+  
   atom=Crecalloc(atom,atom_count+1,sizeof(struct STRUCT_ATOM));
   node->atom=atom;
   node->atom_count=atom_count;
   node->atom_max=atom_count;
   node->atom_add=10000;
-
+  
   /*
-    create the position array and fill it
-  */
+   create the position array and fill it
+   */
   node->apos=Ccalloc(node->atom_count+1,sizeof(struct STRUCT_APOS));
   if(node->apos==NULL) {
     comMessage("memory allocation error in FileEntry2DB (node->apos)\n");
@@ -2135,17 +2132,17 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     node->apos[i].z=node->atom[i].zz;
     node->atom[i].p=&node->apos[i];
   }
-
+  
   debmsg("structRead: index to pointer");
-
+  
   comMessage("i");
-
-  /* 
-     convert the integer cross references to pointers
-  */
+  
+  /*
+   convert the integer cross references to pointers
+   */
   for(i=0;i<node->model_count;i++) {
     cmp=&node->model[i];
-
+    
     cmp->chain=Ccalloc(cmp->chain_count+1,sizeof(struct STRUCT_CHAIN *));
     if(cmp->chain==NULL) {
       comMessage("memory allocation error in FileEntry2DB (cmp->chain)\n");
@@ -2157,7 +2154,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
       cmp->chain[j]=&node->chain[cmp->chain_index[j]];
     }
     Cfree(cmp->chain_index);
-
+    
     cmp->atom=Ccalloc(cmp->atom_count+1,sizeof(struct STRUCT_ATOM *));
     if(cmp->atom==NULL) {
       comMessage("memory allocation error in FileEntry2DB (cmp->atom)\n");
@@ -2169,12 +2166,12 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     }
     Cfree(cmp->atom_index);
   }
-
+  
   for(i=0;i<node->chain_count;i++) {
     ccp=&node->chain[i];
-
+    
     ccp->model=&node->model[ccp->model_num];
-
+    
     ccp->residue=Ccalloc(ccp->residue_count+1,sizeof(struct STRUCT_RESIDUE *));
     if(ccp->residue==NULL) {
       comMessage("memory allocation error in FileEntry2DB (ccp->residue)\n");
@@ -2185,7 +2182,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
       ccp->residue[j]=&node->residue[ccp->residue_index[j]];
     }
     Cfree(ccp->residue_index);
-
+    
     ccp->atom=Ccalloc(ccp->atom_count+1,sizeof(struct STRUCT_ATOM *));
     if(ccp->atom==NULL) {
       comMessage("memory allocation error in FileEntry2DB (ccp->atom)\n");
@@ -2200,9 +2197,9 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
   
   for(i=0;i<node->residue_count;i++) {
     crp=&node->residue[i];
-
+    
     crp->chain=&node->chain[crp->chain_num];
-
+    
     crp->atom=Ccalloc(crp->atom_count+1,sizeof(struct STRUCT_ATOM *));
     if(crp->atom==NULL) {
       comMessage("memory allocation error in FileEntry2DB (crp->atom)\n");
@@ -2214,55 +2211,55 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     }
     Cfree(crp->atom_index);
   }
-
+  
   for(i=0;i<node->atom_count;i++) {
     cap=&node->atom[i];
-
+    
     cap->residue=&node->residue[cap->residue_num];
     cap->chain=&node->chain[cap->chain_num];
     cap->model=&node->model[cap->model_num];
   }
-
+  
   comMessage("s");
-
+  
   /*
-    secondary structure as defined in the file
-  */
-
+   secondary structure as defined in the file
+   */
+  
   if(sf->secs_count>0) {
     for(i=0;i<node->atom_count;i++) {
       cap=&node->atom[i];
       cri=cap->residue->num;
       ccname=cap->chain->name;
       for(j=0;j<sf->secs_count;j++) {
-	secsr1=sf->secs_entry[j].start;
-	secsr2=sf->secs_entry[j].end;
-	if(clStrcmp(sf->secs_entry[j].chain,ccname) ||
-	   (clStrlen(sf->secs_entry[j].chain)==0 && clStrlen(ccname)==0)) {
-	  // EXCLUSIVE setting !
-	  if(cri>secsr1 && cri<secsr2) {
-	    cap->residue->type=sf->secs_entry[j].type;
-	  }
-	}
+        secsr1=sf->secs_entry[j].start;
+        secsr2=sf->secs_entry[j].end;
+        if(clStrcmp(sf->secs_entry[j].chain,ccname) ||
+           (clStrlen(sf->secs_entry[j].chain)==0 && clStrlen(ccname)==0)) {
+          // EXCLUSIVE setting !
+          if(cri>secsr1 && cri<secsr2) {
+            cap->residue->type=sf->secs_entry[j].type;
+          }
+        }
       }
     }
   }
   debmsg("structRead: explicit connectivity");
-
+  
   comMessage("x");
-
+  
   /*
-     now worry about the connectivity
-  */
+   now worry about the connectivity
+   */
   node->conn=0;
   node->conn=Crecalloc(node->conn,
-		       sf->connect_count,
-		       sizeof(struct STRUCT_CONNECTIVITY));
+                       sf->connect_count,
+                       sizeof(struct STRUCT_CONNECTIVITY));
   if(node->conn==NULL) {
     comMessage("memory allocation error in FileEntry2DB (node->conn)\n");
     return -1;
   }
-
+  
   node->conn_count=sf->connect_count;
   node->conn_max=node->conn_count;
   node->conn_add=1000;
@@ -2272,26 +2269,26 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     pass=0;
     for(ac=0;ac<node->atom_count;ac++) {
       if(ce->a1==node->atom[ac].anum) {
-	pass++;
-	node->conn[cc].ap1=&node->atom[ac];
+        pass++;
+        node->conn[cc].ap1=&node->atom[ac];
       }
       if(ce->a2==node->atom[ac].anum) {
-	pass++;
-	node->conn[cc].ap2=&node->atom[ac];
+        pass++;
+        node->conn[cc].ap2=&node->atom[ac];
       }
       if(pass==2)
-	break;
+        break;
     }
     if(pass==2)
       cc++;
   }
   node->conn_count=cc;
-
+  
   comMessage("t");
-
-  /* 
-     determine the type of residue
-  */
+  
+  /*
+   determine the type of residue
+   */
   for(rc=0;rc<node->residue_count;rc++) {
     if(clStrcmp(node->residue[rc].name,"ALA") ||
        clStrcmp(node->residue[rc].name,"CYS") ||
@@ -2316,26 +2313,26 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
        clStrcmp(node->residue[rc].name,"MSE")) {
       node->residue[rc].clss=STRUCT_PROTEIN;
       /*
-	fprintf(stderr,"%s %d protein\n",
-	node->residue[rc].name,node->residue[rc].num);
-      */
+       fprintf(stderr,"%s %d protein\n",
+       node->residue[rc].name,node->residue[rc].num);
+       */
     } else if (clStrcmp(node->residue[rc].name,"A") ||
-	       clStrcmp(node->residue[rc].name,"C") ||
-	       clStrcmp(node->residue[rc].name,"G") ||
-	       clStrcmp(node->residue[rc].name,"T") ||
-	       clStrcmp(node->residue[rc].name,"U") ||
-	       clStrcmp(node->residue[rc].name,"ADE") ||
-	       clStrcmp(node->residue[rc].name,"CYT") ||
-	       clStrcmp(node->residue[rc].name,"URI") ||
-	       clStrcmp(node->residue[rc].name,"GUA") ||
-	       clStrcmp(node->residue[rc].name,"THY")) {
+               clStrcmp(node->residue[rc].name,"C") ||
+               clStrcmp(node->residue[rc].name,"G") ||
+               clStrcmp(node->residue[rc].name,"T") ||
+               clStrcmp(node->residue[rc].name,"U") ||
+               clStrcmp(node->residue[rc].name,"ADE") ||
+               clStrcmp(node->residue[rc].name,"CYT") ||
+               clStrcmp(node->residue[rc].name,"URI") ||
+               clStrcmp(node->residue[rc].name,"GUA") ||
+               clStrcmp(node->residue[rc].name,"THY")) {
       node->residue[rc].clss=STRUCT_NA;
     } else {
       node->residue[rc].clss=STRUCT_MISC;
     }
   }
-
+  
   return 0;
-
+  
 }
 
