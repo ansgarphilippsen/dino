@@ -1,3 +1,14 @@
+0.9.6
+=====
+
+OSX 10.9 support
+custom rep default 
+
+fixed torsion angles
+fixed png scale export
+fixed altloc handling
+fixed jpg,tiff,png shared lib dependencies
+
 CHANGES FOR v0.9.2 to v0.9.4
 ============================
 

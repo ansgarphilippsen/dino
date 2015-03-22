@@ -692,6 +692,7 @@ int gfxSceneRedraw(int clear)
 
 int gfxSetViewport(void)
 {
+  if(debug_mode) fprintf(stderr,"[DEBUG] viewport %d %d\n",gfx.win_width, gfx.win_height);
   glViewport(0,0,gfx.win_width, gfx.win_height);
   gfx.aspect=(double)gfx.win_width/(double)gfx.win_height;
   gfxSetProjection(gfx.current_view);

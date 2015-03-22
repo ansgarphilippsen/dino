@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C85137631ABE40BF0003F552 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C85137601ABE40BF0003F552 /* libjpeg.a */; };
+		C85137641ABE40BF0003F552 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C85137611ABE40BF0003F552 /* libpng.a */; };
+		C85137651ABE40BF0003F552 /* libtiff.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C85137621ABE40BF0003F552 /* libtiff.a */; };
 		E62212F80833C65A007CADC8 /* bspline.h in Headers */ = {isa = PBXBuildFile; fileRef = F512CF3C0249799D01FB7A39 /* bspline.h */; };
 		E62212F90833C65A007CADC8 /* build.h in Headers */ = {isa = PBXBuildFile; fileRef = F512CF3E0249799D01FB7A39 /* build.h */; };
 		E62212FA0833C65A007CADC8 /* ccp4.h in Headers */ = {isa = PBXBuildFile; fileRef = F512CF400249799D01FB7A39 /* ccp4.h */; };
@@ -188,7 +191,10 @@
 		5606964A0573C06E0067B72D /* io_gromacs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = io_gromacs.h; path = ../../io_gromacs.h; sourceTree = SOURCE_ROOT; };
 		56597ECB0438BD1E00FB7A39 /* io_spider.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = io_spider.c; path = ../../io_spider.c; sourceTree = SOURCE_ROOT; };
 		56597ECC0438BD1E00FB7A39 /* io_spider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = io_spider.h; path = ../../io_spider.h; sourceTree = SOURCE_ROOT; };
-		E62213A40833C65A007CADC8 /* Info-Dino.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Info-Dino.plist"; sourceTree = "<group>"; };
+		C85137601ABE40BF0003F552 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../../lib/libjpeg.a; sourceTree = "<group>"; };
+		C85137611ABE40BF0003F552 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../../lib/libpng.a; sourceTree = "<group>"; };
+		C85137621ABE40BF0003F552 /* libtiff.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtiff.a; path = ../../../lib/libtiff.a; sourceTree = "<group>"; };
+		E62213A40833C65A007CADC8 /* Info-Dino.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Dino.plist"; sourceTree = "<group>"; };
 		E62213A50833C65B007CADC8 /* Dino.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dino.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F512CF3B0249799D01FB7A39 /* bspline.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = bspline.c; path = ../../bspline.c; sourceTree = SOURCE_ROOT; };
 		F512CF3C0249799D01FB7A39 /* bspline.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = bspline.h; path = ../../bspline.h; sourceTree = SOURCE_ROOT; };
@@ -361,6 +367,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C85137631ABE40BF0003F552 /* libjpeg.a in Frameworks */,
+				C85137641ABE40BF0003F552 /* libpng.a in Frameworks */,
+				C85137651ABE40BF0003F552 /* libtiff.a in Frameworks */,
 				E62213A20833C65A007CADC8 /* Cocoa.framework in Frameworks */,
 				E62213A30833C65A007CADC8 /* OpenGL.framework in Frameworks */,
 			);
@@ -448,6 +457,9 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C85137601ABE40BF0003F552 /* libjpeg.a */,
+				C85137611ABE40BF0003F552 /* libpng.a */,
+				C85137621ABE40BF0003F552 /* libtiff.a */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
@@ -737,9 +749,15 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = E6D14605086FE5FF00BDC271 /* Build configuration list for PBXProject "Dino" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Dino */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -873,9 +891,9 @@
 		E6D14602086FE5FF00BDC271 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
+				DEAD_CODE_STRIPPING = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -889,16 +907,13 @@
 					INTERNAL_COLOR,
 					CONTOUR_COLOR,
 				);
-				HEADER_SEARCH_PATHS = /opt/local/include;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = "Info-Dino.plist";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
-				OPTIMIZATION_CFLAGS = "-O0";
+				LIBRARY_SEARCH_PATHS = /Users/ansgar/sft/dino/lib;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-lpng",
+					"-lm",
 					"-lz",
-					"-ltiff",
-					"-ljpeg",
 				);
 				PRODUCT_NAME = Dino;
 				SECTORDER_FLAGS = "";
@@ -917,7 +932,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -932,15 +947,13 @@
 					INTERNAL_COLOR,
 					CONTOUR_COLOR,
 				);
-				HEADER_SEARCH_PATHS = /opt/local/include;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = "Info-Dino.plist";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib/dinolib;
+				LIBRARY_SEARCH_PATHS = /Users/ansgar/sft/dino/lib;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-lpng",
+					"-lm",
 					"-lz",
-					"-ltiff",
-					"-ljpeg",
 				);
 				PRODUCT_NAME = Dino;
 				SECTORDER_FLAGS = "";
@@ -958,7 +971,7 @@
 		E6D14604086FE5FF00BDC271 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_MODEL_TUNING = "";
@@ -970,15 +983,13 @@
 					INTERNAL_COLOR,
 					CONTOUR_COLOR,
 				);
-				HEADER_SEARCH_PATHS = /opt/local/include;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = "Info-Dino.plist";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				LIBRARY_SEARCH_PATHS = /Users/ansgar/sft/dino/lib;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-lpng",
+					"-lm",
 					"-lz",
-					"-ltiff",
-					"-ljpeg",
 				);
 				PRODUCT_NAME = Dino;
 				SECTORDER_FLAGS = "";
@@ -999,14 +1010,13 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				DEPLOYMENT_LOCATION = NO;
 				GCC_MODEL_TUNING = "";
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
-				OTHER_LDFLAGS = (
-					"-lpng",
-					"-lz",
-					"-ltiff",
-					"-ljpeg",
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					/opt/local/include,
+					/usr/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 			};
 			name = Development;
 		};
@@ -1014,19 +1024,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				DEAD_CODE_STRIPPING = YES;
 				DEPLOYMENT_LOCATION = NO;
 				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = s;
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib/dinolib;
-				OTHER_LDFLAGS = (
-					"-lpng",
-					"-lz",
-					"-ltiff",
-					"-ljpeg",
+				GCC_OPTIMIZATION_LEVEL = 3;
+				HEADER_SEARCH_PATHS = (
+					/opt/local/include,
+					/usr/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Deployment;
@@ -1037,14 +1045,13 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				DEPLOYMENT_LOCATION = NO;
 				GCC_MODEL_TUNING = "";
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
-				OTHER_LDFLAGS = (
-					"-lpng",
-					"-lz",
-					"-ltiff",
-					"-ljpeg",
+				GCC_OPTIMIZATION_LEVEL = 3;
+				HEADER_SEARCH_PATHS = (
+					/opt/local/include,
+					/usr/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 			};
 			name = Default;
 		};

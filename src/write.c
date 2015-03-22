@@ -23,31 +23,60 @@ static int write_tiff(struct WRITE_IMAGE *img,char *name);
 static void do_jitter(int accum);
 static int get_image(struct WRITE_IMAGE *img);
 
+struct WRITE_GLOBALS {
+  GLuint renderBuffer,depthBuffer,fbo;
+  int flag;
+} write_globals;
+
 int writeFile(char *name, struct WRITE_PARAM *p)
 {
-  int ow,oh,cn;
+  static int init=0,valid=0;
+  int ow,oh;
   struct WRITE_IMAGE img;
+  
+  if(!init) {
+    const GLubyte* strExt = glGetString(GL_EXTENSIONS);
+    GLboolean fboSupported = gluCheckExtension((const GLubyte*)"GL_EXT_framebuffer_object", strExt);
+    if (!fboSupported) {
+      fprintf(stderr,"fbo not supported, cannot export  write image\n");
+      init=1;
+      valid=0;
+      return 0;
+    }
+  
+    // setup renderbuffer
+    glGenFramebuffersEXT(1, &write_globals.fbo);
+    glGenRenderbuffersEXT(1, &write_globals.depthBuffer);
+    glGenRenderbuffersEXT(1, &write_globals.renderBuffer);
+    init=1;
+    valid=1;
+  }
 
+  if(!valid) {
+    fprintf(stderr,"no valid framebuffer to export");
+  }
+  
   memcpy(&img.param,p,sizeof(struct WRITE_PARAM));
 
   if(img.param.dump && !img.param.accum) {
     debmsg("retrieving image");
     get_image(&img);
   } else {
-    // create offscreen rendering context
-    debmsg("creating offscreen rendering context");
-    cn=guiCreateOffscreenContext(img.param.width,img.param.height,
-				 img.param.accum);
-    gfxSetViewport();
-
-    // initial gl
-    debmsg("initializing GL");
-    gfxGLInit();
-
-    gfx.dlist_flag=0;
-
-    // draw into offscreen context
-    debmsg("drawing into offscreen context");
+    debmsg("binding to framebuffer");
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, write_globals.fbo);
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, write_globals.depthBuffer);
+    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, img.param.width, img.param.height);
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, write_globals.renderBuffer);
+    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, img.param.width, img.param.height);
+    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, write_globals.renderBuffer);
+    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, write_globals.depthBuffer);
+    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) != GL_FRAMEBUFFER_COMPLETE_EXT) {
+      fprintf(stderr,"error during framebuffer creation\n");
+      glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+      return -1;
+    }
+    
+    debmsg("drawing into renderbuffer");
     ow=gfx.win_width;
     oh=gfx.win_height;
     glDrawBuffer(GL_FRONT);
@@ -58,27 +87,19 @@ int writeFile(char *name, struct WRITE_PARAM *p)
       debmsg("doing accumulation series");
       do_jitter(img.param.accum);
     } else {
-      //gfxSetProjection(gfx.current_view);
       gfxSceneRedraw(1);
       comDBRedraw();
     }
-    // get image
+    
     debmsg("retrieving image");
     get_image(&img);
 
-    // destry offscreen context
-    debmsg("destroying offscreen context");
-    guiDestroyOffscreenContext(cn);
-    
-    // restore old gfx settings
     debmsg("restoring settings");
     gfx.win_width=ow;
     gfx.win_height=oh;
     gfxSetViewport();
 
-    gfx.dlist_flag=1;
   }
-
 
   switch(img.param.type) {
   case WRITE_TYPE_PNG:
