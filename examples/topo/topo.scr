@@ -1,0 +1,22 @@
+// AFM dataset from the hexagonally packed intermediate 
+// (Mueller et. al. (1998) FEBS letters 430). 
+
+// load the dataset
+load hpi.tiff
+
+// set the scaling in xy-plane and z
+.hpi set scalexy=33,scalez=3 // in nanometer !
+
+// create surface (default) object, using stepsize 4 to decrease size
+// and increase speed
+.hpi new -name s -set step=4
+
+// create contour object with level-step of 0.1 (=11 steps from 0 to 1)
+.hpi new -name c -type contour -set lstep=0.1,step=4
+
+// color contour object in yellow
+.hpi.c set color=yellow
+
+// color surface object by height from dark green (0) to light green (1)
+.hpi.s set color=dark_green:light_green -range prop=h,val=0:1
+

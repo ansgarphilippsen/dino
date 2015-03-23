@@ -1,0 +1,160 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Material Settings: Finish + Normal</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<b><font size=-1>- Finish + Normal</font></b>
+<TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<P>
+Now that we have seen the isolated effect of the <tt>finish</tt> and
+<tt>normal</tt> modifiers, here are a few examples of combining the two:
+
+<P>
+<CENTER>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/dino.jpg')">
+<IMG SRC="material/dino_small.jpg" WIDTH=250 HEIGHT=250>
+</A><BR>
+Again, the image as displayed in DINO
+
+</TD><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/finish1.jpg')">
+<IMG SRC="material/finish1_small.jpg" WIDTH=250 HEIGHT=250>
+</A><BR>
+Default finish and normal settings.
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/comb1.jpeg')">
+<IMG SRC="material/comb1_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>
+normal { granite 0.8 scale 3.0 } <br>
+finish {
+  ambient 0.00
+  diffuse 1.0  brilliance 1.50
+  specular 1.0 roughness 0.005
+}
+</tt>
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/comb2.jpeg')">
+<IMG SRC="material/comb2_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>
+normal { bozo 0.6 scale 0.3 }<br>
+finish { ambient 0.3 diffuse 0.7  brilliance 2 specular 0.1 roughness 0.01}
+</tt>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/comb3.jpeg')">
+<IMG SRC="material/comb3_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>
+normal {
+  granite 1.0 scale 7
+}<br>
+finish {
+ambient 0.1
+diffuse 0.8  brilliance 1.7
+specular 2.0 roughness 0.005}
+</tt>
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/comb4.jpeg')">
+<IMG SRC="material/comb4_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>
+normal {
+  agate 0.4 agate_turb 8 scale 6.0
+}<br>
+finish {
+ambient 0.0
+diffuse 0.8  brilliance 0.3
+specular 0.8 roughness 0.02}
+</tt>
+</TD></TR>
+
+</TABLE>
+</CENTER>
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

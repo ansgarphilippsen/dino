@@ -1,0 +1,81 @@
+load myo.pdb
+
+.myo new -name all
+scene center [.myo]
+scene autoslab
+scene set fogd=0.5
+
+.myo new -name hem -sel rname=HEM
+.myo.hem render custom,sr=0.35,bw=0.15
+
+scene center [.myo.hem]
+scene center [.myo:148.FE]
+
+.myo.hem render cpk
+.myo.hem render detail=2
+.myo.hem render detail=6
+.myo.hem render simple
+
+.myo.all renew -sel not rname=HEM
+.myo.all set color=green -sel aname=C*
+.myo.all hide
+
+.myo new -name sphere -sel 10<>.myo.hem and not rname=HEM
+.myo set smode=residue
+.myo restrict not rname=HEM
+.myo.sphere renew
+.myo restrict
+
+.myo.sphere hide
+.myo new -name ca -type trace -selection $protein
+.myo.ca set color=purple
+
+.myo.ca render tube,bw=0.3
+scene center [.myo.ca]
+
+.myo.ca render sline
+.myo.ca render tube,bw=1.0
+.myo.ca render simple
+
+.*.* hide
+
+load myo -type msms -name surf
+.surf new -name all
+scene center [.surf.all]
+scene autoslab
+
+.surf attach .myo
+
+.surf.all set color=blue -sel rname=LYS,ARG
+.surf.all set color=red -sel rname=ASP,GLU
+
+
+.*.* hide
+load myo_apo -type msms -name surfa
+
+.surfa new -name all
+
+scene center [.surfa.all]
+
+.myo.hem show
+.myo.hem render custom,sr=0.3,bw=0.3,detail=3
+
+.surfa.all hide
+.surfa new -name hem -sel 10<>.myo.hem
+
+.myo.sphere show
+.surfa.hem render t=0.5
+
+.surfa.hem hide
+.surfa.all show
+
+.surfa attach .myo
+
+.surfa.all set color=yellow -sel $protein
+
+.myo restrict not rname=HEM
+.surfa attach none
+.surfa attach .myo
+.myo restrict
+
+.surfa.all set color=yellow -sel $protein

@@ -1,0 +1,128 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>General: Introduction</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<b><font size=-1>- Introduction</font></b>
+<TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<P>
+The <A HREF="http://www.povray.org" TARGET=top>Persistance of Vision
+Raytracer</A>, or just POVray, is a powerful raytracing package, which is freely
+available and runs on all major platforms. Being a raytracer, it allows the
+creation of complex three dimensional scenes with stunning realism and
+incredible artistic beauty, achieving effects that a realtime 3D rendering
+system cannot or only with difficulty achieve. The increase in quality is payed
+by a decrease in rendering time. A single image can take minutes or hours to
+render, and raytracing is therefore not suited for interactive work.
+
+<P>
+<A HREF="http://www.bioz.unibas.ch/~xray/dino">DINO</A> can generate a POVray
+scene from its current objects. This scene can be improved, modified, adjusted
+and tweaked with all the myriads of options POVray has to offer. This tutorial
+attempts to introduce the interested DINO user into the amazing possibilities
+offered by POVray. For a complete treatment, please consult the POVray manual
+and the numerous tutorials found on the <A HREF="http://www.povray.org">POVray
+homepage</A>.
+
+<P>
+A <b>patch</b> to improve POVrays usability for scientific visualization (by
+adding color interpolation between triangle vertices) 
+is available <A HREF=patcho.html>here</A>.
+
+<P>
+In a nutshell: A POVray scene is <A HREF=export.html>exported</A>
+from DINO, resulting in <A HREF=content.html>two files</A>: a
+<tt>.pov</tt> file and a <tt>.inc</tt> file. The latter is usually quite large
+and contains the descriptions of all 3D primitives that make up the scene. The
+former file contains all user editable parameters: scene related settings
+(<A HREF=camera.html>camera</A>,
+ <A HREF=light.html> light sources</A>,
+ <A HREF=back.html> background</A> and
+ <A HREF=depth.html> depth effect</A>) and - for each object - the <A
+ HREF=overview.html>material settings</A>.
+ 
+<P>
+It is easy to get carried away with the infinite number of possible adjustments
+offered by POVray. One should attempt nevertheless to maintain a careful balance
+between artistic ambition and scientific message. The beauty of an image can
+always be improved, its scientific content not.
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

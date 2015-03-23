@@ -1,0 +1,259 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>General: File contents</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<b><font size=-1>- File contents</font></b>
+<TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<P>
+DINO generates two files, ending with <tt>.pov</tt> and <tt>.inc</tt>. The
+former is meant to be user editable and contains definitions for the camera, the
+light sources and the material parameters for the 3D objects (in form of
+variables). The latter contains the definitions for the 3D objects and normally
+does not need to be modified.
+
+<P>
+Lets look a test <tt>.pov</tt> file, with a single (surface) object:
+
+<P>
+<TABLE BORDER=0 CELLSPACING=3 CELLPADDING=4 COLS=2 FRAME=NONE RULES=COLS>
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+/*
+  POVRAY output from DINO
+
+  This is the main file containing
+  the user editable parameters
+*/
+
+#version 3.1;
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+The file header. If you plan to include more definition files, e.g. to use
+predefined textures from POVray, put them after the version info.
+</TD></TR>
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+background {color rgb <0.000,0.000,0.000>}
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+Defines a simple black background. Read more about backgrounds
+<A HREF=back.html>here </A>.
+</TD></TR>
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+camera {
+ perspective
+ location <0,0,0>
+ direction <0,0,-1>
+ up <0,1,0>
+ right <1,0,0>
+ angle 25.0000
+ translate <0,0,114.5000>
+ //translate <2.0,0,0>
+ //look_at <0,0,0>
+}
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+Camera settings, including the possibility to create a stereo image.
+More information <A HREF=camera.html>here</A>.
+</TD></TR>
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+light_source {<0,0,114.5000> color rgb <1,1,1>}
+light_source {<0,0,0> color rgb 0.1 shadowless}
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+Light Sources. The first is positioned at the location of the camera, the second
+in the center of the scene. For more detail see <A
+HREF=light.html>here</A>.
+</TD></TR>
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+// depth cueing
+plane {z, 19.005 
+  texture {pigment {color rgbft <0,0,0,1,1>}}
+  hollow interior {fade_power 2 fade_distance 19.810}
+}
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+This is an infinite plane with a foggy interior (yes, weird concept but works),
+creating a depth effect. See also <A HREF=depth.html>here</A>.
+</TD></TR>
+
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+// bounding box
+// -23.977 -24.062 -22.605  26.760 23.621 21.005
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+The bounding box, showing the minimal and maximal xyz values in the scene.
+Needed for <A HREF=back.html> fancy backgrounds</A>.
+</TD></TR>
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+// object .s.s
+#declare _s_s = 1;
+#declare _s_s_tex = texture {
+  pigment {color rgbft <0,0,0,1,1>}
+  normal {granite 0.0 scale 1.0}
+  finish {
+   ambient 0.10
+   diffuse 0.70  brilliance 1.00
+   specular 0.00  roughness 0.0100
+  }
+}
+#declare _s_s_mat = material { texture {_s_s_tex}}
+#declare _s_s_tp = 0.00;
+#declare _s_s_fi = 0.00;
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+All parameters for DINO object <tt>.s.s</tt>. 
+<p>
+Setting the first <tt>#declare</tt>
+statement to zero will turn the object off (the lines will still be parsed
+thou).
+<p>
+The texture declaration contains several settings, most importantly
+the ones for <A HREF=finish.html>finish</A> and <A
+HREF=normal.html>normal</A>. For more detail look <A
+HREF=overview.html>here</A>.
+<p>
+Finally, the transparency and filter
+values are declared (more explanation <A HREF="index.php/?p=trans">here</A>).
+For some objects there will also be a linewidth and/or pointsize setting
+declaration here.
+</TD></TR>
+
+<TR>
+<TD BGCOLOR=#efefef>
+<FONT SIZE=-1>
+<PRE>
+#declare _Scene = #include "file.inc"
+object {
+    _Scene
+}
+</PRE>
+</FONT>
+</TD>
+<TD BGCOLOR=#efffff>
+This last tidbit reads the object definitions from the <tt>.inc</tt> file.
+</TD></TR>
+
+</TABLE>
+
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

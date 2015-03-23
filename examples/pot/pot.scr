@@ -1,0 +1,112 @@
+// set variables
+set argcluster rnum=42,82,132
+set acidics rnum=117,126,113
+set pos 2.0
+set neg -2.0
+
+// load dataset: structure, surface and potential
+load ompf.pdb
+load ompf -type msms -name surf
+load ompf.pot -name pot // -swap  add this on linux-i386 / osf machines
+
+// calculate pore middle
+push [.ompf:40.CZ] [.ompf:113.CG]
+opr + ; push 2; opr /
+set mp [peek]
+
+// structure objects
+.ompf new -name ca -type trace
+.ompf new -name cr -sel $argcluster or $acidics
+.ompf new -name all
+.ompf.all hide
+
+// center on pore middle
+scene center $mp
+
+// surface object
+.surf new -name all
+.surf.all hide
+
+// surface around pore, light both sides
+.surf new -name pore -sel 10<> $mp
+.surf.pore render light2
+
+// orient to get cut view through pore
+@cut_view.scr
+scene set near-=0.2
+
+
+// generate grid object
+.pot new -name g -type grid -set center=$mp,size={20,20,30},step=1
+// render as points (faster)
+.pot.g render off
+
+// this could also work, but finding a 
+// reasonable distance is difficult
+// .pot.g renew -sel not 3<>.ompf.all
+
+// set grid color and radius according to is grid-values
+.pot.g set color=white:blue -range val=0:$pos
+.pot.g set color=blue -sel v>$pos
+.pot.g set color=white:red  -range val=0:$neg
+.pot.g set color=red -sel v<$neg
+
+.pot.g set rad=0.1
+.pot.g set rad=0.1:0.5 -range val=0:$pos
+.pot.g set rad=0.5 -sel v>$pos
+.pot.g set rad=0.1:0.5 -range val=0:$neg
+.pot.g set rad=0.5 -sel v<$neg
+
+
+.surf.pore hide
+.surf.all show
+
+// render as spheres
+.pot.g render on
+
+pause // next section
+
+.surf.all hide
+.pot.g render off
+.pot.g hide
+
+// map the same thing to the surface
+.surf new -name pot
+.surf.pot set color=white:blue -range src=.pot,val=0:$pos
+.surf.pot set color=blue       -range src=.pot,val=$pos:9999
+.surf.pot set color=white:red  -range src=.pot,val=0:$neg
+.surf.pot set color=red        -range src=.pot,val=$neg:-9999
+
+// trick: make potential colored surface transparent and display 
+// with opaque, white surface, try varying the transparency
+.surf.pot render t=0.6
+.surf.all show
+
+pause // next section
+
+.*.* hide
+
+.surf.all show
+
+// create 0 +1 and -1 contour surfaces
+.pot new -name lzero  -set center=$mp,level=0.0,size=50  
+.pot.lzero set color=yellow
+.pot new -name lplus  -set center=$mp,level=+1.0,size=50  
+.pot.lplus set color=blue
+.pot new -name lminus -set center=$mp,level=-1.0,size=50  
+.pot.lminus set color=red
+
+pause // next section
+
+// slab object
+.*.* hide
+.surf.all show
+
+.pot new -name slab -type slab -set center=$mp,dir={1,-0.5,0}
+.pot.slab set color=white:blue -range val=0:$pos
+.pot.slab set color=blue -sel v>$pos
+.pot.slab set color=white:red  -range val=0:$neg
+.pot.slab set color=red -sel v<$neg
+.pot.slab render t=0.8
+.surf.all render solid,solidc=grey
+scene set far+=10

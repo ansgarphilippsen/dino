@@ -1,0 +1,194 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Scene Settings: Camera</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<b><font size=-1>- Camera</font></b>
+<TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<p>
+The <tt>camera</tt> is the viewport into the three dimensional scene. There are
+quite a few settings for the camera, and only two things will be discussed here:
+creating <i>stereo pairs</i> and changing the <i>FOV angle</i>.
+Please refer to the POVray manual for a complete discussion on all camera
+parameters.
+
+<p>
+These are the camera settings DINO writes into the <tt>.pov</tt> file (the
+values may vary, especially the first <tt>translate</tt> statement).
+
+<pre>
+camera {
+ perspective
+ location <0,0,0>
+ direction <0,0,-1>
+ up <0,1,0>
+ right <1,0,0>
+ angle 25.0000
+ translate <0,0,114.5000>
+ //translate <2.0,0,0>
+ //look_at <0,0,0>
+}
+</pre>
+
+<HR NOSHADE SIZE=1>
+
+<H4>Creating Stereo Pairs</H4>
+<p>
+The two final settings - which are commented out - are used to generate stereo
+pairs. Uncomment them, and render the scene twice. Once with the <tt>x</tt>
+value of the translate statement (the first number, <tt>2.0</tt>) positive, a
+second time with a negative sign. Then place them in a single image, next to
+each other. Depending on the type of stereo picture you want, you have to choose
+the correct left and right image:
+
+<CENTER>
+<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=10 BGCOLOR=#efefef>
+<TR>
+<TD></TD>
+<TD><tt>+x</tt></TD>
+<TD><tt>-x</tt></TD>
+<TR>
+<TD>Cross-Eye Stereo</TD>
+<TD><i>left</i></TD>
+<TD><i>right</i></TD>
+<TR>
+<TD>Parallel Stereo</TD>
+<TD><i>right</i></TD>
+<TD><i>left</i></TD>
+</TABLE>
+</CENTER>
+
+<p>
+Having a decent <A HREF=depth.html>depth-effect</A> can considerably
+improve the three dimensionality of the resulting stereo-pair!.
+
+<HR NOSHADE SIZE=1>
+
+<center>
+<p>
+<IMG SRC="scene/stereo1.jpeg" WIDTH=500 HEIGHT=251><br>
+This is a cross-eye stereo pair generated with the default +/- 2.0 offset
+<p>
+<IMG SRC="scene/stereo2.jpeg" WIDTH=500 HEIGHT=251><br>
+This is a cross-eye stereo pair generated with a +/- 6.0 offset
+</center>
+
+<HR NOSHADE SIZE=1>
+
+<H4>FOV Angle</H4>
+<p>
+The field-of-view angle is a parameter for perspective viewing. The larger it
+is, the faster the object size decreases with increasing distance from the
+observer, as a result, more of the scene will be visible. Increasing the angle
+can become important for close-ups: In the scenes below, the right image has
+been rendered with an angle of 80.0. Much more of the surrounding area is
+visible, although the objects tend to be distorted.
+
+<p>
+<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/angle2.jpeg')">
+<IMG SRC="scene/angle2_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><br>
+<tt>angle 25</tt>
+</TD><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/angle1.jpeg')">
+<IMG SRC="scene/angle1_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>angle 80.0</tt>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/angle3.jpeg')">
+<IMG SRC="scene/angle3_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><br>
+<tt>angle 25</tt>
+</TD><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/angle4.jpeg')">
+<IMG SRC="scene/angle4_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>angle 80.0</tt>
+</TD></TR>
+
+</TABLE>
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

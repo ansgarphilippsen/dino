@@ -1,0 +1,55 @@
+// DINO example:  active site with hydrogen bonds
+// 1999 AP
+// from 2OAT (Storici et. al JMB 285 (1999))
+
+// define active site A residues
+set as ((rnum=55,142,143,180,263,266,292 and chain=A) or (rnum=322 and chain=B))
+
+// load the coordinates and the surface
+load fmp.pdb
+load fmp -type msms -name surf
+
+// generate structure objects
+.fmp new -name ca -type trace -sel chain=A and $protein
+.fmp.ca hide
+.fmp new -name fmpa -sel rname=FMP and chain=A
+.fmp new -name as -sel $as
+.fmp.fmpa set color=cyan -sel ele=C
+.fmp.fmpa render custom
+.fmp.as render custom,sr=0.1,bw=0.1
+
+scene center [.fmp.fmpa]
+
+// generate surface object
+.surf new -name all
+
+// load the viewing matrix
+@view.scr
+
+// modify the light and material proerties for the surface 
+// to make it suitable as a backdrop
+.surf.all render light2      
+.surf.all material amb=0,diff=0.0,spec=0  
+.surf.all set color=grey20  
+
+// create geometric dataset
+new geom
+
+// create new geom object and add lines to it
+.geom new -name hb
+.geom.hb add line p={[.fmp:A.440.N],[.fmp:A.55.OH]}
+.geom.hb add line p={[.fmp:A.440.OB],[.fmp:A.180.NH1]}
+.geom.hb add line p={[.fmp:A.440.OA],[.fmp:A.180.NE]}
+.geom.hb add line p={[.fmp:A.440.OE],[.fmp:B.322.OG1]}
+.geom.hb add line p={[.fmp:A.440.O3],[.fmp:A.266.NE2]}
+.geom.hb add line p={[.fmp:A.440.N1],[.fmp:A.263.OD1]}
+.geom.hb add line p={[.fmp:A.440.OP2],[.fmp:B.322.N]}
+.geom.hb add line p={[.fmp:A.440.OP1],[.fmp:A.143.N]}
+.geom.hb add line p={[.fmp:A.440.OP3],[.fmp:A.142.N]}
+
+// color the line yellow and set their radius
+.geom.hb set color=yellow,r=0.05
+// turn on rendering (line->cylinder) and activate stippling
+.geom.hb render on,stipple,stipplei=0.2,stippleo=0.15
+
+

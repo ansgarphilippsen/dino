@@ -1,0 +1,121 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Material Settings: Overview</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<b><font size=-1>- Overview</font></b>
+<TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<P>
+The material of an object can be separated into its surface properties, the
+<b>texture</b>, and its inside, the <b>interior</b>. Here we will only touch
+upon the texture, which can be split into three parts:
+<b>pigment</b>, <b>normal</b> and <b>finish</b>.
+
+<P>
+Although the pigment can be much more, it is easiest to think about it as the
+color of the surface. It consists of five parts: the <i>red</i>, <i>green</i>
+and <i>blue</i> component as well as a <i>transparency</i> and <i>filter</i>
+value. The first three are usually predefined from DINO, and their usage in POVray can
+be <A HREF=export.html>a little complicated</A>. The fourth and fifth
+parameters are present as variables and they are further discussed <A
+HREF=trans.html>here</A>. The <tt>pigment</tt>
+statement in the <tt>texture</tt> declaration is just a placeholder and should
+not be modified. There are two exceptions to this:
+<UL>
+<LI>The <tt>contour</tt> object of the scalar field dataset uses this
+<tt>pigment</tt> statement to define its color, filter and transmit value.
+<LI>The <tt>-nocolor</tt> option during <A HREF=export.html>scene
+export</A> will make this <tt>pigment</tt> statement active.
+</UL>
+
+
+<P>
+Some detail is presented on the <A HREF=finish.html>finish</A> and the
+<A HREF=normal.html>normal</A> modifiers as well as their <A
+HREF=fin_norm.html>combined effect</A>.
+
+<P>
+It is of course possible to utilize predefined settings from the POVray
+distribution or other sources. The <A HREF=pre.html>predefined
+textures</A> sections has more on that.
+
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

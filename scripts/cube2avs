@@ -1,0 +1,138 @@
+#!/usr/bin/perl
+
+$ARGC=@ARGV;
+$fact=1.0;
+@farg=("","");
+$fc=0;
+for ($ac=0; $ac<$ARGC; ++$ac)
+{
+	if($ARGV[$ac] =~ "-f")
+	{
+		if($ac+1<$ARGC)
+		{
+			$fact=$ARGV[$ac+1];
+			++$ac;
+		}
+		else
+		{
+			die "Missing value after -f\n";
+		}
+	}
+	else
+	{
+		$farg[$fc]=$ARGV[$ac];
+		++$fc;	
+	}
+}
+
+if($fc != 2)
+{
+	die "Syntax: cube2avs [-f NUM] infile outfile\n";
+}
+
+open CUBE, "<$farg[0]" or die "Could not open input file\n";
+open AVS, ">$farg[1]" or die "Could not open output file\n";
+
+# search for the first line matching NA X0 Y0 Z0
+while (defined ($line = <CUBE>))
+{
+	chomp $line;
+	$line =~ s/^\s+//;
+	if($line =~ m/^\d+(\s+-?(\d+|\d+\.\d+)){3}/)
+	{
+		last;
+	}
+}
+
+# extract NA X0 Y0 and Z0
+($num, $cx, $cy, $cz) = split(/\s+/,$line);
+
+#extract rest of header
+$line = <CUBE>;
+chomp $line;
+$line =~ s/^\s+//;
+($nx, $m1, $m2, $m3) = split(/\s+/,$line);
+$line = <CUBE>;
+chomp $line;
+$line =~ s/^\s+//;
+($ny, $m4, $m5, $m6) = split(/\s+/,$line);
+$line = <CUBE>;
+chomp $line;
+$line =~ s/^\s+//;
+($nz, $m7, $m8, $m9) = split(/\s+/,$line);
+
+if(!($m2==0 && $m3==0 && $m4==0 && $m6==0 && $m7==0 && $m8==0))
+{
+	die "Expected zero for non-diagonal matrix elements\n";
+}
+
+#convert center and spacing from Bohr into Angstrom
+$cx/=1.88973
+$cy/=1.88973
+$cz/=1.88973
+$m1/=1.88973
+$m5/=1.88973
+$m9/=1.88973
+
+$line_num=int($nz/6)+1;
+$xformat="f".$nz;
+
+#skip over atom entries
+for ($i=1; $i<=$num; ++$i)
+{
+	$line=<CUBE>;
+	chomp $line;
+} 
+$lt=localtime;
+
+#write out headers
+print AVS "# AVS field file\n";
+print AVS "# Created with cube2avs on $lt\n";
+print AVS "#\n";
+print AVS "ndim=3\ndim1=$nx\ndim2=$ny\ndim3=$nz\n";
+print AVS "nspace=3\nveclen=1\ndata=float\n";
+
+$xs=($nx-1)*$m1;
+$ys=($ny-1)*$m5;
+$zs=($nz-1)*$m9;
+
+print AVS "min_ext=$cx $cy $cz\n";
+print AVS "max_ext=$xs $ys $zs\n";
+print AVS "field=uniform\n";
+printf AVS "%c%c",014,014;
+
+binmode(AVS);
+
+print "Writing AVS field file: ${nx}x${ny}x${nz} with factor $fact\n";
+
+#main loop, blocks of NX 
+for($z=1; $z<=$nx; ++$z)
+{
+	# blocks of NY
+	for($y=1; $y<=$ny; ++$y)
+	{
+		$xlist="";
+		# read in int(NZ/6)+1 lines
+		for($lc=1; $lc<=$line_num; ++$lc)
+		{
+			$line=<CUBE>;
+			chomp $line;
+			$line =~ s/^\s+//;
+			$line =~ s/\s+$//;
+			$xlist.="$line ";
+		}
+		$xlist =~ s/\s+$//;
+		$xlist =~ s/ +/ /g;
+		@xlist2=split(/\s+/,$xlist);
+		for ($e=0;$e<@xlist2;++$e)
+		{
+			$xlist2[$e]*=$fact;
+		}
+		$xbuf=pack($xformat,@xlist2);
+		print AVS $xbuf;
+	}
+}
+
+(@minmax2)=($cx,$xs,$cy,$ys,$cz,$zs);
+$minmax=pack("f6",@minmax2);
+print AVS $minmax;

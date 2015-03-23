@@ -1,0 +1,186 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Scene Settings: Background</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<b><font size=-1>- Background</font></b>
+<TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<p>
+The default background is simply the background color from DINO, specified with
+the line:
+
+<pre>
+background {color rgb <0.000,0.000,0.000>}
+</pre>
+
+<P>
+To use a white background, for example, use:
+
+<PRE>
+background {color rgb <1,1,1>}
+</PRE>
+
+<p>
+The three floating point values are RGB triplets ranging from zero to one. Due
+to the nature of a raytracer, however, much nicer backgrounds can be 
+constructed. Two examples shall be given here: a <i>backdrop</i> and an 
+<i>infinite plane</i>. The bounding box information written out by DINO is used,
+such as:
+
+<PRE>
+// bounding box
+// -24.978 -30.817 -20.448  26.820 26.427 18.574
+</PRE>
+
+<p>
+These additional objects can be placed anywhere in the <tt>.pov</tt> file, or
+they can be included from an additional file. A good place to put them is below
+the bounding box information.
+
+<H4>Backdrop</H4>
+
+An infinite plane is placed behind the objects, at least as much as the third
+value given for the bounding box, and assigned a texture. In this case, roughly
+twice the minimal z-value was choosen. Also, depth-cueing was off. 
+
+<p>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 BGCOLOR=#dfffef WIDTH=100%>
+<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/back1.jpeg')">
+<IMG SRC="scene/back1_small.jpeg" WIDTH=250 HEIGHT=250>
+</A>
+</TD><TD ALIGN=LEFT VALIGN=MIDDLE>
+<pre>
+plane {z, -40
+ texture {
+  pigment {color rgb 1}
+  normal {agate 0.9 agate_turb 10 scale 0.5}
+  finish {
+   ambient 0.0 
+   diffuse 0.5 brilliance 0.01
+   specular 0.3 roughness 0.05
+	}
+  scale 100
+ }
+}
+</pre>
+</TD>
+</TABLE>
+
+
+<H4>Infinite Plane</H4>
+
+An infinite plane is placed below out scene, using the second (min y) value from
+the bounding box - actually a little less. Also, an additional light is placed
+directly above the scene, to add some dramatic illumination. There is a little
+depth cueing in the scene.
+
+<p>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 BGCOLOR=#dfffef WIDTH=100%>
+<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/back2.jpeg')">
+<IMG SRC="scene/back2_small.jpeg" WIDTH=250 HEIGHT=250>
+</A>
+</TD><TD ALIGN=LEFT VALIGN=MIDDLE>
+<pre>
+light_source {
+  <0,100,0> 
+  color rgb 1 
+	spotlight radius 100 point_at <0,0,0>
+}
+plane {y, -31
+ texture {
+  pigment {checker color rgb 1 color rgb 0}
+  finish {
+   reflection 0.7
+  }
+  scale 10
+ }
+}
+</pre>
+</TD>
+</TABLE>
+
+<p>
+If you have generated a nice background for a scene and would like to share it,
+please drop me an email with the background code and an example image.
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

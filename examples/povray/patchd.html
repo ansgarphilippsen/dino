@@ -1,0 +1,308 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Patch: Detail</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<b><font size=-1>- Detail</font></b>
+</TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<h2>
+Patched POV-ray Version: <tt><font color="#663366">smooth_color_triangle</font></tt></h2>
+
+<hr SIZE=3 NOSHADE WIDTH="100%">
+<br>Step 1: added color capabilities to mesh object (<tt>mesh.h</tt>),
+added another object type <tt>COLOR_MESH_OBJECT</tt> (<tt>objects.h</tt>)
+to identify mesh.
+<p>Step 2: added token (<tt>tokenize.c</tt>) and object <tt>SMOOTH_COLOR_TRIANGLE</tt>
+to mesh (<tt>mesh.c</tt>) and parsing (<tt>parse.[c,h]</tt>)
+<p>Step 3: implement a catch-point during rendering, This was done in l<tt>ighting.c</tt>
+in the routine <tt>Determine_Apparent_Colour</tt>: &lt;
+<pre>void Determine_Apparent_Colour(INTERSECTION *Ray_Intersection, COLOUR Colour, RAY *Ray, DBL Weight)
+{
+&nbsp; int i, Texture_Count;
+&nbsp; size_t savelights_size, save_tw_size;
+&nbsp; DBL *save_Weights = NULL;
+&nbsp; DBL Normal_Direction;
+&nbsp; COLOUR C1;
+&nbsp; VECTOR Raw_Normal;
+&nbsp; VECTOR IPoint;
+&nbsp; TEXTURE *Texture, **save_Textures = NULL;
+&nbsp; TEXTURE Temp_Texture; /* AP */
+&nbsp; LIGHT_TESTED *savelights = NULL;</pre>
+- - - some lines omitted - - -
+<pre>&nbsp; Texture_Count = create_texture_list (Ray_Intersection);
+
+&nbsp; /*
+&nbsp;&nbsp; * Now, we perform the lighting calculations by stepping through
+&nbsp;&nbsp; * the list of textures and summing the weighted color.
+&nbsp;&nbsp; */
+
+&nbsp; for (i = 0; i &lt; Texture_Count; i++)
+&nbsp; {
+&nbsp;&nbsp;&nbsp; /* If contribution of this texture is neglectable skip ahead. */
+
+&nbsp;&nbsp;&nbsp; if (Weight_List[i] &lt; BLACK_LEVEL)
+&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; continue;
+&nbsp;&nbsp;&nbsp; }
+
+&nbsp;&nbsp;&nbsp; Texture = Texture_List[i];
+
+&nbsp;&nbsp;&nbsp; /* AP */
+&nbsp;&nbsp;&nbsp; if (Ray_Intersection->Object->Type &amp; COLOR_MESH_OBJECT) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mesh_Interpolate will only return TRUE - and hence override
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the current texture - if the triangle is a colored triangle
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(Mesh_Interpolate(C1,IPoint,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (MESH *)Ray_Intersection->Object,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (MESH_TRIANGLE *)Ray_Intersection->Pointer)==TRUE) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; save a copy of the current texture - in case it is shared among
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objects - then force the texture to type plain and the&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interpolated color
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; memcpy(&amp;Temp_Texture,Texture,sizeof(TEXTURE));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Texture=&amp;Temp_Texture;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Texture->Pigment->Type=PLAIN_PATTERN;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Texture->Pigment->Colour[0]=C1[0];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Texture->Pigment->Colour[1]=C1[1];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Texture->Pigment->Colour[2]=C1[2];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Texture->Pigment->Colour[3]=C1[3];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Texture->Pigment->Colour[4]=C1[4];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; }
+
+&nbsp;&nbsp;&nbsp; do_texture_map(C1, Texture, IPoint, Raw_Normal, Ray, Weight, Ray_Intersection, FALSE);
+
+
+
+&nbsp;&nbsp;&nbsp; Colour[RED]&nbsp;&nbsp; += Weight_List[i] * C1[RED];
+&nbsp;&nbsp;&nbsp; Colour[GREEN] += Weight_List[i] * C1[GREEN];
+&nbsp;&nbsp;&nbsp; Colour[BLUE]&nbsp; += Weight_List[i] * C1[BLUE];
+
+</pre>
+During texture parsing, if the current object is a <tt>COLOR_MESH_OBJECT</tt>,
+branch to <tt>Mesh_Interpolate</tt> to calculate the interpolated color
+at position <tt>IPoint</tt>, using the intersected mesh triangle. If interpolation
+is successful, force the current texture pigment to this color.
+<p>Following is the interpolation function, implemented in <tt>mesh.c</tt>
+and <tt>triangle.c</tt>:
+<pre>
+/* AP */
+
+/*
+&nbsp; Interpolate the three vertice colors of mesh-triangle tri to a single color
+&nbsp; at position IPoint. If mesh-triangle is not a smooth_color_triange, ignore
+&nbsp; interpolation and return FALSE
+*/
+
+int Mesh_Interpolate(COLOUR Col, VECTOR IPoint, MESH *m, MESH_TRIANGLE *tri)
+{
+&nbsp; VECTOR P1,P2,P3;
+&nbsp; COLOUR NCol;
+&nbsp; if(tri->Color) {
+&nbsp;&nbsp;&nbsp; if(tri->C1==-1 ||
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tri->C2==-1 ||
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tri->C3==-1)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return FALSE;
+&nbsp;&nbsp;&nbsp; P1[0]=m->Data->Vertices[tri->P1][0];
+&nbsp;&nbsp;&nbsp; P1[1]=m->Data->Vertices[tri->P1][1];
+&nbsp;&nbsp;&nbsp; P1[2]=m->Data->Vertices[tri->P1][2];
+&nbsp;&nbsp;&nbsp; P2[0]=m->Data->Vertices[tri->P2][0];
+&nbsp;&nbsp;&nbsp; P2[1]=m->Data->Vertices[tri->P2][1];
+&nbsp;&nbsp;&nbsp; P2[2]=m->Data->Vertices[tri->P2][2];
+&nbsp;&nbsp;&nbsp; P3[0]=m->Data->Vertices[tri->P3][0];
+&nbsp;&nbsp;&nbsp; P3[1]=m->Data->Vertices[tri->P3][1];
+&nbsp;&nbsp;&nbsp; P3[2]=m->Data->Vertices[tri->P3][2];
+&nbsp;&nbsp;&nbsp; Interpolate_Smooth_Color(NCol, IPoint,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P1,P2,P3,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m->Data->Colors[tri->C1],
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m->Data->Colors[tri->C2],
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m->Data->Colors[tri->C3]);
+&nbsp;&nbsp;&nbsp; Col[0]=NCol[0];
+&nbsp;&nbsp;&nbsp; Col[1]=NCol[1];
+&nbsp;&nbsp;&nbsp; Col[2]=NCol[2];
+&nbsp;&nbsp;&nbsp; Col[3]=NCol[3];
+&nbsp;&nbsp;&nbsp; Col[4]=NCol[4];
+&nbsp;&nbsp;&nbsp; return TRUE;
+&nbsp; } else {
+&nbsp;&nbsp;&nbsp; return FALSE;
+&nbsp; }
+}
+
+int Interpolate_Smooth_Color(COLOUR Col, VECTOR IPoint, VECTOR P1, VECTOR P2, VECTOR P3, COLOUR C1, COLOUR C2, COLOUR C3)
+{
+&nbsp; int i;
+
+&nbsp; DBL t1,t2,t3,tsum;
+&nbsp; COLOUR CInt;
+
+&nbsp; t1=Calculate_Smooth_T(IPoint, P1, P2, P3);
+&nbsp; t2=Calculate_Smooth_T(IPoint, P2, P3, P1);
+&nbsp; t3=Calculate_Smooth_T(IPoint, P3, P1, P2);
+
+&nbsp; tsum=(1.0-t1)+(1.0-t2)+(1.0-t3);
+
+&nbsp; for(i=0;i&lt;5;i++)
+&nbsp;&nbsp;&nbsp; Col[i]=((1.0-t1)*C1[i]+(1.0-t2)*C2[i]+(1.0-t3)*C3[i])/tsum;
+&nbsp;&nbsp;
+&nbsp; return TRUE;
+}
+
+DBL Calculate_Smooth_T(VECTOR IPoint, VECTOR P1, VECTOR P2, VECTOR P3)
+{
+&nbsp; DBL a,b,c,d,e,f,g,h,i;
+&nbsp; DBL dm1,dm2,dm3,r,s,t;
+&nbsp; VECTOR Q;
+
+&nbsp; a=IPoint[0]-P1[0];
+&nbsp; b=P2[0]-P3[0];
+&nbsp; c=P2[0]-P1[0];
+
+&nbsp; d=IPoint[1]-P1[1];
+&nbsp; e=P2[1]-P3[1];
+&nbsp; f=P2[1]-P1[1];
+
+&nbsp; g=IPoint[2]-P1[2];
+&nbsp; h=P2[2]-P3[2];
+&nbsp; i=P2[2]-P1[2];
+
+&nbsp; dm1=a*e-d*b;
+&nbsp; dm2=a*h-g*b;
+&nbsp; dm3=d*h-g*e;
+
+&nbsp; if(dm1*dm1 < EPSILON) {
+    if(dm2*dm2 < EPSILON) {
+      if(dm3*dm3 < EPSILON) {
+	fprintf(stderr,"all determinants too small\n");
+	return FALSE;
+      } else {
+	/* use dm3 */
+	r=(f*h-i*e)/dm3;
+	s=(d*i-g*f)/dm3;
+      }  
+    } else {
+      /* use dm2 */
+      r=(c*h-b*i)/dm2;
+      s=(a*i-g*c)/dm2;
+    }
+  } else {
+    /* use dm1 */
+    r=(c*e-f*b)/dm1;
+    s=(a*f-d*c)/dm1;
+  }
+
+
+  Q[0]=P2[0]+s*(P3[0]-P2[0]);
+  Q[1]=P2[1]+s*(P3[1]-P2[1]);
+  Q[2]=P2[2]+s*(P3[2]-P2[2]);
+
+  /*
+    t=(M-A)/(Q-A)
+   */
+
+  a=Q[0]-P1[0];
+  b=Q[1]-P1[1];
+  c=Q[2]-P1[2];
+  
+  if(a*a < EPSILON) {
+    if(b*b < EPSILON) {
+      if(c*c < EPSILON) {
+	t=0;
+      } else {
+	t=(IPoint[2]-P1[2])/c;
+      }
+    } else {
+	t=(IPoint[1]-P1[1])/b;
+    }
+  } else {
+	t=(IPoint[0]-P1[0])/a;
+  }
+
+  return t;
+}
+
+
+</PRE>
+
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

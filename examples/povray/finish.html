@@ -1,0 +1,183 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Material Settings: Finish modifiers</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<b><font size=-1>- Finish modifiers</font></b>
+<TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<P>
+From the POVray manual:
+
+<BLOCKQUOTE>
+The finish properties of a surface can greatly affect its appearance. How does
+light reflect? What happens in shadows? What kind of highlights are visible. To
+answer these questions you need a finish.
+</BLOCKQUOTE>
+
+<P>
+The following code is written into the finish section of each object in the
+<tt>.pov</tt> file (the actual values may vary depending on the object type):
+
+<pre>
+finish {
+  ambient 0.10
+  diffuse 0.70 brilliance 1.00
+  specular 0.00 roughness 0.01
+}
+</pre>
+
+<P>
+For a complete treatment of the finish statement and all its keywords, please
+consult the POVray manual. Here only the effect of changing some of the above
+values is shown.
+
+<P>
+<CENTER>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/dino.jpg')">
+<IMG SRC="material/dino_small.jpg" WIDTH=250 HEIGHT=250>
+</A><BR>
+The image as displayed in DINO
+
+</TD><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/finish1.jpg')">
+<IMG SRC="material/finish1_small.jpg" WIDTH=250 HEIGHT=250>
+</A><BR>
+The POVray rendered image with the default material settings from above.
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/finish2.jpeg')">
+<IMG SRC="material/finish2_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+The <tt>brilliance</tt> value at 2.0, causing the diffuse hilight to spread out
+less, emphasizing the roundness of the shape.
+
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/finish3.jpeg')">
+<IMG SRC="material/finish3_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+The <tt>brilliance</tt> value at 0.5, causing the diffuse hilight to be spread out
+more, de-emphasizing the roundness of the shape
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/finish4.jpeg')">
+<IMG SRC="material/finish4_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+Adding a <tt>specular</tt> hilight of 0.5 with the (default) <tt>roughness</tt>
+of 0.01 (<tt>brilliance</tt> back to 1.0)
+
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/finish5.jpeg')">
+<IMG SRC="material/finish5_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+Adding a <tt>specular</tt> hilight of 0.5 with a  higher <tt>roughness</tt> of
+0.08 (<tt>brilliance</tt> back to 1.0)
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/finish6.jpeg')">
+<IMG SRC="material/finish6_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<pre>
+ambient 0.00
+diffuse 1.0  brilliance 1.50
+specular 1.0 roughness 0.005
+</pre>
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/finish7.jpeg')">
+<IMG SRC="material/finish7_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<pre>
+ambient 0.30 
+diffuse 0.5  brilliance 0.8
+specular 0.2 roughness 0.1
+</pre>
+</TD></TR>
+
+
+</TABLE>
+</CENTER>
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

@@ -1,0 +1,179 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Scene Settings: Depth Effect</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<b><font size=-1>- Depth Effect</font></b>
+</TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<P>
+A common technique to emphasize the three dimensionsionality of a two
+dimensional image is to use a depth-cueing effect, fading parts of the
+three dimensional scene into the background depending on how far they are from
+the observer. This is demonstrated below. Both pictures are directly from DINO.
+The one on the left fades into the black background, while the one on the right
+has equal intensity irrespective of the distance of the object from the
+observer.
+
+<p>
+<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 BGCOLOR=#dfffef WIDTH=100%>
+<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/depth1.jpeg')">
+<IMG SRC="scene/depth1_small.jpeg">
+</A><br>
+With depth-cueing
+</TD><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/depth2.jpeg')">
+<IMG SRC="scene/depth2_small.jpeg">
+</A><br>
+No depth-cueing
+</TD></TR>
+</TABLE>
+
+<p>
+This depth-cueing effect is implemented using fog, in the case above black fog.
+To achieve the same effect in POVray, <i>light attenuation</i> is used by adding
+the following to each <tt>.pov</tt> file (some numbers may vary depending on the
+scene): 
+
+<pre>
+// depth cueing
+plane {z, 31.065
+  texture {pigment {color rgbft <0,0,0,1,1>}}
+  hollow interior {fade_power 2 fade_distance 18}
+}
+</pre>
+
+<p>
+An infinite plane is defined along the xy-plane (normal pointing towards
+positive z, ie away from camera) positioned at a z value of - in this case - 
+31.065 (which is the position of the near clipping plane in DINO). The
+<tt>texture</tt> is set to a simple black and completely transparent surface -
+after all, we don't want to see the plane, but the objects behind it.
+This plane is also set to <tt>hollow</tt>, otherwise POVray would treat the area
+behind the plane as solid! Just think of the are behind the plane as 'inside'.
+The <tt>interior</tt> settings now finally specify how to treat the light behind
+the plane (from the POVray manual):
+
+<BLOCKQUOTE>
+The <tt>fade_distance</tt> value determines the distance the light has to travel
+to reach half intensity while the <tt>fade_power</tt> value determines how fast
+the light will fall off. For realistic effects a fade power of 1 to 2 should be 
+used. Default values for both keywords is 0.0 which turns this feature off.
+</BLOCKQUOTE>
+
+<p>
+The value for <tt>fade_distance</tt> is determined from the far clipping plane
+position in DINO. For the example from above, here are the rendered scenes with
+different settings:
+
+<p>
+<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 BGCOLOR=#dfffef WIDTH=100%>
+<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/depth0.jpeg')">
+<IMG SRC="scene/depth0_small.jpeg">
+</A><BR>
+no attenuation
+</TD><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/depth3.jpeg')">
+<IMG SRC="scene/depth3_small.jpeg">
+</A><BR>
+<tt>fade_power 2.0 fade_distance 18</tt>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/depth4.jpeg')">
+<IMG SRC="scene/depth4_small.jpeg">
+</A><BR>
+<tt>fade_power 2.0 fade_distance 12</tt>
+</TD><TD ALIGN=CENTER VALIGN=MIDDLE>
+<A HREF="javascript:openpic('scene/depth5.jpeg')">
+<IMG SRC="scene/depth5_small.jpeg">
+</A><BR>
+<tt>fade_power 4.0 fade_distance 18</tt>
+</TD></TR>
+</TABLE>
+
+<p>
+If you need to turn attenuation off, it is better to comment out the two
+lines specifiying the plane rather than setting the values to zero, because the
+scene will render much faster.
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

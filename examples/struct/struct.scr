@@ -1,0 +1,49 @@
+// example using IIB subunit of the fructose transporter
+// Schauder et. al. 1997                                                        
+
+// define secondary structure
+set helix rnum=18:26,36:40,42:49,63:71,88:96,125:136,154:159 
+set strand rnum=57:61,30:34,79:84,3:10,102:107,140:143
+
+// load pdb file, a dataset named iib will be created
+load iib.pdb
+
+// set the secondary structure, default is coil
+.iib set rtype=helix -sel $helix
+.iib set rtype=strand -sel $strand
+
+// create an object containing all atoms (selection ommited, defaults to *)
+.iib new -name all
+
+// center on this object
+scene center [.iib.all]
+
+// adjust the clipping planes
+scene autoslab
+scene set near-=5,far+=5
+
+// change rendering mode
+.iib.all render cpk,detail=3
+.iib.all render custom,bw=0.2,sr=0.2,detail=3,detail2=2
+.iib.all render simple,lw=2
+
+// change coloring, e.g. of carbon atoms
+.iib.all set color=yellow -sel ele=C
+
+// hide this object and create CA trace
+.iib.all hide
+.iib new -name ca -type trace
+
+// color helix and strand residues differently
+.iib.ca set color=green -sel $strand
+.iib.ca set color=purple -sel $helix
+
+// since sec structure was defined above, render it this way
+.iib.ca render hsc
+
+// other rendering modes
+.iib.ca render sline
+.iib.ca render tube
+.iib.ca render custom
+.iib.ca render simple
+

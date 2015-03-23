@@ -1,0 +1,188 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Material Settings: Normal modifiers</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<b><font size=-1>- Normal modifiers</font></b>
+<TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<P>
+From the POVray manual:
+
+<BLOCKQUOTE>
+Ray-tracing is known for the dramatic way it depicts reflection, refraction and
+lighting effects. Much of our perception depends on the reflective properties of
+an object. Ray tracing can exploit this by playing tricks on our perception to
+make us see complex details that aren't really there. Suppose you wanted a very
+bumpy surface on the object. It would be very difficult to mathematically model
+lots of bumps. We can however simulate the way bumps look by altering the way
+light reflects off of the surface. Reflection calculations depend on a vector
+called a surface normal vector. This is a vector which points away from the
+surface and is perpendicular to it. By artificially modifying (or perturbing)
+this normal vector you can simulate bumps. This is done by adding an optional
+normal statement.Note that attaching a normal pattern does not really modify the
+surface. It only affects the way light reflects or refracts at the surface so
+that it looks bumpy. 
+</BLOCKQUOTE>
+
+<P>
+The following code is written into the normal section of each object in the
+<tt>.pov</tt> file (the actual values may vary depending on the object type):
+
+<pre>
+normal {granite 0.0 scale 1.0}
+</pre>
+
+<P>
+The perturbation of the normal vectors is turned <b>off</b> by default. The
+first expression indicates the type of perturbation function that is to be used
+(called a <i>PATTERN_TYPE</i> in POVray). There are about 30 different functions
+(or patterns)
+available, but only a few will be demonstrated here: 
+<tt>granite</tt>, <tt>bumps</tt>, <tt>bozo</tt>, <tt>crackle</tt> and
+<tt>agate</tt>.
+ The floating point numbers after the pattern is the intensity, a
+value of 0.0 turns the perturbation off. The <tt>scale</tt> can be thought of as
+the amount the perturbation is stretched out on the surface, see examples below.
+
+<P>
+Please note that all examples below were rendered with <tt>+A0.2</tt>
+antialiasing because the effects can be quite small. The <A
+HREF=finish.html>finish settings</A> are the default values.
+
+<P>
+<CENTER>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/dino.jpg')">
+<IMG SRC="material/dino_small.jpg" WIDTH=250 HEIGHT=250>
+</A><BR>
+The image as displayed in DINO
+
+</TD><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/normal1.jpg')">
+<IMG SRC="material/normal1_small.jpg" WIDTH=250 HEIGHT=250>
+</A><BR>
+The POVray rendered image with the default normal settings from above (no
+perturbation)
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/normal2.jpeg')">
+<IMG SRC="material/normal2_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>granite 0.5 scale 1.0</tt>
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/normal3.jpeg')">
+<IMG SRC="material/normal3_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>granite 0.8 scale 3.0</tt>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/normal4.jpeg')">
+<IMG SRC="material/normal4_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>bumps 0.3 scale 0.3</tt>
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/normal5.jpeg')">
+<IMG SRC="material/normal5_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>bozo 0.8 scale 0.5</tt>
+</TD></TR>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/normal6.jpeg')">
+<IMG SRC="material/normal6_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>crackle 1.2 scale 1.5 turbulence 0.5</tt>
+</TD><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('material/normal7.jpeg')">
+<IMG SRC="material/normal7_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>agate 0.4 agate_turb 4 scale 3.0</tt>
+</TD></TR>
+
+
+</TABLE>
+</CENTER>
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

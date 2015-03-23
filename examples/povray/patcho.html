@@ -1,0 +1,150 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Patch: Overview</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<b><font size=-1>- Overview</font></b>
+<TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<h2> Patched POV-ray Version: <tt><font
+color="#663366">smooth_color_triangle</font></tt></h2>
+
+<hr SIZE=3 NOSHADE WIDTH="100%"> <br>&nbsp; <table CELLSPACING=5 CELLPADDING=5
+WIDTH="100%" NOSAVE > <tr ALIGN=LEFT VALIGN=TOP NOSAVE> <td ALIGN=CENTER
+VALIGN=CENTER BGCOLOR="#000000" NOSAVE><img SRC="patch/tri.gif" height=213
+width=192></td>
+
+<td NOSAVE>While <a href="http://www.povray.org">POV-ray</a> is an excellent
+raytracer, it misses a feature which is utilized in a number of visualization
+approaches: triangles with individual colors for each vertex, which are
+interpolated during rendering. <p>In an attempt to add this feature, I have
+added a little patch to the current (3.1g) POV-ray source. This adds the object
+<b><tt>smooth_color_triangle</tt></b> to a mesh object (and only to a mesh
+object). It is specified like <b><tt>smooth_triangle</tt></b>, with added
+colors (see the syntax specification below).&nbsp; <ul> <li> Download the
+modified files: <tt><a
+href="patch/pov_color_changes.tgz">pov_color_changes.tgz</a></tt>. If you do not have
+the source code, please get it from <tt><a
+href="http://www.povray.org">www.povray.org<br> </a></tt>The modifications are
+labeled as <tt>/* AP */ </tt>or <tt>/* [AP] */</tt></li> </ul>
+
+<ul> <li> <a href=patchd.html>
+Detailed look at the changes and the mechanism
+behind the patch</a></li> </ul>
+
+<ul> <li> <a href="patch/x-pov.linuxi386.gz">Linux 386 executable</a> (RH6.0
+glibc2.1)</li>
+
+<li> <a href="patch/x-pov.irix.gz">SGI IRIX executable</a> (IRIX 6.5)</li>
+
+<li> <a href="patch/POV-Ray_patch_PPC.sit.hqx">MacOS PPC version</a> 
+(kindly provided
+by <a href="mailto:weber@math.uni-bonn.de">Matthias Weber</a>) </ul> <p>Please
+feel free to contact me about this patch at <tt>ansgar dot philippsen at unibas.ch</tt></td> </tr>
+</table>
+
+<hr size=3 noshade>
+
+<h4>
+<p>
+<font color="#CC33CC">09 Sep 1999</font></h4> After I released the first patch,
+I found two problems when using standard meshes. A malloc error could occur and
+normal mesh functionality was broken for predefined textures. This should have
+been fixed with the new version of this patch.
+</p>
+<hr size=3 noshade>
+<table COLS=1 WIDTH="100%" BGCOLOR="#FFCC50" NOSAVE > <tr NOSAVE> <td
+NOSAVE><b><u>SYNTAX</u></b> <p><i>MESH_TRIANGLE</i>:&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b><tt>triangle {</tt></b> <i>&lt;Corner_1>,
+&lt;Corner_2>, &lt;Corner_3> [MESH_TEXTURE] </i><b>}</b> |&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b><tt>smooth_triangle {&nbsp;</tt></b>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <i>&lt;Corner_1>, &lt;Normal_1>,&nbsp;</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp; &lt;Corner_2>, &lt;Normal_2>,&nbsp;</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp; &lt;Corner_3>, &lt;Normal_3>&nbsp;</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp; [MESH_TEXTURE]&nbsp;</i>
+<br><i>&nbsp;&nbsp;<tt> </tt></i><b><tt>}</tt></b> | <br><tt>&nbsp;
+<b>smooth_color_triangle {</b></tt> <br>&nbsp;&nbsp;&nbsp;&nbsp;
+<i>&lt;Corner_1>, &lt;Normal_1>, &lt;Color1>,</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp; &lt;Corner_2>, &lt;Normal_2>, &lt;Color2>,</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp; &lt;Corner_3>, &lt;Normal_3> ,&lt;Color3></i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp; [MESH_TEXTURE]&nbsp;</i> <br><b><tt>&nbsp;
+}</tt></b></td> </tr> </table>
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

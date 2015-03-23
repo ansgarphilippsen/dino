@@ -1,0 +1,46 @@
+// load the structure dataset
+load iib.pdb -name iib
+
+// load the surface dataset
+load iib -type msms -name surf
+
+// attach the surface to the structure
+// (thereby assigning each surface point
+// to an atom)
+.surf attach .iib
+
+// center on the surface
+scene center [.surf]
+
+// create a surface object 
+.surf new -name all
+
+// adjust the clipping planes
+scene autoslab
+
+// color the surface object according
+// to some underlying residue properties
+// the variables used here are predefined
+// by DINO, use 'var' to look at them
+.surf.all set color=blue -sel $basic
+.surf.all set color=blue4 -sel $basic2
+.surf.all set color=red -sel $acidic
+.surf.all set color=red4 -sel $acidic2
+.surf.all set color=cyan -sel $polar
+.surf.all set color=green -sel $aromatic
+.surf.all set color=yellow -sel $aliphatic
+
+// reset the color to white and make the surface
+// transparent  to show the underlying structure
+.surf.all set color=white
+.iib new -name all
+.iib.all render custom
+.surf.all render t=0.4
+
+// generate a solid surface
+// reset transparency and hide struct obj
+.surf.all render t=1
+.iib.all hide
+
+scene set near+=23
+.surf.all render solid,solidc=grey

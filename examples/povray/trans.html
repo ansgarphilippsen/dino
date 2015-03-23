@@ -1,0 +1,221 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>Material Settings: Transparency</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<A HREF=export.html><font size=-1>- Exporting from DINO</font></A><TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<b><font size=-1>- Transparency</font></b>
+<TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+<p>
+Transparency is a powerful feature which allows objects obscured by another
+object to become partially visible, by allowing light to pass through the
+obscuring object, revealing whats behind it.
+
+<P>
+Transparency in DINO is relatively simple: From a transparent object, only the
+frontmost part is drawn, using the <tt>t</tt> value to combine it with the
+already present objects in the scene. The order in which objects are created and
+drawn is important, and already using more than one transparent object can be
+cumbersome and the result unsatisfactory. To properly implement transparency in
+realtime visualization, the 3D primitives must be first sorted from back to
+front for <i>every</i> scene update. This would unacceptably slow down
+the visualization for already modestly complex scenes, therefore only a
+simplified transparency is implemented in DINO.
+
+<P>
+Ratracing on the other hand can treat transparency in a much more realistic way.
+As a ray hits a transparent surface, both the reflected ray as well as the ray
+passing through the surface are followed. In POVray, there are two types of
+transparency: <i>transmit</i> and <i>filter</i>. The former only diminishes the
+amount of light, irrespective of the color of the surface. The latter filters
+out some colors, subtracting them from the light passing through the surface.
+The transparency effect in DINO is based on transmitting light, not filtering
+it.
+
+<P>
+Going from the simplistic transparency in DINO to the complex one in POVray is
+not straighforward. Below is an example of an active site with a bound inhibitor
+(<tt>2OAT</tt>). The goal is to show both the structural detail of the inhibitor
+protein interaction as well as the shape of the binding pocket created by the
+active site residues. On the left is the picture as displayed in DINO, with a
+transparency value of 0.5. On the right is the POVray rendered scene with the
+written out values, using <tt>transmit</tt> of 0.5. The values for
+<tt>transmit</tt> and <tt>filter</tt> can be set for each object by the
+appropriate variable declared below the material definition, such as:
+
+<PRE>
+#declare _s_s_tp = 0.500;  // transmit value
+#decalre _s_s_fi = 0.000;  // filter value
+</PRE>
+
+<p>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/trans0.jpeg')">
+<IMG SRC="material/trans0_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+DINO output with <tt>render t=0.5</tt>
+</TD><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/trans1.jpeg')">
+<IMG SRC="material/trans1_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+Default POVray output with <tt>_tp=0.5</tt>
+</TD></TR>
+</TABLE>
+
+<HR NOSHADE SIZE=1>
+
+<P>
+Two tweak the display of the transparency, the surface is first rendered fully
+opaque. This is done by setting the <tt>transmit</tt> variable to <b>zero</b>,
+exactly opposite as in DINO. (<b>left</b>) Then, the <A
+HREF=finish.html><tt>finish</tt></A> settings are adjusted in a way
+that the diffuse light shapes each bump while reducing the ambient light
+contribution as much as possible. The specular contribution is turned off.
+(<b>right</b>)
+
+<P>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER VALIGN=TOP WIDTH=50%>
+<A HREF="javascript:openpic('material/trans2.jpeg')">
+<IMG SRC="material/trans2_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>_tp = 0.0</tt>
+</TD><TD ALIGN=CENTER VALIGN=TOP WIDTH=50%>
+<A HREF="javascript:openpic('material/trans3.jpeg')">
+<IMG SRC="material/trans3_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>
+ _tp = 0.0<BR>
+ ambient 0.05
+ diffuse 0.60  brilliance 1.7
+ specular 0.00 roughness 0.01
+</tt>
+</TD></TR>
+</TABLE>
+
+<HR NOSHADE SIZE=1>
+
+<P>
+Next, the <tt>transmit</tt> value is adjusted in a way that the objects behind
+the surface become clearly visible but their intensity is still reduced enough
+so its obvious they are obscured by the surface. Also, the diffuse setting might
+be adjusted so that the surface itself is still fairly visible. (<b>left</b>)
+Finally, some hilight is added with the specular light contribution, just so
+much that the hilight does not interfere with the objects behind the surface but
+still adds to the surface plasticity. (<b>right</b>)
+
+<P>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/trans4.jpeg')">
+<IMG SRC="material/trans4_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>
+_tp = 0.6<BR>
+diffuse 0.80
+</tt>
+</TD><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('material/trans5.jpeg')">
+<IMG SRC="material/trans5_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+<tt>
+specular 0.15 roughness 0.06
+</tt>
+</TD></TR>
+</TABLE>
+
+<p>
+The final settings:
+
+<PRE>
+finish {
+ ambient 0.05
+ diffuse 0.80  brilliance 1.7
+ specular 0.15 roughness 0.06
+}
+
+#declare _s_s_tp = 0.6;
+</PRE>
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>

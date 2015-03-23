@@ -1,0 +1,23 @@
+// load spider format
+load test.spi -name t
+
+// center in middle of scene
+scene center [.t]
+
+// set center of rotation to center of dataset
+.t set rcen=[.t]
+
+// create two object at different contour levels
+.t new -name c1 -set size=65,level=10
+.t new -name c2 -set size=65,level=15
+
+// color by range, using distance from rcen
+.t.c1 set color=purple:yellow -range prop=dist,val=0:30,clamp
+.t.c2 set color=orange:red -range prop=dist,val=10:30,clamp
+
+// go to surface rendering, outer obj is transparent
+.t.c1 render lines,t=0.3
+.t.c2 render fill,t=1
+
+
+

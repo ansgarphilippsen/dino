@@ -1,0 +1,43 @@
+// load the dna (from 1B8I)
+load dna.pdb
+
+// center on the dataset
+scene center [.dna]
+
+// create two objects
+.dna new -name all
+.dna new -type trace -name t
+
+// the trace passes through the backbone phosphates
+// for rendering modes simple, custom, sline and tube
+.dna.t render tube,bw=1
+
+// the tube can be flattened (axial ration != 1)
+.dna.t render tuber=2
+
+// the trace passes through the sugar C3' for
+// the rendering mode hsc
+.dna.t render hsc
+
+// the property color changes the object,
+// while color1 though color3 change the
+// backbone, the sugar and the base, resp
+.dna.t set color1=green
+.dna.t set color2=yellow
+.dna.t set color3=red    -sel rname=C
+.dna.t set color3=orange -sel rname=G
+.dna.t set color3=blue   -sel rname=T
+.dna.t set color3=cyan   -sel rname=A
+
+// update the rendering
+.dna.t render
+
+// base and sugar thickness can also be modified
+.dna.t render baset=0.8,sugart=0.6
+
+// second rendering possibility (first is nam=0)
+.dna.t render nam=1,tuber=1
+.dna.t set color2=red    -sel rname=C
+.dna.t set color2=orange -sel rname=G
+.dna.t set color2=blue   -sel rname=T
+.dna.t set color2=cyan   -sel rname=A

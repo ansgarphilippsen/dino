@@ -1,0 +1,203 @@
+<HTML>
+
+<script language="JavaScript">
+
+<!--
+
+function openpic(img) {
+ n = img.substring(img.lastIndexOf("/")+1,img.indexOf("."));
+ url = "viewpic.php?i=" + img;
+ window.open(url,n,"innerWidth=540,innerHeight=580,scrollbars=1");
+}
+//-->
+</script>
+
+
+<HEADER>
+<TITLE>
+DINO and POVray Tutorial
+</TITLE>
+</HEADER>
+<BODY BGCOLOR=#ffffff LINK=#0000ff ALINK=#7f00ff VLINK=#0000cf>
+
+<TABLE width=100% CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=#cfefdf>
+<TR>
+<TD WIDTH=1% ALIGN=CENTER VALIGN=BOTTOM>
+<H3>DINO&nbsp;&&nbsp;POVray</H3>
+
+<TD VALIGN=MIDDLE ALIGN=CENTER>
+<H4>General: Exporting from DINO</H4><TR>
+<TD WIDTH=1% VALIGN=TOP>
+<CENTER><A HREF='..'>DINO Homepage</A></CENTER>
+<HR SIZE=1 NOSHADE>
+<TABLE CELLSPACING=0 CELLPADDING=6 BORDER=0 WIDTH=100%>
+<TR><TD>
+<b><i>General</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=pov.html><font size=-1>- Introduction</font></A><TR><TD>
+<b><font size=-1>- Exporting from DINO</font></b>
+<TR><TD>
+<A HREF=content.html><font size=-1>- File contents</font></A><TR><TD>
+<A HREF=render.html><font size=-1>- Rendering the scene</font></A></TABLE><TR><TD>
+<b><i>Scene Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=camera.html><font size=-1>- Camera</font></A><TR><TD>
+<A HREF=light.html><font size=-1>- Light Sources</font></A><TR><TD>
+<A HREF=back.html><font size=-1>- Background</font></A><TR><TD>
+<A HREF=depth.html><font size=-1>- Depth Effect</font></A></TABLE><TR><TD>
+<b><i>Material Settings</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=overview.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=finish.html><font size=-1>- Finish modifiers</font></A><TR><TD>
+<A HREF=normal.html><font size=-1>- Normal modifiers</font></A><TR><TD>
+<A HREF=fin_norm.html><font size=-1>- Finish + Normal</font></A><TR><TD>
+<A HREF=trans.html><font size=-1>- Transparency</font></A><TR><TD>
+<A HREF=pre.html><font size=-1>- Predefined Textures</font></A></TABLE><TR><TD>
+<b><i>Patch</i></b>
+<TR><TD>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=3 WIDTH=100%>
+<TR><TD>
+<A HREF=patcho.html><font size=-1>- Overview</font></A><TR><TD>
+<A HREF=patchd.html><font size=-1>- Detail</font></A></TABLE></TABLE>
+
+<HR SIZE=1 NOSHADE>
+
+<small>last updated 26 Jul 2012<br><A HREF='mailto:dino@dino3d.org'><tt>dino@dino3d.org</tt></A>
+</small>
+
+<TD BGCOLOR=#ffffff VALIGN=top>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=20>
+<TR><TD ALIGN="JUSTIFY" VALIGN=TOP>
+The command in DINO to output POVray format is:
+
+<P>
+<CODE>dino&gt; write file.pov [(-patch | -smooth | -v35)]  [-nocolor]
+</CODE>
+
+<P>
+Either one or none of the additional parameters can be specified; this means
+that
+there are 5 different ways to generate a POVray file! What is the difference
+between them ? This effectively boils down to the way triangles are written out.
+One of them, <tt>-nocolor</tt>, is discussed in the section <A
+HREF=pre.html>Predefined Textures</A>. The other four are explained
+below.
+
+<P>
+Most of the objects in DINO consist of triangles, and frequently each corner of
+a triangle has a different color, which is interpolated across the triangle
+face. And this is the caveat in POVray: triangles cannot be specified with
+different colors at each corner, only with a single one (actually, a single
+texture) per face. This will lead to ugly effects, as shown below. 
+
+The left image is a snapshot directly from DINO, showing smooth color
+interpolation. The image on the right is the rendered POVray scene, as written
+out from DINO without any parameters specified; all the triangles are unicolored.
+
+<p>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=2 BGCOLOR=#dfffef WIDTH=100%>
+
+<TR><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('general/smooth0.jpeg')">
+<IMG SRC="general/smooth0_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+DINO output
+</TD><TD ALIGN=CENTER WIDTH=50%>
+<A HREF="javascript:openpic('general/smooth1.jpeg')">
+<IMG SRC="general/smooth1_small.jpeg" WIDTH=250 HEIGHT=250>
+</A><BR>
+Normal POVray 3.1g output
+</TD></TR>
+</TABLE>
+
+
+<p>
+As a workaround, three different choices are offered:
+
+<H4>1. In-build macro</H4>
+With the flag <TT>-smooth</TT>, the output <TT>file.inc</TT> will contain a macro which
+produces the smooth coloring during POVray rendering. This macro was designed by
+<A HREF="mailto:ccolefax@geocities.com">Chris Colefax</A> and slightly modified to work 
+in this case. 
+
+<H4>2. POVray patch</H4>
+I have designed a patch for POVray v3.1g which implements a new object type to allow
+smoothly colored triangles. You can find it and all background information  
+<A HREF=patcho.html>here</A>. The flag <TT>-patch</TT> produces
+output suitable for the patch.
+
+<H4>3. POVray v35 output</H4>
+The new POVray version 3.5 includes the smooth_color patch, but uses a totally different syntax. If you have this version installed, use the <tt>-v35</tt> flag to generate appropriate output.  
+<i>Detail</i>:
+Nathan Kopp has rewritten my <tt>smooth_color_triangle</tt> to allow
+three different <i>textures</i> to be placed at each triangle vertice, not only
+colors. The caveat, however, is that the textures need to be predefined. This
+creates a problem: One would like to specify a color for each vertex, but
+without creating a new texture for each vertex (leading to insane memory usage).
+DINO solves this problem by collapsing the colorspace of the object to 256
+colors, which are predefined in 256 textures. For practical purposes, this color
+reduction will be OK. <i>NOTE: the colors are only reduced at the edges. The
+interpolation still produces all shades!</i>
+
+<H4>Which workaround to choose ?</H4>
+The results of all three workarounds are visually pleasing (see below).
+The memory requirements for the smoothing macro, however, are unfortunately
+very high, and easily get prohibitive for average object sizes. One should probably go with the new POVray version 3.5
+
+<CENTER>
+
+<P>
+<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=5 BGCOLOR=#dfffef>
+
+<TR><TD ALIGN=CENTER>
+<A HREF="javascript:openpic('general/smooth2.jpeg')">
+<IMG SRC="general/smooth2_small.jpeg" WIDTH=250 HEIGHT=250>
+</A>
+</TD><TD ALIGN=LEFT VALIGN=MIDDLE>
+<b>Smooth Macro (<tt>-smooth</tt>)</b><BR>
+Parsing 6s<BR>
+Rendering 20s<BR>
+Memory usage 15.9MB
+</TD>
+</TR><TR>
+<TD ALIGN=CENTER>
+<A HREF="javascript:openpic('general/smooth3.jpeg')">
+<IMG SRC="general/smooth3_small.jpeg" WIDTH=250 HEIGHT=250>
+</A>
+</TD><TD>
+<b>Patched POVray 3.1 (<tt>-patch</tt>)</b><BR> 
+Parsing 1s<BR>
+Rendering 19s<BR>
+Memory usage 2.4MB
+</TD>
+</TR><TR>
+<TD ALIGN=CENTER>
+<A HREF="javascript:openpic('general/smooth4.jpeg')">
+<IMG SRC="general/smooth4_small.jpeg" WIDTH=250 HEIGHT=250>
+</A>
+</TD><TD>
+<b>POVray 3.5 (<tt>-v35</tt>)</b><BR> 
+Parsing 1s<BR>
+Rendering 27s<BR>
+Memory usage 2.0MB
+</TD></TR>
+</TABLE>
+</CENTER
+
+<P>
+<HR NOSHADE SIZE=1>
+<P ALIGN=RIGHT>
+<SMALL>(c) 2001-2005 Ansgar Philippsen</SMALL>
+
+</TD></TR>
+</TABLE>
+</TABLE>
+
+</BODY>
+</HTML>
