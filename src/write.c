@@ -62,6 +62,7 @@ int writeFile(char *name, struct WRITE_PARAM *p)
     debmsg("retrieving image");
     get_image(&img);
   } else {
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
     debmsg("binding to framebuffer");
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, write_globals.fbo);
     glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, write_globals.depthBuffer);
@@ -95,10 +96,12 @@ int writeFile(char *name, struct WRITE_PARAM *p)
     get_image(&img);
 
     debmsg("restoring settings");
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glDrawBuffer(GL_BACK);
+    glPopAttrib();
     gfx.win_width=ow;
     gfx.win_height=oh;
     gfxSetViewport();
-
   }
 
   switch(img.param.type) {
