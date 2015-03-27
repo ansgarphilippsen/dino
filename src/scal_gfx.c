@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <OpenGL/glu.h>
-#include <OpenGL/gl.h>
+#include "gl_include.h"
 
 #include "scal_db.h"
 #include "gfx.h"

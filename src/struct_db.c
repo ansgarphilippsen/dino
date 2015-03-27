@@ -1,4 +1,4 @@
-#include <OpenGL/gl.h>
+#include "gl_include.h"
 
 #include <time.h>
 #include <stdlib.h>

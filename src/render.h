@@ -1,4 +1,4 @@
-#include <OpenGL/gl.h>
+#include "gl_include.h"
 
 #ifndef RENDER_H
 #define RENDER_H

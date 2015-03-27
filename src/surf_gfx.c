@@ -1,7 +1,6 @@
 #include <stdio.h>
 
-#include <OpenGL/glu.h>
-#include <OpenGL/gl.h>
+#include "gl_include.h"
 
 #include "surf_db.h"
 

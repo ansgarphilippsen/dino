@@ -1,46 +1,29 @@
 # Makedef for linux
+# last tested o ubuntu 14
 
 CC   = gcc
 CPP  = g++
 
 ARCH=LINUX
-MACH=i386
-STRIP = strip -x -g
-#STRIP = echo
 
-OPTIONS += -DLINUX_STEREO
+OPTIONS += -DLINUX_STEREO \
+ -Wno-maybe-uninitialized \
+ -Wno-unused-result \
+ -Wno-pointer-sign \
+ -Wno-return-type \
+ -Wno-implicit-function-declaration \
+ -Wno-format-security
 
-LIBDIR = -L../extras/lib -L/usr/X11R6/lib64
 
-LIBSTATIC = /usr/lib64/libtiff.a /usr/lib64/libjpeg.a
-LIBSTATIC += /usr/lib64/libpng.a /usr/lib64/libz.a
+LIBSHARED = -lXp -lXft -lXi -lXt -lXmu -lXext -lX11 \
+            -lm -lpthread -ldl -ltiff -lpng
 
-#LIBSTATICC := $(shell $(CC) -print-libgcc-file-name)
-#LIBSTATIC += $(LIBSTATICC)
-
-LIBSHARED = -lXp -lXft -lXi -lXt -lXmu -lXext -lX11 -lm -lpthread -ldl
-
-ifdef STATIC
-
-# static version
-INCLUDE = -I../extras/include -I/usr/X11R6/include
-LIBGL = ../extras/lib/libGL.a ../extras/lib/libGLU.a
-LIBGLW = /usr/X11R6/lib/libGLw.a
-LIBMOTIF = /usr/X11R6/lib64/libXm.a
-
-else
-
-# motif static, rest shared
-
-#INCLUDE = -I../extras/include -I/usr/X11R6/include
 INCLUDE = -I/usr/X11R6/include
 LIBGL += -lGLU -lGL
-LIBMOTIF = /usr/X11R6/lib64/libXm.a
-
-endif
+LIBMOTIF = -lXm
 
 # add -pg to both for profiling
 COPT = -O3  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
 #COPT = -g  $(INCLUDE) $(OPTIONS) -D$(ARCH) -Wall -Wno-unused
-LOPT = $(LIBDIR) $(LIBGL) $(LIBMOTIF) $(LIBSHARED) $(LIBGLW) $(LIBSTATIC)
+LOPT = $(LIBGL) $(LIBMOTIF) $(LIBSHARED) 
 

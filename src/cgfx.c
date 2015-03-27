@@ -2,7 +2,7 @@
 #include <math.h>
 #include <string.h>
 
-#include <OpenGL/gl.h>
+#include "gl_include.h"
 
 #include "dino.h"
 #include "cgfx.h"

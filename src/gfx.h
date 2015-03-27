@@ -1,5 +1,4 @@
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include "gl_include.h"
 
 #ifndef GFX_H
 #define GFX_H

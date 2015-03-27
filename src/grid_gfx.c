@@ -1,4 +1,4 @@
-#include <OpenGL/gl.h>
+#include "gl_include.h"
 
 #include "grid_db.h"
 #include "dbm.h"

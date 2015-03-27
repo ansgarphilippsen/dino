@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include "gl_include.h"
 
 #include "transform.h"
 #include "Cmalloc.h"

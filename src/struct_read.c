@@ -1978,7 +1978,7 @@ int structFileEntry2DB(struct STRUCT_FILE *sf,dbmStructNode *node, int model_fla
     pass_atom=1;
     if(!isspace(ae->altloc)) {
       // only accept first altloc
-      for(int i=0;i<crp->atom_count;++i) {
+      for(i=0;i<crp->atom_count;++i) {
         cap=crp->atom_index[i];
         if(clStrcmp(cap->name,ae->aname)) {
           // duplicate atom exists, skipping this one

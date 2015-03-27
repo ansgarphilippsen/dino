@@ -1,4 +1,4 @@
-#include <OpenGL/gl.h>
+#include "gl_include.h"
 
 #ifndef GLF_H
 #define GLF_H
