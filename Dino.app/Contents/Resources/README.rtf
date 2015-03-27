@@ -1,0 +1,137 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanBdMS;\f1\froman\fcharset77 TimesNewRomanMS;\f2\froman\fcharset77 TimesNewRomanItMS;
+\f3\froman\fcharset77 Times-Bold;\f4\froman\fcharset77 Times-Roman;\f5\fmodern\fcharset77 Courier;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;}
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f0\b\fs36 \cf0 Welcome to Dino v0.9.2 on MacOS X\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f1\b0\fs32 \cf0 \
+Thank you for your interest in DINO. This program aims to participate in the ongoing effort to understand the structure and function of biological macromolecules. It seeks specifically to visually combine results obtained from all different fields that involve structural biology, such as x-ray crystallography, structural NMR, electron and atomic-force microsopy and  computational biophysics (including molecular dynamics, structure prediction and electrostatic potential calculations).\
+\
+\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f0\b\fs36 \cf0 About DINO
+\f1\b0\fs32 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\fs28 \cf0 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\fs32 \cf0 DINO aims to visualize all this structural data in a single program and to allow the user to explore relationships between the data. There are five data-types supported: 
+\f2\i structure
+\f1\i0  (atomic coordinates and trajectories), 
+\f2\i surface
+\f1\i0  (molecular surfaces), 
+\f2\i scalar fields
+\f1\i0  (electron densities and electrostatic potentials), 
+\f2\i topographs
+\f1\i0  (surface topography scans) and 
+\f2\i geom
+\f1\i0  (geometric primitives such as lines). \
+\
+The number and size of the data the program can handle is only limited by the amount of RAM present in the system. No artifical limits are set. \
+\
+Supported input file formats are PDB (coordinates), X-PLOR/CNS (coordinates, electron densities and trajectories), CHARMM (coordinates, trajectories and scalar fields), CCP4 (electron densities), UHBD (electrostatic potentials), DELPHI/GRASP (electrostatic potentials), MSMS (surfaces), MSP (surfaces), GRASP (surfaces), MEAD (coordinates and electrostatic potentials) and greyscale TIFF (surface topographs). \
+\
+Output can be written as PNG, PostScript, POV-Ray (v3.1 and MegaPov) \
+\
+Please note that the current release is considered beta. Most of the features have been implemented, however, and current work is dedicated to improving code robustness, removing bugs and implementing more formats. Please do not hesitate to contact 
+\f2\i dino@dino3d.org
+\f1\i0  for any questions, comments, criticism or bug reports.\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\fs26 \cf0 \
+\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f3\b\fs36 \cf0 Installing DINO on MacOS X\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f4\b0\fs32 \cf0 \
+Copy the DINO application bundle to the /Applications directory.\
+\
+To use DINO from the Terminal application, it is convenient to create an alias like the following:\
+\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f5\fs26 \cf0 alias dino  '/Applications/Dino.app/Contents/MacOS/Dino'
+\f4\fs32 \
+\
+DINO can then be started from the command line with its options:\
+\
+
+\f5\fs26 dino [-s scriptfile] [-log logfile] [+log] [-debug]
+\f4\fs32 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f1\fs26 \cf0 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\fs32 \cf0 Note:  In this release of DINO for MacOS X, the functions called by the simultaneous depression of the left and middle mouse-buttons are rather called by the depression of the left-button and the alt-key. If you are using a single-button mouse, the middle-button can be emulated by the combination [mouse-button + command-key] and the right-button by [mouse-button + ctrl-key].
+\fs26  
+\fs32 The alternate input device (mouse2) is not selected by the ctrl-key but by the caps-lock-key.\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f0\b\fs36 \cf0 \
+\
+Discussion Forums \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f1\b0\fs26 \cf0 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\fs32 \cf0 There are now several help/discussion forums available for DINO. To post or search the forums, go to the following web page:  
+\f5\fs26 http://www.dino3d.org
+\f1\fs32  
+\fs26  \
+\
+
+\fs32 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\f0\b\fs36 \cf0 Credits
+\f1\b0\fs32 \
+\
+DINO is developed by Ansgar Philippsen at the Division of Structural Biology, Biozentrum, University of Basel, Switzerland.\
+(
+\f2\i \CocoaLigature0 Ansgar.Philippsen@unibas.ch
+\f1\i0 \CocoaLigature1 )\
+\
+The MacOS X distribution is maintained by Simon Bern\'8fche.\
+(
+\f2\i simon.berneche@unibas.ch
+\f1\i0 )\
+\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\ql\qnatural
+\cf0 \CocoaLigature0 DINO's command line interface (CLI) was taken from F-Script. \'a9 \cf2 1998\cf0 ,\cf2 2001\cf0  Philippe Mougin.\CocoaLigature1 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+\cf0 \
+_____________________________________________________________\
+\
+DINO is currently in a beta stage and freely available to non-profit and profit based institutions. Use on your own risk. \
+\
+If you use DINO for presentations or publications, please quote: \
+DINO: Visualizing Structural Biology (2001) http://www.dino3d.org \
+\
+\
+\
+\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\fs26 \cf0 \
+\
+\
+\
+\
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\ql\qnatural
+\cf0 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+\cf0 \
+\pard\tx1440\tx2880\tx4320\tx5760\tx7200\ri-1140\qj
+
+\fs28 \cf0 \
+}

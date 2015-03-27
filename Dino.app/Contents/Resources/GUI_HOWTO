@@ -1,0 +1,216 @@
+FUNCTIONS TO BE PROVIDED
+------------------------
+
+The graphical user interface (GUI) part must provide the following functions,
+as defined in gui_ext.h (SOME OF THESE ARE BOUND TO CHANGE FOR THE FINAL 
+SPECIFICATIONS)
+
+ int guiInit(int argc, char **argv)
+
+Initialization, called from main() with the command line parameters
+
+ int guiMainLoop(void)
+
+Called after all initialization is done, this routine is expected to never 
+return, and it should handle all windows event management as well implement
+a timer with ~10ms resolution
+
+ int guiMessage(char *m)
+
+Called when a message is to be displayed in the main gfx status bar
+
+ int guiCreateOffscreenContext(int w, int h, int af)
+ int guiDestroyOffscreenContext(int n)
+
+Offscreen context handling procedures, required for a "write -s N" command.
+The first call receives the width and height ad well as the accumulation flag
+(0 for off), returning an integer handle that identifies the context. This
+integer must be passed to the second routine to destroy the context again.
+
+ void guiSwapBuffers(void)
+
+Swap front and back OpenGL drawing buffers (should be routed directly to
+the platform specific SwapBuffer command, e.g. glxSwapBuffers for X)
+
+ int guiQueryStereo(void)
+
+Must return value > 0 if windowing system supports stereo (ie SGI) or <0 
+if not (ie all other platforms)
+
+ void guiCMICallback(const cmiToken *t)
+
+Required for the initialization of the Common Message Interface (cmi)
+(see below)
+
+
+INTERACTING WITH DINO BACKEND
+-----------------------------
+
+header files to be included from the main src directory
+gui_ext.h -  contains the above prototypes
+cmi.h     -  prototypes and definitions for the CMI
+
+One of the first calls in the initialization should be
+
+cmiRegisterCallback(CMI_TARGET_GUI, guiCMICallback(const cmiToken *t))
+
+This will cause the backend to call guiCMICallback whenever a token with
+the target CMI_TARGET_GUI is received. 
+
+
+INCOMING CMI MESSAGES
+---------------------
+
+The possible commands for the gui to receive are:
+
+t->command : CMI_MESSAGE
+t->value   : (const char *)message     
+Message to be displayed by status bar (actual a copy of above guiMessage!)
+
+t->command : CMI_REFRESH
+t->value   : NULL
+Request for a refresh of the gfx window content (should update an internal
+counter, not redraw the actual content)
+
+t->command : CMI_STEREO
+t->value   : (int *) mode
+Set the stereo mode
+
+t->command : CMI_CHECKR
+t->value   : (NULL)
+Check if refresh is necessary and do actual redraw (e.g. by checking internal
+counter from CMI_REFRESH)
+
+t->command : CMI_DS_NEW
+t->value   : (char **value)[0]=name, (char **value)[1]=type
+A new dataset was loaded 
+
+t->command : CMI_DS_SEL
+t->value   : (char *)value = name
+Dataset was deleted
+
+t->command : CMI_DS_REN
+t->value   : (char **value)[0]=oldname, (char **value)[1]=newname
+Rename dataset
+
+t->command : CMI_OBJ_NEW
+t->value   : (char **)value[0]=ds (char **)value[1]=objname
+Create new object under specified dataset
+
+t->command : CMI_OBJ_DEL
+t->value   : (char **)value[0]=ds (char **)value[1]=objname
+Delete object of specified dataset
+
+t->command : CMI_OBJ_REN
+t->value   : (char **)value[0]=ds (char **)value[1]=old (char **value)[2]=new
+Rename object of specified datase
+
+t->command : CMI_OBJ_SHOW
+t->value   : (char **)value[0]=ds (char **)value[1]=objname
+obj is shown in gfx window
+
+t->command : CMI_OBJ_HIDE
+t->value   : (char **)value[0]=ds (char **)value[1]=objname
+obj is not shown in gfx window
+
+see src/X11/gui_x11.c for an example, in particular how the command may be
+used within a switch/case context
+
+
+
+OUTGOING CMI MESSAGES 
+---------------------
+
+CMI Messages that the GUI should send out are
+
+t->target  : CMI_TARGET_GFX
+t->command : CMI_INIT_GL
+t->value   : NULL
+tells backend that OpenGL context is ready to be initialized - may be called
+by convenience function cmiInitGL()
+
+t-> target : CMI_TARGET_GFX
+t->command : CMI_REDRAW
+t->value   : NULL
+tells backend to execute OpenGL commands that redraw the scene and all current
+objects - may be called with the convenience function cmiRedraw()
+
+t->target  : CMI_TARGET_GFX
+t->command : CMI_RESIZE
+t->value   : (int *)value[0]=width (int *)value[1]=height
+informs the backend that the gfx window size has changed - may be called by
+the convenience function cmiResize(width,height)
+
+t->target  : CMI_TARGET_COM
+t->command : CMI_MESSAGE
+t->value   : (const char *)
+Send a message to the backend (will usually be dsiplayed in the terminal 
+window)
+
+INPUT EVENTS
+------------
+
+Since the gui handles all input (mouse, keyboard, other devices) events,
+it must pass these to the backend, also via CMI.
+
+t->target  : CMI_TARGET_COM
+t->command : CMI_INPUT
+t->value   : (int *)v
+
+a) Key Release
+v[0]=CMI_INPUT_KEYBOARD
+v[1]=CMI_BUTTON_RELEASE
+v[2]=ASCII value of key pressed _or_ one of the special values for function
+keys as defined in cmi.h (e.g. CMI_KEY_RETURN or CMI_KEY_UP)
+
+b) Mouse Button Press
+v[0]=CMI_INPUT_MOUSE
+v[1]=CMI_BUTTON_PRESS
+v[2]=value that has bit set for each mouse button and modifier key set, can
+be assembled from the mask values CMI_BUTTON1_MASK ... CMI_BUTTON5_MASK as
+well ass CMI_SHIFT_MASK and CMI_CNTRL_MASK
+v[3]=value of mouse x coordinate (gfx window relativ, not absolute)
+v[4]=value of mouse y coordinate (gfx window relativ, not absolute)
+
+c) Mouse Button Release
+same as b), with
+v[1]=CMI_BUTTON_RELEASE
+
+d) Mouse movement in window
+(only required if at least one mouse button is depressed!)
+v[0]=CMI_INPUT_MOUSE
+v[1]=CMI_MOTION
+v[2]=mask as for b) or c)
+v[3]=x-value of movement event (not change relativ to last event!)
+v[4]=y-value of movement event (not change relativ to last event!)   
+
+
+TIMER ROUTINE
+-------------
+
+Another vital routine that the gui must periodically call (e.g. every 10ms)
+is cmiTimer()
+
+
+COMMAND LINE INTERFACE
+----------------------
+
+files to include: 
+shell_raw.h
+
+If the GUI does not use the gui_terminal functionality, it can provide its
+own input terminal. It should pass entered commands to the backend and echo
+results and messages.
+
+1) pass commands to backend
+shellParseRaw(command, flag)
+const char *command : the command as a string
+int flag            : flag wether to update the command line history
+
+2) echo results
+TODO
+
+3) echo messages
+TODO - AS A WORKAROUND PLEASE PROVIDE A FUNCTION NAMED 
+guitWrite(const char *s)
+THAT IS USED RIGHT NOW IN guit_terminal.c
